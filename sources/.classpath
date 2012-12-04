@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/ajaxcore"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/ajaxpipe"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/ajaxrpc"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/ajaxswt"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/annotation"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.ajax/store"/>
+	<classpathentry kind="src" path="net.sf.j2s.core/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.html/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.core/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.junit/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.org.eclipse.core.commands/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.org.eclipse.core.runtime/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.org.eclipse.jface/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.org.eclipse.osgi/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.java.org.eclipse.swt/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.lib/src"/>
+	<classpathentry kind="src" path="net.sf.j2s.ui/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

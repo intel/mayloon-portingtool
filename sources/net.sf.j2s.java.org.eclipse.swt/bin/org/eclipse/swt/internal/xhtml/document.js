@@ -1,0 +1,13 @@
+﻿$_J("org.eclipse.swt.internal.xhtml");
+c$=$_T($wt.internal.xhtml,"document");
+$_S(c$,
+"onmousemove",null,
+"onmousedown",null,
+"onmouseup",null,
+"ondblclick",null,
+"onselectstart",null,
+"onclick",null,
+"onkeypress",null,
+"onkeydown",null,
+"onkeyup",null,
+"body",null);

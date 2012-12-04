@@ -1,0 +1,12 @@
+﻿$_J("org.eclipse.swt.internal.xhtml");
+c$=$_T($wt.internal.xhtml,"window");
+$_S(c$,
+"defaultWindowLeft",null,
+"defaultWindowTop",null,
+"defaultWindowWidth",null,
+"defaultWindowHeight",null,
+"currentTopZIndex",0,
+"clientWidth",0,
+"clientHeight",0,
+"screen",null,
+"history",null);

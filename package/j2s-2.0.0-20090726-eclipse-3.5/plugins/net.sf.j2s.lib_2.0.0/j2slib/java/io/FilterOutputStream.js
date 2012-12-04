@@ -1,0 +1,44 @@
+﻿$_L(["java.io.OutputStream"],"java.io.FilterOutputStream",["java.lang.ArrayIndexOutOfBoundsException","org.apache.harmony.luni.util.Msg"],function(){
+c$=$_C(function(){
+this.out=null;
+$_Z(this,arguments);
+},java.io,"FilterOutputStream",java.io.OutputStream);
+$_K(c$,
+function(out){
+$_R(this,java.io.FilterOutputStream,[]);
+this.out=out;
+},"java.io.OutputStream");
+$_M(c$,"close",
+function(){
+try{
+this.flush();
+}catch(e){
+if($_O(e,java.io.IOException)){
+}else{
+throw e;
+}
+}
+this.out.close();
+});
+$_M(c$,"flush",
+function(){
+this.out.flush();
+});
+$_M(c$,"write",
+function(buffer){
+this.write(buffer,0,buffer.length);
+},"~A");
+$_M(c$,"write",
+function(buffer,offset,count){
+if(offset<=buffer.length&&0<=offset&&0<=count&&count<=buffer.length-offset){
+for(var i=0;i<count;i++){
+this.write(buffer[offset+i]);
+}
+}else{
+throw new ArrayIndexOutOfBoundsException(org.apache.harmony.luni.util.Msg.getString("K002f"));
+}},"~A,~N,~N");
+$_M(c$,"write",
+function(oneByte){
+this.out.write(oneByte);
+},"~N");
+});
