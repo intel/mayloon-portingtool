@@ -74,7 +74,7 @@ return result;
 }, "~S");
 Clazz.overrideMethod (Boolean, "compareTo", 
 function (b) {
-return (b.value == this.valueOf () ? 0 : (this.valueOf () ? 1 : -1));
+return (b.valueOf () == this.valueOf () ? 0 : (this.valueOf () ? 1 : -1));
 }, "Boolean");
 Boolean.toBoolean = Clazz.defineMethod (Boolean, "toBoolean", 
 ($fz = function (name) {
