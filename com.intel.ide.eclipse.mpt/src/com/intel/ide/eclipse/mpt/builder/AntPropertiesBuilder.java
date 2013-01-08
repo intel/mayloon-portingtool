@@ -27,7 +27,7 @@ import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
 
 public class AntPropertiesBuilder {
 	/**
-	 * Properties in kona.build.properties file
+	 * Properties in mayloon.build.properties file
 	 */
 	public static final String MAYLOON_BUILD_PROPERTIES = "mayloon.build.properties";
 	public static final String PROPERTY_MAYLOON_SDK_DIR = "mayloon.sdk.dir";
@@ -48,7 +48,7 @@ public class AntPropertiesBuilder {
 	/**
 	 * Path ID for Mayloon and Android classpath containers
 	 */
-	public static final String KONA_CONTAINER_ID = MayloonClasspathContainerInitializer.MAYLOON_CONTAINER_ID;
+	public static final String MAYLOON_CONTAINER_ID = MayloonClasspathContainerInitializer.MAYLOON_CONTAINER_ID;
 	public static final String ANDROID_CONTAINER_ID = MptConstants.ANDROID_CLASSPATH_ENTRY_ID;
 	/**
 	 * Current java project
@@ -178,15 +178,15 @@ public class AntPropertiesBuilder {
 			prop.setProperty(PROPERTY_CURRENT_PROJECT_CLASSPATH_JARS, classpathJars);
 			prop.setProperty(PROPERTY_CURRENT_PROJECT_REFERENCE_PROJECTS, referenceProjects);
 			// set up following properties:
-			//   kona.sdk.dir
+			//   mayloon.sdk.dir
 			//   android.sdk.dir
 			//   android.sdk.platform.target.dir
-			IClasspathContainer container = JavaCore.getClasspathContainer(new Path(KONA_CONTAINER_ID), fProject);
+			IClasspathContainer container = JavaCore.getClasspathContainer(new Path(MAYLOON_CONTAINER_ID), fProject);
 			if(container != null) {
 				for(IClasspathEntry entry : container.getClasspathEntries()) {
 					if(entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 						File path = entry.getPath().toFile().getAbsoluteFile();
-						if(path.toString().toLowerCase().endsWith("kona.jar")) {
+						if(path.toString().toLowerCase().endsWith("mayloon.jar")) {
 							prop.setProperty(PROPERTY_MAYLOON_SDK_DIR, path.getParent());
 						}
 					}
@@ -278,7 +278,7 @@ public class AntPropertiesBuilder {
 		return buffer.toString();
 	}
 	/**
-	 * Save properties to kona.build.properties file
+	 * Save properties to mayloon.build.properties file
 	 * @param prop
 	 */
 	private void save(Properties prop) {

@@ -10,13 +10,13 @@ public class MptConstants {
 	// MAYLOON Sdk property file name
 	public static final String MAYLOON_SDK_PROPERTY = "sdk-info.properties"; //$NON-NLS-1$
 	// MAYLOON ant build properties and ant script xml
-	public static final String MAYLOON_CUSTOM_PROPERTIES = "MAYLOON.custom.properties"; //$NON-NLS-1$
-	public static final String MAYLOON_CUSTOM_PROPERTIES_TEMPLATE = "MAYLOON.custom.properties.template"; //$NON-NLS-1$
-	public static final String MAYLOON_BUILD_PROPERTIES = "MAYLOON.build.properties"; //$NON-NLS-1$
-	public static final String MAYLOON_BUILD_PROPERTIES_TEMPLATE = "MAYLOON.build.properties.template"; //$NON-NLS-1$
+	public static final String MAYLOON_CUSTOM_PROPERTIES = "mayloon.custom.properties"; //$NON-NLS-1$
+	public static final String MAYLOON_CUSTOM_PROPERTIES_TEMPLATE = "mayloon.custom.properties.template"; //$NON-NLS-1$
+	public static final String MAYLOON_BUILD_PROPERTIES = "mayloon.build.properties"; //$NON-NLS-1$
+	public static final String MAYLOON_BUILD_PROPERTIES_TEMPLATE = "mayloon.build.properties.template"; //$NON-NLS-1$
 	public static final String MAYLOON_BUILD_XML = "build.xml"; //$NON-NLS-1$
 	// default property file in an Android project, we will get target api level from here
-	public static final String ANDROID_DEFAULT_PROPERTIES = "default.properties"; //$NON-NLS-1$
+	public static final String ANDROID_PROJECT_PROPERTIES = "project.properties"; //$NON-NLS-1$
 	// the target property name in default.properties
 	public static final String ANDROID_DEFAULT_PROPERTY_TARGET = "target"; //$NON-NLS-1$
 	// Android manifest file in an Android project, we will get the minimal sdk version required by this project 

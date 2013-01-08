@@ -110,7 +110,7 @@ public class MayloonNature implements IProjectNature {
 
             description.setNatureIds(newNatures);
             project.setDescription(description, null);
-            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with KonaNature", project.getName());
+            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
 		}
 	}
 

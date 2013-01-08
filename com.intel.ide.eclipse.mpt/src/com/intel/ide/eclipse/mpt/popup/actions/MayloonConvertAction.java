@@ -14,6 +14,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
+import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
@@ -53,8 +54,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 							return;
 						}
 						ProjectUtil.backupProject(project);
-						// TODO luqiang
-						//KonaNature.addProjectNature(project);
+						MayloonNature.addProjectNature(project);
 						ProjectUtil.addMayloonOutputFolder(project);
 						ProjectUtil.fixMayloonClassEntry(project);
 						ProjectUtil.addAntBuildSupport(project);

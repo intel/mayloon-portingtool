@@ -135,5 +135,44 @@
             id="com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder">
       </builder>
    </extension>
+   <extension
+         id="MayloonPropertiesBuilder"
+         name="Mayloon Properties Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="com.intel.ide.eclipse.mpt.sdkProblem"
+         name="%mayloon_sdk_problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="com.intel.ide.eclipse.mpt.buildProblem"
+         name="Build Problem Marker"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
 
 </plugin>

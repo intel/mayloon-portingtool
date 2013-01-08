@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.JavaCore;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
-	public static final String BUILDER_ID = "com.intel.ide.eclipse.kdt.KonaPropertiesBuilder";
+	public static final String BUILDER_ID = "com.intel.ide.eclipse.mpt.MayloonPropertiesBuilder";
 
 	@SuppressWarnings("rawtypes")
 	@Override

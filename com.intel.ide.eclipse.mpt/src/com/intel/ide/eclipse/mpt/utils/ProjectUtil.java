@@ -175,9 +175,9 @@ public class ProjectUtil {
 	 */
 	public static int getAndroidProjectApiLevel(IProject project) {
 		int androidApiLevel = -1;		
-		IFile defaultProperties = project.getFile(MptConstants.ANDROID_DEFAULT_PROPERTIES);
+		IFile defaultProperties = project.getFile(MptConstants.ANDROID_PROJECT_PROPERTIES);
 		if (defaultProperties == null || !defaultProperties.exists()) {
-			MptPluginConsole.warning(MptPlugin.PLUGIN_ID,"Can't find android file:%1$s", MptConstants.ANDROID_DEFAULT_PROPERTIES); //$NON-NLS-1$
+			MptPluginConsole.warning(MptPlugin.PLUGIN_ID,"Can't find android file:%1$s", MptConstants.ANDROID_PROJECT_PROPERTIES); //$NON-NLS-1$
 			return androidApiLevel;
 		}
 		
@@ -194,11 +194,11 @@ public class ProjectUtil {
 				MptPluginConsole.warning(MptPlugin.PLUGIN_ID, "Can't parse android api level number from " + target);
 			}
 		} catch (FileNotFoundException e) {
-			MptPluginLogger.log(e, "Can't find android file:%1$s", MptConstants.ANDROID_DEFAULT_PROPERTIES); //$NON-NLS-1$
-			MptPluginConsole.warning(MptPlugin.PLUGIN_ID, "Can't find android file:%1$s", MptConstants.ANDROID_DEFAULT_PROPERTIES);
+			MptPluginLogger.log(e, "Can't find android file:%1$s", MptConstants.ANDROID_PROJECT_PROPERTIES); //$NON-NLS-1$
+			MptPluginConsole.warning(MptPlugin.PLUGIN_ID, "Can't find android file:%1$s", MptConstants.ANDROID_PROJECT_PROPERTIES);
 		} catch (IOException e) {
-			MptPluginLogger.log(e, "Fail to read the file:%1$s", MptConstants.ANDROID_DEFAULT_PROPERTIES); //$NON-NLS-1$
-			MptPluginConsole.warning(MptPlugin.PLUGIN_ID, "Fail to read the file:%1$s", MptConstants.ANDROID_DEFAULT_PROPERTIES);
+			MptPluginLogger.log(e, "Fail to read the file:%1$s", MptConstants.ANDROID_PROJECT_PROPERTIES); //$NON-NLS-1$
+			MptPluginConsole.warning(MptPlugin.PLUGIN_ID, "Fail to read the file:%1$s", MptConstants.ANDROID_PROJECT_PROPERTIES);
 		} finally {
 			if(stream != null) {
 				try {
@@ -428,7 +428,6 @@ public class ProjectUtil {
         	IProject project = javaProject.getProject();
         	
         	// check if it's a Mayloon project
-        	// TODO luqiang
         	try {
 				if (project.hasNature(MayloonNature.NATURE_ID)) {
 					MayloonProjectList.add(javaProject);
@@ -616,10 +615,10 @@ public class ProjectUtil {
 		}
 		
 		// clean up project
-		try {
-			project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-		} catch (CoreException e) {
-		}
+//		try {
+//			project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+//		} catch (CoreException e) {
+//		}
 		
 		// do backup
 		ZipOutputStream stream = null;

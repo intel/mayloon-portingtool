@@ -20,6 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import com.intel.ide.eclipse.mpt.logger.MptLogger;
 import com.intel.ide.eclipse.mpt.preferences.PreferenceInitializer;
+import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 /**
@@ -67,7 +68,7 @@ public class MptPlugin extends AbstractUIPlugin {
 					}
 					
 					// update each kona project's classpath.
-//					KonaClasspathContainerInitializer.updateProjects(konaProjects);
+					MayloonClasspathContainerInitializer.updateProjects(mayloonProjects);
 				}
 				
 			}

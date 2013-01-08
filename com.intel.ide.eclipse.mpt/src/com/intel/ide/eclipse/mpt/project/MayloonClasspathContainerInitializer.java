@@ -26,7 +26,7 @@ public class MayloonClasspathContainerInitializer extends
 
 	// The container id for mayloon framework jar file
 	public static String MAYLOON_CONTAINER_ID = 
-		"com.intel.ide.eclipse.kdt.mayloon_FRAMEWORK"; //$NON-NLS-1$
+		"com.intel.ide.eclipse.mpt.MAYLOON_FRAMEWORK"; //$NON-NLS-1$
 	
 	// classpath container for mayloon project
 	static class mayloonClasspathContainer  implements IClasspathContainer {

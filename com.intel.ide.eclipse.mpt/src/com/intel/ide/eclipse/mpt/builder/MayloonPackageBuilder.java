@@ -1,34 +1,8 @@
 package com.intel.ide.eclipse.mpt.builder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.security.DigestOutputStream;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -41,14 +15,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
@@ -133,7 +103,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		}
 		
 		// do migrate incompatibility check
-		doMigrateCheck(kind, monitor);
+//		doMigrateCheck(kind, monitor);
 		
 		// remove build problem marker
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
@@ -141,10 +111,10 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		// check if apk is built successfully
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject javaProject = JavaCore.create(project);
-		IFolder javaOutputFolder = (IFolder)root.findMember(javaProject.getOutputLocation());
-		javaOutputFolder.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
+		IFolder apkOutputFolder = (IFolder)root.findMember(javaProject.getPath().append("/bin"));
+		apkOutputFolder.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
 		IFile apk = null;
-		for(IResource resoruce : javaOutputFolder.members(IResource.FILE)){
+		for(IResource resoruce : apkOutputFolder.members(IResource.FILE)){
 			if(resoruce.exists() && resoruce.getLocation().toString().endsWith(EXT_APK)){
 				apk = (IFile)resoruce;
 				break;
@@ -172,7 +142,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		
 		// build output jar which package apk and referenced libraries and reference 
 		// project compiled code, and signed with a debug signature
-		// TODO luqiang
+		// TODO luqiang, using j2s JDT compiler extension instead!!!
 		//build(javaProject, apk.getLocation().toFile(), MayloonOutputJar.getLocation().toFile(), MayloonSDK.getDebugSignatureInfo());
 		
 		// refresh Mayloon output folder, and mark output jar as derived as appropriate
