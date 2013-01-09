@@ -10,6 +10,7 @@ public class MptMessages extends NLS {
 	public static String Not_found_Mayloon_SDK_Title;
 	public static String Not_found_Mayloon_SDK_Message;
 	public static String Not_found_Mayloon_SDK_Version_File_Message;
+	public static String Not_found_Mayloon_External_File_Message;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, MptMessages.class);

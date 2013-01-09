@@ -67,7 +67,7 @@ public class MptPlugin extends AbstractUIPlugin {
 						}
 					}
 					
-					// update each kona project's classpath.
+					// update each Mayloon project's classpath.
 					MayloonClasspathContainerInitializer.updateProjects(mayloonProjects);
 				}
 				

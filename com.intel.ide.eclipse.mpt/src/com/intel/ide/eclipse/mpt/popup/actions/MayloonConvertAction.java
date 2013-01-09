@@ -53,11 +53,24 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						if (!ProjectUtil.checkVersionMatch(project)) {
 							return;
 						}
+						
 						ProjectUtil.backupProject(project);
+						
+						// merge j2s nature to it.
 						MayloonNature.addProjectNature(project);
+						
 						ProjectUtil.addMayloonOutputFolder(project);
+						
+						// copy mayloon framework resource js library
+						ProjectUtil.addMayloonFrameworkFolder(project);
+						
+						// TODO, luqiang, generate .mayloon configuration file
+						
+						// TODO luqiang, merge j2s class path modify logic to it.
 						ProjectUtil.fixMayloonClassEntry(project);
-						ProjectUtil.addAntBuildSupport(project);
+						
+						// TODO luqiang, skip this release
+						// ProjectUtil.addAntBuildSupport(project);
 						MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 					} catch (CoreException e) {
 						MptPluginLogger.throwable(e);

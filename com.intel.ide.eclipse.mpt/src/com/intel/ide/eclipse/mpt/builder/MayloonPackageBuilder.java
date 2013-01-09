@@ -27,6 +27,7 @@ import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 
 	public static final String BUILDER_ID = "com.intel.ide.eclipse.mpt.MayloonPackageBuilder"; //$NON-NLS-1$
+											   
 	/**
 	 * Tag used in printing message to console view.
 	 */
@@ -69,7 +70,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	// TODO luqiang
+	// TODO luqiang, we don't need this migrate check, because mayloon check compatible problem depend on its specific extension of JDT compiler. 
 	/**
 	 * Do migrate incompatibility check on resource object
 	 * @param resource
@@ -103,7 +104,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		}
 		
 		// do migrate incompatibility check
-//		doMigrateCheck(kind, monitor);
+		//doMigrateCheck(kind, monitor);
 		
 		// remove build problem marker
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);

@@ -126,13 +126,13 @@
          </run>
       </runtime>
       <builder
-            id="com.intel.ide.eclipse.mpt.builder.MayloonPackageBuilder">
+            id="com.intel.ide.eclipse.mpt.MayloonPackageBuilder">
       </builder>
-      <requires-nature
-            id="com.android.ide.eclipse.adt.AndroidNature">
-      </requires-nature>
       <builder
-            id="com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder">
+            id="com.intel.ide.eclipse.mpt.MayloonPropertiesBuilder">
+      </builder>
+      <builder
+            id="net.sf.j2s.core.java2scriptbuilder">
       </builder>
    </extension>
    <extension
