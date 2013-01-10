@@ -1,16 +1,12 @@
 package com.intel.ide.eclipse.mpt.builder;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,7 +16,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import com.intel.ide.eclipse.mpt.MptConstants;
-import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 
@@ -36,64 +31,6 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 	 * File extensions of Android build output
 	 */
 	public static final String EXT_APK = ".apk";
-	/**
-	 * List of project on which the build has done
-	 */
-	private ArrayList<IProject> doneProjects = new ArrayList<IProject>();
-	
-	/**
-	 * Do migrate incompatibility check with specified kind of build and monitor
-	 * @param kind
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	private void doMigrateCheck(int kind, IProgressMonitor monitor) throws CoreException {
-		IProject project = this.getProject();
-		IResourceDelta delta = this.getDelta(project);
-		if(delta != null) {
-			delta.accept(new IResourceDeltaVisitor(){
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					IResource resource = delta.getResource();
-					if(resource.getType() == IResource.FILE) {
-						doMigrateCheck(resource);
-					}
-					return true;
-				}});
-		}else{
-			project.accept(new IResourceVisitor(){
-				public boolean visit(IResource resource) throws CoreException {
-					if(resource.getType() == IResource.FILE) {
-						doMigrateCheck(resource);
-					}
-					return true;
-				}});
-		}
-	}
-	
-	// TODO luqiang, we don't need this migrate check, because mayloon check compatible problem depend on its specific extension of JDT compiler. 
-	/**
-	 * Do migrate incompatibility check on resource object
-	 * @param resource
-	 */
-	private void doMigrateCheck(IResource resource) {
-		MptPluginLogger.general("In doMigrateCheck");
-		String category = resource.getLocation().getFileExtension();
-//		MigrateHandlerLoader loader = MigrateHandlerLoader.instance();
-//		ArrayList<MigrateHandler> handlers = loader.getCategoryHandler(category);
-//		if(handlers != null) {
-//			try {
-//				resource.deleteMarkers(MptConstants.MARKER_MIGRATE, true, IResource.DEPTH_ZERO);
-//			} catch (CoreException e) {
-//				MptPluginLogger.throwable(e);
-//			}
-//			for(MigrateHandler handler : handlers) {
-//				try {
-//					handler.handle(resource);
-//				} catch (Exception e) {
-//				}
-//			}
-//		}
-	}
 	
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -102,9 +39,6 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		if(ProjectUtil.isLibraryProject(project)) {
 			return project.getReferencedProjects();
 		}
-		
-		// do migrate incompatibility check
-		//doMigrateCheck(kind, monitor);
 		
 		// remove build problem marker
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
