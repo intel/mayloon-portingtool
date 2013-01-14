@@ -174,5 +174,80 @@
             type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="com.intel.ide.eclipse.mpt.launching.MayloonApplicationLaunchShortcut"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
+            icon="icons/sample.gif"
+            id="com.intel.ide.eclipse.debug.ui.localMayloonApplicationShortcut"
+            label="%run_mayloon_application"
+            modes="run, debug">
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                <or>
+               	  <test property="org.eclipse.jdt.launching.hasMain"/>
+               	  <and>
+               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <or>
+               	     	<test property="org.eclipse.jdt.launching.isContainer"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
+               	     	<test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+               	     </or>
+               	  </and>
+               	</or>
+               </iterate>
+               </with>
+           </enablement>
+  		 </contextualLaunch>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+         <perspective id="org.eclipse.ui.resourcePerspective"/>
+      </shortcut>
+  </extension> 
+  
+  <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="com.intel.ide.eclipse.mpt.launching.MayloonLaunchingTabGroup"
+            id="com.intel.ide.eclipse.launching.launchConfigurationTabGroup.MayloonApplication"
+            type="com.intel.ide.eclipse.launching.MayloonApplication">
+      </launchConfigurationTabGroup>
+  </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="com.intel.ide.eclipse.mpt.launching.MayloonLaunchConfigurationDelegate"
+            id="com.intel.ide.eclipse.launching.MayloonApplication"
+            modes="run, debug"
+            name="%run_mayloon_application">
+      </launchConfigurationType>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="com.intel.ide.eclipse.launching.MayloonApplication"
+            icon="icons/sample.gif"
+            id="com.intel.ide.eclipse.launching.launchConfigurationTypeImage.MayloonApplication"/>
+   </extension>
 
 </plugin>
