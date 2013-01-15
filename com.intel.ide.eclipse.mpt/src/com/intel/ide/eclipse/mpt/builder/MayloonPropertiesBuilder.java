@@ -28,7 +28,7 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 	private static final String J2S_RESROUCE_LIST = "j2s.resources.list";
 	private static final String J2S_OUTPUT_PATH = "j2s.out.path";
 	private static final String J2S_COMPILER_STATUS = "j2s.compiler.status";
-	private static final String MAYLOON_PROJECT_SETTING = ".mayloon";
+	private static final String MAYLOON_PROJECT_SETTING = ".j2s"; //".mayloon"; In net.sf.j2s.core, .j2s is used to check whether enable java2scriptbuilder when building. 
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -41,14 +41,15 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 		antPropertiesbuilder.build();
 		
 		// .mayloon properties generation
-		mayloonPropBuild();
+		// move to conversion logic
+		// mayloonPropBuild();
 		
 		return project.getReferencedProjects();
 	}
 	
-	private void mayloonPropBuild() {
+	public static void mayloonPropBuild(IProject project) {
 		Properties prop = new Properties();
-		IJavaProject javaProject = JavaCore.create(getProject());
+		IJavaProject javaProject = JavaCore.create(project);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		
 		// TODO luqiang, get net.sf.j2s.lib/j2slib/ from eclipse plugin api!!!
@@ -78,7 +79,7 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 	 * Save properties to .mayloon file
 	 * @param prop
 	 */
-	private void save(Properties prop, IJavaProject javaProject) {
+	public static void save(Properties prop, IJavaProject javaProject) {
 		FileOutputStream stream = null;
 		try {
 			File location = new File(javaProject.getProject().getLocation().toFile(), MAYLOON_PROJECT_SETTING);

@@ -9,14 +9,14 @@
  *     Zhou Renjian - initial API and implementation
  *******************************************************************************/
 
-package com.intel.ide.eclipse.mpt.launching;
+package com.intel.ide.eclipse.mpt.extensionpoint;
 
 /**
  * @author zhou renjian
  *
  * 2006-5-13
  */
-public interface IExternalResourceProvider {
+public interface IExternalResourceProvider4MPT {
 	public String[] getKeys();
 	public String[] getDescriptions();
 	public String[][] getResources();

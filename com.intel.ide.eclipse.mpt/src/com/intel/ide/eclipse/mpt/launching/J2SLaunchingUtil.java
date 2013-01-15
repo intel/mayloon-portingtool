@@ -44,6 +44,7 @@ import com.intel.ide.eclipse.mpt.classpath.ContactedClasses;
 import com.intel.ide.eclipse.mpt.classpath.IRuntimeClasspathEntry;
 import com.intel.ide.eclipse.mpt.classpath.Resource;
 import com.intel.ide.eclipse.mpt.classpath.UnitClass;
+import com.intel.ide.eclipse.mpt.extensionpoint.ExternalResources;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class J2SLaunchingUtil {

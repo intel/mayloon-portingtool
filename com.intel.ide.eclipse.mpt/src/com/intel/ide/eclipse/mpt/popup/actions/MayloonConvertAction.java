@@ -10,10 +10,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
+import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
@@ -39,6 +39,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 			for (Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
 				Object element = it.next();
 				IProject project = null;
+				
 				if (element instanceof IProject) {
 					project = (IProject) element;
 				} else if (element instanceof IAdaptable) {
@@ -65,6 +66,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						ProjectUtil.addMayloonFrameworkFolder(project);
 						
 						// TODO, luqiang, generate .mayloon configuration file
+						MayloonPropertiesBuilder.mayloonPropBuild(project);
 						
 						// TODO luqiang, merge j2s class path modify logic to it.
 						ProjectUtil.fixMayloonClassEntry(project);

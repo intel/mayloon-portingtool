@@ -9,7 +9,7 @@
  *     Zhou Renjian - initial API and implementation
  *******************************************************************************/
 
-package com.intel.ide.eclipse.mpt.launching;
+package com.intel.ide.eclipse.mpt.extensionpoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+
 
 /**
  * @author zhou renjian
@@ -41,7 +42,7 @@ public class ExternalResources {
 		isExtensionPointsChecked = true;
 		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extensionRegistry
-				.getExtensionPoint("net.sf.j2s.ui.externalResourceProvider"); //$NON-NLS-1$
+				.getExtensionPoint("com.intel.ide.eclipse.mpt.externalResourceProvider"); //$NON-NLS-1$
 		if (extensionPoint == null) {
 			return;
 		}
@@ -62,7 +63,7 @@ public class ExternalResources {
 						try {
 							Object callback = element
 									.createExecutableExtension("class");
-							if (callback instanceof IExternalResourceProvider) {
+							if (callback instanceof IExternalResourceProvider4MPT) {
 								providers.put(id.trim(), callback);
 							}
 						} catch (CoreException e) {
@@ -79,12 +80,12 @@ public class ExternalResources {
 		return providers;
 	}
 	
-	public static IExternalResourceProvider getProviderByName(String keyName) {
+	public static IExternalResourceProvider4MPT getProviderByName(String keyName) {
 		checkExtensionPoints();
 		if (keyName != null) {
 			for (Iterator iter = providers.keySet().iterator(); iter.hasNext();) {
 				String key = (String) iter.next();
-				IExternalResourceProvider provider = (IExternalResourceProvider) providers.get(key);
+				IExternalResourceProvider4MPT provider = (IExternalResourceProvider4MPT) providers.get(key);
 				String[] keys = provider.getKeys();
 				for (int i = 0; i < keys.length; i++) {
 					if (keyName.equals(keys[i])) {
@@ -101,7 +102,7 @@ public class ExternalResources {
 		List list = new ArrayList();
 		for (Iterator iter = providers.keySet().iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
-			IExternalResourceProvider provider = (IExternalResourceProvider) providers.get(key);
+			IExternalResourceProvider4MPT provider = (IExternalResourceProvider4MPT) providers.get(key);
 			String[] keys = provider.getKeys();
 			for (int i = 0; i < keys.length; i++) {
 				list.add(keys[i]);
@@ -115,7 +116,7 @@ public class ExternalResources {
 		List list = new ArrayList();
 		for (Iterator iter = providers.keySet().iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
-			IExternalResourceProvider provider = (IExternalResourceProvider) providers.get(key);
+			IExternalResourceProvider4MPT provider = (IExternalResourceProvider4MPT) providers.get(key);
 			String[] descs = provider.getDescriptions();
 			for (int i = 0; i < descs.length; i++) {
 				list.add(descs[i]);
@@ -129,7 +130,7 @@ public class ExternalResources {
 		List list = new ArrayList();
 		for (Iterator iter = providers.keySet().iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
-			IExternalResourceProvider provider = (IExternalResourceProvider) providers.get(key);
+			IExternalResourceProvider4MPT provider = (IExternalResourceProvider4MPT) providers.get(key);
 			String[][] ress = provider.getResources();
 			for (int i = 0; i < ress.length; i++) {
 				list.add(ress[i]);
