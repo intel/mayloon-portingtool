@@ -14,5 +14,14 @@
             id="net.sf.j2s.lib.providers.javaSWTJS"/>
        -->
    </extension>
+   <extension
+   		 id="net.sf.j2s.innerjsresources4mpt"
+         name="Inner JS Resources MPT"
+         point="com.intel.ide.eclipse.mpt.externalResourceProvider">
+      <externalResourceProvider
+            class="net.sf.j2s.lib.providers.JavaRuntimeJSProvider4MPT"
+            id="net.sf.j2s.lib.providers.javaRuntimeJS4MPT">
+      </externalResourceProvider>
+   </extension>
 
 </plugin>
