@@ -250,5 +250,48 @@
             icon="icons/sample.gif"
             id="com.intel.ide.eclipse.launching.launchConfigurationTypeImage.MayloonApplication"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="com.intel.ide.eclipse.mpt.editContribution"
+            objectClass="org.eclipse.jdt.core.ICompilationUnit">
+         <action
+               class="com.intel.ide.eclipse.mpt.popup.actions.EditJSAction"
+               enablesFor="1"
+               id="com.intel.ide.eclipse.mpt.action.editjs4object"
+               label="%mayloon_edit_js"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="com.intel.ide.eclipse.mpt.editViewContribution"
+            targetID="#CompilationUnitEditorContext">
+         <action
+               class="com.intel.ide.eclipse.mpt.popup.actions.OpenJSEditorViewAction"
+               id="com.intel.ide.eclipse.mpt.action.editjs4view"
+               label="%mayloon_edit_js"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="com.intel.ide.eclipse.mpt.editViewContribution"
+            targetID="#TextEditorContext">
+         <action
+               class="com.intel.ide.eclipse.mpt.popup.actions.OpenJavaEditorViewAction"
+               id="com.intel.ide.eclipse.mpt.action.editjava4view"
+               label="%mayloon_edit_java"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
 
 </plugin>
