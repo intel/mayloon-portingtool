@@ -53,8 +53,7 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		
 		// TODO luqiang, get net.sf.j2s.lib/j2slib/ from eclipse plugin api!!!
-		String j2sLibPath = "../net.sf.j2s.lib/j2slib/";
-		
+		String j2sLibPath = "../net.sf.j2s.lib/j2slib/";	
 		
 		prop.setProperty(J2S_RESROUCE_LIST, j2sLibPath + "/java.runtime.j2x");
 		

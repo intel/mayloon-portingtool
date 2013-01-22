@@ -77,7 +77,6 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		
 		// build output jar which package apk and referenced libraries and reference 
 		// project compiled code, and signed with a debug signature
-		// TODO luqiang, using j2s JDT compiler extension instead!!!
 		//build(javaProject, apk.getLocation().toFile(), MayloonOutputJar.getLocation().toFile(), MayloonSDK.getDebugSignatureInfo());
 		
 		// refresh Mayloon output folder, and mark output jar as derived as appropriate

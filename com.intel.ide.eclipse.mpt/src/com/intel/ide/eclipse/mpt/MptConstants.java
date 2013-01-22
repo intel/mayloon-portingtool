@@ -3,8 +3,11 @@ package com.intel.ide.eclipse.mpt;
 public class MptConstants {
 	public static final String WS_ROOT = "/"; //$NON-NLS-1$
 	public static final String MAYLOON_OUTPUT_DIR = "mayloon_bin"; //$NON-NLS-1$
+	public static final String MAYLOON_APP_RES_DIR = "/apps/"; //$NON-NLS-1$
 	public static final String MAYLOON_EXTERNAL_JS_DIR = "external"; //$NON-NLS-1$
-	public static final String MAYLOON_FRAMEWORK_JS_DIR = "bin/framework"; //$NON-NLS-1$
+	public static final String ANDROID_GEN_DIR = "gen"; //$NON-NLS-1$
+	public static final String MAYLOON_SRC_DIR = "src"; //$NON-NLS-1$
+	public static final String MAYLOON_FRAMEWORK_JS_DIR = "bin"; //$NON-NLS-1$
 	public static final String MAYLOON_FRAMEWORK_RES_DIR = "res_sys"; //$NON-NLS-1$	
 	public static final String MAYLOON_JAR_LIB = "mayloon.jar"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
@@ -17,6 +20,7 @@ public class MptConstants {
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
+	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";
 	// MAYLOON ant build properties and ant script xml
 	public static final String MAYLOON_CUSTOM_PROPERTIES = "mayloon.custom.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_CUSTOM_PROPERTIES_TEMPLATE = "mayloon.custom.properties.template"; //$NON-NLS-1$

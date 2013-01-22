@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -57,19 +58,25 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						ProjectUtil.backupProject(project);
 						
+						// luqiang, merge j2s class path modify logic to it.
+						ProjectUtil.fixMayloonClassEntry(project);
+						
 						// merge j2s nature to it.
 						MayloonNature.addProjectNature(project);
 						
 						ProjectUtil.addMayloonOutputFolder(project);
 						
-						// copy mayloon framework resource js library
+						// copy mayloon framework resource and js library
 						ProjectUtil.addMayloonFrameworkFolder(project);
 						
-						// TODO, luqiang, generate .mayloon configuration file
-						MayloonPropertiesBuilder.mayloonPropBuild(project);
+						// copy android build output resource to /bin/apps/[package name]/
+						ProjectUtil.moveAndroidOutput2Mayloon(project);
 						
-						// TODO luqiang, merge j2s class path modify logic to it.
-						ProjectUtil.fixMayloonClassEntry(project);
+						// clear android generated gen/ folder
+						ProjectUtil.clearAndroidGenFolder(project);
+						
+						// luqiang, generate .j2s configuration file
+						MayloonPropertiesBuilder.mayloonPropBuild(project);
 						
 						// TODO luqiang, skip this release
 						// ProjectUtil.addAntBuildSupport(project);
