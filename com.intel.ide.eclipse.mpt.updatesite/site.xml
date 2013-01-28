@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.intel.ide.eclipse.mpt.feature_1.0.0.201301281532.jar" id="com.intel.ide.eclipse.mpt.feature" version="1.0.0.201301281532" os="linux,macosx,win32" nl="en_US" arch="x86,x86_64"/>
+</site>
