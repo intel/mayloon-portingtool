@@ -979,7 +979,6 @@ public class ProjectUtil {
 			IProject project = javaProject.getProject();
 
 			// check if it's a Mayloon project
-			// TODO luqiang
 			try {
 				if (project.hasNature(MayloonNature.NATURE_ID)) {
 					MayloonProjectList.add(javaProject);

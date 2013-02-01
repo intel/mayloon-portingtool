@@ -57,10 +57,10 @@ public class MayloonNature implements IProjectNature {
 		project.setDescription(desc, null);
 		
 		addToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
-		removeFromBuildSpec(JavaCore.BUILDER_ID);
-		removeFromBuildSpec("com.android.ide.eclipse.adt.PreCompilerBuilder");
-		removeFromBuildSpec("com.android.ide.eclipse.adt.ApkBuilder");
-		removeFromBuildSpec("com.android.ide.eclipse.adt.ResourceManagerBuilder");
+		removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
+		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
+		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
 	}
 
 	/*
@@ -85,7 +85,7 @@ public class MayloonNature implements IProjectNature {
 		desc.setBuildSpec((ICommand[])commands.toArray(new ICommand[commands.size()]));
 		project.setDescription(desc, null);
 		
-		removeFromBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
+		removeFromBuildSpec(project, MptConstants.MAYLOON_J2S_BUILDER);
 		addToBuildSpec(JavaCore.BUILDER_ID);
 		addToBuildSpec("com.android.ide.eclipse.adt.PreCompilerBuilder");
 		addToBuildSpec("com.android.ide.eclipse.adt.ApkBuilder");
@@ -123,6 +123,12 @@ public class MayloonNature implements IProjectNature {
             description.setNatureIds(newNatures);
             project.setDescription(description, null);
             MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
+            
+            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+    		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
+    		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
+    		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
+            
 		}
 	}
 	
@@ -243,9 +249,9 @@ public class MayloonNature implements IProjectNature {
 	/**
 	 * Removes the given builder from the build spec for the given project.
 	 */
-	public void removeFromBuildSpec(String builderID) throws CoreException {
+	public static void removeFromBuildSpec(IProject project, String builderID) throws CoreException {
 
-		IProjectDescription description = this.project.getDescription();
+		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderID)) {
@@ -253,7 +259,7 @@ public class MayloonNature implements IProjectNature {
 				System.arraycopy(commands, 0, newCommands, 0, i);
 				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
 				description.setBuildSpec(newCommands);
-				this.project.setDescription(description, null);
+				project.setDescription(description, null);
 				return;
 			}
 		}
