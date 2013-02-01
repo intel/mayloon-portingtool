@@ -19,6 +19,7 @@ public class MptConstants {
 	public static final String MAYLOON_EXTERNAL_PROPERTY = "external-info.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
+	public static final String MAYLOON_RUNTIME_ZIP = "mayloon.zip";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
 	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";
 	// MAYLOON ant build properties and ant script xml

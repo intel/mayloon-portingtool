@@ -1,5 +1,7 @@
 package com.intel.ide.eclipse.mpt.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -11,10 +13,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -66,17 +70,24 @@ import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
  * class to provide util functions to help Mayloon project
  */
 public class ProjectUtil {
-	
+
+	private static final int BUFFER = 2048;
+
 	public enum OutputLevel {
-        /** Silent mode. Project creation will only display errors. */
-        SILENT,
-        /** Normal mode. Project creation will display what's being done, display
-         * error but not warnings. */
-        NORMAL,
-        /** Verbose mode. Project creation will display what's being done, errors and warnings. */
-        VERBOSE;
-    }
-	
+		/** Silent mode. Project creation will only display errors. */
+		SILENT,
+		/**
+		 * Normal mode. Project creation will display what's being done, display
+		 * error but not warnings.
+		 */
+		NORMAL,
+		/**
+		 * Verbose mode. Project creation will display what's being done, errors
+		 * and warnings.
+		 */
+		VERBOSE;
+	}
+
 	private static OutputLevel mLevel;
 
 	/**
@@ -93,43 +104,51 @@ public class ProjectUtil {
 			folder.create(true, true, null);
 		}
 	}
-	
+
 	/**
-	 * Move the build output of android project to the application resource folder of Mayloon project
+	 * Move the build output of android project to the application resource
+	 * folder of Mayloon project
 	 * 
-	 *    Step 1. move /gen/R.java to /src/[application package name]/
-	 *    Step 2. move /[android output root]/[application package name] to /[mayloon output]/apps/
+	 * Step 1. move /gen/R.java to /src/[application package name]/ Step 2. move
+	 * /[android output root]/[application package name] to /[mayloon
+	 * output]/apps/
 	 * 
 	 * @param project
 	 * @throws CoreException
 	 */
 	public static void moveAndroidOutput2Mayloon(IProject project) {
-			
+
 		// packageName is [package].[main activity]
 		String packageName = extractPackageFromManifest(project);
-		
+
 		// TODO luqiang, cross-platform directory delimit problem ???
 		// Step 1
-		if (packageName != null && !packageName.equals("")) {		
-			
+		if (packageName != null && !packageName.equals("")) {
+
 			String genRPath = null;
 			genRPath = packageName.substring(0, packageName.lastIndexOf("."));
-			
-			String srcFile = project.getLocation() + "/" + MptConstants.ANDROID_GEN_DIR + "/" + genRPath.replaceAll("\\.", "/") + "/R.java";
-			
-			String destFile = project.getLocation() + "/src/" + genRPath.replaceAll("\\.", "/") + "/R.java";
-			
-			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(destFile));	
-			
+
+			String srcFile = project.getLocation() + "/"
+					+ MptConstants.ANDROID_GEN_DIR + "/"
+					+ genRPath.replaceAll("\\.", "/") + "/R.java";
+
+			String destFile = project.getLocation() + "/src/"
+					+ genRPath.replaceAll("\\.", "/") + "/R.java";
+
+			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+					destFile));
+
 			// Step 2
 			srcFile = project.getLocation() + "/bin/" + packageName + "/";
-			
-			// TODO luqiang, see mayloon PackageManager, app.add should read resource from package+activityName instead of package 
+
+			// TODO luqiang, see mayloon PackageManager, app.add should read
+			// resource from package+activityName instead of package
 			destFile = project.getLocation() + "/bin/apps/" + genRPath + "/";
-			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(destFile));
+			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+					destFile));
 		}
 	}
-	
+
 	/**
 	 * move file from src to dest
 	 * 
@@ -140,43 +159,42 @@ public class ProjectUtil {
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore destDir = fileSystem.getStore(destPath);
 		IFileStore srcDir = fileSystem.getStore(srcPath);
-		
-		// Will recursively copy the home directory to the backup 
+
+		// Will recursively copy the home directory to the backup
 		// directory, overwriting any files in the backup directory in the way.
 		try {
 			srcDir.move(destDir, EFS.OVERWRITE, null);
 		} catch (CoreException e) {
 			MptPluginConsole
-			.error(MptConstants.CONVERT_TAG,
-					"Could not move Android output resource due to cause {%1$s}",
-					e.getMessage());
+					.error(MptConstants.CONVERT_TAG,
+							"Could not move Android output resource due to cause {%1$s}",
+							e.getMessage());
 		}
 	}
-	
-	
+
 	/**
 	 * Copy file from plugin to user's project
 	 * 
 	 * @param srcPath
 	 * @param destPath
 	 */
-	public static void copyFilesFromPlugin2UserProject(IPath srcPath, IPath destPath) {
+	public static void copyFilesFromPlugin2UserProject(IPath srcPath,
+			IPath destPath) {
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore destDir = fileSystem.getStore(destPath);
 		IFileStore srcDir = fileSystem.getStore(srcPath);
-		
-		// Will recursively copy the home directory to the backup 
+
+		// Will recursively copy the home directory to the backup
 		// directory, overwriting any files in the backup directory in the way.
 		try {
 			srcDir.copy(destDir, EFS.OVERWRITE, null);
 		} catch (CoreException e) {
-			MptPluginConsole
-			.error(MptConstants.CONVERT_TAG,
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
 					"Could not copy Mayloon resource due to cause {%1$s}",
 					e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * delete file from src folder
 	 * 
@@ -185,26 +203,26 @@ public class ProjectUtil {
 	public static void deleteFiles(IPath srcPath) {
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore srcDir = fileSystem.getStore(srcPath);
-		
-		// Will recursively copy the home directory to the backup 
+
+		// Will recursively copy the home directory to the backup
 		// directory, overwriting any files in the backup directory in the way.
 		try {
 			srcDir.delete(EFS.NONE, null);
 		} catch (CoreException e) {
-			MptPluginConsole
-			.error(MptConstants.CONVERT_TAG,
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
 					"Could not clear Android gen folder due to cause {%1$s}",
 					e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Clear Android's Gen Folder
 	 * 
 	 * @param project
 	 */
 	public static void clearAndroidGenFolder(IProject project) {
-		IPath genPath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
+		IPath genPath = project.getLocation().append(
+				MptConstants.ANDROID_GEN_DIR);
 		deleteFiles(genPath);
 	}
 
@@ -235,7 +253,7 @@ public class ProjectUtil {
 					MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
 			String frameworkRes = properties.getProperty(
 					MptConstants.MAYLOON_FRAMEWORK_RES, null);
-			
+
 			String startFiles = properties.getProperty(
 					MptConstants.MAYLOON_APPLICATION_ENTRY, null);
 
@@ -245,33 +263,40 @@ public class ProjectUtil {
 				if (!folder.exists()) {
 					folder.create(true, true, null);
 				}
-				
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/" + externalJSLib);
-				copyFilesFromPlugin2UserProject(srcPath, folder.getRawLocation());
-				
+
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+						+ externalJSLib);
+				copyFilesFromPlugin2UserProject(srcPath,
+						folder.getRawLocation());
+
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-				
+
 			} else {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Could not load Mayloon external javascript library due to cause {%1$s}",
 								"Mayloon Javascript Library path is not seted correctly.");
-			}			
-			
-			// TODO luqiang, these framework javascript will be deleted by java compile, 
-			// so we need find a method to tell the java builder, not clear output before each build process
+			}
+
+			// TODO luqiang, these framework javascript will be deleted by java
+			// compile,
+			// so we need find a method to tell the java builder, not clear
+			// output before each build process
 			if (frameworkJs != null) {
-				
+
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceRoot root = workspace.getRoot();
-				
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + MptConstants.WS_ROOT + frameworkJs);
-				IPath destPath = root.getLocation().append(javaProject.getOutputLocation());
+
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath
+						+ MptConstants.WS_ROOT + frameworkJs);
+				IPath destPath = root.getLocation().append(
+						javaProject.getOutputLocation());
 				copyFilesFromPlugin2UserProject(srcPath, destPath);
-				
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT + MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+
+				IFolder folder = project.getFolder(MptConstants.WS_ROOT
+						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-				
+
 			} else {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
@@ -285,9 +310,11 @@ public class ProjectUtil {
 				if (!folder.exists()) {
 					folder.create(true, true, null);
 				}
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/" + frameworkRes);
-				copyFilesFromPlugin2UserProject(srcPath, folder.getRawLocation());
-				
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+						+ frameworkRes);
+				copyFilesFromPlugin2UserProject(srcPath,
+						folder.getRawLocation());
+
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
 				MptPluginConsole
@@ -295,21 +322,23 @@ public class ProjectUtil {
 								"Could not load Mayloon framework resource due to cause {%1$s}",
 								"Mayloon framework resource path is not seted correctly.");
 			}
-			
+
 			if (startFiles != null) {
 				IFolder folder = project.getFolder(MptConstants.WS_ROOT
 						+ MptConstants.MAYLOON_SRC_DIR);
-				
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/" + startFiles);
-				IPath destPath = project.getLocation().append(MptConstants.MAYLOON_SRC_DIR);
-				
+
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+						+ startFiles);
+				IPath destPath = project.getLocation().append(
+						MptConstants.MAYLOON_SRC_DIR);
+
 				copyFilesFromPlugin2UserProject(srcPath, destPath);
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);				
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
 				MptPluginConsole
-				.error(MptConstants.CONVERT_TAG,
-						"Could not load Mayloon application entry to cause {%1$s}",
-						"Mayloon application entry is not seted correctly.");
+						.error(MptConstants.CONVERT_TAG,
+								"Could not load Mayloon application entry to cause {%1$s}",
+								"Mayloon application entry is not seted correctly.");
 			}
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
@@ -328,8 +357,7 @@ public class ProjectUtil {
 				}
 			}
 		}
-		
-		
+
 	}
 
 	/**
@@ -542,54 +570,64 @@ public class ProjectUtil {
 		}
 		return isLibraryProject;
 	}
-	
+
 	/**
-	 * Copy from ADT, ProjectCreator.java
-	 * Combine Package Activity name with Package
+	 * Copy from ADT, ProjectCreator.java Combine Package Activity name with
+	 * Package
 	 * 
 	 * @param packageName
 	 * @param activityName
 	 * @return
 	 */
-	private static String combinePackageActivityNames(String packageName, String activityName) {
-        // Activity Name can have 3 forms:
-        // - ".Name" means this is a class name in the given package name.
-        //    The full FQCN is thus packageName + ".Name"
-        // - "Name" is an older variant of the former. Full FQCN is packageName + "." + "Name"
-        // - "com.blah.Name" is a full FQCN. Ignore packageName and use activityName as-is.
-        //   To be valid, the package name should have at least two components. This is checked
-        //   later during the creation of the build.xml file, so we just need to detect there's
-        //   a dot but not at pos==0.
+	private static String combinePackageActivityNames(String packageName,
+			String activityName) {
+		// Activity Name can have 3 forms:
+		// - ".Name" means this is a class name in the given package name.
+		// The full FQCN is thus packageName + ".Name"
+		// - "Name" is an older variant of the former. Full FQCN is packageName
+		// + "." + "Name"
+		// - "com.blah.Name" is a full FQCN. Ignore packageName and use
+		// activityName as-is.
+		// To be valid, the package name should have at least two components.
+		// This is checked
+		// later during the creation of the build.xml file, so we just need to
+		// detect there's
+		// a dot but not at pos==0.
 
-        int pos = activityName.indexOf('.');
-        if (pos == 0) {
-            return packageName + activityName;
-        } else if (pos > 0) {
-            return activityName;
-        } else {
-            return packageName + "." + activityName;
-        }
-    }
-	
+		int pos = activityName.indexOf('.');
+		if (pos == 0) {
+			return packageName + activityName;
+		} else if (pos > 0) {
+			return activityName;
+		} else {
+			return packageName + "." + activityName;
+		}
+	}
+
 	/**
-	 * Copy from ADT, ProjectCreator.java
-     * Extracts a "full" package & activity name from an AndroidManifest.xml.
-     * <p/>
-     * The keywords dictionary is always filed the package name under the key {@link #PH_PACKAGE}.
-     * If an activity name can be found, it is filed under the key {@link #PH_ACTIVITY_ENTRY_NAME}.
-     * When no activity is found, this key is not created.
-     *
-     * @param manifestFile The AndroidManifest.xml file
-     * @param outKeywords  Place where to put the out parameters: package and activity names.
-     * @return True if the package/activity was parsed and updated in the keyword dictionary.
-     */
-    private static String extractPackageFromManifest(IProject project) {
-        
-    	String packageName = ""; 
-    	
-    	IResource manifestFile = project
+	 * Copy from ADT, ProjectCreator.java Extracts a "full" package & activity
+	 * name from an AndroidManifest.xml.
+	 * <p/>
+	 * The keywords dictionary is always filed the package name under the key
+	 * {@link #PH_PACKAGE}. If an activity name can be found, it is filed under
+	 * the key {@link #PH_ACTIVITY_ENTRY_NAME}. When no activity is found, this
+	 * key is not created.
+	 * 
+	 * @param manifestFile
+	 *            The AndroidManifest.xml file
+	 * @param outKeywords
+	 *            Place where to put the out parameters: package and activity
+	 *            names.
+	 * @return True if the package/activity was parsed and updated in the
+	 *         keyword dictionary.
+	 */
+	private static String extractPackageFromManifest(IProject project) {
+
+		String packageName = "";
+
+		IResource manifestFile = project
 				.findMember(MptConstants.ANDROID_MANIFEST_FILE);
-    	
+
 		if (manifestFile == null) {
 			MptPluginConsole.warning(MptPlugin.PLUGIN_ID,
 					"Can't find Android file:%1$s",
@@ -602,89 +640,100 @@ public class ProjectUtil {
 		InputSource source;
 		try {
 			source = new InputSource(new FileInputStream(new File(
-					location.toOSString(),
-					MptConstants.ANDROID_MANIFEST_FILE)));
-			
-			packageName = xPath
-					.evaluate(
-							"/manifest/@package", //$NON-NLS-1$
-							source);
-    		
-    		// Select the "android:name" attribute of all <activity> nodes but only if they
-            // contain a sub-node <intent-filter><action> with an "android:name" attribute which
-            // is 'android.intent.action.MAIN' and an <intent-filter><category> with an
-            // "android:name" attribute which is 'android.intent.category.LAUNCHER'
-            String expression = String.format("/manifest/application/activity" +
-                    "[intent-filter/action/@%1$s:name='android.intent.action.MAIN' and " +
-                    "intent-filter/category/@%1$s:name='android.intent.category.LAUNCHER']" +
-                    "/@%1$s:name", AndroidXPathFactory.DEFAULT_NS_PREFIX);
-            
-            source = new InputSource(new FileInputStream(new File(
-					location.toOSString(),
-					MptConstants.ANDROID_MANIFEST_FILE)));
-    		
-    		NodeList activityNames = (NodeList) xPath.evaluate(expression, source,
-                    XPathConstants.NODESET);
+					location.toOSString(), MptConstants.ANDROID_MANIFEST_FILE)));
 
+			packageName = xPath.evaluate("/manifest/@package", //$NON-NLS-1$
+					source);
 
-            // If we get here, both XPath expressions were valid so we're most likely dealing
-            // with an actual AndroidManifest.xml file. The nodes may not have the requested
-            // attributes though, if which case we should warn.
-            if (packageName == null || packageName.length() == 0) {
-            	MptPluginLogger
-				.warning(MptPlugin.PLUGIN_ID,
-						"Missing <manifest package=\"...\"> in '%1$s'", MptConstants.ANDROID_MANIFEST_FILE); //$NON-NLS-1$
-            	MptPluginConsole.error(MptPlugin.PLUGIN_ID,
-				"Fail to parse android manifest file:%1$s",
-				MptConstants.ANDROID_MANIFEST_FILE);
+			// Select the "android:name" attribute of all <activity> nodes but
+			// only if they
+			// contain a sub-node <intent-filter><action> with an "android:name"
+			// attribute which
+			// is 'android.intent.action.MAIN' and an <intent-filter><category>
+			// with an
+			// "android:name" attribute which is
+			// 'android.intent.category.LAUNCHER'
+			String expression = String
+					.format("/manifest/application/activity"
+							+ "[intent-filter/action/@%1$s:name='android.intent.action.MAIN' and "
+							+ "intent-filter/category/@%1$s:name='android.intent.category.LAUNCHER']"
+							+ "/@%1$s:name",
+							AndroidXPathFactory.DEFAULT_NS_PREFIX);
+
+			source = new InputSource(new FileInputStream(new File(
+					location.toOSString(), MptConstants.ANDROID_MANIFEST_FILE)));
+
+			NodeList activityNames = (NodeList) xPath.evaluate(expression,
+					source, XPathConstants.NODESET);
+
+			// If we get here, both XPath expressions were valid so we're most
+			// likely dealing
+			// with an actual AndroidManifest.xml file. The nodes may not have
+			// the requested
+			// attributes though, if which case we should warn.
+			if (packageName == null || packageName.length() == 0) {
+				MptPluginLogger
+						.warning(
+								MptPlugin.PLUGIN_ID,
+								"Missing <manifest package=\"...\"> in '%1$s'", MptConstants.ANDROID_MANIFEST_FILE); //$NON-NLS-1$
+				MptPluginConsole.error(MptPlugin.PLUGIN_ID,
+						"Fail to parse android manifest file:%1$s",
+						MptConstants.ANDROID_MANIFEST_FILE);
 				return packageName;
-            }
-            
-            // Get the first activity that matched earlier. If there is no activity,
-            // activityName is set to an empty string and the generated "combined" name
-            // will be in the form "package." (with a dot at the end).
-            String activityName = "";
-            if (activityNames.getLength() > 0) {
-                activityName = activityNames.item(0).getNodeValue();
-            }
-            
-            if (mLevel == OutputLevel.VERBOSE && activityNames.getLength() > 1) {
-            	MptPluginLogger
-				.error(MptPlugin.PLUGIN_ID, "ERROR: There is more than one activity defined in '%1$s'.\n" +
-                        "Only the first one will be used. If this is not appropriate, you need\n" +
-                        "to specify one of these values manually instead:",
-                        MptConstants.ANDROID_MANIFEST_FILE);
+			}
 
-                for (int i = 0; i < activityNames.getLength(); i++) {
-                    String name = activityNames.item(i).getNodeValue();
-                    name = combinePackageActivityNames(packageName, name);
-                    MptPluginLogger
-    				.warning(MptPlugin.PLUGIN_ID, "- %1$s", name);
-                }
-            }
+			// Get the first activity that matched earlier. If there is no
+			// activity,
+			// activityName is set to an empty string and the generated
+			// "combined" name
+			// will be in the form "package." (with a dot at the end).
+			String activityName = "";
+			if (activityNames.getLength() > 0) {
+				activityName = activityNames.item(0).getNodeValue();
+			}
 
-            if (activityName.length() == 0) {
-            	MptPluginLogger
-				.error(MptPlugin.PLUGIN_ID,"Missing <activity %1$s:name=\"...\"> in '%2$s'.\n" +
-                        "No activity will be generated.",
-                        AndroidXPathFactory.DEFAULT_NS_PREFIX, MptConstants.ANDROID_MANIFEST_FILE);
-            } else {
-            	packageName = packageName + activityName;
-            }
-			
+			if (mLevel == OutputLevel.VERBOSE && activityNames.getLength() > 1) {
+				MptPluginLogger
+						.error(MptPlugin.PLUGIN_ID,
+								"ERROR: There is more than one activity defined in '%1$s'.\n"
+										+ "Only the first one will be used. If this is not appropriate, you need\n"
+										+ "to specify one of these values manually instead:",
+								MptConstants.ANDROID_MANIFEST_FILE);
+
+				for (int i = 0; i < activityNames.getLength(); i++) {
+					String name = activityNames.item(i).getNodeValue();
+					name = combinePackageActivityNames(packageName, name);
+					MptPluginLogger
+							.warning(MptPlugin.PLUGIN_ID, "- %1$s", name);
+				}
+			}
+
+			if (activityName.length() == 0) {
+				MptPluginLogger.error(MptPlugin.PLUGIN_ID,
+						"Missing <activity %1$s:name=\"...\"> in '%2$s'.\n"
+								+ "No activity will be generated.",
+						AndroidXPathFactory.DEFAULT_NS_PREFIX,
+						MptConstants.ANDROID_MANIFEST_FILE);
+			} else {
+				packageName = packageName + activityName;
+			}
+
 		} catch (FileNotFoundException e) {
-			MptPluginConsole.error(MptPlugin.PLUGIN_ID, "FileNotFound, Failed to read %1$s", MptConstants.ANDROID_MANIFEST_FILE);
+			MptPluginConsole.error(MptPlugin.PLUGIN_ID,
+					"FileNotFound, Failed to read %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE);
 		} catch (IOException e) {
-			MptPluginConsole.error(MptPlugin.PLUGIN_ID, "Failed to read %1$s", MptConstants.ANDROID_MANIFEST_FILE);
-        } catch (XPathExpressionException e) {
-            Throwable t = e.getCause();
-            MptPluginConsole.error(MptPlugin.PLUGIN_ID,
-    				"Fail to parse android manifest file:%1$s",
-    				MptConstants.ANDROID_MANIFEST_FILE);
-        }
+			MptPluginConsole.error(MptPlugin.PLUGIN_ID, "Failed to read %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE);
+		} catch (XPathExpressionException e) {
+			Throwable t = e.getCause();
+			MptPluginConsole.error(MptPlugin.PLUGIN_ID,
+					"Fail to parse android manifest file:%1$s",
+					MptConstants.ANDROID_MANIFEST_FILE);
+		}
 
-        return packageName;
-    }
+		return packageName;
+	}
 
 	/**
 	 * get the minimal sdk version required by this android project
@@ -739,8 +788,7 @@ public class ProjectUtil {
 				minSdkValue = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
 				MptPluginConsole
-						.error(
-								MptPlugin.PLUGIN_ID,
+						.error(MptPlugin.PLUGIN_ID,
 								"Attribute minSdkVersion is not an Integer in %1$s", MptConstants.ANDROID_MANIFEST_FILE); //$NON-NLS-1$
 				return -1;
 			}
@@ -1143,10 +1191,10 @@ public class ProjectUtil {
 		}
 
 		// clean up project
-//		try {
-//			project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-//		} catch (CoreException e) {
-//		}
+		// try {
+		// project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+		// } catch (CoreException e) {
+		// }
 
 		// do backup
 		ZipOutputStream stream = null;
@@ -1268,7 +1316,7 @@ public class ProjectUtil {
 		}
 		return new String(output.toByteArray());
 	}
-	
+
 	public static void saveInputStreamAsFile(InputStream is, File file) {
 		byte[] buf = new byte[1024];
 		try {
@@ -1303,7 +1351,8 @@ public class ProjectUtil {
 			int lastIndex = index;
 			while (index != -1) {
 				String partURL = absURL.substring(0, index);
-				if (!baseURL.startsWith(partURL + "/") && !baseURL.equals(partURL)) {
+				if (!baseURL.startsWith(partURL + "/")
+						&& !baseURL.equals(partURL)) {
 					break;
 				}
 				lastIndex = index;
@@ -1330,65 +1379,108 @@ public class ProjectUtil {
 			return null;
 		}
 	}
-	
-	public static void copyFolder(String srcPath, String destPath, boolean overwrite) {
-        File srcFolder = new File(srcPath);
-        if (srcFolder.exists() && srcFolder.isDirectory()) {
-            File destFolder = new File(destPath);
-            if (destFolder.exists() && destFolder.isDirectory()) {
-                //return ;
-            } else {
-                try {
-                    destFolder.mkdirs();
-                } catch (Exception e) {
-                }
-            }
-            FileFilter filter = new FileFilter() {
-                public boolean accept(File file) {
-                    if (file.isDirectory()) {
-                        String name = file.getName();
-                        if (name.equals("CVS")) {
-                            return false;
-                        }
-                    }
-                    if (file.getAbsolutePath().endsWith(".swp")) {
-                        return false;
-                    }
-                    return true;
-                }
-            };
-            File[] files = srcFolder.listFiles(filter);
-            for (int i = 0; i < files.length; i++) {
-                File file = new File(destFolder, files[i].getName());
-                if (files[i].isDirectory()) {
-                    copyFolder(files[i].getAbsolutePath(), file.getAbsolutePath(), overwrite);
-                } else {
-                    if (!file.exists() || overwrite) {
-                        streamCopyFile(files[i], file);
-                    }
-                }
-            }
-        }
-    }
-    
-    public static void copyFile(String srcFile, String destFile) {
-        streamCopyFile(new File(srcFile), new File(destFile));
-    }
-    public static void streamCopyFile(File srcFile, File destFile) {
-        try {
-            FileInputStream fi = new FileInputStream(srcFile);
-            FileOutputStream fo = new FileOutputStream(destFile);
-            byte[] buf = new byte[1024];
-            int readLength = 0;
-            while (readLength != -1) {
-                readLength = fi.read(buf);
-                if (readLength != -1) {
-                    fo.write(buf, 0, readLength);
-                }
-            }
-            fo.close();
-            fi.close();
-        } catch (Exception e) {
-        }
-    }
+
+	public static void copyFolder(String srcPath, String destPath,
+			boolean overwrite) {
+		File srcFolder = new File(srcPath);
+		if (srcFolder.exists() && srcFolder.isDirectory()) {
+			File destFolder = new File(destPath);
+			if (destFolder.exists() && destFolder.isDirectory()) {
+				// return ;
+			} else {
+				try {
+					destFolder.mkdirs();
+				} catch (Exception e) {
+				}
+			}
+			FileFilter filter = new FileFilter() {
+				public boolean accept(File file) {
+					if (file.isDirectory()) {
+						String name = file.getName();
+						if (name.equals("CVS")) {
+							return false;
+						}
+					}
+					if (file.getAbsolutePath().endsWith(".swp")) {
+						return false;
+					}
+					return true;
+				}
+			};
+			File[] files = srcFolder.listFiles(filter);
+			for (int i = 0; i < files.length; i++) {
+				File file = new File(destFolder, files[i].getName());
+				if (files[i].isDirectory()) {
+					copyFolder(files[i].getAbsolutePath(),
+							file.getAbsolutePath(), overwrite);
+				} else {
+					if (!file.exists() || overwrite) {
+						streamCopyFile(files[i], file);
+					}
+				}
+			}
+		}
+	}
+
+	public static void copyFile(String srcFile, String destFile) {
+		streamCopyFile(new File(srcFile), new File(destFile));
+	}
+
+	public static void streamCopyFile(File srcFile, File destFile) {
+		try {
+			FileInputStream fi = new FileInputStream(srcFile);
+			FileOutputStream fo = new FileOutputStream(destFile);
+			byte[] buf = new byte[1024];
+			int readLength = 0;
+			while (readLength != -1) {
+				readLength = fi.read(buf);
+				if (readLength != -1) {
+					fo.write(buf, 0, readLength);
+				}
+			}
+			fo.close();
+			fi.close();
+		} catch (Exception e) {
+		}
+	}
+
+	public static void fileExtractor(IProject project) {
+		String filePath = MayloonSDK.getSdkLocation();
+		String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
+		
+		try {
+			ZipFile zipFile = new ZipFile(fileName);
+			Enumeration<? extends ZipEntry> emu = zipFile.entries();
+			
+			while (emu.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) emu.nextElement();
+				if (entry.isDirectory()) {
+					new File(filePath + entry.getName()).mkdirs();
+					continue;
+				}
+				BufferedInputStream bis = new BufferedInputStream(
+						zipFile.getInputStream(entry));
+				File file = new File(filePath + entry.getName());
+				File parent = file.getParentFile();
+				if (parent != null && (!parent.exists())) {
+					parent.mkdirs();
+				}
+				FileOutputStream fos = new FileOutputStream(file);
+				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
+
+				int count;
+				byte data[] = new byte[BUFFER];
+				while ((count = bis.read(data, 0, BUFFER)) != -1) {
+					bos.write(data, 0, count);
+				}
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+			zipFile.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

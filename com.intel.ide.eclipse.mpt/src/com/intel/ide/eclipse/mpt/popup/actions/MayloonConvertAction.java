@@ -66,6 +66,9 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						ProjectUtil.addMayloonOutputFolder(project);
 						
+						// Extractor Mayloon Runtime resource
+						ProjectUtil.fileExtractor(project);
+						
 						// copy mayloon framework resource and js library
 						ProjectUtil.addMayloonFrameworkFolder(project);
 						
@@ -80,6 +83,8 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						// TODO luqiang, skip this release
 						// ProjectUtil.addAntBuildSupport(project);
+						
+						
 						MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 					} catch (CoreException e) {
 						MptPluginLogger.throwable(e);
