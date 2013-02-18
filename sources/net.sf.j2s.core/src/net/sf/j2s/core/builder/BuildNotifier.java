@@ -17,6 +17,10 @@ import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.AbortCompilation;
 import org.eclipse.jdt.internal.core.util.Messages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildNotifier {
 
@@ -112,6 +116,21 @@ public void done() {
 	if (this.monitor != null)
 		this.monitor.done();
 	this.previousSubtask = null;
+	
+	// Message with ok and cancel button and info icon
+	if (NewErrorCount != 0) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		    public void run() {
+			    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			    MessageBox dialog = 
+			    		  new MessageBox(activeShell, SWT.ICON_QUESTION | SWT.OK| SWT.CANCEL);
+			    		dialog.setText("Compile Error");
+			    		dialog.setMessage("Do you really want to generate webruntime package and ignore these compile errors?");
+			    		int returnCode = dialog.open();
+			    		System.out.println("returnCode = " + returnCode);
+			}
+		});
+	}
 }
 
 /**
