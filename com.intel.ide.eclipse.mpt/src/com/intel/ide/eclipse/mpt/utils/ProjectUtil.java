@@ -1,7 +1,5 @@
 package com.intel.ide.eclipse.mpt.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -13,12 +11,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -26,7 +22,6 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -45,9 +40,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -69,9 +64,7 @@ import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 /*
  * class to provide util functions to help Mayloon project
  */
-public class ProjectUtil {
-
-	private static final int BUFFER = 2048;
+public class ProjectUtil {	
 
 	public enum OutputLevel {
 		/** Silent mode. Project creation will only display errors. */
@@ -127,12 +120,15 @@ public class ProjectUtil {
 
 			String genRPath = null;
 			genRPath = packageName.substring(0, packageName.lastIndexOf("."));
+			
+			IPath srcFilePath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
+			
+			IPath destFilePath = project.getLocation().append("src");
 
-			String srcFile = project.getLocation() + "/"
-					+ MptConstants.ANDROID_GEN_DIR + "/"
+			String srcFile = srcFilePath.toOSString() + "/"
 					+ genRPath.replaceAll("\\.", "/") + "/R.java";
 
-			String destFile = project.getLocation() + "/src/"
+			String destFile = destFilePath.toOSString() + "/"
 					+ genRPath.replaceAll("\\.", "/") + "/R.java";
 
 			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
@@ -146,6 +142,16 @@ public class ProjectUtil {
 			destFile = project.getLocation() + "/bin/apps/" + genRPath + "/";
 			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
 					destFile));
+			
+			IFolder folder = project.getFolder(MptConstants.WS_ROOT
+					+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+
+			try {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -386,14 +392,39 @@ public class ProjectUtil {
 		// check JRE classpath entry
 		int jreIndex = ProjectUtil.findClassPathEntry(entries,
 				JavaRuntime.JRE_CONTAINER, IClasspathEntry.CPE_CONTAINER);
-		if (jreIndex == -1) {
+		if (jreIndex != -1) {
 			// no jre classpath entry, add a jre container to Mayloon class path
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Adding JRE Class Container to classpath.");
-			IClasspathEntry jre_entry = JavaRuntime
-					.getDefaultJREContainerEntry();
-			entries = ProjectUtil.addClassPathEntry(entries, jre_entry);
+					"Remove JRE Class Container from classpath.");
+//			IClasspathEntry jre_entry = JavaRuntime
+//					.getDefaultJREContainerEntry();
+			entries = ProjectUtil.removeClassPathEntry(entries, jreIndex);
 		}
+		
+		// check ADT classpath entry
+		int adtIndex = ProjectUtil.findClassPathEntry(entries,
+				MptConstants.ADT_CLASSPATH_ENTRY_ID, IClasspathEntry.CPE_CONTAINER);
+		if (adtIndex != -1) {
+			// no jre classpath entry, add a jre container to Mayloon class path
+			MptPluginConsole.general(MptConstants.CONVERT_TAG,
+					"Remove ADT Class Container from classpath.");
+			entries = ProjectUtil.removeClassPathEntry(entries, adtIndex);
+		}
+		
+		// check android gen classpath entry
+		IClasspathEntry[] classpathEntries = null; 
+	    classpathEntries = javaProject.getResolvedClasspath(true); 
+	    IPath android_gen_path = javaProject.getPath().append(MptConstants.ANDROID_GEN_DIR);
+	         
+	    int androidGenIndex = ProjectUtil.findClassPathEntry(entries,
+	    		android_gen_path.toOSString(), IClasspathEntry.CPE_SOURCE);
+		if (androidGenIndex != -1) {
+			// no jre classpath entry, add a jre container to Mayloon class path
+			MptPluginConsole.general(MptConstants.CONVERT_TAG,
+					"Remove Android Gen src from classpath.");
+			entries = ProjectUtil.removeClassPathEntry(entries, androidGenIndex);
+		}
+	    		
 
 		// add Mayloon framework classpath if not exist
 		int MayloonIndex = ProjectUtil.findClassPathEntry(entries,
@@ -1442,44 +1473,4 @@ public class ProjectUtil {
 		} catch (Exception e) {
 		}
 	}
-
-	public static void fileExtractor(IProject project) {
-		String filePath = MayloonSDK.getSdkLocation();
-		String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
-		
-		try {
-			ZipFile zipFile = new ZipFile(fileName);
-			Enumeration<? extends ZipEntry> emu = zipFile.entries();
-			
-			while (emu.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) emu.nextElement();
-				if (entry.isDirectory()) {
-					new File(filePath + entry.getName()).mkdirs();
-					continue;
-				}
-				BufferedInputStream bis = new BufferedInputStream(
-						zipFile.getInputStream(entry));
-				File file = new File(filePath + entry.getName());
-				File parent = file.getParentFile();
-				if (parent != null && (!parent.exists())) {
-					parent.mkdirs();
-				}
-				FileOutputStream fos = new FileOutputStream(file);
-				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
-
-				int count;
-				byte data[] = new byte[BUFFER];
-				while ((count = bis.read(data, 0, BUFFER)) != -1) {
-					bos.write(data, 0, count);
-				}
-				bos.flush();
-				bos.close();
-				bis.close();
-			}
-			zipFile.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }

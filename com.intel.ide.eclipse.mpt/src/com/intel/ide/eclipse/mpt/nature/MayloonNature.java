@@ -61,6 +61,7 @@ public class MayloonNature implements IProjectNature {
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
+		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.AndroidNature");
 	}
 
 	/*
@@ -90,6 +91,7 @@ public class MayloonNature implements IProjectNature {
 		addToBuildSpec("com.android.ide.eclipse.adt.PreCompilerBuilder");
 		addToBuildSpec("com.android.ide.eclipse.adt.ApkBuilder");
 		addToBuildSpec("com.android.ide.eclipse.adt.ResourceManagerBuilder");
+		addToBuildSpec("com.android.ide.eclipse.adt.AndroidNature");
 	}
 
 	/*
@@ -128,6 +130,7 @@ public class MayloonNature implements IProjectNature {
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
+    		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.AndroidNature");
             
 		}
 	}

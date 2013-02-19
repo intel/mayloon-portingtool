@@ -1,9 +1,16 @@
 package com.intel.ide.eclipse.mpt.preferences;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -12,10 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
-
 import com.intel.ide.eclipse.mpt.MayloonVersion;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPlugin;
+import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
+import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 /**
  * This class represents a preference page that
@@ -34,6 +42,8 @@ import com.intel.ide.eclipse.mpt.MptPlugin;
 public class MayloonSDKPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
+	
+	private static final int BUFFER = 2048;
 	
 	private MayloonSDKDirectoryFieldEditor mDiretoryField;
 
@@ -108,6 +118,10 @@ public class MayloonSDKPreferencePage
 		
 		// helper function to check the diretory has valid Mayloon SDK layout
 		private boolean checkSDKValid(String sdkLocation) {
+			
+			// Extractor Mayloon Runtime resource
+			fileExtractor();
+			
 			File mayloonJARLib = new File(sdkLocation, MptConstants.MAYLOON_JAR_LIB);
 			if (!mayloonJARLib.isFile()) {
 				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_JAR_LIB, sdkLocation));
@@ -136,6 +150,45 @@ public class MayloonSDKPreferencePage
 				}
 			}
 			return true;
+		}
+	}
+	
+	private void fileExtractor() {
+		String filePath = MayloonSDK.getSdkLocation();
+		String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
+		
+		try {
+			ZipFile zipFile = new ZipFile(filePath + fileName);
+			Enumeration<? extends ZipEntry> emu = zipFile.entries();
+			
+			while (emu.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) emu.nextElement();
+				if (entry.isDirectory()) {
+					new File(filePath + entry.getName()).mkdirs();
+					continue;
+				}
+				BufferedInputStream bis = new BufferedInputStream(
+						zipFile.getInputStream(entry));
+				File file = new File(filePath + entry.getName());
+				File parent = file.getParentFile();
+				if (parent != null && (!parent.exists())) {
+					parent.mkdirs();
+				}
+				FileOutputStream fos = new FileOutputStream(file);
+				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
+
+				int count;
+				byte data[] = new byte[BUFFER];
+				while ((count = bis.read(data, 0, BUFFER)) != -1) {
+					bos.write(data, 0, count);
+				}
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+			zipFile.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

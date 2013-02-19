@@ -52,6 +52,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 							MptPluginConsole.error(MptConstants.CONVERT_TAG, "Convert library project '%1$s' is not supported.", project.getName());
 							return;
 						}
+						
 						if (!ProjectUtil.checkVersionMatch(project)) {
 							return;
 						}
@@ -66,9 +67,6 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						ProjectUtil.addMayloonOutputFolder(project);
 						
-						// Extractor Mayloon Runtime resource
-						ProjectUtil.fileExtractor(project);
-						
 						// copy mayloon framework resource and js library
 						ProjectUtil.addMayloonFrameworkFolder(project);
 						
@@ -82,8 +80,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						MayloonPropertiesBuilder.mayloonPropBuild(project);
 						
 						// TODO luqiang, skip this release
-						// ProjectUtil.addAntBuildSupport(project);
-						
+						// ProjectUtil.addAntBuildSupport(project);					
 						
 						MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 					} catch (CoreException e) {

@@ -13,6 +13,12 @@ public class MptConstants {
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
 	// The container id of the android framework jar file android.jar
 	public static final String ANDROID_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"; //$NON-NLS-1$
+	// The container id of the android develop tools
+	public static final String ADT_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.LIBRARIES"; //$NON-NLS-1$
+	// The container id of the JRE
+	public static final String JRE_CLASSPATH_ENTRY_ID = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
+	// The container id of the Mayloon Native JRE
+	public static final String MAYLOON_JRE_CLASSPATH_ENTRY_ID = "com.intel.ide.eclipse.mpt.JRE_CONTAINER"; //$NON-NLS-1$
 	// MAYLOON Sdk property file name
 	public static final String MAYLOON_SDK_PROPERTY = "sdk-info.properties"; //$NON-NLS-1$
 	// MAYLOON External Resource property file name
