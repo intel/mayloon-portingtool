@@ -5,6 +5,7 @@
       version="1.0.0.qualifier"
       provider-name="INTEL"
       os="linux,macosx,win32"
+      ws="gtk,win32"
       nl="en_US"
       arch="x86,x86_64">
 
