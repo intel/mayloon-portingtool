@@ -1,5 +1,6 @@
 package com.intel.ide.eclipse.mpt.launching;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -7,11 +8,14 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import net.sf.j2s.core.astvisitors.ASTTypeVisitor;
@@ -37,6 +41,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.classpath.CompositeResources;
@@ -814,6 +821,8 @@ public class J2SLaunchingUtil {
 						}
 						DependencyASTVisitor.joinArrayClasses(buf, arr, null);
 						if (arr.length > 1) {
+							// add mayloon runtime package
+							AddMayloonRuntimePackage(buf);
 							buf.append(']');
 						}
 						if (arr.length > 0) {
@@ -857,6 +866,8 @@ public class J2SLaunchingUtil {
 			}
 			DependencyASTVisitor.joinArrayClasses(buf, arr, null);
 			if (arr.length > 1) {
+				// add mayloon runtime package
+				AddMayloonRuntimePackage(buf);
 				buf.append(']');
 			}
 			if (arr.length > 0) {
@@ -878,6 +889,53 @@ public class J2SLaunchingUtil {
 			set.clear();
 		}
 		return buf.toString();
+	}
+	
+	private static void AddMayloonRuntimePackage(StringBuffer buf) {
+		
+		File testFile = new File("/home/luq/Dev/mayloon_sdk/package_name.json");
+		JSONParser parser = new JSONParser();
+		ArrayList<String> mayloonPackageList = new ArrayList<String>();
+		BufferedReader input;
+		try {
+			input = new BufferedReader(new FileReader(testFile));
+			try {
+				
+				Object obj = parser.parse(input);
+				
+				JSONArray jsonArray = (JSONArray) obj;
+				Iterator<?> iterator = jsonArray.iterator();
+				while (iterator.hasNext()) {
+					System.out.println(iterator.next());
+					mayloonPackageList.add(iterator.next().toString());
+				}
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		for (int i = 0; i < mayloonPackageList.size(); i++) {
+			buf.append("\"");
+			buf.append(mayloonPackageList.get(i));
+			buf.append("\"");
+			if (i != mayloonPackageList.size() - 1) {
+				buf.append(", ");
+			}
+		}
 	}
 
 	/*
