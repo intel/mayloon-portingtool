@@ -255,8 +255,10 @@ public class ProjectUtil {
 
 			String externalJSLib = properties.getProperty(
 					MptConstants.MAYLOON_JS_LIBRARY_PATH, null);
-			String frameworkJs = properties.getProperty(
-					MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
+			String njsLib = properties.getProperty(
+					MptConstants.MAYLOON_NJS_LIBRARY_PATH, null);
+//			String frameworkJs = properties.getProperty(
+//					MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
 			String frameworkRes = properties.getProperty(
 					MptConstants.MAYLOON_FRAMEWORK_RES, null);
 
@@ -281,34 +283,57 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Could not load Mayloon external javascript library due to cause {%1$s}",
-								"Mayloon Javascript Library path is not seted correctly.");
+								"Mayloon external javascript Library path is not seted correctly.");
+			}
+			
+			if (njsLib != null) {
+				IFolder folder = project.getFolder(MptConstants.WS_ROOT
+						+ MptConstants.MAYLOON_NJS_JS_DIR);
+				
+				if (!folder.exists()) {
+					folder.create(true, true, null);
+				}
+
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+						+ njsLib);
+				copyFilesFromPlugin2UserProject(srcPath,
+						folder.getRawLocation());
+
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+			} else {
+				MptPluginConsole
+						.error(MptConstants.CONVERT_TAG,
+								"Could not load Mayloon njs javascript library due to cause {%1$s}",
+								"Mayloon njs Library path is not seted correctly.");
 			}
 
 			// TODO luqiang, these framework javascript will be deleted by java
 			// compile,
 			// so we need find a method to tell the java builder, not clear
 			// output before each build process
-			if (frameworkJs != null) {
-
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IWorkspaceRoot root = workspace.getRoot();
-
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath
-						+ MptConstants.WS_ROOT + frameworkJs);
-				IPath destPath = root.getLocation().append(
-						javaProject.getOutputLocation());
-				copyFilesFromPlugin2UserProject(srcPath, destPath);
-
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-
-			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon framework javascript files due to cause {%1$s}",
-								"Mayloon framework javascript path is not seted correctly.");
-			}
+			// solution: after comiple complete, then move these framework javascript to output directory
+//			if (frameworkJs != null) {
+//
+//				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//				IWorkspaceRoot root = workspace.getRoot();
+//
+//				IPath srcPath = Path.fromPortableString(mayloonSDKPath
+//						+ MptConstants.WS_ROOT + frameworkJs);
+//				IPath destPath = root.getLocation().append(
+//						javaProject.getOutputLocation());
+//				copyFilesFromPlugin2UserProject(srcPath, destPath);
+//
+//				IFolder folder = project.getFolder(MptConstants.WS_ROOT
+//						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+//				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+//
+//			} else {
+//				MptPluginConsole
+//						.error(MptConstants.CONVERT_TAG,
+//								"Could not load Mayloon framework javascript files due to cause {%1$s}",
+//								"Mayloon framework javascript path is not seted correctly.");
+//			}
 
 			if (frameworkRes != null) {
 				IFolder folder = project.getFolder(MptConstants.WS_ROOT
@@ -392,13 +417,14 @@ public class ProjectUtil {
 		// check JRE classpath entry
 		int jreIndex = ProjectUtil.findClassPathEntry(entries,
 				JavaRuntime.JRE_CONTAINER, IClasspathEntry.CPE_CONTAINER);
-		if (jreIndex != -1) {
+		if (jreIndex == -1) {
 			// no jre classpath entry, add a jre container to Mayloon class path
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
 					"Remove JRE Class Container from classpath.");
-//			IClasspathEntry jre_entry = JavaRuntime
-//					.getDefaultJREContainerEntry();
-			entries = ProjectUtil.removeClassPathEntry(entries, jreIndex);
+			IClasspathEntry jre_entry = JavaRuntime
+					.getDefaultJREContainerEntry();
+//			entries = ProjectUtil.removeClassPathEntry(entries, jreIndex);
+			entries = ProjectUtil.addClassPathEntry(entries, jre_entry);
 		}
 		
 		// check ADT classpath entry

@@ -5,6 +5,7 @@ public class MptConstants {
 	public static final String MAYLOON_OUTPUT_DIR = "mayloon_bin"; //$NON-NLS-1$
 	public static final String MAYLOON_APP_RES_DIR = "/apps/"; //$NON-NLS-1$
 	public static final String MAYLOON_EXTERNAL_JS_DIR = "external"; //$NON-NLS-1$
+	public static final String MAYLOON_NJS_JS_DIR = "njs"; //$NON-NLS-1$
 	public static final String ANDROID_GEN_DIR = "gen"; //$NON-NLS-1$
 	public static final String MAYLOON_SRC_DIR = "src"; //$NON-NLS-1$
 	public static final String MAYLOON_FRAMEWORK_JS_DIR = "bin"; //$NON-NLS-1$
@@ -25,6 +26,7 @@ public class MptConstants {
 	public static final String MAYLOON_EXTERNAL_PROPERTY = "external-info.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
+	public static final String MAYLOON_NJS_LIBRARY_PATH = "Mayloon.Framework.Njs.Path";
 	public static final String MAYLOON_RUNTIME_ZIP = "mayloon.zip";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
 	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";

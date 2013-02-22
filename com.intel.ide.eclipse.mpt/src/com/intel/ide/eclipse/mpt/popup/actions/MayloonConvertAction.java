@@ -59,7 +59,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						ProjectUtil.backupProject(project);
 						
-						// luqiang, merge j2s class path modify logic to it.
+						// merge j2s class path modify logic to it.
 						ProjectUtil.fixMayloonClassEntry(project);
 						
 						// merge j2s nature to it.

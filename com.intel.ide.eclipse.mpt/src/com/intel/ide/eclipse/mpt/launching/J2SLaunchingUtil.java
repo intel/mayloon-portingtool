@@ -22,10 +22,14 @@ import net.sf.j2s.core.astvisitors.ASTTypeVisitor;
 import net.sf.j2s.core.astvisitors.DependencyASTVisitor;
 import net.sf.j2s.core.hotspot.InnerHotspotServer;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -35,6 +39,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,13 +50,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPlugin;
+import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.classpath.CompositeResources;
 import com.intel.ide.eclipse.mpt.classpath.ContactedClasses;
 import com.intel.ide.eclipse.mpt.classpath.IRuntimeClasspathEntry;
 import com.intel.ide.eclipse.mpt.classpath.Resource;
 import com.intel.ide.eclipse.mpt.classpath.UnitClass;
 import com.intel.ide.eclipse.mpt.extensionpoint.ExternalResources;
+import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class J2SLaunchingUtil {
@@ -208,6 +216,7 @@ public class J2SLaunchingUtil {
 //					IJ2SLauchingConfiguration.J2S_MOZILLA_ADDON_COMPATIABLE, preferred);
 			//boolean addonCompatiable = true;
 			
+			// TODO luqiang, the net.sf.j2s.lib/j2slib location should be set more robustly.
 			String[][] allResources = ExternalResources.getAllResources();
 			String j2sLibPath = null;
 			if (allResources != null && allResources.length != 0 && allResources[0].length != 0) {
@@ -281,11 +290,62 @@ public class J2SLaunchingUtil {
 			generatePostJavaScript(buf, configuration);
 
 			String url = writeBufferToFile(buf, mainType, workingDir, extensionName);
+			
+			// TODO luqiang, after compile complete, add mayloon runtime js files
+			addMayloonRuntimeJSFiles(javaProject);
 
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));
 		} else {
 			MessageDialog.openError(null, "Project Error", "The selected J2S's working folder is not found.");
+		}
+	}
+	
+	private static void addMayloonRuntimeJSFiles(IJavaProject javaProject) {
+		FileInputStream stream = null;
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+		
+		Properties properties = new Properties();
+		try {
+			properties.load(stream = new FileInputStream(new File(
+					mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY)));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		String frameworkJs = properties.getProperty(
+				MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
+		
+		if (frameworkJs != null) {
+
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+
+			IPath srcPath = Path.fromPortableString(mayloonSDKPath
+					+ MptConstants.WS_ROOT + frameworkJs);
+			IPath outputPath;
+			try {
+				outputPath = javaProject.getOutputLocation();
+				IPath destPath = root.getLocation().append(outputPath);
+				ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
+				IFolder folder = root.getFolder(outputPath);
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (JavaModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			MptPluginConsole
+					.error(MptConstants.BUILD_TAG,
+							"Could not load Mayloon framework javascript files due to cause {%1$s}",
+							"Mayloon framework javascript path is not seted correctly.");
 		}
 	}
 
@@ -821,6 +881,7 @@ public class J2SLaunchingUtil {
 						}
 						DependencyASTVisitor.joinArrayClasses(buf, arr, null);
 						if (arr.length > 1) {
+							buf.append(", ");
 							// add mayloon runtime package
 							AddMayloonRuntimePackage(buf);
 							buf.append(']');
@@ -866,6 +927,7 @@ public class J2SLaunchingUtil {
 			}
 			DependencyASTVisitor.joinArrayClasses(buf, arr, null);
 			if (arr.length > 1) {
+				buf.append(", ");
 				// add mayloon runtime package
 				AddMayloonRuntimePackage(buf);
 				buf.append(']');
