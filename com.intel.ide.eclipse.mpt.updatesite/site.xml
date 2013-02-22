@@ -3,7 +3,7 @@
    <description name="MPT" url="http://com.intel.ide.eclipse.mpt">
       com.intel.ide.eclipse.mpt
    </description>
-   <feature url="features/com.intel.ide.eclipse.mpt.feature_1.0.0.201302201547.jar" id="com.intel.ide.eclipse.mpt.feature" version="1.0.0.201302201547" os="linux,macosx,win32" nl="en_US" arch="x86,x86_64">
+   <feature url="features/com.intel.ide.eclipse.mpt.feature_1.0.0.201302220912.jar" id="com.intel.ide.eclipse.mpt.feature" version="1.0.0.201302220912" os="linux,macosx,win32" nl="en_US" arch="x86,x86_64">
       <category name="com.intel.ide.eclipse.mpt"/>
    </feature>
    <category-def name="com.intel.ide.eclipse.mpt" label="MPT">
