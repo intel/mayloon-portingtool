@@ -122,9 +122,9 @@ public class MayloonSDKPreferencePage
 			// Extractor Mayloon Runtime resource
 			fileExtractor();
 			
-			File mayloonJARLib = new File(sdkLocation, MptConstants.MAYLOON_JAR_LIB);
+			File mayloonJARLib = new File(sdkLocation, MptConstants.MAYLOON_ZIP);
 			if (!mayloonJARLib.isFile()) {
-				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_JAR_LIB, sdkLocation));
+				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_ZIP, sdkLocation));
 				return false;
 			}
 			File sdkProperty = new File(sdkLocation, MptConstants.MAYLOON_SDK_PROPERTY);

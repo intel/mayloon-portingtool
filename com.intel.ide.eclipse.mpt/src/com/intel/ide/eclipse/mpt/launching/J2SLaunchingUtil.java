@@ -292,7 +292,7 @@ public class J2SLaunchingUtil {
 			String url = writeBufferToFile(buf, mainType, workingDir, extensionName);
 			
 			// TODO luqiang, after compile complete, add mayloon runtime js files
-			addMayloonRuntimeJSFiles(javaProject);
+			addMayloonRuntimeJSFiles(javaProject, projectName);
 
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));
@@ -301,7 +301,7 @@ public class J2SLaunchingUtil {
 		}
 	}
 	
-	private static void addMayloonRuntimeJSFiles(IJavaProject javaProject) {
+	private static void addMayloonRuntimeJSFiles(IJavaProject javaProject, String projectName) {
 		FileInputStream stream = null;
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		
@@ -321,18 +321,24 @@ public class J2SLaunchingUtil {
 				MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
 		
 		if (frameworkJs != null) {
-
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-
 			IPath srcPath = Path.fromPortableString(mayloonSDKPath
 					+ MptConstants.WS_ROOT + frameworkJs);
 			IPath outputPath;
+			IPath projectPath = new Path(projectName);
 			try {
-				outputPath = javaProject.getOutputLocation();
-				IPath destPath = root.getLocation().append(outputPath);
+				outputPath = javaProject.getOutputLocation().makeRelativeTo(projectPath);
+				
+				IPath destPath = javaProject.getProject().getLocation().append(outputPath);
+				
+//				MptPluginConsole
+//				.general(MptConstants.BUILD_TAG, "outputPath = {%1$s}", outputPath.toOSString());
+//				MptPluginConsole
+//				.general(MptConstants.BUILD_TAG, "srcPath = {%1$s}", srcPath.toOSString());
+//				MptPluginConsole
+//				.general(MptConstants.BUILD_TAG, "destPath = {%1$s}", destPath.toOSString());	
+				
 				ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
-				IFolder folder = root.getFolder(outputPath);
+				IFolder folder = javaProject.getProject().getFolder(outputPath);
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} catch (JavaModelException e) {
 				// TODO Auto-generated catch block
@@ -955,6 +961,7 @@ public class J2SLaunchingUtil {
 	
 	private static void AddMayloonRuntimePackage(StringBuffer buf) {
 		
+		//TODO luqiang, change json file location to sdk path
 		File testFile = new File("/home/luq/Dev/mayloon_sdk/package_name.json");
 		JSONParser parser = new JSONParser();
 		ArrayList<String> mayloonPackageList = new ArrayList<String>();
@@ -968,7 +975,6 @@ public class J2SLaunchingUtil {
 				JSONArray jsonArray = (JSONArray) obj;
 				Iterator<?> iterator = jsonArray.iterator();
 				while (iterator.hasNext()) {
-					System.out.println(iterator.next());
 					mayloonPackageList.add(iterator.next().toString());
 				}
 

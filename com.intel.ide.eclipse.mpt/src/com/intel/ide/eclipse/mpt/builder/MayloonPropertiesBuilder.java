@@ -28,6 +28,8 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 	private static final String J2S_RESROUCE_LIST = "j2s.resources.list";
 	private static final String J2S_OUTPUT_PATH = "j2s.out.path";
 	private static final String J2S_COMPILER_STATUS = "j2s.compiler.status";
+	private static final String J2S_COMPILER_MODE = "j2s.compiler.mode";
+	private static final String J2S_DEPLOY_MODE = "j2s.deploy.mode";
 	private static final String MAYLOON_PROJECT_SETTING = ".j2s"; //".mayloon"; In net.sf.j2s.core, .j2s is used to check whether enable java2scriptbuilder when building. 
 
 	@SuppressWarnings("rawtypes")
@@ -70,6 +72,8 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 		}
 		
 		prop.setProperty(J2S_COMPILER_STATUS, "enable");
+		prop.setProperty(J2S_COMPILER_MODE, "debug");
+		prop.setProperty(J2S_DEPLOY_MODE, "browser");
 		
 		save(prop, javaProject);
 	}

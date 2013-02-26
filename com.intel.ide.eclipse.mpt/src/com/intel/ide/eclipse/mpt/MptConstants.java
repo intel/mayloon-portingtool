@@ -11,6 +11,7 @@ public class MptConstants {
 	public static final String MAYLOON_FRAMEWORK_JS_DIR = "bin"; //$NON-NLS-1$
 	public static final String MAYLOON_FRAMEWORK_RES_DIR = "res_sys"; //$NON-NLS-1$	
 	public static final String MAYLOON_JAR_LIB = "mayloon.jar"; //$NON-NLS-1$
+	public static final String MAYLOON_ZIP = "mayloon.zip"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
 	// The container id of the android framework jar file android.jar
 	public static final String ANDROID_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"; //$NON-NLS-1$
