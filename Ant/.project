@@ -5,25 +5,7 @@
 	<projects>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>bin</name>
-			<type>2</type>
-			<location>C:/Users/ruiyang/Documents/kona2/MPT/mayloon-portingtool/Ant/bin</location>
-		</link>
-		<link>
-			<name>src</name>
-			<type>2</type>
-			<location>C:/Users/ruiyang/Documents/kona2/MPT/mayloon-portingtool/Ant/src</location>
-		</link>
-	</linkedResources>
 </projectDescription>
