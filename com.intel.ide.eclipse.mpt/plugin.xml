@@ -293,5 +293,20 @@
          </action>
       </viewerContribution>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            id="com.intel.ide.eclipse.mpt.wizards.category"
+            name="Mayloon">
+      </category>
+      <wizard
+            category="com.intel.ide.eclipse.mpt.wizards.category"
+            class="com.intel.ide.eclipse.mpt.wizards.export.ExportWizard"
+            icon="icons/sample.gif"
+            id="com.intel.ide.eclipse.mpt.wizards.exportMayloonApp"
+            name="Export Mayloon Application">
+      </wizard>
+   </extension>
 
 </plugin>

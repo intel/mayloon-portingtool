@@ -38,8 +38,6 @@ private static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 private static final String J2S_DEPLOY_MODE_TIZEN = "tize";
 private String j2sDeployMode;
 private IProject currentProject;
-private static final String WS_ROOT = "/"; //$NON-NLS-1$
-private static final String MAYLOON_OUTPUT_DIR = "mayloon_bin"; //$NON-NLS-1$
 
 public static int NewErrorCount = 0;
 public static int FixedErrorCount = 0;
@@ -133,12 +131,13 @@ public void done() {
 			    public void run() {
 				    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				    MessageBox dialog = 
-				    		  new MessageBox(activeShell, SWT.ICON_QUESTION | SWT.OK| SWT.CANCEL);
+				    		  new MessageBox(activeShell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
 				    		dialog.setText("Detect some compilation errors");
-				    		dialog.setMessage("Do you really want to generate webruntime package and ignore these compile errors?");
+				    		dialog.setMessage("Do you really want to ignore these compile errors?");
 				    		int returnCode = dialog.open();
 				    		if (SWT.OK == returnCode) {
 				    			// TODO luqiang, Package for Tizen Project
+//				    			performTizenPackage();
 				    		}
 				}
 			});
@@ -148,30 +147,30 @@ public void done() {
 	
 }
 
-private void performTizenPackage() {
-	IFolder folder = currentProject.getFolder(WS_ROOT
-			+ MAYLOON_OUTPUT_DIR);
-	if (!folder.exists()) {
-		try {
-			folder.create(true, true, null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-	} 
-	
-	// generate the .project file of tizen application
-	
-	// generate the config.xml file of tizen application
-	
-	// copy mayloon runtime resource to mayloon_bin
-	
-	// copy mayloon jre folder to mayloon_bin
-	
-	// copy mayloon application files to mayloon_bin
-		
-}
+//private void performTizenPackage() {
+//	IFolder folder = currentProject.getFolder(WS_ROOT
+//			+ MAYLOON_OUTPUT_DIR);
+//	if (!folder.exists()) {
+//		try {
+//			folder.create(true, true, null);
+//		} catch (CoreException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return;
+//		}
+//	}
+//	
+//	// generate the .project file of tizen application
+//	
+//	// generate the config.xml file of tizen application
+//	
+//	// copy mayloon runtime resource to mayloon_bin
+//	
+//	// copy mayloon jre folder to mayloon_bin
+//	
+//	// copy mayloon application files to mayloon_bin
+//		
+//}
 
 /**
  * Returns a string describing the problems.
