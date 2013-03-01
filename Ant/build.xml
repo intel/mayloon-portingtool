@@ -34,7 +34,13 @@
 
 	<property name="cfg.dir" location="./buildconfig" />
 	<property name="current.dir" location="." />
-	<property name="update.site.source.dir" location="./site" />
+	<property name="site.dir" location="./site"/>
+	<property name="mpt.source.dir" location="${current.dir}/plugins" />
+	<property name="mpt.json.source.dir" location="${current.dir}/plugins" />
+	<property name="j2s.core.source.dir" location="${current.dir}/plugins" />
+	<property name="j2s.lib.source.dir" location="${current.dir}/plugins" />
+	<property name="features.source.dir" location="${current.dir}/features" />
+	<property name="mayloon.dir" location="." />
 	<!-- var: this is where the build will take place, source code will be copied there and build into package. -->
 	<condition property="build.dir" value="${current.dir}/buildDirectory">
 		<not>
@@ -83,6 +89,11 @@
 	            Base Arch                       : ${base.arch}
 	            Eclipse Home                    : ${eclipse.home}
 	            Eclipse launcher                : ${eclipse.home}/plugins/${launcher.jar}
+                MPT Source                      : ${mpt.source.dir}
+                MPT.json Source                 : ${mpt.json.source.dir}
+                J2S.core Source                 : ${j2s.core.source.dir}
+                J2S.lib Source                  : ${j2s.lib.source.dir}
+                Mayloon Home                    : ${mayloon.dir}
 	            PDE Build Script                : ${eclipse.home}/plugins/${pdebuild.script}
 	            Kdt Build Config Directory      : ${cfg.dir}
 	            Kdt Build Destination Directory : ${build.dir}
@@ -91,10 +102,23 @@
 		<mkdir dir="${build.dir}/plugins" />
 		<mkdir dir="${build.dir}/features" />
 		<copy todir="${build.dir}/plugins">
-			<fileset dir="./plugins" />
+			<fileset dir="${mpt.source.dir}">
+				<include name="com.intel.ide.eclipse.mpt/**" />
+			</fileset>
+			<fileset dir="${mpt.json.source.dir}">
+				<include name="com.intel.ide.eclipse.mpt.json/**" />
+			</fileset>
+			<fileset dir="${j2s.core.source.dir}">
+				<include name="net.sf.j2s.core/**" />
+			</fileset>
+			<fileset dir="${j2s.lib.source.dir}">
+				<include name="net.sf.j2s.lib/**" />
+			</fileset>
 		</copy>
 		<copy todir="${build.dir}/features">
-			<fileset dir="./features" />
+			<fileset dir="${features.source.dir}">
+				<include name="com.intel.ide.eclipse.mpt.feature/**" />
+			</fileset>
 		</copy>
 	</target>
 
@@ -104,7 +128,7 @@
 			<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-DbuildDirectory=${build.dir}" />
 			<arg value="-Dbuilder=${cfg.dir}" />
-			<arg value="-DupdateSiteSource=./site" />
+			<arg value="-DupdateSiteSource=${site.dir}" />
 			<arg value="-DupdateSiteRoot=${build.dir}" />
 			<arg value="-DbaseLocation=${eclipse.home}" />
 			<arg value="-buildfile" />

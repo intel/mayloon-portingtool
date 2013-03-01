@@ -57,6 +57,11 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 							return;
 						}
 						
+						// generate .j2s configuration file
+						MayloonPropertiesBuilder.mayloonPropBuild(project);
+						
+						String deployMode = ProjectUtil.getDeployMode(project);
+						
 						ProjectUtil.backupProject(project);
 						
 						// merge j2s class path modify logic to it.
@@ -65,19 +70,14 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						// merge j2s nature to it.
 						MayloonNature.addProjectNature(project);
 						
-						ProjectUtil.addMayloonOutputFolder(project);
-						
 						// copy mayloon framework resource and js library
-						ProjectUtil.addMayloonFrameworkFolder(project);
+						ProjectUtil.addMayloonFrameworkFolder(project, deployMode);
 						
 						// copy android build output resource to /bin/apps/[package name]/
-						ProjectUtil.moveAndroidOutput2Mayloon(project);
+						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode);
 						
 						// clear android generated gen/ folder
-						ProjectUtil.clearAndroidGenFolder(project);
-						
-						// luqiang, generate .j2s configuration file
-						MayloonPropertiesBuilder.mayloonPropBuild(project);
+						ProjectUtil.clearAndroidGenFolder(project);			
 						
 						// TODO luqiang, skip this release
 						// ProjectUtil.addAntBuildSupport(project);					

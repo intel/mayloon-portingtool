@@ -13,6 +13,13 @@ public class MptConstants {
 	public static final String MAYLOON_JAR_LIB = "mayloon.jar"; //$NON-NLS-1$
 	public static final String MAYLOON_ZIP = "mayloon.zip"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
+	public static final String J2S_DEPLOY_MODE = "j2s.deploy.mode";
+	public static final String J2S_DEPLOY_MODE_BROWSER = "browser";
+	public static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
+	public static final String TIZEN_PROJECT_FILE = ".project";
+	public static final String TIZEN_CONFIGURATION_FILE = "config.xml";
+	public static final String MAYLOON_START_ENTRY_FILE = "android.core.Start.html";
+	public static final String MAYLOON_TIZEN_ICON = "Icon.png";
 	// The container id of the android framework jar file android.jar
 	public static final String ANDROID_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"; //$NON-NLS-1$
 	// The container id of the android develop tools
@@ -25,9 +32,11 @@ public class MptConstants {
 	public static final String MAYLOON_SDK_PROPERTY = "sdk-info.properties"; //$NON-NLS-1$
 	// MAYLOON External Resource property file name
 	public static final String MAYLOON_EXTERNAL_PROPERTY = "external-info.properties"; //$NON-NLS-1$
+	public static final String MAYLOON_RUNTIME_PACKAGE = "package_name.json"; //$NON-NLS-1$
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
 	public static final String MAYLOON_NJS_LIBRARY_PATH = "Mayloon.Framework.Njs.Path";
+	public static final String MAYLOON_J2S_LIBRARY_PATH = "Mayloon.Framework.J2S.Path";
 	public static final String MAYLOON_RUNTIME_ZIP = "mayloon.zip";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
 	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";
@@ -50,6 +59,9 @@ public class MptConstants {
     public static final String ANDROID_NS_RESOURCES = "http://schemas.android.com/apk/res/android"; //$NON-NLS-1$
     
     public static final String MAYLOON_J2S_BUILDER = "net.sf.j2s.core.java2scriptbuilder";
+    
+    public static final String MAYLOON_PROJECT_SETTING = ".j2s"; //".mayloon"; In net.sf.j2s.core, .j2s is used to check whether enable java2scriptbuilder when building.
+    public static final String J2S_RESROUCE_LIST = "j2s.resources.list";
     
     // MAYLOON Sdk error marker, to be used when we can't find MAYLOON sdk.
     public static final String MARKER_SDK = MptPlugin.PLUGIN_ID + ".sdkProblem"; //$NON-NLS-1$

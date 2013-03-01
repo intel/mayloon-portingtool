@@ -34,6 +34,18 @@ public class MptPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static MptPlugin sPlugin;
 	
+	// The net.sf.j2s.lib path
+	// TODO luqiang, using plug-in preferences instead
+	private static String j2sLibPaht = null;
+	
+	public static String getJ2sLibPaht() {
+		return j2sLibPaht;
+	}
+
+	public static void setJ2sLibPaht(String j2sLibPaht) {
+		MptPlugin.j2sLibPaht = j2sLibPaht;
+	}
+
 	/**
 	 * The constructor
 	 */
