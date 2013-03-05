@@ -20,8 +20,15 @@ public class MptConstants {
 	public static final String TIZEN_CONFIGURATION_FILE = "config.xml";
 	public static final String MAYLOON_START_ENTRY_FILE = "android.core.Start.html";
 	public static final String MAYLOON_TIZEN_ICON = "Icon.png";
+	public static final String MAYLOON_START_ENTRY_JAVA_FILE = "android/core/Start.java";
+	public static final String MAYLOON_START_ENTRY_BASE = "pm.installPackage(\"/**/\");";
+	public static final String MAYLOON_START_ENTRY_MATCH = "/\\*\\*/";
 	// The container id of the android framework jar file android.jar
 	public static final String ANDROID_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"; //$NON-NLS-1$
+	
+	public static final String ANDROID_APK_EXTENSION = ".apk";
+	public static final String ZIP_FILE_EXTENSION = ".zip";
+	
 	// The container id of the android develop tools
 	public static final String ADT_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.LIBRARIES"; //$NON-NLS-1$
 	// The container id of the JRE

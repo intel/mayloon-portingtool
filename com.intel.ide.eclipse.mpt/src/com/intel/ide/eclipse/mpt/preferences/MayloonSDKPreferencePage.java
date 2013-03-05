@@ -43,8 +43,6 @@ public class MayloonSDKPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 	
-	private static final int BUFFER = 2048;
-	
 	private MayloonSDKDirectoryFieldEditor mDiretoryField;
 
 	public MayloonSDKPreferencePage() {
@@ -120,7 +118,9 @@ public class MayloonSDKPreferencePage
 		private boolean checkSDKValid(String sdkLocation) {
 			
 			// Extractor Mayloon Runtime resource
-			fileExtractor();
+			String filePath = MayloonSDK.getSdkLocation();
+			String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
+			ProjectUtil.fileExtractor(filePath, fileName, filePath);
 			
 			File mayloonJARLib = new File(sdkLocation, MptConstants.MAYLOON_ZIP);
 			if (!mayloonJARLib.isFile()) {
@@ -152,44 +152,5 @@ public class MayloonSDKPreferencePage
 			return true;
 		}
 	}
-	
-	private void fileExtractor() {
-		String filePath = MayloonSDK.getSdkLocation();
-		String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
-		
-		try {
-			ZipFile zipFile = new ZipFile(filePath + fileName);
-			Enumeration<? extends ZipEntry> emu = zipFile.entries();
-			
-			while (emu.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) emu.nextElement();
-				if (entry.isDirectory()) {
-					new File(filePath + entry.getName()).mkdirs();
-					continue;
-				}
-				BufferedInputStream bis = new BufferedInputStream(
-						zipFile.getInputStream(entry));
-				File file = new File(filePath + entry.getName());
-				File parent = file.getParentFile();
-				if (parent != null && (!parent.exists())) {
-					parent.mkdirs();
-				}
-				FileOutputStream fos = new FileOutputStream(file);
-				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
 
-				int count;
-				byte data[] = new byte[BUFFER];
-				while ((count = bis.read(data, 0, BUFFER)) != -1) {
-					bos.write(data, 0, count);
-				}
-				bos.flush();
-				bos.close();
-				bis.close();
-			}
-			zipFile.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 }
