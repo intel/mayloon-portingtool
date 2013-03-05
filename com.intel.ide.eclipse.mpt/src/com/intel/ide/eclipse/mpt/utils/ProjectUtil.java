@@ -1,20 +1,28 @@
 package com.intel.ide.eclipse.mpt.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -65,6 +73,8 @@ import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
  * class to provide util functions to help Mayloon project
  */
 public class ProjectUtil {	
+	
+	private static final int BUFFER = 2048;
 
 	public enum OutputLevel {
 		/** Silent mode. Project creation will only display errors. */
@@ -103,46 +113,71 @@ public class ProjectUtil {
 	 * Move the build output of android project to the application resource
 	 * folder of Mayloon project
 	 * 
-	 * Step 1. move /gen/R.java to /src/[application package name]/ Step 2. move
+	 * Step 1. move /gen/package/R.java to /src/[application package name]/ Step 2. move
 	 * /[android output root]/[application package name] to /[mayloon
 	 * output]/apps/
 	 * 
 	 * @param project
 	 * @param deployMode
+	 * @param packageName
 	 * @throws CoreException
 	 */
-	public static void addAndroidOutput2Mayloon(IProject project, String deployMode) throws CoreException {
-
-		// packageName is [package].[main activity]
-		String packageName = extractPackageFromManifest(project);
+	public static void addAndroidOutput2Mayloon(IProject project, String deployMode, String packageName) throws CoreException {
 
 		// TODO luqiang, cross-platform directory delimit problem ???
 		// Step 1
 		if (packageName != null && !packageName.equals("")) {
 			// Step 2
-			
-			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-				String genRPath = null;
-				genRPath = packageName.substring(0, packageName.lastIndexOf("."));
+		
+//				String genRPath = null;
+//				genRPath = packageName.substring(0, packageName.lastIndexOf("."));
 				
 				IPath srcFilePath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
 				
 				IPath destFilePath = project.getLocation().append("src");
 
+//				String srcFile = srcFilePath.toOSString() + "/"
+//						+ genRPath.replaceAll("\\.", "/") + "/R.java";
+//
+//				String destFile = destFilePath.toOSString() + "/"
+//						+ genRPath.replaceAll("\\.", "/") + "/R.java";
 				String srcFile = srcFilePath.toOSString() + "/"
-						+ genRPath.replaceAll("\\.", "/") + "/R.java";
+						+ packageName.replaceAll("\\.", "/") + "/R.java";
 
 				String destFile = destFilePath.toOSString() + "/"
-						+ genRPath.replaceAll("\\.", "/") + "/R.java";
+						+ packageName.replaceAll("\\.", "/") + "/R.java";
 
 				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
 						destFile));
-				srcFile = project.getLocation() + "/bin/" + packageName + "/";
-				// see mayloon PackageManager, app.add should read
-				// resource from package+activityName instead of package
-				destFile = project.getLocation().append("bin/apps/") + genRPath + "/";
-				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-						destFile));
+				
+				IPath filePath = project.getLocation().append(MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+				
+				// copy .apk to .zip otherwise, java Zip api can't read .apk as zip file
+				IPath tempZipFile = filePath.append(project.getName() + MptConstants.ZIP_FILE_EXTENSION);
+				IPath apkFile = filePath.append(project.getName() + MptConstants.ANDROID_APK_EXTENSION);
+				copyFile(apkFile.toOSString(), tempZipFile.toOSString());
+				
+				// unzip android appliction .zip to bin/apps/pckageName/
+				
+				String apkFileName = project.getName() + MptConstants.ZIP_FILE_EXTENSION;
+				
+				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+					
+					String mayloonBinAppPath = project.getLocation().append("bin/apps/")+packageName + "/";
+					ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName, mayloonBinAppPath);
+					
+//					srcFile = project.getLocation() + "/bin/" + packageName + "/";
+//					
+//					destFile = project.getLocation().append("bin/apps/") + genRPath + "/";
+//					copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+//							destFile));
+				} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+					String mayloon4TizenBinAppPath = project.getLocation().append(MptConstants.MAYLOON_OUTPUT_DIR).append("apps/") + packageName + "/";
+					ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName, mayloon4TizenBinAppPath);
+				}
+				
+				// delete .zip otherwise
+				deleteFiles(tempZipFile);
 				
 				IFolder folder = project.getFolder(MptConstants.WS_ROOT
 						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
@@ -153,17 +188,17 @@ public class ProjectUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-				String srcFile = project.getLocation() + "/bin/" + packageName + "/";
-				// see mayloon PackageManager, app.add should read
-				// resource from package+activityName instead of package
+//			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+//				String srcFile = project.getLocation() + "/bin/" + packageName + "/";
+//				// see mayloon PackageManager, app.add should read
+//				// resource from package+activityName instead of package
 //				destFile = project.getLocation().append("bin/apps/") + genRPath + "/";
 //				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
 //						destFile));
 //				IPath srcPath = project.getLocation().append("bin/apps");
-				IFolder destFolder = getMayloonOutputFolder(project);
-				copyFilesFromPlugin2UserProject(new Path(srcFile), destFolder.getRawLocation().append("bin/apps/"));
-			}	
+//				IFolder destFolder = getMayloonOutputFolder(project);
+//				copyFilesFromPlugin2UserProject(new Path(srcFile), destFolder.getRawLocation().append("bin/apps/"+packageName));
+//			}	
 		}
 	}
 
@@ -222,8 +257,6 @@ public class ProjectUtil {
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore srcDir = fileSystem.getStore(srcPath);
 
-		// Will recursively copy the home directory to the backup
-		// directory, overwriting any files in the backup directory in the way.
 		try {
 			srcDir.delete(EFS.NONE, null);
 		} catch (CoreException e) {
@@ -293,9 +326,10 @@ public class ProjectUtil {
 	 * 
 	 * @param project
 	 * @param deployMode
+	 * @param packageName
 	 * @throws CoreException
 	 */
-	public static void addMayloonFrameworkFolder(IProject project, String deployMode)
+	public static void addMayloonFrameworkFolder(IProject project, String deployMode, String packageName)
 			throws CoreException {
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		IJavaProject javaProject = JavaCore.create(project);
@@ -427,25 +461,30 @@ public class ProjectUtil {
 								"Could not load Mayloon framework resource due to cause {%1$s}",
 								"Mayloon framework resource path is not seted correctly.");
 			}
-			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-				if (startFiles != null) {
-					IFolder folder = project.getFolder(MptConstants.WS_ROOT
-							+ MptConstants.MAYLOON_SRC_DIR);
-	
-					IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-							+ startFiles);
-					IPath destPath = project.getLocation().append(
-							MptConstants.MAYLOON_SRC_DIR);
-	
-					copyFilesFromPlugin2UserProject(srcPath, destPath);
-					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-				} else {
-					MptPluginConsole
-							.error(MptConstants.CONVERT_TAG,
-									"Could not load Mayloon application entry to cause {%1$s}",
-									"Mayloon application entry is not seted correctly.");
-				}
+			
+			if (startFiles != null) {
+				IFolder folder = project.getFolder(MptConstants.WS_ROOT
+						+ MptConstants.MAYLOON_SRC_DIR);
+
+				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+						+ startFiles);
+				IPath destPath = project.getLocation().append(
+						MptConstants.MAYLOON_SRC_DIR);
+				
+				// change pm.installPackage(/**/); to pm.installPackage("convert android application's package name");
+				// for example, pm.installPackage("com.intel.linpack");
+				// fixs mayloon application start entry logic
+				fixsMayloonAppEntry(srcPath.append(MptConstants.MAYLOON_START_ENTRY_JAVA_FILE), packageName);
+
+				copyFilesFromPlugin2UserProject(srcPath, destPath);
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} else {
+				MptPluginConsole
+						.error(MptConstants.CONVERT_TAG,
+								"Could not load Mayloon application entry to cause {%1$s}",
+								"Mayloon application entry is not seted correctly.");
 			}
+			
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
 					MptMessages.Not_found_Mayloon_External_File_Message,
@@ -464,6 +503,59 @@ public class ProjectUtil {
 			}
 		}
 
+	}
+	
+	/**
+	 * Change mayloon application entry file(com.android.core.Start.java) according to user application package name.
+	 * 
+	 * @param filePath
+	 * @param packageName
+	 */
+	public static void fixsMayloonAppEntry(IPath filePath, String packageName) {
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		
+		String tempOutPutFile = filePath.toOSString() + ".temp";
+		
+		try {
+			String sCurrentLine;
+
+			br = new BufferedReader(new FileReader(filePath.toOSString()));
+			bw = new BufferedWriter(new FileWriter(tempOutPutFile));
+ 
+			while ((sCurrentLine = br.readLine()) != null) {
+				if (sCurrentLine.contains(MptConstants.MAYLOON_START_ENTRY_BASE)) {
+					String insatllPackageEntry = MptConstants.MAYLOON_START_ENTRY_BASE.replaceAll(MptConstants.MAYLOON_START_ENTRY_MATCH, packageName);
+					bw.write(insatllPackageEntry);
+					bw.newLine();
+				} else {
+					bw.write(sCurrentLine);
+					bw.newLine();
+				}
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (bw != null)
+					bw.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		// rm original Start.java, rename Start.java.temp to Start.java
+		deleteFiles(filePath);
+				
+		moveFiles(new Path(tempOutPutFile), filePath);
+		
 	}
 	
 	/**
@@ -813,6 +905,7 @@ public class ProjectUtil {
 	}
 
 	/**
+	 * Not compatibility with Android internal implementation 
 	 * Copy from ADT, ProjectCreator.java Extracts a "full" package & activity
 	 * name from an AndroidManifest.xml.
 	 * <p/>
@@ -829,7 +922,7 @@ public class ProjectUtil {
 	 * @return True if the package/activity was parsed and updated in the
 	 *         keyword dictionary.
 	 */
-	private static String extractPackageFromManifest(IProject project) {
+	public static String extractPackageFromManifest(IProject project) {
 
 		String packageName = "";
 
@@ -890,11 +983,15 @@ public class ProjectUtil {
 				return packageName;
 			}
 
+			/* mayloon update
+			 * We don't follow android internal implementation of packageName logic. So skip below package + activityName logic.
+			 */
 			// Get the first activity that matched earlier. If there is no
 			// activity,
 			// activityName is set to an empty string and the generated
 			// "combined" name
 			// will be in the form "package." (with a dot at the end).
+			/*
 			String activityName = "";
 			if (activityNames.getLength() > 0) {
 				activityName = activityNames.item(0).getNodeValue();
@@ -925,6 +1022,7 @@ public class ProjectUtil {
 			} else {
 				packageName = packageName + activityName;
 			}
+			*/
 
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptPlugin.PLUGIN_ID,
@@ -1677,4 +1775,42 @@ public class ProjectUtil {
 		}
 		return j2sDeployMode;
 	}
+	
+	public static void fileExtractor(String filePath, String fileName, String outputPath) {
+
+		try {
+			ZipFile zipFile = new ZipFile(filePath + "/" + fileName);
+			Enumeration<? extends ZipEntry> emu = zipFile.entries();
+			
+			while (emu.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) emu.nextElement();
+				if (entry.isDirectory()) {
+					new File(filePath + entry.getName()).mkdirs();
+					continue;
+				}
+				BufferedInputStream bis = new BufferedInputStream(
+						zipFile.getInputStream(entry));
+				File file = new File(outputPath + entry.getName());
+				File parent = file.getParentFile();
+				if (parent != null && (!parent.exists())) {
+					parent.mkdirs();
+				}
+				FileOutputStream fos = new FileOutputStream(file);
+				BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
+
+				int count;
+				byte data[] = new byte[BUFFER];
+				while ((count = bis.read(data, 0, BUFFER)) != -1) {
+					bos.write(data, 0, count);
+				}
+				bos.flush();
+				bos.close();
+				bis.close();
+			}
+			zipFile.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

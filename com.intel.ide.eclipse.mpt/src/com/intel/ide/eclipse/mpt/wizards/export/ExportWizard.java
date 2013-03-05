@@ -129,14 +129,18 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	 */
 	private void performTizenPackage() {
 		try {
+			// get package name from AndroidManifest.xml
+			// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
+			String packageName = ProjectUtil.extractPackageFromManifest(fProject);
+			
 			// generate the .project, config.xml, Icon.png and android.core.Start.html file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
 			// copy mayloon runtime resource to mayloon_bin
-			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN);
+			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
 			
 			// copy mayloon compile output folder to mayloon_bin
 			// copy /bin/apps
-			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN);
+			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
 			
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);			

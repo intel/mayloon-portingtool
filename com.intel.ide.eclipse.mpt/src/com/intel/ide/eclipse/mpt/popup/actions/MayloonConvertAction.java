@@ -64,6 +64,10 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						
 						ProjectUtil.backupProject(project);
 						
+						// get package name from AndroidManifest.xml
+						// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
+						String packageName = ProjectUtil.extractPackageFromManifest(project);
+						
 						// merge j2s class path modify logic to it.
 						ProjectUtil.fixMayloonClassEntry(project);
 						
@@ -71,10 +75,10 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						MayloonNature.addProjectNature(project);
 						
 						// copy mayloon framework resource and js library
-						ProjectUtil.addMayloonFrameworkFolder(project, deployMode);
+						ProjectUtil.addMayloonFrameworkFolder(project, deployMode, packageName);
 						
 						// copy android build output resource to /bin/apps/[package name]/
-						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode);
+						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode, packageName);
 						
 						// clear android generated gen/ folder
 						ProjectUtil.clearAndroidGenFolder(project);			
