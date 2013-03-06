@@ -45,7 +45,7 @@ public class MayloonSDK {
 	}
 	
 	/**
-	 * Return Mayloon SDK version
+	 * Return Mayloon runtime version
 	 * @return MayloonVersion
 	 */
 	public static MayloonVersion getSdkVersion() {

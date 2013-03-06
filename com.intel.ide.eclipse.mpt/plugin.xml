@@ -116,6 +116,10 @@
               class="com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer"
               id="com.intel.ide.eclipse.mpt.MAYLOON_FRAMEWORK">
          </classpathContainerInitializer>
+         <classpathContainerInitializer
+               class="com.intel.ide.eclipse.mpt.project.MayloonJREClasspathContainerInitializer"
+               id="com.intel.ide.eclipse.mpt.MAYLOON_JRE">
+         </classpathContainerInitializer>
    </extension>
    <extension
          id="MayloonNature"

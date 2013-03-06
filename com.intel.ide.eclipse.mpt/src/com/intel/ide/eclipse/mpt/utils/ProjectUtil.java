@@ -66,6 +66,7 @@ import com.intel.ide.eclipse.mpt.builder.AntPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.project.AndroidXPathFactory;
 import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
+import com.intel.ide.eclipse.mpt.project.MayloonJREClasspathContainerInitializer;
 import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 
@@ -696,15 +697,27 @@ public class ProjectUtil {
 	    		
 
 		// add Mayloon framework classpath if not exist
-		int MayloonIndex = ProjectUtil.findClassPathEntry(entries,
+		int MayloonRuntimeIndex = ProjectUtil.findClassPathEntry(entries,
 				MayloonClasspathContainerInitializer.MAYLOON_CONTAINER_ID,
 				IClasspathEntry.CPE_CONTAINER);
-		if (MayloonIndex == -1) {
+		if (MayloonRuntimeIndex == -1) {
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Adding Mayloon Class Container to classpath.");
-			IClasspathEntry Mayloon_entry = MayloonClasspathContainerInitializer
+					"Adding Mayloon Runtime Class Container to classpath.");
+			IClasspathEntry mayloon_runtime_entry = MayloonClasspathContainerInitializer
 					.getContainerEntry();
-			entries = ProjectUtil.addClassPathEntry(entries, Mayloon_entry);
+			entries = ProjectUtil.addClassPathEntry(entries, mayloon_runtime_entry);
+		}
+		
+		// add Mayloon JRE classpath if not exist
+		int MayloonJREIndex = ProjectUtil.findClassPathEntry(entries,
+				MayloonJREClasspathContainerInitializer.MAYLOON_JRE_CONTAINER_ID,
+				IClasspathEntry.CPE_CONTAINER);
+		if (MayloonJREIndex == -1) {
+			MptPluginConsole.general(MptConstants.CONVERT_TAG,
+					"Adding Mayloon JRE Class Container to classpath.");
+			IClasspathEntry mayloon_jre_entry = MayloonJREClasspathContainerInitializer
+					.getContainerEntry();
+			entries = ProjectUtil.addClassPathEntry(entries, mayloon_jre_entry);
 		}
 
 		if (entries != oldEntries) {
