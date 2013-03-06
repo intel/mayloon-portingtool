@@ -709,16 +709,16 @@ public class ProjectUtil {
 		}
 		
 		// add Mayloon JRE classpath if not exist
-		int MayloonJREIndex = ProjectUtil.findClassPathEntry(entries,
-				MayloonJREClasspathContainerInitializer.MAYLOON_JRE_CONTAINER_ID,
-				IClasspathEntry.CPE_CONTAINER);
-		if (MayloonJREIndex == -1) {
-			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Adding Mayloon JRE Class Container to classpath.");
-			IClasspathEntry mayloon_jre_entry = MayloonJREClasspathContainerInitializer
-					.getContainerEntry();
-			entries = ProjectUtil.addClassPathEntry(entries, mayloon_jre_entry);
-		}
+//		int MayloonJREIndex = ProjectUtil.findClassPathEntry(entries,
+//				MayloonJREClasspathContainerInitializer.MAYLOON_JRE_CONTAINER_ID,
+//				IClasspathEntry.CPE_CONTAINER);
+//		if (MayloonJREIndex == -1) {
+//			MptPluginConsole.general(MptConstants.CONVERT_TAG,
+//					"Adding Mayloon JRE Class Container to classpath.");
+//			IClasspathEntry mayloon_jre_entry = MayloonJREClasspathContainerInitializer
+//					.getContainerEntry();
+//			entries = ProjectUtil.addClassPathEntry(entries, mayloon_jre_entry);
+//		}
 
 		if (entries != oldEntries) {
 			javaProject.setRawClasspath(entries, new NullProgressMonitor());
