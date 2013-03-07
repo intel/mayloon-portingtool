@@ -84,18 +84,19 @@ public class ProjectUtil {
 	private static OutputLevel mLevel;
 
 	/**
-	 * add the Mayloon output folder, the jar package will be created there.
+	 * Get the Mayloon output folder, the tizen package will be created there.
 	 * 
 	 * @param project
 	 * @throws CoreException
 	 */
-	public static void addMayloonOutputFolder(IProject project)
+	public static IFolder getMayloonOutputFolder(IProject project)
 			throws CoreException {
 		IFolder folder = project.getFolder(MptConstants.WS_ROOT
 				+ MptConstants.MAYLOON_OUTPUT_DIR);
 		if (!folder.exists()) {
 			folder.create(true, true, null);
 		}
+		return folder;
 	}
 
 	/**
@@ -107,9 +108,10 @@ public class ProjectUtil {
 	 * output]/apps/
 	 * 
 	 * @param project
+	 * @param deployMode
 	 * @throws CoreException
 	 */
-	public static void moveAndroidOutput2Mayloon(IProject project) {
+	public static void addAndroidOutput2Mayloon(IProject project, String deployMode) throws CoreException {
 
 		// packageName is [package].[main activity]
 		String packageName = extractPackageFromManifest(project);
@@ -117,41 +119,51 @@ public class ProjectUtil {
 		// TODO luqiang, cross-platform directory delimit problem ???
 		// Step 1
 		if (packageName != null && !packageName.equals("")) {
-
-			String genRPath = null;
-			genRPath = packageName.substring(0, packageName.lastIndexOf("."));
-			
-			IPath srcFilePath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
-			
-			IPath destFilePath = project.getLocation().append("src");
-
-			String srcFile = srcFilePath.toOSString() + "/"
-					+ genRPath.replaceAll("\\.", "/") + "/R.java";
-
-			String destFile = destFilePath.toOSString() + "/"
-					+ genRPath.replaceAll("\\.", "/") + "/R.java";
-
-			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-					destFile));
-
 			// Step 2
-			srcFile = project.getLocation() + "/bin/" + packageName + "/";
-
-			// TODO luqiang, see mayloon PackageManager, app.add should read
-			// resource from package+activityName instead of package
-			destFile = project.getLocation() + "/bin/apps/" + genRPath + "/";
-			copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-					destFile));
 			
-			IFolder folder = project.getFolder(MptConstants.WS_ROOT
-					+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+				String genRPath = null;
+				genRPath = packageName.substring(0, packageName.lastIndexOf("."));
+				
+				IPath srcFilePath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
+				
+				IPath destFilePath = project.getLocation().append("src");
 
-			try {
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				String srcFile = srcFilePath.toOSString() + "/"
+						+ genRPath.replaceAll("\\.", "/") + "/R.java";
+
+				String destFile = destFilePath.toOSString() + "/"
+						+ genRPath.replaceAll("\\.", "/") + "/R.java";
+
+				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+						destFile));
+				srcFile = project.getLocation() + "/bin/" + packageName + "/";
+				// see mayloon PackageManager, app.add should read
+				// resource from package+activityName instead of package
+				destFile = project.getLocation().append("bin/apps/") + genRPath + "/";
+				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+						destFile));
+				
+				IFolder folder = project.getFolder(MptConstants.WS_ROOT
+						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+
+				try {
+					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+				String srcFile = project.getLocation() + "/bin/" + packageName + "/";
+				// see mayloon PackageManager, app.add should read
+				// resource from package+activityName instead of package
+//				destFile = project.getLocation().append("bin/apps/") + genRPath + "/";
+//				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
+//						destFile));
+//				IPath srcPath = project.getLocation().append("bin/apps");
+				IFolder destFolder = getMayloonOutputFolder(project);
+				copyFilesFromPlugin2UserProject(new Path(srcFile), destFolder.getRawLocation().append("bin/apps/"));
+			}	
 		}
 	}
 
@@ -231,13 +243,59 @@ public class ProjectUtil {
 				MptConstants.ANDROID_GEN_DIR);
 		deleteFiles(genPath);
 	}
+	
+	/**
+	 * add .project and config.xml to Tizen deployment directory
+	 * 
+	 * @param project
+	 * @throws CoreException 
+	 */
+	public static void addTizenProjectFile(IProject project) throws CoreException {
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+
+		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
+			return;
+		}
+		
+		try {
+			IFolder folder = null;
+			IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+					+ MptConstants.TIZEN_PROJECT_FILE);
+			folder = getMayloonOutputFolder(project);
+			
+			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.TIZEN_PROJECT_FILE).toFile());
+			
+			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+					+ MptConstants.TIZEN_CONFIGURATION_FILE);
+			
+			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.TIZEN_CONFIGURATION_FILE).toFile());
+			
+			srcPath = project.getFolder(MptConstants.WS_ROOT
+					+ MptConstants.MAYLOON_START_ENTRY_FILE).getRawLocation();
+			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_START_ENTRY_FILE).toFile());
+			
+			srcPath = project.getFolder(MptConstants.WS_ROOT
+					+ MptConstants.MAYLOON_TIZEN_ICON).getRawLocation();
+			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_TIZEN_ICON).toFile());
+			
+			if (folder != null) {
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	/**
 	 * add Mayloon Framework related resource
 	 * 
 	 * @param project
+	 * @param deployMode
+	 * @throws CoreException
 	 */
-	public static void addMayloonFrameworkFolder(IProject project)
+	public static void addMayloonFrameworkFolder(IProject project, String deployMode)
 			throws CoreException {
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		IJavaProject javaProject = JavaCore.create(project);
@@ -257,27 +315,34 @@ public class ProjectUtil {
 					MptConstants.MAYLOON_JS_LIBRARY_PATH, null);
 			String njsLib = properties.getProperty(
 					MptConstants.MAYLOON_NJS_LIBRARY_PATH, null);
-//			String frameworkJs = properties.getProperty(
-//					MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
 			String frameworkRes = properties.getProperty(
 					MptConstants.MAYLOON_FRAMEWORK_RES, null);
-
 			String startFiles = properties.getProperty(
 					MptConstants.MAYLOON_APPLICATION_ENTRY, null);
+			String j2sLib = properties.getProperty(
+					MptConstants.MAYLOON_J2S_LIBRARY_PATH, null);
 
 			if (externalJSLib != null) {
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_EXTERNAL_JS_DIR);
-				if (!folder.exists()) {
-					folder.create(true, true, null);
-				}
-
+				IFolder folder = null;
 				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
 						+ externalJSLib);
-				copyFilesFromPlugin2UserProject(srcPath,
-						folder.getRawLocation());
-
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				
+				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+					folder = project.getFolder(MptConstants.WS_ROOT
+							+ MptConstants.MAYLOON_EXTERNAL_JS_DIR);
+					if (!folder.exists()) {
+						folder.create(true, true, null);
+					}
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation());
+				} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+					folder = getMayloonOutputFolder(project);					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation().append(MptConstants.MAYLOON_EXTERNAL_JS_DIR));
+				}
+				if (folder != null) {
+					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
 
 			} else {
 				MptPluginConsole
@@ -287,19 +352,25 @@ public class ProjectUtil {
 			}
 			
 			if (njsLib != null) {
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_NJS_JS_DIR);
-				
-				if (!folder.exists()) {
-					folder.create(true, true, null);
-				}
-
+				IFolder folder = null;
 				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
 						+ njsLib);
-				copyFilesFromPlugin2UserProject(srcPath,
-						folder.getRawLocation());
-
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+					folder = project.getFolder(MptConstants.WS_ROOT
+							+ MptConstants.MAYLOON_NJS_JS_DIR);
+					if (!folder.exists()) {
+						folder.create(true, true, null);
+					}					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation());
+				} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+					folder = getMayloonOutputFolder(project);					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation().append(MptConstants.MAYLOON_NJS_JS_DIR));
+				}
+				if (folder != null) {
+					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
 
 			} else {
 				MptPluginConsole
@@ -307,44 +378,47 @@ public class ProjectUtil {
 								"Could not load Mayloon njs javascript library due to cause {%1$s}",
 								"Mayloon njs Library path is not seted correctly.");
 			}
-
-			// TODO luqiang, these framework javascript will be deleted by java
-			// compile,
-			// so we need find a method to tell the java builder, not clear
-			// output before each build process
-			// solution: after comiple complete, then move these framework javascript to output directory
-//			if (frameworkJs != null) {
-//
-//				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//				IWorkspaceRoot root = workspace.getRoot();
-//
-//				IPath srcPath = Path.fromPortableString(mayloonSDKPath
-//						+ MptConstants.WS_ROOT + frameworkJs);
-//				IPath destPath = root.getLocation().append(
-//						javaProject.getOutputLocation());
-//				copyFilesFromPlugin2UserProject(srcPath, destPath);
-//
-//				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-//						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
-//				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-//
-//			} else {
-//				MptPluginConsole
-//						.error(MptConstants.CONVERT_TAG,
-//								"Could not load Mayloon framework javascript files due to cause {%1$s}",
-//								"Mayloon framework javascript path is not seted correctly.");
-//			}
+			
+			if (j2sLib != null) {				
+				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+					IFolder folder = null;
+					IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+							+ j2sLib);
+					folder = getMayloonOutputFolder(project);					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation().append(j2sLib));
+					if (folder != null) {
+						folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+					}
+				}
+			} else {
+				MptPluginConsole
+						.error(MptConstants.CONVERT_TAG,
+								"Could not load Mayloon j2s javascript library due to cause {%1$s}",
+								"Mayloon njs Library path is not seted correctly.");
+			}
 
 			if (frameworkRes != null) {
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_FRAMEWORK_RES_DIR);
-				if (!folder.exists()) {
-					folder.create(true, true, null);
-				}
+				
+				IFolder folder = null;
 				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
 						+ frameworkRes);
-				copyFilesFromPlugin2UserProject(srcPath,
-						folder.getRawLocation());
+				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+					folder = project.getFolder(MptConstants.WS_ROOT
+							+ MptConstants.MAYLOON_FRAMEWORK_RES_DIR);
+					if (!folder.exists()) {
+						folder.create(true, true, null);
+					}					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation());
+				} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+					folder = getMayloonOutputFolder(project);					
+					copyFilesFromPlugin2UserProject(srcPath,
+							folder.getRawLocation().append(MptConstants.MAYLOON_FRAMEWORK_RES_DIR));
+				}
+				if (folder != null) {
+					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
 
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
@@ -353,23 +427,24 @@ public class ProjectUtil {
 								"Could not load Mayloon framework resource due to cause {%1$s}",
 								"Mayloon framework resource path is not seted correctly.");
 			}
-
-			if (startFiles != null) {
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_SRC_DIR);
-
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-						+ startFiles);
-				IPath destPath = project.getLocation().append(
-						MptConstants.MAYLOON_SRC_DIR);
-
-				copyFilesFromPlugin2UserProject(srcPath, destPath);
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon application entry to cause {%1$s}",
-								"Mayloon application entry is not seted correctly.");
+			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+				if (startFiles != null) {
+					IFolder folder = project.getFolder(MptConstants.WS_ROOT
+							+ MptConstants.MAYLOON_SRC_DIR);
+	
+					IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+							+ startFiles);
+					IPath destPath = project.getLocation().append(
+							MptConstants.MAYLOON_SRC_DIR);
+	
+					copyFilesFromPlugin2UserProject(srcPath, destPath);
+					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				} else {
+					MptPluginConsole
+							.error(MptConstants.CONVERT_TAG,
+									"Could not load Mayloon application entry to cause {%1$s}",
+									"Mayloon application entry is not seted correctly.");
+				}
 			}
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
@@ -389,6 +464,82 @@ public class ProjectUtil {
 			}
 		}
 
+	}
+	
+	/**
+	 * add Mayloon compiled output files(/bin/classes) to Tizen deployment directory
+	 * 
+	 * @param project
+	 * @throws CoreException
+	 */
+	public static void addMayloonCompiledJSFiles(IProject project) {
+		
+		IJavaProject javaProject = JavaCore.create(project);
+		
+		IPath outputPath;
+		IPath projectPath = new Path(project.getName());
+		try {
+			outputPath = javaProject.getOutputLocation().makeRelativeTo(projectPath);
+			
+			IPath srcPath = project.getLocation().append(outputPath);
+			IFolder destFolder = getMayloonOutputFolder(project);
+			
+			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destFolder.getRawLocation().append(outputPath));
+			
+			if (destFolder != null) {
+				destFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			}
+			
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//			MptPluginConsole
+//					.error(MptConstants.BUILD_TAG,
+//							"Could not load Mayloon framework javascript files due to cause {%1$s}",
+//							"Mayloon framework javascript path is not seted correctly.");
+	}
+	
+	/**
+	 * add Mayloon J2s Lib to Tizen package directory
+	 * 
+	 * @param project
+	 * @throws CoreException
+	 */
+	public static void addJ2SLibFiles2Tizen(IProject project) {
+		
+		IJavaProject javaProject = JavaCore.create(project);
+		
+		IPath outputPath;
+		IPath projectPath = new Path(project.getName());
+		try {
+			outputPath = javaProject.getOutputLocation().makeRelativeTo(projectPath);
+			
+			IPath srcPath = project.getLocation().append(outputPath);
+			IFolder destFolder = getMayloonOutputFolder(project);
+			
+			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destFolder.getRawLocation());
+			
+			if (destFolder != null) {
+				destFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			}
+			
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//			MptPluginConsole
+//					.error(MptConstants.BUILD_TAG,
+//							"Could not load Mayloon framework javascript files due to cause {%1$s}",
+//							"Mayloon framework javascript path is not seted correctly.");
 	}
 
 	/**
@@ -1498,5 +1649,32 @@ public class ProjectUtil {
 			fi.close();
 		} catch (Exception e) {
 		}
+	}
+	
+	/*
+	 * Get the deployment mode from .j2s 
+	 */
+	public static String getDeployMode(IProject project) {
+		String j2sDeployMode = null;
+		File file = new File(project.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
+		if (!file.exists()) {
+			/*
+			 * The file .j2s is a marker for Java2Script to compile JavaScript
+			 */
+			return j2sDeployMode;
+		}
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream(file));
+			j2sDeployMode = props.getProperty(MptConstants.J2S_DEPLOY_MODE, null);
+			
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			return j2sDeployMode;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return j2sDeployMode;
+		}
+		return j2sDeployMode;
 	}
 }

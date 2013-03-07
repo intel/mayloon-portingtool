@@ -53,6 +53,7 @@ import org.json.simple.parser.ParseException;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
+import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.classpath.CompositeResources;
 import com.intel.ide.eclipse.mpt.classpath.ContactedClasses;
 import com.intel.ide.eclipse.mpt.classpath.IRuntimeClasspathEntry;
@@ -114,6 +115,8 @@ public class J2SLaunchingUtil {
 				}
 			}
 			
+			MptPlugin.setJ2sLibPaht(gj2sLibPath);
+			
 			IJavaModel javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 			String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if ((projectName == null) || (projectName.trim().length() < 1)) {
@@ -141,6 +144,22 @@ public class J2SLaunchingUtil {
 					grelativePath += "/";
 				}
 			}
+			
+			File location = new File(javaProject.getProject().getLocation().toFile(), MptConstants.MAYLOON_PROJECT_SETTING);
+			Properties prop = new Properties();
+			String deployMode = null;
+	    	try {
+	               //load a properties file
+	    		prop.load(new FileInputStream(location));
+	    		
+	    		deployMode = prop.getProperty(MptConstants.J2S_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
+	    		
+	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, gj2sLibPath + "java.runtime.j2x");
+	    		MayloonPropertiesBuilder.saveProperty(prop, javaProject);
+	 
+	    	} catch (IOException ex) {
+	    		ex.printStackTrace();
+	        }    	
 
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
@@ -149,10 +168,10 @@ public class J2SLaunchingUtil {
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
-					configuration);
+					configuration, deployMode);
 			
 			generatePreLoadingJavaScript(buf, j2xStr, mainType, gj2sLibPath,
-					isJUnit, grelativePath, workingDir, configuration);
+					isJUnit, grelativePath, workingDir, configuration, javaProject);
 			
 			buf.append("ClazzLoader.loadClass (\"junit.textui.TestRunner\", function () {\r\n");
 			buf.append("\tClazzLoader.loadClass (\"" + mainType + "\", function () {\r\n");
@@ -203,10 +222,7 @@ public class J2SLaunchingUtil {
 			StringBuffer buf = new StringBuffer();
 			boolean useXHTMLHeader = configuration.getAttribute(
 					IJ2SLauchingConfiguration.USE_XHTML_HEADER, true);
-
-			IPreferenceStore store = MptPlugin.getDefault().getPreferenceStore();
 			
-			boolean preferred = false;
 			boolean addonCompatiable = false;
 
 			
@@ -268,6 +284,23 @@ public class J2SLaunchingUtil {
 					grelativePath += "/";
 				}
 			}
+			
+			File location = new File(javaProject.getProject().getLocation().toFile(), MptConstants.MAYLOON_PROJECT_SETTING);
+			Properties prop = new Properties();
+			String deployMode = null;
+	    	try {
+	               //load a properties file
+	    		prop.load(new FileInputStream(location));
+	    		
+	    		deployMode = prop.getProperty(MptConstants.J2S_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
+	    		String javaRuntimeJ2x = gj2sLibPath + "java.runtime.j2x";
+	    		String j2sResourceList = prop.getProperty(MptConstants.J2S_RESROUCE_LIST, null);
+	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, javaRuntimeJ2x + ", " + j2sResourceList);
+	    		MayloonPropertiesBuilder.saveProperty(prop, javaProject);
+	 
+	    	} catch (IOException ex) {
+	    		ex.printStackTrace();
+	        }    	
 
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
@@ -276,11 +309,11 @@ public class J2SLaunchingUtil {
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
-					configuration);
+					configuration, deployMode);
 			
 			
 			generatePreLoadingJavaScript(buf, j2xStr, mainType, gj2sLibPath,
-					isJUnit, grelativePath, workingDir, configuration);
+					isJUnit, grelativePath, workingDir, configuration, javaProject);
 			
 			buf.append("ClazzLoader.loadClass (\"" + mainType + "\", function () {\r\n");
 			String mainTypeName = new ASTTypeVisitor().assureQualifiedName(mainType);
@@ -330,13 +363,6 @@ public class J2SLaunchingUtil {
 				
 				IPath destPath = javaProject.getProject().getLocation().append(outputPath);
 				
-//				MptPluginConsole
-//				.general(MptConstants.BUILD_TAG, "outputPath = {%1$s}", outputPath.toOSString());
-//				MptPluginConsole
-//				.general(MptConstants.BUILD_TAG, "srcPath = {%1$s}", srcPath.toOSString());
-//				MptPluginConsole
-//				.general(MptConstants.BUILD_TAG, "destPath = {%1$s}", destPath.toOSString());	
-				
 				ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
 				IFolder folder = javaProject.getProject().getFolder(outputPath);
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -383,10 +409,20 @@ public class J2SLaunchingUtil {
 	private static void generatePreLoadingJavaScript(StringBuffer buf,
 			String j2xStr, String mainType, String gj2sLibPath, boolean isJUnit,
 			String grelativePath, File workingDir,
-			ILaunchConfiguration configuration) throws CoreException {
+			ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
+		
+		String deployMode = ProjectUtil.getDeployMode(javaProject.getProject());
+		
 		if (j2xStr.indexOf("\"java\"") == -1) {
 			buf.append("ClazzLoader.packageClasspath (\"java\", \"");
-			buf.append(gj2sLibPath);
+			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+				buf.append(gj2sLibPath);
+			// for tizen package, the j2s lib should not located in eclipse plugin directory
+			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+				String j2sLibPath = "./j2slib/";
+				buf.append(j2sLibPath);
+			}
+			
 			buf.append("\", true);\r\n");
 		}
 		if (isJUnit && j2xStr.indexOf("\"junit\"") == -1) {
@@ -409,7 +445,7 @@ public class J2SLaunchingUtil {
 
 	private static String generatePreJavaScript(StringBuffer buf, String args, 
 			String grelativePath, String gj2sLibPath, boolean isJUnit, String mode,
-			String mainType, File workingDir, ILaunchConfiguration configuration)
+			String mainType, File workingDir, ILaunchConfiguration configuration, String deployMode)
 			throws CoreException {
 		buf.append("<a class=\"alaa\" title=\"Launch ");
 		buf.append(mainType);
@@ -445,7 +481,14 @@ public class J2SLaunchingUtil {
 		buf.append("<script type=\"text/javascript\">\r\n");
 
 		J2SCyclicProjectUtils.emptyTracks();
-		String j2xStr = J2SLaunchingUtil.generateClasspathJ2X(configuration, null, workingDir);
+		
+		String j2xStr = null;
+		
+		if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+			j2xStr = J2SLaunchingUtil.generateClasspathJ2X(configuration, null, workingDir);
+		} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+			j2xStr = "ClazzLoader.packageClasspath (\"java\", \"./j2slib/\", true);";
+		}
 		
 		if ("debug".equals(mode)) {
 			buf.append("window[\"j2s.script.debugging\"] = true;\r\n");
@@ -961,13 +1004,14 @@ public class J2SLaunchingUtil {
 	
 	private static void AddMayloonRuntimePackage(StringBuffer buf) {
 		
-		//TODO luqiang, change json file location to sdk path
-		File testFile = new File("/home/luq/Dev/mayloon_sdk/package_name.json");
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+		
+		File packageNameFile = new File(mayloonSDKPath + MptConstants.WS_ROOT + MptConstants.MAYLOON_RUNTIME_PACKAGE);
 		JSONParser parser = new JSONParser();
 		ArrayList<String> mayloonPackageList = new ArrayList<String>();
 		BufferedReader input;
 		try {
-			input = new BufferedReader(new FileReader(testFile));
+			input = new BufferedReader(new FileReader(packageNameFile));
 			try {
 				
 				Object obj = parser.parse(input);
