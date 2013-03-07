@@ -138,9 +138,9 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			// copy mayloon runtime resource to mayloon_bin
 			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
 			
-			// copy mayloon compile output folder to mayloon_bin
+			// copy mayloon Icon to mayloon_bin
 			// copy /bin/apps
-			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
+			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
 			
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);			

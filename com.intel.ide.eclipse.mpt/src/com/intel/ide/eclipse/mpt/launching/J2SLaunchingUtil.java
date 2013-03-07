@@ -164,7 +164,7 @@ public class J2SLaunchingUtil {
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
 			generateJ2SHeaderHTML(buf, useXHTMLHeader, addonCompatiable,
-					gj2sLibPath, mainType, workingDir, configuration);
+					gj2sLibPath, mainType, workingDir, configuration, deployMode);
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
@@ -305,7 +305,7 @@ public class J2SLaunchingUtil {
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
 			generateJ2SHeaderHTML(buf, useXHTMLHeader, addonCompatiable,
-					gj2sLibPath, mainType, workingDir, configuration);
+					gj2sLibPath, mainType, workingDir, configuration, deployMode);
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
@@ -505,7 +505,7 @@ public class J2SLaunchingUtil {
 	private static void generateJ2SHeaderHTML(StringBuffer buf,
 			boolean useXHTMLHeader, boolean addonCompatiable,
 			String gj2sLibPath, String mainType, File workingDir,
-			ILaunchConfiguration configuration) throws CoreException {
+			ILaunchConfiguration configuration, String deployMode) throws CoreException {
 		if (useXHTMLHeader) {
 			buf.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\r\n");
 			buf.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n");
@@ -522,7 +522,13 @@ public class J2SLaunchingUtil {
 				IJ2SLauchingConfiguration.HEAD_HEADER_HTML, ""));
 
 		if (!addonCompatiable) {
-			buf.append("<script type=\"text/javascript\" src=\"" + gj2sLibPath + "j2slib.z.js\"></script>\r\n");
+
+			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+				buf.append("<script type=\"text/javascript\" src=\"" + gj2sLibPath + "j2slib.z.js\"></script>\r\n");
+			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+				buf.append("<script type=\"text/javascript\" src=\"" + "./j2slib/" + "j2slib.z.js\"></script>\r\n");
+			}
+			
 		}
 		
 		J2SCyclicProjectUtils.emptyTracks();
