@@ -34,7 +34,7 @@
 
 	<property name="cfg.dir" location="./buildconfig" />
 	<property name="current.dir" location="." />
-	<property name="site.dir" location="./site"/>
+	<property name="update.site.source.dir" location="./site"/>
 	<property name="mpt.source.dir" location="${current.dir}/plugins" />
 	<property name="mpt.json.source.dir" location="${current.dir}/plugins" />
 	<property name="j2s.core.source.dir" location="${current.dir}/plugins" />
@@ -95,8 +95,8 @@
                 J2S.lib Source                  : ${j2s.lib.source.dir}
                 Mayloon Home                    : ${mayloon.dir}
 	            PDE Build Script                : ${eclipse.home}/plugins/${pdebuild.script}
-	            Kdt Build Config Directory      : ${cfg.dir}
-	            Kdt Build Destination Directory : ${build.dir}
+	            MPT Build Config Directory      : ${cfg.dir}
+	            MPT Build Destination Directory : ${build.dir}
 	        </echo>
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${build.dir}/plugins" />
@@ -128,7 +128,7 @@
 			<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-DbuildDirectory=${build.dir}" />
 			<arg value="-Dbuilder=${cfg.dir}" />
-			<arg value="-DupdateSiteSource=${site.dir}" />
+			<arg value="-DupdateSiteSource=${update.site.source.dir}" />
 			<arg value="-DupdateSiteRoot=${build.dir}" />
 			<arg value="-DbaseLocation=${eclipse.home}" />
 			<arg value="-buildfile" />
