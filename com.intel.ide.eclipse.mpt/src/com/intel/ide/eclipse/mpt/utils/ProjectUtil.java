@@ -121,9 +121,10 @@ public class ProjectUtil {
 	 * @param project
 	 * @param deployMode
 	 * @param packageName
+	 * @param isExport, whether call it from export logic
 	 * @throws CoreException
 	 */
-	public static void addAndroidOutput2Mayloon(IProject project, String deployMode, String packageName) throws CoreException {
+	public static void addAndroidOutput2Mayloon(IProject project, String deployMode, String packageName, boolean isExport) throws CoreException {
 
 		// TODO luqiang, cross-platform directory delimit problem ???
 		// Step 1
@@ -133,6 +134,7 @@ public class ProjectUtil {
 //				String genRPath = null;
 //				genRPath = packageName.substring(0, packageName.lastIndexOf("."));
 				
+			if (!isExport) {
 				IPath srcFilePath = project.getLocation().append(MptConstants.ANDROID_GEN_DIR);
 				
 				IPath destFilePath = project.getLocation().append("src");
@@ -150,6 +152,7 @@ public class ProjectUtil {
 
 				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
 						destFile));
+			}
 				
 				IPath filePath = project.getLocation().append(MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
 				
@@ -173,22 +176,13 @@ public class ProjectUtil {
 //					copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
 //							destFile));
 				} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-					String mayloon4TizenBinAppPath = project.getLocation().append(MptConstants.MAYLOON_OUTPUT_DIR).append("apps/") + packageName + "/";
+					String mayloon4TizenBinAppPath = project.getLocation().append(MptConstants.MAYLOON_OUTPUT_DIR).append("bin/apps/") + packageName + "/";
 					ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName, mayloon4TizenBinAppPath);
 				}
 				
 				// delete .zip otherwise
 				deleteFiles(tempZipFile);
 				
-				IFolder folder = project.getFolder(MptConstants.WS_ROOT
-						+ MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
-
-				try {
-					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 //			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 //				String srcFile = project.getLocation() + "/bin/" + packageName + "/";
 //				// see mayloon PackageManager, app.add should read
@@ -308,8 +302,8 @@ public class ProjectUtil {
 					+ MptConstants.MAYLOON_START_ENTRY_FILE).getRawLocation();
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_START_ENTRY_FILE).toFile());
 			
-			srcPath = project.getFolder(MptConstants.WS_ROOT
-					+ MptConstants.MAYLOON_TIZEN_ICON).getRawLocation();
+			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+					+ MptConstants.MAYLOON_TIZEN_ICON);
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_TIZEN_ICON).toFile());
 			
 			if (folder != null) {

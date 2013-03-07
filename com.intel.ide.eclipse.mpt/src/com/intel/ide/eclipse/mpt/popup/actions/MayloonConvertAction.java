@@ -2,7 +2,9 @@ package com.intel.ide.eclipse.mpt.popup.actions;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -78,13 +80,22 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						ProjectUtil.addMayloonFrameworkFolder(project, deployMode, packageName);
 						
 						// copy android build output resource to /bin/apps/[package name]/
-						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode, packageName);
+						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode, packageName, false);
 						
 						// clear android generated gen/ folder
 						ProjectUtil.clearAndroidGenFolder(project);			
 						
 						// TODO luqiang, skip this release
-						// ProjectUtil.addAntBuildSupport(project);					
+						// ProjectUtil.addAntBuildSupport(project);	
+						
+						IFolder folder = project.getFolder(MptConstants.WS_ROOT);
+
+						try {
+							folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 						MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 					} catch (CoreException e) {

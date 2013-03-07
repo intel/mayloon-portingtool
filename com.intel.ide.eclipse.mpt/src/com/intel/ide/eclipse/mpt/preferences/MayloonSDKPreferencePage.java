@@ -122,11 +122,14 @@ public class MayloonSDKPreferencePage
 			String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
 			ProjectUtil.fileExtractor(filePath, fileName, filePath);
 			
-			File mayloonJARLib = new File(sdkLocation, MptConstants.MAYLOON_ZIP);
-			if (!mayloonJARLib.isFile()) {
+			File mayloonZipLib = new File(sdkLocation, MptConstants.MAYLOON_ZIP);
+			if (!mayloonZipLib.isFile()) {
 				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_ZIP, sdkLocation));
 				return false;
 			}
+			// unzip mayloon.zip
+			ProjectUtil.fileExtractor(filePath, fileName, filePath);
+			
 			File sdkProperty = new File(sdkLocation, MptConstants.MAYLOON_SDK_PROPERTY);
 			if(!sdkProperty.isFile()) {
 				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_SDK_PROPERTY, sdkLocation));
