@@ -88,14 +88,8 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						// TODO luqiang, skip this release
 						// ProjectUtil.addAntBuildSupport(project);	
 						
-						IFolder folder = project.getFolder(MptConstants.WS_ROOT);
-
-						try {
-							folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-						} catch (CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						// TODO luqiang, add monitor for it.
+						project.refreshLocal(IResource.DEPTH_INFINITE, null);
 						
 						MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 					} catch (CoreException e) {
