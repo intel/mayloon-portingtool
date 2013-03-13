@@ -79,7 +79,7 @@ public class MayloonSDKPreferencePage
 	}
 	
     /**
-     * custom version of DirectoryFieldEditor which validates that the directory really contains an Kona SDK
+     * custom version of DirectoryFieldEditor which validates that the directory really contains an Mayloon SDK
      */
 	private class MayloonSDKDirectoryFieldEditor extends DirectoryFieldEditor {
 		protected Label label;
@@ -118,23 +118,24 @@ public class MayloonSDKPreferencePage
 		private boolean checkSDKValid(String sdkLocation) {
 			
 			// Extractor Mayloon Runtime resource
-			String filePath = MayloonSDK.getSdkLocation();
-			String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
-			ProjectUtil.fileExtractor(filePath, fileName, filePath);
+//			String filePath = MayloonSDK.getSdkLocation();
+//			String fileName = MptConstants.MAYLOON_RUNTIME_ZIP;
+//			
+//			File mayloonZipLib = new File(sdkLocation, MptConstants.MAYLOON_RUNTIME_ZIP);
+//			if (!mayloonZipLib.isFile()) {
+//				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_RUNTIME_ZIP, sdkLocation));
+//				return false;
+//			}
 			
-			File mayloonZipLib = new File(sdkLocation, MptConstants.MAYLOON_ZIP);
-			if (!mayloonZipLib.isFile()) {
-				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_ZIP, sdkLocation));
-				return false;
-			}
 			// unzip mayloon.zip
-			ProjectUtil.fileExtractor(filePath, fileName, filePath);
+//			ProjectUtil.fileExtractor(sdkLocation, fileName, sdkLocation + MptConstants.WS_ROOT);
 			
 			File sdkProperty = new File(sdkLocation, MptConstants.MAYLOON_SDK_PROPERTY);
 			if(!sdkProperty.isFile()) {
 				setErrorMessage(String.format(MPTPreferenceMessages.Can_Not_Find_File_In_SDK, MptConstants.MAYLOON_SDK_PROPERTY, sdkLocation));
 				return false;
 			}
+			
 			FileInputStream stream = null;
 			try {
 				Properties prop = new Properties();

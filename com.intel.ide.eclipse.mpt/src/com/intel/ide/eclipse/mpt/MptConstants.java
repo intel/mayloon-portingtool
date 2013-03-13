@@ -12,7 +12,6 @@ public class MptConstants {
 	public static final String MAYLOON_FRAMEWORK_RES_DIR = "res_sys"; //$NON-NLS-1$	
 	public static final String MAYLOON_JAR_LIB = "mayloon.jar"; //$NON-NLS-1$
 	public static final String MAYLOON_JRE_LIB = "mayloon_jre.jar"; //$NON-NLS-1$
-	public static final String MAYLOON_ZIP = "mayloon.zip"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
 	public static final String MAYLOON_JRE_LIB_NAME = "MayloonJRE"; //$NON-NLS-1$
 	public static final String J2S_DEPLOY_MODE = "j2s.deploy.mode";
