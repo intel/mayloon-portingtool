@@ -466,12 +466,14 @@ public class ProjectUtil {
 				IPath destPath = project.getLocation().append(
 						MptConstants.MAYLOON_SRC_DIR);
 				
+				copyFilesFromPlugin2UserProject(srcPath, destPath);
+				
 				// change pm.installPackage(/**/); to pm.installPackage("convert android application's package name");
 				// for example, pm.installPackage("com.intel.linpack");
 				// fixs mayloon application start entry logic
-				fixsMayloonAppEntry(srcPath.append(MptConstants.MAYLOON_START_ENTRY_JAVA_FILE), packageName);
+				fixsMayloonAppEntry(destPath.append(MptConstants.MAYLOON_START_ENTRY_JAVA_FILE), packageName);
 
-				copyFilesFromPlugin2UserProject(srcPath, destPath);
+				
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
 				MptPluginConsole
@@ -1792,7 +1794,7 @@ public class ProjectUtil {
 			while (emu.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry) emu.nextElement();
 				if (entry.isDirectory()) {
-					new File(filePath + entry.getName()).mkdirs();
+					new File(outputPath + entry.getName()).mkdirs();
 					continue;
 				}
 				BufferedInputStream bis = new BufferedInputStream(
