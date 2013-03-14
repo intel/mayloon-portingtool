@@ -143,7 +143,10 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
 			
 			// copy /bin/classes
-			ProjectUtil.addMayloonCompiledJSFiles(fProject);			
+			ProjectUtil.addMayloonCompiledJSFiles(fProject);	
+			
+			// TODO luqiang, add monitor for it.
+			fProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 			
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

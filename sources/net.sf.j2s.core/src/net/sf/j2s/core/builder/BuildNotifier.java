@@ -144,33 +144,15 @@ public void done() {
 		}
 	}
 	
+	try {
+		currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+	} catch (CoreException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	
 }
 
-//private void performTizenPackage() {
-//	IFolder folder = currentProject.getFolder(WS_ROOT
-//			+ MAYLOON_OUTPUT_DIR);
-//	if (!folder.exists()) {
-//		try {
-//			folder.create(true, true, null);
-//		} catch (CoreException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			return;
-//		}
-//	}
-//	
-//	// generate the .project file of tizen application
-//	
-//	// generate the config.xml file of tizen application
-//	
-//	// copy mayloon runtime resource to mayloon_bin
-//	
-//	// copy mayloon jre folder to mayloon_bin
-//	
-//	// copy mayloon application files to mayloon_bin
-//		
-//}
 
 /**
  * Returns a string describing the problems.

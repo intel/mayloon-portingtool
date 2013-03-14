@@ -329,6 +329,13 @@ public class J2SLaunchingUtil {
 
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));
+			
+			try {
+				javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			MessageDialog.openError(null, "Project Error", "The selected J2S's working folder is not found.");
 		}
