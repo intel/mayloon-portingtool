@@ -517,6 +517,8 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> {
     public void clear() {
         super.clear();
         head = tail = null;
+        valuesCollection = null;
+        keySet = null;
     }
 
     /**
