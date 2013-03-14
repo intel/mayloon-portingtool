@@ -306,9 +306,9 @@ public class ProjectUtil {
 					+ MptConstants.MAYLOON_TIZEN_ICON);
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_TIZEN_ICON).toFile());
 			
-			if (folder != null) {
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-			}
+//			if (folder != null) {
+//				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+//			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
