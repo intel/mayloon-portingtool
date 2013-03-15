@@ -358,6 +358,17 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
             }
 			modCount = fullList.modCount;
 		}
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            Iterator<?> it = iterator();
+            while (it.hasNext()) {
+                Object object = it.next();
+                result = (31 * result) + (object == null ? 0 : object.hashCode());
+            }
+            return result;
+        }
 	}
 
 	/**

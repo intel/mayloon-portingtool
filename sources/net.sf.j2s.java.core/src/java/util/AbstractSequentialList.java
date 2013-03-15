@@ -59,6 +59,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 	 */
 	@Override
     public void add(int location, E object) {
+        if(object == null) {
+            throw new NullPointerException();
+        }
 		listIterator(location).add(object);
 	}
 
@@ -84,6 +87,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 	 */
 	@Override
     public boolean addAll(int location, Collection<? extends E> collection) {
+        if(collection == null) {
+            throw new NullPointerException();
+        }
 		ListIterator<E> it = listIterator(location);
 		Iterator<? extends E> colIt = collection.iterator();
 		int next = it.nextIndex();
@@ -193,4 +199,15 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 		it.set(object);
 		return result;
 	}
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        Iterator<?> it = iterator();
+        while (it.hasNext()) {
+            Object object = it.next();
+            result = (31 * result) + (object == null ? 0 : object.hashCode());
+        }
+        return result;
+    }
 }

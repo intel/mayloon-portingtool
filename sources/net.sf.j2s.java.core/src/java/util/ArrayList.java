@@ -55,6 +55,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 *            the initial capacity of this ArrayList
 	 */
 	public ArrayList(int capacity) {
+        if(capacity < 0) {
+            throw new IllegalArgumentException();
+        }
 		firstIndex = lastIndex = 0;
 		try {
 			array = newElementArray(capacity);
@@ -73,6 +76,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 *            the collection of elements to add
 	 */
 	public ArrayList(Collection<? extends E> collection) {
+        if(collection == null) {
+            throw new NullPointerException();
+        }
 		int size = collection.size();
 		firstIndex = lastIndex = 0;
 		array = newElementArray(size + (size / 10));
@@ -167,6 +173,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
         if (location < 0 || location > size) {
             throw new IndexOutOfBoundsException();
         }
+        if(collection == null){
+            throw new NullPointerException();
+        }
         int growSize = collection.size();
         if (0 < location && location < size) {
             if (array.length - size < growSize) {
@@ -221,6 +230,9 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public boolean addAll(Collection<? extends E> collection) {
+        if(collection == null) {
+            throw new NullPointerException();
+        }
 		int growSize = collection.size();
 		if (growSize > 0) {
 			if (lastIndex > array.length - growSize) {
@@ -679,4 +691,18 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
             array[i] = (E)stream.readObject();
         }
 	}
+
+    /**
+     * Override the hashCode method
+     * */
+    @Override
+    public int hashCode() {
+        int result = 1;
+        Iterator<?> it = iterator();
+        while (it.hasNext()) {
+            Object object = it.next();
+            result = (31 * result) + (object == null ? 0 : object.hashCode());
+        }
+        return result;
+    }
 }

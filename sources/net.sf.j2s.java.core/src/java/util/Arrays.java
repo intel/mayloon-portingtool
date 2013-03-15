@@ -2524,5 +2524,16 @@ public class Arrays {
         public boolean contains(Object o) {
             return indexOf(o) != -1;
         }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            Iterator<?> it = iterator();
+            while (it.hasNext()) {
+                Object object = it.next();
+                result = (31 * result) + (object == null ? 0 : object.hashCode());
+            }
+            return result;
+        }
     }
 }

@@ -61,6 +61,17 @@ public class Collections {
             }
 			throw new IndexOutOfBoundsException();
 		}
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            Iterator<?> it = iterator();
+            while (it.hasNext()) {
+                Object object = it.next();
+                result = (31 * result) + (object == null ? 0 : object.hashCode());
+            }
+            return result;
+        }
 	}
 
 	@SuppressWarnings("unchecked")
@@ -270,6 +281,17 @@ public class Collections {
         public int size() {
 			return 1;
 		}
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            Iterator<?> it = iterator();
+            while (it.hasNext()) {
+                Object object = it.next();
+                result = (31 * result) + (object == null ? 0 : object.hashCode());
+            }
+            return result;
+        }
 	}
 
 	private static final class SingletonMap<K, V> extends AbstractMap<K, V> implements
