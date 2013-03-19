@@ -84,5 +84,7 @@ public class MptConstants {
     public static final String CONVERT_TAG = "Convert";
     // Tag for build message in console
     public static final String BUILD_TAG = "Build";
+    // Tag for export message in console
+    public static final String EXPORT_TAG = "Export";
     
 }

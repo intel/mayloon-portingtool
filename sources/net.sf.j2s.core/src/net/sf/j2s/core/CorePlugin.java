@@ -1,6 +1,7 @@
 package net.sf.j2s.core;
 
 import net.sf.j2s.core.hotspot.InnerHotspotServer;
+import net.sf.j2s.core.utils.CorePluginConsole;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
@@ -25,6 +26,7 @@ public class CorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		CorePluginConsole.initConsoleView();
 		if (!InnerHotspotServer.isServerStarted()) {
 			InnerHotspotServer.getSingletonServer().startServer();
 		}
