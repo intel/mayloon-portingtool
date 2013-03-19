@@ -17,6 +17,8 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import net.sf.j2s.core.utils.CorePluginConsole;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -50,15 +52,9 @@ protected int totalWork;
 protected String previousSubtask;
 private static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 private static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
-private static final String EXPORT_TAG = "Export";
+private static final String BUILD_TAG = "Build";
 private String j2sDeployMode;
 private IProject currentProject;
-
-private static MessageConsole sConsole;
-private static MessageConsoleStream sNormalStream;
-private static MessageConsoleStream sErrorStream;
-private static Color sColorRed;
-private static Formatter sFormatter;
 
 public static int NewErrorCount = 0;
 public static int FixedErrorCount = 0;
@@ -84,41 +80,6 @@ public BuildNotifier(IProgressMonitor monitor, IProject project, String deployMo
 	this.fixedWarningCount = FixedWarningCount;
 	this.workDone = 0;
 	this.totalWork = 1000000;
-	initConsoleView();
-}
-
-/**
- * init MPTConsole for J2S
- */
-
-public void initConsoleView(){
-	IConsole[] IConsole = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
-	this.sConsole = (MessageConsole) IConsole[1];
-	this.sNormalStream = sConsole.newMessageStream();
-	this.sErrorStream = sConsole.newMessageStream();
-	Display display = ConsolePlugin.getDefault().getWorkbench().getDisplay();
-	sColorRed = new Color(display, 0xFF, 0x00, 0x00);
-    display.asyncExec(new Runnable() {
-        public void run() {
-        	sErrorStream.setColor(sColorRed);
-        }
-    });
-	this.sFormatter = new Formatter(){
-		public String format(LogRecord record) {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(String.format("[%1$tF_%1$tT:%1$tL] [%2$s] [%3$s] %4$s\n", 
-                                        Calendar.getInstance(),
-                                        record.getLevel(),
-                                        record.getLoggerName(),
-                                        record.getMessage()));
-			if(record.getThrown() != null){
-				StringWriter writer = new StringWriter();
-				record.getThrown().printStackTrace(new PrintWriter(writer));
-				buffer.append(writer.toString());
-			}
-			return buffer.toString();
-		}
-	};
 }
 
 /**
@@ -182,7 +143,7 @@ public void done() {
 	if (J2S_DEPLOY_MODE_TIZEN.equals(j2sDeployMode)){
 		// Message with ok and cancel button and info icon
 		if (NewErrorCount != 0) {
-			error(EXPORT_TAG, "Project '%1$s' could not be exported for '%2$s'", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			    public void run() {
 				    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -198,13 +159,13 @@ public void done() {
 				}
 			});
 		}else{
-			general(EXPORT_TAG, "Project '%1$s' has been exported for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.general(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode)){
 		if (NewErrorCount != 0) {
-			error(EXPORT_TAG, "Project '%1$s' could not be exported for '%2$s'", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
 		}else{
-			general(EXPORT_TAG, "Project '%1$s' has been exported for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.general(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}
 	
@@ -380,44 +341,5 @@ public void updateProgress(float newPercentComplete) {
 
 public void updateProgressDelta(float percentWorked) {
 	updateProgress(this.percentComplete + percentWorked);
-}
-
-/**
- * Print general message to normal console stream
- * @param tag     Component tag
- * @param format  Format string
- * @param args    Format arguments
- */
-public void general(String tag, String format, Object ...args){
-	LogRecord record = new LogRecord(Level.INFO, String.format(format, args));
-	record.setLoggerName(tag);
-	sNormalStream.print(sFormatter.format(record));
-	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(sConsole);
-}
-
-/**
- * Print warning message to error console stream
- * @param tag     Component tag
- * @param format  Format string
- * @param args    Format arguments
- */
-public void warning(String tag, String format, Object ...args){
-	LogRecord record = new LogRecord(Level.WARNING, String.format(format, args));
-	record.setLoggerName(tag);
-	sErrorStream.print(sFormatter.format(record));
-	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(sConsole);
-}
-
-/**
- * Print error message to error console stream
- * @param tag     Component tag
- * @param format  Format string
- * @param args    Format arguments
- */
-public void error(String tag, String format, Object ...args){
-	LogRecord record = new LogRecord(Level.SEVERE, String.format(format, args));
-	record.setLoggerName(tag);
-	sErrorStream.print(sFormatter.format(record));
-	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(sConsole);
 }
 }
