@@ -281,6 +281,10 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> {
      */
     @Override
     public V put(K key, V value) {
+        return putEntry(key, value);
+    }
+
+    private V putEntry(K key, V value) {
         int index = getModuloHash(key);
         LinkedHashMapEntry<K, V> m = (LinkedHashMapEntry<K, V>) findEntry(key, index);
 
@@ -534,7 +538,7 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> {
         LinkedHashMap<K, V> map = (LinkedHashMap<K, V>) super.clone();
         map.clear();
         for (Map.Entry<K, V> entry : entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
+            map.putEntry(entry.getKey(), entry.getValue());
         }
         return map;
     }
