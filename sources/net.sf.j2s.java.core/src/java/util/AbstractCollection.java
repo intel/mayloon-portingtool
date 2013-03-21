@@ -268,6 +268,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      *                if null is used to invoke this method
 	 */
 	public boolean retainAll(Collection<?> collection) {
+        if(collection == null) {
+            throw new NullPointerException();
+        }
 		boolean result = false;
 		Iterator<?> it = iterator();
 		while (it.hasNext()) {
@@ -324,6 +327,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
 	 */
 	@SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] contents) {
+        if(contents == null) {
+            throw new NullPointerException();
+        }
 		int size = size(), index = 0;
 		if (size > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();

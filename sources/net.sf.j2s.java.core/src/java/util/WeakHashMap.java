@@ -636,6 +636,9 @@ public class WeakHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
+        if(map == null) {
+            throw new NullPointerException();
+        }
         putAllImpl(map);
     }
 

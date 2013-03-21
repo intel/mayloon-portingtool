@@ -195,6 +195,9 @@ public class StringTokenizer implements Enumeration<Object> {
 	 *                if no tokens remain
 	 */
 	public String nextToken(String delims) {
+        if(delims == null) {
+            throw new NullPointerException();
+        }
 		this.delimiters = delims;
 		return nextToken();
 	}

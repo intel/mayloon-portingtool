@@ -291,6 +291,9 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      *                null keys or values
      */
     public void putAll(Map<? extends K, ? extends V> map) {
+        if(map == null) {
+            throw new NullPointerException();
+        }
         for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }

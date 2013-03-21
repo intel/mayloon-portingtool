@@ -489,6 +489,9 @@ public class IdentityHashMap<K, V> extends AbstractMap<K, V> implements
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
+        if(map == null) {
+            throw new NullPointerException();
+        }
         putAllImpl(map);
     }
 

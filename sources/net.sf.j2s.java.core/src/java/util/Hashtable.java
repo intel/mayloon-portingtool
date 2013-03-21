@@ -393,6 +393,9 @@ public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneab
 	 * @see java.lang.Object#equals
 	 */
 	public synchronized boolean containsKey(Object key) {
+        if(key == null) {
+            throw new NullPointerException();
+        }
 		return getEntry(key) != null;
 	}
 
@@ -705,6 +708,9 @@ public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneab
 	 *            the Map to copy mappings from
 	 */
 	public synchronized void putAll(Map<? extends K,? extends V> map) {
+        if(map == null) {
+            throw new NullPointerException();
+        }
 		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
 			put(entry.getKey(), entry.getValue());
 		}
@@ -757,6 +763,9 @@ public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneab
 	 */
 	@Override
     public synchronized V remove(Object key) {
+        if(key == null) {
+            throw new NullPointerException();
+        }
 		int hash = key.hashCode();
 		int index = (hash & 0x7FFFFFFF) % elementData.length;
 		Entry<K, V> last = null;

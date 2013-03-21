@@ -273,6 +273,9 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
         if (location < 0 || location > size) {
             throw new IndexOutOfBoundsException();
         }
+        if(collection == null) {
+            throw new NullPointerException();
+        }
         int adding = collection.size();
         if (adding == 0) {
             return false;
@@ -310,6 +313,9 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
 	 */
 	@Override
     public boolean addAll(Collection<? extends E> collection) {
+        if(collection == null) {
+            throw new NullPointerException();
+        }
 		int adding = collection.size();
 		if (adding == 0) {
             return false;
@@ -748,6 +754,9 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
 	@Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] contents) {
+        if(contents == null) {
+            throw new NullPointerException();
+        }
 		int index = 0;
 		if (size > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();
