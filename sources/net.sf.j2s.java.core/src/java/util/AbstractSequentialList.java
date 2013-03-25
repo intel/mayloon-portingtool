@@ -95,7 +95,6 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 		int next = it.nextIndex();
 		while (colIt.hasNext()) {
 			it.add(colIt.next());
-			it.previous();
 		}
 		return next != it.nextIndex();
 	}
@@ -112,11 +111,10 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 	 */
 	@Override
     public E get(int location) {
-		try {
-			return listIterator(location).next();
-		} catch (NoSuchElementException e) {
-			throw new IndexOutOfBoundsException();
-		}
+        if(location < 0 || location >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        return listIterator(location).next();
 	}
 
 	/**
@@ -163,14 +161,14 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 	 */
 	@Override
     public E remove(int location) {
-		try {
-			ListIterator<E> it = listIterator(location);
-			E result = it.next();
-			it.remove();
-			return result;
-		} catch (NoSuchElementException e) {
-			throw new IndexOutOfBoundsException();
-		}
+        if(location < 0 || location >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        ListIterator<E> it = listIterator(location);
+        E result = it.next();
+        it.remove();
+        return result;
 	}
 
 	/**
@@ -194,6 +192,10 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
 	 */
 	@Override
     public E set(int location, E object) {
+        if(location < 0 || (location >= size())) {
+            throw new IndexOutOfBoundsException();
+        }
+
 		ListIterator<E> it = listIterator(location);
 		E result = it.next();
 		it.set(object);
