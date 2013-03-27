@@ -322,7 +322,7 @@ public class J2SLaunchingUtil {
 
 			generatePostJavaScript(buf, configuration);
 
-			String url = writeBufferToFile(buf, mainType, workingDir, extensionName);
+			String url = writeBufferToFile(buf, projectName, workingDir, extensionName);
 			
 			// TODO luqiang, after compile complete, add mayloon runtime js files
 			addMayloonRuntimeJSFiles(javaProject, projectName);
