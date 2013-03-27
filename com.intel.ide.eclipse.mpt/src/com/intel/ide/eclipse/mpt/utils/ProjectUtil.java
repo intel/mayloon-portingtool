@@ -24,9 +24,21 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
@@ -50,12 +62,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.framework.adaptor.FilePath;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import com.intel.ide.eclipse.mpt.MayloonVersion;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptMessages;
@@ -292,11 +309,13 @@ public class ProjectUtil {
 			folder = getMayloonOutputFolder(project);
 			
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.TIZEN_PROJECT_FILE).toFile());
+			ProjectUtil.fixTizenProjectFile(project, folder.getRawLocation().append(MptConstants.TIZEN_PROJECT_FILE));
 			
 			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
 					+ MptConstants.TIZEN_CONFIGURATION_FILE);
 			
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.TIZEN_CONFIGURATION_FILE).toFile());
+			ProjectUtil.fixTizenConfigurationFile(project, folder.getRawLocation().append(MptConstants.TIZEN_CONFIGURATION_FILE));
 			
 			srcPath = project.getFolder(MptConstants.WS_ROOT
 					+ MptConstants.MAYLOON_START_ENTRY_FILE).getRawLocation();
@@ -314,6 +333,104 @@ public class ProjectUtil {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * change tizen .project file according to user application
+	 * 
+	 * @param project
+	 * @throws CoreException
+	 */
+	public static void fixTizenProjectFile(IProject project, IPath filePath) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setIgnoringElementContentWhitespace(true);
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document projectDocument = builder.parse(filePath.toFile());
+
+			Element projectDescription = projectDocument.getDocumentElement();
+			projectDescription.getElementsByTagName(MptConstants.TIZEN_NAME_ELEMENT_NAME)
+					.item(0).setTextContent(project.getName());
+
+			saveXml(filePath.toString(), projectDocument);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * change tizen config.xml file according to user application
+	 * 
+	 * @param project
+	 */
+	public static void fixTizenConfigurationFile(IProject project,
+			IPath filePath) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setIgnoringElementContentWhitespace(true);
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document configDocument = builder.parse(filePath.toFile());
+
+			Element widget = configDocument.getDocumentElement();
+			widget.setAttribute(MptConstants.TIZEN_ID_ATTRIBUTE_NAMR,
+					MptConstants.TIZEN_WIDGET_ID_DOMAIN + project.getName());
+			widget.getElementsByTagName(MptConstants.TIZEN_NAME_ELEMENT_NAME)
+					.item(0).setTextContent(project.getName());
+
+			Element icon = (Element) widget.getElementsByTagName(
+					MptConstants.TIZEN_ICON_ELEMENT_NAME).item(0);
+			icon.setAttribute(MptConstants.TIZEN_SRC_ATTRIBUTE_NAMR,
+					MptConstants.MAYLOON_TIZEN_ICON);
+
+			Element tizenApp = (Element) widget.getElementsByTagName(
+					MptConstants.TIZEN_APPLICATION_ELEMENT_NAME).item(0);
+			tizenApp.setAttribute(MptConstants.TIZEN_ID_ATTRIBUTE_NAMR,
+					project.getName());
+
+			saveXml(filePath.toString(), configDocument);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * save XML document
+	 * 
+	 * @param filename
+	 * @param document
+	 */
+	public static void saveXml(String fileName, Document doc) {
+		TransformerFactory transFactory = TransformerFactory.newInstance();
+		try {
+			Transformer transformer = transFactory.newTransformer();
+			transformer.setOutputProperty("indent", "yes");
+
+			DOMSource source = new DOMSource();
+			source.setNode(doc);
+			StreamResult result = new StreamResult();
+			result.setOutputStream(new FileOutputStream(fileName));
+			transformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
