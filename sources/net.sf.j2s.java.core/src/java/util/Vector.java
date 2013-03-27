@@ -895,7 +895,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 	 */
 	@Override
     public synchronized E set(int location, E object) {
-		if (location < elementCount) {
+		if (location < elementCount && location >= 0) {
 			E result = (E)elementData[location];
 			elementData[location] = object;
 			return result;
@@ -918,7 +918,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 	 * @see #size
 	 */
 	public synchronized void setElementAt(E object, int location) {
-		if (location < elementCount) {
+		if (location < elementCount && location >= 0) {
             elementData[location] = object;
         } else {
             throw new ArrayIndexOutOfBoundsException(location);
