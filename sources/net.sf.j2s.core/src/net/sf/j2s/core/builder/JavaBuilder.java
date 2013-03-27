@@ -366,6 +366,7 @@ private void cleanup() {
 	this.nameEnvironment = null;
 	this.binaryLocationsPerProject = null;
 	this.lastState = null;
+	this.notifier.resetProblemCounters();
 	this.notifier = null;
 	this.extraResourceFileFilters = null;
 	this.extraResourceFolderFilters = null;
