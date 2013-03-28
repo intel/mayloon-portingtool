@@ -82,7 +82,7 @@
 
 	<target name="init" description="create build directory and copy plugin sources here" depends="set-eclipse">
 		<echo>
-	                    Kdt Package Build
+	                    MPT Package Build
 	            =========================================================================
 	            Base OS                         : ${base.os}
 	            Base WS                         : ${base.ws}
