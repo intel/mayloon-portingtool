@@ -17,6 +17,14 @@ String.getName = Clazz.innerFunctions.getName;
 
 String.serialVersionUID = String.prototype.serialVersionUID = -6849794470754667710;
 
+c$ = Clazz.declareType (String, "CaseInsensitiveComparator", null, [java.util.Comparator, java.io.Serializable]);
+Clazz.overrideMethod (c$, "compare",
+function (str1, str2) {
+    return str1.compareToIgnoreCase (str2);
+}, "~S,~S");
+
+String.CASE_INSENSITIVE_ORDER = String.prototype.CASE_INSENSITIVE_ORDER =  new String.CaseInsensitiveComparator ();
+
 String.prototype.$replace = function (c1, c2) {
 	/*
 	var sp = "\\$.*+{}?^()[]";
