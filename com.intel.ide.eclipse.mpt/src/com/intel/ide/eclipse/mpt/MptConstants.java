@@ -26,7 +26,7 @@ public class MptConstants {
 	public static final String TIZEN_APPLICATION_ELEMENT_NAME = "tizen:application";
 	public static final String TIZEN_WIDGET_ID_DOMAIN = "http://yourdomain/";
 	
-	public static final String MAYLOON_START_ENTRY_FILE = "android.core.Start.html";
+	public static final String MAYLOON_START_ENTRY_FILE = ".html";
 	public static final String MAYLOON_TIZEN_ICON = "Icon.png";
 	public static final String MAYLOON_START_ENTRY_JAVA_FILE = "android/core/Start.java";
 	public static final String MAYLOON_START_ENTRY_BASE = "pm.installPackage(\"/**/\");";

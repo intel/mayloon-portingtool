@@ -317,9 +317,10 @@ public class ProjectUtil {
 			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.TIZEN_CONFIGURATION_FILE).toFile());
 			ProjectUtil.fixTizenConfigurationFile(project, folder.getRawLocation().append(MptConstants.TIZEN_CONFIGURATION_FILE));
 			
-			srcPath = project.getFolder(MptConstants.WS_ROOT
+			srcPath = project.getFolder(MptConstants.WS_ROOT + project.getName()
 					+ MptConstants.MAYLOON_START_ENTRY_FILE).getRawLocation();
-			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(MptConstants.MAYLOON_START_ENTRY_FILE).toFile());
+			ProjectUtil.copyFile(srcPath.toFile(), folder.getRawLocation().append(project.getName()
+					+ MptConstants.MAYLOON_START_ENTRY_FILE).toFile());
 			
 			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
 					+ MptConstants.MAYLOON_TIZEN_ICON);
