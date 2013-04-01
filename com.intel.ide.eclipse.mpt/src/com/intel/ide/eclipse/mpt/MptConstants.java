@@ -21,6 +21,7 @@ public class MptConstants {
 	public static final String TIZEN_CONFIGURATION_FILE = "config.xml";
 	public static final String TIZEN_NAME_ELEMENT_NAME = "name";
 	public static final String TIZEN_ICON_ELEMENT_NAME = "icon";
+	public static final String TIZEN_CONTENT_ELEMENT_NAME = "content";
 	public static final String TIZEN_ID_ATTRIBUTE_NAMR = "id";
 	public static final String TIZEN_SRC_ATTRIBUTE_NAMR = "src";
 	public static final String TIZEN_APPLICATION_ELEMENT_NAME = "tizen:application";
