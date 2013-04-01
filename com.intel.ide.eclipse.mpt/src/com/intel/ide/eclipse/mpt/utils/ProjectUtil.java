@@ -389,6 +389,11 @@ public class ProjectUtil {
 					MptConstants.TIZEN_ICON_ELEMENT_NAME).item(0);
 			icon.setAttribute(MptConstants.TIZEN_SRC_ATTRIBUTE_NAMR,
 					MptConstants.MAYLOON_TIZEN_ICON);
+			
+			Element content = (Element) widget.getElementsByTagName(
+					MptConstants.TIZEN_CONTENT_ELEMENT_NAME).item(0);
+			content.setAttribute(MptConstants.TIZEN_SRC_ATTRIBUTE_NAMR,
+					project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE);
 
 			Element tizenApp = (Element) widget.getElementsByTagName(
 					MptConstants.TIZEN_APPLICATION_ELEMENT_NAME).item(0);
