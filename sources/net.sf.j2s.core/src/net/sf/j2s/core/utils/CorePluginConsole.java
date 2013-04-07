@@ -1,6 +1,7 @@
 package net.sf.j2s.core.utils;
 
 import java.io.Console;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -23,6 +24,10 @@ public class CorePluginConsole {
 	 */
 	private static MessageConsole sConsole;
 	/**
+	 * Successful console stream (text in green)
+	 */
+	private static MessageConsoleStream sSuccessStream;
+	/**
 	 * Normal console stream (text in black)
 	 */
 	private static MessageConsoleStream sNormalStream;
@@ -34,6 +39,10 @@ public class CorePluginConsole {
 	 * Color red
 	 */
 	private static Color sColorRed;
+    /**
+     * Color green
+     */
+    private static Color sColorGreen;
 	/**
 	 * Message formatter
 	 */
@@ -51,14 +60,17 @@ public class CorePluginConsole {
 				sConsole = (MessageConsole) IConsole[i];
 			}
 		}
+		sSuccessStream = sConsole.newMessageStream();
 		sNormalStream = sConsole.newMessageStream();
 		sErrorStream = sConsole.newMessageStream();
 		Display display = ConsolePlugin.getDefault().getWorkbench()
 				.getDisplay();
 		sColorRed = new Color(display, 0xFF, 0x00, 0x00);
+		sColorGreen = new Color(display, 0x00, 0xFF, 0x00);
 		display.asyncExec(new Runnable() {
 			public void run() {
 				sErrorStream.setColor(sColorRed);
+				sSuccessStream.setColor(sColorGreen);
 			}
 		});
 		sFormatter = new Formatter() {
@@ -92,6 +104,19 @@ public static void general(String tag, String format, Object ...args){
 }
 
 /**
+ * Print successful message to normal console stream
+ * @param tag     Component tag
+ * @param format  Format string
+ * @param args    Format arguments
+ */
+public static void success(String tag, String format, Object ...args){
+	LogRecord record = new LogRecord(Level.INFO, String.format(format, args));
+	record.setLoggerName(tag);
+	sSuccessStream.print(sFormatter.format(record));
+	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(sConsole);
+}
+
+/**
  * Print warning message to error console stream
  * @param tag     Component tag
  * @param format  Format string
@@ -116,4 +141,55 @@ public static void error(String tag, String format, Object ...args){
 	sErrorStream.print(sFormatter.format(record));
 	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(sConsole);
 }
+/**
+ * Return normal console stream
+ * @return MessageConsoleStream
+ */
+public static MessageConsoleStream getNormalStream(){
+	return sNormalStream;
+}
+
+/**
+ * Return error console stream
+ * @return MessageConsoleStream
+ */
+public static MessageConsoleStream getErrorStream(){
+	return sErrorStream;
+}
+
+/**
+ * @return the sSuccessStream
+ */
+public static MessageConsoleStream getsSuccessStream() {
+	return sSuccessStream;
+}
+
+/**
+ * Return message formatter
+ * @return Formatter
+ */
+public static Formatter getFormatter(){
+	return sFormatter;
+}
+
+/**
+ * Destroy
+ */
+public static void destroy(){
+	sColorRed.dispose();
+	sColorGreen.dispose();
+	try {
+		sNormalStream.close();
+	} catch (IOException e) {
+	}
+	try {
+		sErrorStream.close();
+	} catch (IOException e) {
+	}
+	try {
+		sSuccessStream.close();
+	} catch (IOException e) {
+	}
+}
+
 }

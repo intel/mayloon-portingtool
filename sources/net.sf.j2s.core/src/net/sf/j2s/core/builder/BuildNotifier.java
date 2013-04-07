@@ -159,13 +159,13 @@ public void done() {
 				}
 			});
 		}else{
-			CorePluginConsole.general(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode)){
 		if (NewErrorCount != 0) {
 			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
 		}else{
-			CorePluginConsole.general(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}
 	
