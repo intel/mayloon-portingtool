@@ -1880,7 +1880,7 @@ public class ProjectUtil {
 	 */
 	public static String getDeployMode(IProject project) {
 		String j2sDeployMode = null;
-		File file = new File(project.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
+		File file = new File(project.getLocation().toFile(), MptConstants.MAYLOON_BUILD_PROPERTIES);//new File(project.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
 		if (!file.exists()) {
 			/*
 			 * The file .j2s is a marker for Java2Script to compile JavaScript
@@ -1890,7 +1890,7 @@ public class ProjectUtil {
 		Properties props = new Properties();
 		try {
 			props.load(new FileInputStream(file));
-			j2sDeployMode = props.getProperty(MptConstants.J2S_DEPLOY_MODE, null);
+			j2sDeployMode = props.getProperty(MptConstants.MAYLOON_DEPLOY_MODE, null);
 			
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();

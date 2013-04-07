@@ -55,11 +55,15 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 							return;
 						}
 						
-						if (!ProjectUtil.checkVersionMatch(project)) {
-							return;
-						}
+						// luqiang, comment for test
+//						if (!ProjectUtil.checkVersionMatch(project)) {
+//							return;
+//						}
 						
 						// generate .j2s configuration file
+						// move to partial conversion complete
+						// MayloonPropertiesBuilder.j2sPropBuild(project);
+						
 						MayloonPropertiesBuilder.mayloonPropBuild(project);
 						
 						String deployMode = ProjectUtil.getDeployMode(project);
@@ -83,9 +87,9 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 						ProjectUtil.addAndroidOutput2Mayloon(project, deployMode, packageName, false);
 						
 						// clear android generated gen/ folder
-						ProjectUtil.clearAndroidGenFolder(project);			
+						ProjectUtil.clearAndroidGenFolder(project);
 						
-						// TODO luqiang, skip this release
+						// TODO luqiang, skip in this release
 						// ProjectUtil.addAntBuildSupport(project);	
 						
 						// TODO luqiang, add monitor for it.

@@ -56,8 +56,8 @@ public class MayloonNature implements IProjectNature {
 		desc.setBuildSpec((ICommand[])commands.toArray(new ICommand[commands.size()]));
 		project.setDescription(desc, null);
 		
-		addToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
-		removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+//		addToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
+//		removeFromBuildSpec(project, JavaCore.BUILDER_ID);
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
@@ -126,7 +126,7 @@ public class MayloonNature implements IProjectNature {
             project.setDescription(description, null);
             MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
             
-            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+//            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");

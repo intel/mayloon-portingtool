@@ -152,7 +152,7 @@ public class J2SLaunchingUtil {
 	               //load a properties file
 	    		prop.load(new FileInputStream(location));
 	    		
-	    		deployMode = prop.getProperty(MptConstants.J2S_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
+	    		deployMode = prop.getProperty(MptConstants.MAYLOON_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
 	    		
 	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, gj2sLibPath + "java.runtime.j2x");
 	    		MayloonPropertiesBuilder.saveProperty(prop, javaProject);
@@ -292,7 +292,7 @@ public class J2SLaunchingUtil {
 	               //load a properties file
 	    		prop.load(new FileInputStream(location));
 	    		
-	    		deployMode = prop.getProperty(MptConstants.J2S_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
+	    		deployMode = prop.getProperty(MptConstants.MAYLOON_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
 	    		String javaRuntimeJ2x = gj2sLibPath + "java.runtime.j2x";
 	    		String j2sResourceList = prop.getProperty(MptConstants.J2S_RESROUCE_LIST, null);
 	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, javaRuntimeJ2x + ", " + j2sResourceList);
