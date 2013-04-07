@@ -2476,6 +2476,590 @@ public class Arrays {
     }
 
     /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code false}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static boolean[] copyOfRange(boolean[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        boolean[] result = new boolean[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code (byte) 0}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static byte[] copyOfRange(byte[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        byte[] result = new byte[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code '\\u0000'}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static char[] copyOfRange(char[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        char[] result = new char[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code 0.0d}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static double[] copyOfRange(double[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        double[] result = new double[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code 0}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static int[] copyOfRange(int[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        int[] result = new int[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code 0L}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static long[] copyOfRange(long[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        long[] result = new long[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code (short) 0}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static short[] copyOfRange(short[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        short[] result = new short[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code 0.0f}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     * @j2sIgnore
+     */
+    public static float[] copyOfRange(float[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        float[] result = new float[resultLength];
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Copies elements from {@code original} into a new array, from indexes start (inclusive) to
+     * end (exclusive). The original order of elements is preserved.
+     * If {@code end} is greater than {@code original.length}, the result is padded
+     * with the value {@code null}.
+     *
+     * @param original the original array
+     * @param start the start index, inclusive
+     * @param end the end index, exclusive
+     * @return the new array
+     * @throws ArrayIndexOutOfBoundsException if {@code start < 0 || start > original.length}
+     * @throws IllegalArgumentException if {@code start > end}
+     * @throws NullPointerException if {@code original == null}
+     * @since 1.6
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] copyOfRange(T[] original, int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException();
+        }
+        if (original == null) {
+            throw new NullPointerException();
+        }
+        int originalLength = original.length;
+        if (start < 0 || start > originalLength) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        int resultLength = end - start;
+        int copyLength = Math.min(resultLength, originalLength - start);
+        T[] result = (T[]) Array.newInstance(original.getClass().getComponentType(), resultLength);
+        System.arraycopy(original, start, result, 0, copyLength);
+        return result;
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code boolean[]} passed.
+     * The result is surrounded by brackets ({@code &quot;[]&quot;}), each
+     * element is converted to a {@code String} via the
+     * {@link String#valueOf(boolean)} and separated by {@code &quot;, &quot;}.
+     * If the array is {@code null}, then {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code boolean} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(boolean[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return toString(array);
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code byte[]} passed. The
+     * result is surrounded by brackets ({@code &quot;[]&quot;}), each element
+     * is converted to a {@code String} via the {@link String#valueOf(int)} and
+     * separated by {@code &quot;, &quot;}. If the array is {@code null}, then
+     * {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code byte} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(byte[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code char[]} passed. The
+     * result is surrounded by brackets ({@code &quot;[]&quot;}), each element
+     * is converted to a {@code String} via the {@link String#valueOf(char)} and
+     * separated by {@code &quot;, &quot;}. If the array is {@code null}, then
+     * {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code char} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(char[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code double[]} passed.
+     * The result is surrounded by brackets ({@code &quot;[]&quot;}), each
+     * element is converted to a {@code String} via the
+     * {@link String#valueOf(double)} and separated by {@code &quot;, &quot;}.
+     * If the array is {@code null}, then {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code double} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(double[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code float[]} passed.
+     * The result is surrounded by brackets ({@code &quot;[]&quot;}), each
+     * element is converted to a {@code String} via the
+     * {@link String#valueOf(float)} and separated by {@code &quot;, &quot;}.
+     * If the array is {@code null}, then {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code float} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(float[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code int[]} passed. The
+     * result is surrounded by brackets ({@code &quot;[]&quot;}), each element
+     * is converted to a {@code String} via the {@link String#valueOf(int)} and
+     * separated by {@code &quot;, &quot;}. If the array is {@code null}, then
+     * {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code int} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(int[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code long[]} passed. The
+     * result is surrounded by brackets ({@code &quot;[]&quot;}), each element
+     * is converted to a {@code String} via the {@link String#valueOf(long)} and
+     * separated by {@code &quot;, &quot;}. If the array is {@code null}, then
+     * {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code long} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(long[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code short[]} passed.
+     * The result is surrounded by brackets ({@code &quot;[]&quot;}), each
+     * element is converted to a {@code String} via the
+     * {@link String#valueOf(int)} and separated by {@code &quot;, &quot;}. If
+     * the array is {@code null}, then {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code short} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     * @j2sIgnore
+     */
+    public static String toString(short[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
+     * Creates a {@code String} representation of the {@code Object[]} passed.
+     * The result is surrounded by brackets ({@code &quot;[]&quot;}), each
+     * element is converted to a {@code String} via the
+     * {@link String#valueOf(Object)} and separated by {@code &quot;, &quot;}.
+     * If the array is {@code null}, then {@code &quot;null&quot;} is returned.
+     *
+     * @param array
+     *            the {@code Object} array to convert.
+     * @return the {@code String} representation of {@code array}.
+     * @since 1.5
+     */
+    public static String toString(Object[] array) {
+        if (array == null) {
+            return "null";
+        }
+        if (array.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        sb.append(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            sb.append(", ");
+            sb.append(array[i]);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    /**
      * @serial include
      */
     private static class ArrayList extends AbstractList
