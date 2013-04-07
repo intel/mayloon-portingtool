@@ -1,13 +1,19 @@
 package com.intel.ide.eclipse.mpt.wizards.export;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.plaf.ButtonUI;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -23,9 +29,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+
+import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 
@@ -40,11 +49,21 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	 * Text for project name 
 	 */
 	private Text fProjectText;
+	
+	/**
+	 * Text for export path 
+	 */
+	private Text fDestinationText;
+	
 	/**
 	 * Button for browsing project
 	 */
 	private Button fBrowseButton;
 	
+	/**
+	 * Button for browsing export path
+	 */
+	private Button fDestinationButton;
 	/**
 	 * Constructor
 	 * @param wizard
@@ -62,6 +81,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		composite.setLayout(new GridLayout(1, false));
 		
 		createProjectComponent(composite);
+		createDestinationComponent(composite);
 		//createSignatureComponent(composite);
 		
         this.setErrorMessage(null);
@@ -69,6 +89,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
         this.setPageComplete(false);
         this.setControl(composite);
 	}
+
 	/**
 	 * Create project component, containing a text and browse button for project selection
 	 * @param parent
@@ -85,7 +106,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		fProjectText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProjectText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
-				onChange();
+				onProjectChange();
 			}
 		});
 		if(fWizard.getProject() != null){
@@ -101,6 +122,47 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		});
 	}
 	
+	/**
+	 * Create path component, containing a text and browse button for export destination selection
+	 * @param parent
+	 */
+	private void createDestinationComponent(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout gl = new GridLayout(3, false);
+		gl.marginHeight = gl.marginWidth = 0;
+		composite.setLayout(gl);
+		
+		new Label(composite, SWT.NONE).setText("Export destination:");
+		fDestinationText = new Text(composite, SWT.BORDER);
+		fDestinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fDestinationText.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				onDestinationChange();
+			}
+		});
+		
+		String text = this.fProjectText.getText().trim();
+		if (text.length() != 0) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject project = root.getProject(text);
+			if(project != null && project.exists()){
+				try {
+					IFolder folder = getOutputFolder(project);
+					fDestinationText.setText(folder.getRawLocation().toString());
+				} catch (CoreException e1) {
+					this.setErrorMessage("Can not get project default output folder");
+				} 
+			}
+		}
+		fDestinationButton = new Button(composite, SWT.NONE);
+		fDestinationButton.setText("Browse...");
+		fDestinationButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				onBrowseDestination();
+			}
+		});
+	}
 //	@Override
 //	public IWizardPage getNextPage() {
 //		return fWizard.getSignatureRequired() ? 
@@ -109,7 +171,8 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	@Override
 	public void onVisible(){
 		super.onVisible();
-		onChange();
+		onProjectChange();
+		onDestinationChange();
 	}
 	/**
 	 * Browse project and choose
@@ -117,7 +180,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	protected void onBrowseProject(){
 		ILabelProvider labelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(this.getShell(), labelProvider);
-		dialog.setTitle("Choose Kona Project");
+		dialog.setTitle("Choose Mayloon Project");
 		dialog.setMessage("Please choose a Kona project to open.");
 		ArrayList<IJavaProject> projects = new ArrayList<IJavaProject>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -146,9 +209,23 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		}
 	}
 	/**
-	 * Perform a variety of checks.
+	 * Browse file system and choose the destination directory
 	 */
-	protected void onChange(){
+	protected void onBrowseDestination(){
+		DirectoryDialog dialog = new DirectoryDialog (this.getShell(), SWT.OPEN); 
+		dialog.setText("Export Destination Selection");
+		if(this.fDestinationText.getText() != null){
+			dialog.setFilterPath(this.fDestinationText.getText().trim());
+		}
+		String selecteddir=dialog.open(); 
+		if(selecteddir != null){
+			this.fDestinationText.setText(selecteddir);
+		}
+	}
+	/**
+	 * Perform a variety of project checks.
+	 */
+	protected void onProjectChange(){
 		this.setMessage(null);
 		this.setErrorMessage(null);
 		this.setPageComplete(false);
@@ -194,6 +271,24 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		}
 	}
 	/**
+	 * Perform a variety of destination checks.
+	 */
+	protected void onDestinationChange(){
+		String text = this.fDestinationText.getText().trim();
+		if(text.length() == 0){
+			this.setErrorMessage("Please select a destination directory to export.");
+		}
+		else{
+			File destinationDir = new File(text);
+			if(!destinationDir.isDirectory()){
+				this.setErrorMessage("The destination directory doesn't exist.");
+			}
+			else{
+				this.fWizard.setDestinationFile(destinationDir);
+			}
+		}
+	}
+	/**
 	 * Find the first marker of specified type and properties from project. 
 	 * @param project          Project to search
 	 * @param type             Type of marker
@@ -225,5 +320,19 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			MptPluginLogger.throwable(e);
 		}
 		return null;
+	}
+	/**
+	 * Get outputFolder of project. 
+	 * @param project          Project to search
+	 * @return IFolder         output folder
+	 * @throws CoreException 
+	 */
+	private IFolder getOutputFolder(IProject project) throws CoreException {
+		IFolder folder = project.getFolder(MptConstants.WS_ROOT
+				+ MptConstants.MAYLOON_OUTPUT_DIR);
+		if (!folder.exists()) {
+			folder.create(true, true, null);
+		}
+		return folder;
 	}
 }
