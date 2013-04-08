@@ -326,7 +326,7 @@ public class J2SLaunchingUtil {
 			
 			// TODO luqiang, after compile complete, add mayloon runtime js files
 			addMayloonRuntimeJSFiles(javaProject, projectName);
-			MptPluginConsole.general(MptConstants.RUN_TAG, "%1$s has been generated at %2$s.", projectName + MptConstants.MAYLOON_START_ENTRY_FILE, url);
+			MptPluginConsole.general(MptConstants.RUN_TAG, "%1$s has been generated at %2$s", projectName + MptConstants.MAYLOON_START_ENTRY_FILE, url);
 
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));

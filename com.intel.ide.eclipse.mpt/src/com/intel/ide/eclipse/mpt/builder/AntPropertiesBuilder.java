@@ -107,6 +107,7 @@ public class AntPropertiesBuilder {
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		ArrayList<File> sources = new ArrayList<File>();
+		ArrayList<File> destinations = new ArrayList<File>();
 		ArrayList<IJavaProject> projects = new ArrayList<IJavaProject>();
 		ArrayList<File> libraries = new ArrayList<File>();
 		for(IClasspathEntry entry : fProject.getRawClasspath()) {
