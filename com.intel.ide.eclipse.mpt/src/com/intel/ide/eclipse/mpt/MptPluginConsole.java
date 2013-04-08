@@ -27,17 +27,25 @@ public class MptPluginConsole {
 	 */
 	private static MessageConsole sConsole;
 	/**
+	 * Successful console stream (text in green)
+	 */
+	private static MessageConsoleStream sSuccessStream;
+	/**
 	 * Normal console stream (text in black)
 	 */
 	private static MessageConsoleStream sNormalStream;
 	/**
 	 * Error console stream (text in red)
 	 */
-    private static MessageConsoleStream sErrorStream;
+    private static MessageConsoleStream sErrorStream; 
     /**
      * Color red
      */
     private static Color sColorRed;
+    /**
+     * Color green
+     */
+    private static Color sColorGreen;
     /**
      * Message formatter
      */
@@ -52,11 +60,14 @@ public class MptPluginConsole {
 		consoleManager.addConsoles(new IConsole[]{sConsole});
 		sNormalStream = sConsole.newMessageStream();
 		sErrorStream = sConsole.newMessageStream();
+		sSuccessStream = sConsole.newMessageStream();
 		Display display = MptPlugin.getDisplay();
 		sColorRed = new Color(display, 0xFF, 0x00, 0x00);
+		sColorGreen = new Color(display, 0x00, 0xFF, 0x00);
         display.asyncExec(new Runnable() {
             public void run() {
             	sErrorStream.setColor(sColorRed);
+            	sSuccessStream.setColor(sColorGreen);
             }
         });
         consoleManager.showConsoleView(sConsole);
@@ -108,6 +119,19 @@ public class MptPluginConsole {
 		LogRecord record = new LogRecord(Level.INFO, String.format(format, args));
 		record.setLoggerName(tag);
 		sNormalStream.print(sFormatter.format(record));
+		showConsoleView();
+	}
+	
+	/**
+	 * Print successful message to normal console stream
+	 * @param tag     Component tag
+	 * @param format  Format string
+	 * @param args    Format arguments
+	 */
+	public static void success(String tag, String format, Object ...args){
+		LogRecord record = new LogRecord(Level.INFO, String.format(format, args));
+		record.setLoggerName(tag);
+		sSuccessStream.print(sFormatter.format(record));
 		showConsoleView();
 	}
 	
@@ -183,6 +207,13 @@ public class MptPluginConsole {
 	}
 	
 	/**
+	 * @return the sSuccessStream
+	 */
+	public static MessageConsoleStream getsSuccessStream() {
+		return sSuccessStream;
+	}
+
+	/**
 	 * Return message formatter
 	 * @return Formatter
 	 */
@@ -195,12 +226,17 @@ public class MptPluginConsole {
 	 */
 	public static void destroy(){
 		sColorRed.dispose();
+		sColorGreen.dispose();
 		try {
 			sNormalStream.close();
 		} catch (IOException e) {
 		}
 		try {
 			sErrorStream.close();
+		} catch (IOException e) {
+		}
+		try {
+			sSuccessStream.close();
 		} catch (IOException e) {
 		}
 	}
