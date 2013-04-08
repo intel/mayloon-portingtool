@@ -326,6 +326,7 @@ public class J2SLaunchingUtil {
 			
 			// TODO luqiang, after compile complete, add mayloon runtime js files
 			addMayloonRuntimeJSFiles(javaProject, projectName);
+			MptPluginConsole.general(MptConstants.RUN_TAG, "%1$s has been generated at %2$s.", projectName + MptConstants.MAYLOON_START_ENTRY_FILE, url);
 
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));
@@ -336,6 +337,7 @@ public class J2SLaunchingUtil {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			MptPluginConsole.success(MptConstants.RUN_TAG, "Project '%1$s' has been run as Mayloon Application successfully.", projectName);
 		} else {
 			MessageDialog.openError(null, "Project Error", "The selected J2S's working folder is not found.");
 		}
