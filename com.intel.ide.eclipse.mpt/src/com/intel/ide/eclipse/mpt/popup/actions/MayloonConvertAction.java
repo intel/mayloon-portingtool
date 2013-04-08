@@ -112,6 +112,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 								// TODO luqiang, add monitor for it.
 								project.refreshLocal(IResource.DEPTH_INFINITE, null);
 								monitor.worked(1);
+								MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 							} catch (CoreException e) {
 								MptPluginLogger.throwable(e);
 								MptPluginConsole.error(MptConstants.CONVERT_TAG, "Project '%1$s' could not be converted due to cause {%2$s}", project.getName(), e.getMessage());
@@ -122,7 +123,6 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 					};
 					convertJob.setUser(true);
 					convertJob.schedule();
-					MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
 				}
 			}
 		}

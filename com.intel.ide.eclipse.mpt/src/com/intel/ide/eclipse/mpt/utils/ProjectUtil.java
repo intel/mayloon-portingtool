@@ -1944,5 +1944,15 @@ public class ProjectUtil {
 			e.printStackTrace();
 		}
 	}
+
+	public static void addMayloonOutput2Destination(IProject project,
+			File destinationFile) throws CoreException {
+		IFolder folder = getMayloonOutputFolder(project);
+		if(!destinationFile.toString().equals(folder.getRawLocation().toString())){
+			System.out.println("copying .....");
+			copyFolder(folder.getRawLocation().toString(), destinationFile.toString(), true);
+			deleteFiles(folder.getRawLocation());
+		}
+	}
 	
 }

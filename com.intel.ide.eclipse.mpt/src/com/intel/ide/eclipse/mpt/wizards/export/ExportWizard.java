@@ -10,7 +10,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,6 +41,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
      * Project to export
      */
 	private IProject fProject;
+	
 	/**
 	 * Wizard pages in this export wizard
 	 */
@@ -134,7 +137,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
 			String packageName = ProjectUtil.extractPackageFromManifest(fProject);
 			
-			// generate the .project, config.xml, Icon.png and android.core.Start.html file of tizen application
+			// generate the .project, config.xml, Icon.png and project name.html file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
 			// copy mayloon runtime resource to mayloon_bin
 			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
@@ -146,8 +149,12 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);	
 			
+			// copy exprot files to destination folder, and delete mayloon_bin 
+			ProjectUtil.addMayloonOutput2Destination(fProject, fDestinationFile);
+			
 			// TODO luqiang, add monitor for it.
 			fProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+			
 			MptPluginConsole.general(MptConstants.EXPORT_TAG, "Project '%1$s' has been exported successfully.", fProject.getName());
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
@@ -188,6 +195,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	public IProject getProject(){
 		return this.fProject;
 	}
+	
 	/**
 	 * Return project selection page
 	 * @return IWizardPage
@@ -195,6 +203,15 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	public IWizardPage getProjectSelectionPage(){
 		return this.fProjectSelectionPage;
 	}
+	
+	/**
+     * Set destination file to export
+     * @param destinationFile
+     */
+	public void setDestinationFile(File destinationFile) {
+		this.fDestinationFile = destinationFile;
+	}
+
 	/**
 	 * Return destination file
 	 * @return File
