@@ -331,10 +331,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
             throw new NullPointerException();
         }
 		int size = size(), index = 0;
-		if (size > contents.length) {
+		/*if (size > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();
 			contents = (T[])Array.newInstance(ct, size);
-        }
+        }*/
 		for (E entry: this) {
 			contents[index++] = (T)entry;
         }

@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Canvas"],"$wt.custom.CLabel",["$wt.events.DisposeListener","$wt.graphics.Color","$.Point","$wt.internal.browser.OS"],function(){
-$WTC$$.registerCSS ("$wt.custom.CLabel"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.custom.CLabel", ".clabel-icon {\nposition:absolute;\nbackground-position:center center;\nbackground-repeat:no-repeat;\nz-index:2;\n}\n.clabel-text {\ncursor:default;\nfont-family:Tahoma, Arial, sans-serif;\nfont-size:8pt;\nz-index:3;\n}\n.clabel-line {\nz-index:4;\n}\n.clabel-border {\nborder-style:solid;\nborder-width:1px;\nfont-size:0;\nposition:absolute;\n}\n.clabel-background {\nposition:absolute;\nfont-size:0;\nmargin:0;\npadding:0;\nz-index:1;\n}\n.clabel-background-block {\nposition:absolute;\nfont-size:0;\nmargin:0;\npadding:0;\nz-index:0;\n}\n.swt-custom-clabel {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.align = 16384;
 this.hIndent = 3;
 this.vIndent = 3;

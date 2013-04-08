@@ -1012,13 +1012,10 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 	@Override
     @SuppressWarnings("unchecked")
     public synchronized <T> T[] toArray(T[] contents) {
-        if(contents == null) {
-            throw new NullPointerException();
-        }
-		if (elementCount > contents.length) {
+		/*if (elementCount > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();
 			contents = (T[]) Array.newInstance(ct, elementCount);
-        }
+        }*/
 		System.arraycopy(elementData, 0, contents, 0, elementCount);
 		if (elementCount < contents.length) {
             contents[elementCount] = null;

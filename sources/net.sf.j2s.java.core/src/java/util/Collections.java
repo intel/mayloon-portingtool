@@ -1238,10 +1238,10 @@ public class Collections {
             public <T> T[] toArray(T[] contents) {
 				int size = c.size(), index = 0;
 				Iterator<Map.Entry<K, V>> it = iterator();
-				if (size > contents.length) {
+				/*if (size > contents.length) {
                     Class<?> ct = contents.getClass().getComponentType();
 					contents = (T[])Array.newInstance(ct, size);
-                }
+                }*/
 				while (index < size) {
 					contents[index++] = (T)it.next();
                 }
@@ -2567,10 +2567,10 @@ public class Collections {
      * @return specified object
      */
     static <E> E checkType(E obj, Class<E> type) {
-        if (!type.isInstance(obj)) {
+        /*if (!type.isInstance(obj)) {
             throw new ClassCastException("Attempt to insert " + obj.getClass()
                     + " element into collection with element type " + type);
-        }
+        }*/
         return obj;
     }
 
@@ -3237,10 +3237,10 @@ public class Collections {
             @SuppressWarnings("unchecked")
             public <T> T[] toArray(T[] array) {
                 int thisSize = size();
-                if (array.length < thisSize) {
+                /*if (array.length < thisSize) {
                     Class<?> ct = array.getClass().getComponentType();
                     array = (T[]) Array.newInstance(ct, thisSize);
-                }
+                }*/
                 Iterator<?> it = iterator();
                 for (int i = 0; i < thisSize; i++) {
                     array[i] = (T) it.next();

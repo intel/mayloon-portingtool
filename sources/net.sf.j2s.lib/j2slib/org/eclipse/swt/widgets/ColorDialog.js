@@ -634,82 +634,82 @@ this.l=0;
 $_Z(this,arguments);
 },$wt.widgets.ColorDialog,"HSL");
 $_K(c$,
-function(a,b,c){
-this.h=a;
-this.s=b;
-this.l=c;
+function(h,s,l){
+this.h=h;
+this.s=s;
+this.l=l;
 },"~N,~N,~N");
 $_M(c$,"toRGB",
 function(){
-var a=0;
+var r=0;
+var g=0;
 var b=0;
-var c=0;
-var d;
-var e;
-var f=this.h/240;
-var g=this.s/240;
-var h=this.l/240;
-if(h==0){
-a=b=c=0;
+var temp1;
+var temp2;
+var H=this.h/240;
+var S=this.s/240;
+var L=this.l/240;
+if(L==0){
+r=g=b=0;
 }else{
-if(g==0){
-a=b=c=h;
+if(S==0){
+r=g=b=L;
 }else{
-e=((h<=0.5)?h*(1.0+g):h+g-(h*g));
-d=2.0*h-e;
-var i=[f+0.3333333333333333,f,f-0.3333333333333333];
-var j=[0,0,0];
-for(var k=0;k<3;k++){
-if(i[k]<0)i[k]+=1.0;
-if(i[k]>1)i[k]-=1.0;
-if(6.0*i[k]<1.0)j[k]=d+(e-d)*i[k]*6.0;
-else if(2.0*i[k]<1.0)j[k]=e;
-else if(3.0*i[k]<2.0)j[k]=(d+(e-d)*((0.6666666666666666)-i[k])*6.0);
-else j[k]=d;
+temp2=((L<=0.5)?L*(1.0+S):L+S-(L*S));
+temp1=2.0*L-temp2;
+var t3=[H+0.3333333333333333,H,H-0.3333333333333333];
+var clr=[0,0,0];
+for(var i=0;i<3;i++){
+if(t3[i]<0)t3[i]+=1.0;
+if(t3[i]>1)t3[i]-=1.0;
+if(6.0*t3[i]<1.0)clr[i]=temp1+(temp2-temp1)*t3[i]*6.0;
+else if(2.0*t3[i]<1.0)clr[i]=temp2;
+else if(3.0*t3[i]<2.0)clr[i]=(temp1+(temp2-temp1)*((0.6666666666666666)-t3[i])*6.0);
+else clr[i]=temp1;
 }
-a=j[0];
-b=j[1];
-c=j[2];
-}}return new $wt.graphics.RGB(Math.round((255*a)),Math.round((255*b)),Math.round((255*c)));
+r=clr[0];
+g=clr[1];
+b=clr[2];
+}}return new $wt.graphics.RGB(Math.round((255*r)),Math.round((255*g)),Math.round((255*b)));
 });
 $_M(c$,"fromRGB",
-function(a){
-var b=(a.red/255);
-var c=(a.green/255);
-var d=(a.blue/255);
-var e;
-var f;
-var g;
-if(b>c){
-e=c;
-f=b;
+function(rgb){
+var var_R=(rgb.red/255);
+var var_G=(rgb.green/255);
+var var_B=(rgb.blue/255);
+var var_Min;
+var var_Max;
+var del_Max;
+if(var_R>var_G){
+var_Min=var_G;
+var_Max=var_R;
 }else{
-e=b;
-f=c;
-}if(d>f)f=d;
-if(d<e)e=d;
-g=f-e;
-var h=0;
-var i;
-var j;
-j=(f+e)/2;
-if(g==0){
-h=0;
-i=0;
+var_Min=var_R;
+var_Max=var_G;
+}if(var_B>var_Max)var_Max=var_B;
+if(var_B<var_Min)var_Min=var_B;
+del_Max=var_Max-var_Min;
+var H=0;
+var S;
+var L;
+L=(var_Max+var_Min)/2;
+if(del_Max==0){
+H=0;
+S=0;
 }else{
-if(j<0.5)i=g/(f+e);
-else i=g/(2-f-e);
-var k=(((f-b)/ 6) + (g /2))/g;
-var l=(((f-c)/ 6) + (g /2))/g;
-var m=(((f-d)/ 6) + (g /2))/g;
-if(b==f)h=m-l;
-else if(c==f)h=(0.33333334)+k-m;
-else if(d==f)h=(0.6666667)+l-k;
-if(h<0)h+=1;
-if(h>1)h-=1;
-}this.h=Math.round((240*h));
-this.s=Math.round((i*240));
-this.l=Math.round((j*240));
+if(L<0.5)S=del_Max/(var_Max+var_Min);
+else S=del_Max/(2-var_Max-var_Min);
+var del_R=(((var_Max-var_R)/ 6) + (del_Max /2))/del_Max;
+var del_G=(((var_Max-var_G)/ 6) + (del_Max /2))/del_Max;
+var del_B=(((var_Max-var_B)/ 6) + (del_Max /2))/del_Max;
+if(var_R==var_Max)H=del_B-del_G;
+else if(var_G==var_Max)H=(0.33333334)+del_R-del_B;
+else if(var_B==var_Max)H=(0.6666667)+del_G-del_R;
+if(H<0)H+=1;
+if(H>1)H-=1;
+}this.h=Math.round((240*H));
+this.s=Math.round((S*240));
+this.l=Math.round((L*240));
 },"$wt.graphics.RGB");
 c$=$_P();
 c$.customColors=c$.prototype.customColors=new Array(16);

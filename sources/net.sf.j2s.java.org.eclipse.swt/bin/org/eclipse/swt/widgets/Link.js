@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Control","$wt.graphics.RGB"],"$wt.widgets.Link",["java.lang.Character","$wt.graphics.Point","$wt.internal.RunnableCompatibility","$wt.internal.browser.OS","$wt.widgets.Event","$.TypedListener"],function(){
-$WTC$$.registerCSS ("$wt.widgets.Link"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.widgets.Link", ".link-default {\nposition:absolute;\nleft:0;\ntop:0;\ncursor:default;\nfont-family:Tahoma, Arial, sans-serif;\nfont-size:8pt;\nwhite-space:normal;\noverflow:hidden;\nbackground-color:buttonface;\n}\n.link-default a {\ncolor:rgb(0,51,153);\n}\n.link-disabled a {\ncolor:gray;\ncursor:default;\n}\n.link-default span {\ntext-decoration:underline;\n}\n.link-default a span {\ntext-decoration:underline;\n}\n.link-wrap {\nwhite-space:normal;\noverflow:hidden;\n}\n.link-border {\nborder-style:inset;\nborder-width:2px;\nborder-color:white;\n}\n.swt-widgets-link {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.text = null;
 this.cachedText = null;
 this.textSizeCached = false;

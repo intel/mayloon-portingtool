@@ -173,7 +173,8 @@ public class DataInputStream extends FilterInputStream implements DataInput {
      * @see DataOutput#writeDouble(double)
      */
     public final double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
+//        return Double.longBitsToDouble(readLong());
+    	return 0.0;
     }
 
     /**
@@ -188,7 +189,8 @@ public class DataInputStream extends FilterInputStream implements DataInput {
      * @see DataOutput#writeFloat(float)
      */
     public final float readFloat() throws IOException {
-        return Float.intBitsToFloat(readInt());
+//        return Float.intBitsToFloat(readInt());
+    	return (float) 0;
     }
 
     /**

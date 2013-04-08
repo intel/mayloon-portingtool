@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.DesktopItem"],"$wt.widgets.MaximizedTitle",["$wt.internal.browser.OS","$wt.widgets.Decorations","$.Display"],function(){
-$WTC$$.registerCSS ("$wt.widgets.MaximizedTitle"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.widgets.MaximizedTitle", ".shell-manager-topbar-container {\nposition:absolute;\nleft:0;\ntop:0;\nborder:1px solid windowframe;\nborder-top:0 none transparent;\nbackground-color:buttonface;\npadding:2px;\nheight:24px;\n/*font-size:10pt;\nheight:1.6em;\nmin-height:24px;\n_height:1.7em;*/\nwidth:320px;\nz-index:6174;\ntext-align:left;\nfont-size:0;\nmargin:0;\nopacity:0.85;\nfilter:Alpha(Opacity=85);\n}\n*:first-child+html .shell-manager-topbar-container { /* IE7 */\n/*height:1.7em;*/\n}\n.swt-widgets-maximizedtitle {\nwidth:324px;\n}");
+ c$ = $_C (function () {
 this.lastMaximizedShell = null;
 this.topbarEl = null;
 this.hMaxClick = null;

@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Scrollable"],"$wt.widgets.List",["$wt.graphics.Point","$wt.internal.browser.OS","$wt.widgets.TypedListener"],function(){
-$WTC$$.registerCSS ("$wt.widgets.List"); c$ = $_T ($wt.widgets, "List", $wt.widgets.Scrollable);
+$WTC$$.registerCSS ("$wt.widgets.List", ".list-default {\nposition:absolute;\nleft:0;\ntop:0;\nfont-family:Tahoma, Arial, sans-serif;\nfont-size:8pt;\n}\n.list-border {\nborder:2px inset gray;\n}\n.swt-widgets-list {\nwidth:324px;\n}\n");
+ c$ = $_T ($wt.widgets, "List", $wt.widgets.Scrollable);
 $_M (c$, "add", 
 function (string) {
 if (this.handle != null) {

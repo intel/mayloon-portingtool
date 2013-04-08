@@ -219,9 +219,9 @@ public class ObjectStreamField implements Comparable<Object> {
      */
     public Class<?> getType() {
         Class<?> cl = getTypeInternal();
-        if (isDeserialized && !cl.isPrimitive()) {
+       /* if (isDeserialized && !cl.isPrimitive()) {
             return Object.class;
-        }
+        }*/
         return cl;
     }
 
@@ -303,8 +303,9 @@ public class ObjectStreamField implements Comparable<Object> {
      *         the type of this field is a regular class.
      */
     public boolean isPrimitive() {
-        Class<?> t = getTypeInternal();
-        return t != null && t.isPrimitive();
+        /*Class<?> t = getTypeInternal();
+        return t != null && t.isPrimitive();*/
+    	return true;
     }
 
     /**

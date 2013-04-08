@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Control"],"$wt.widgets.Sash",["$wt.graphics.Point","$wt.internal.dnd.DragAndDrop","$.SashDND","$wt.widgets.Event","$.TypedListener"],function(){
-$WTC$$.registerCSS ("$wt.widgets.Sash"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.widgets.Sash", ".sash-horizontal-default {\nposition:absolute;\ncursor:e-resize;\nwidth:4px;\nfont-size:0;\nz-index:100;\n}\n.sash-vertical-default {\nposition:absolute;\ncursor:s-resize;\nheight:4px;\nfont-size:0;\nz-index:100;\n}\n.sash-border {\nborder: 1px inset white;\n}\n.sash-mouse-down {\nbackground-color:gray;\nz-index:100;\n}\n.swt-widgets-sash {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.dragging = false;
 this.lastX = 0;
 this.lastY = 0;

@@ -640,10 +640,10 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] contents) {
 		int size = size();
-		if (size > contents.length) {
+		/*if (size > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();
 			contents = (T[]) Array.newInstance(ct, size);
-        }
+        }*/
 		System.arraycopy(array, firstIndex, contents, 0, size);
 		if (size < contents.length) {
             contents[size] = null;
@@ -695,7 +695,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
     /**
      * Override the hashCode method
      * */
-    @Override
+   /* @Override
     public int hashCode() {
         int result = 1;
         Iterator<?> it = iterator();
@@ -704,5 +704,5 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
             result = (31 * result) + (object == null ? 0 : object.hashCode());
         }
         return result;
-    }
+    }*/
 }

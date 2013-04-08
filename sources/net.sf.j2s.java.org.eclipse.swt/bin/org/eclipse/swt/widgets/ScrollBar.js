@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Widget"],"$wt.widgets.ScrollBar",["$wt.graphics.Point","$.Rectangle","$wt.internal.RunnableCompatibility","$wt.internal.browser.OS","$wt.widgets.Event","$.TypedListener"],function(){
-$WTC$$.registerCSS ("$wt.widgets.ScrollBar"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.widgets.ScrollBar", "/* scrolled composite */\n.vscroll-default{\noverflow-y:scroll;\n}\n.hscroll-default{\noverflow-x:scroll;\n}\n.swt-widgets-scrollbar {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.parent = null;
 this.increment = 0;
 this.pageIncrement = 0;

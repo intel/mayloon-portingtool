@@ -55,9 +55,10 @@ public final class StrictMath {
 	 * @j2sNative return Math.abs (d);
 	 */
 	public static double abs(double d) {
-		long bits = Double.doubleToLongBits(d);
+		/*long bits = Double.doubleToLongBits(d);
 		bits &= 0x7fffffffffffffffL;
-		return Double.longBitsToDouble(bits);
+		return Double.longBitsToDouble(bits);*/
+		return 0.0;
 	}
 
 	/**
@@ -71,9 +72,10 @@ public final class StrictMath {
 	 * @j2sIgnore
 	 */
 	public static float abs(float f) {
-		int bits = Float.floatToIntBits(f);
+		/*int bits = Float.floatToIntBits(f);
 		bits &= 0x7fffffff;
-		return Float.intBitsToFloat(bits);
+		return Float.intBitsToFloat(bits);*/
+		return (float) 0;
 	}
 
 	/**
@@ -315,9 +317,9 @@ public final class StrictMath {
 		if (d1 != d2)
 			return Double.NaN;
 		/* max( +0.0,-0.0) == +0.0 */
-		if (d1 == 0.0
+		/*if (d1 == 0.0
 				&& ((Double.doubleToLongBits(d1) & Double.doubleToLongBits(d2)) & 0x8000000000000000L) == 0)
-			return 0.0;
+			return 0.0;*/
 		return d1;
 	}
 
@@ -342,9 +344,9 @@ public final class StrictMath {
 		if (f1 != f2)
 			return Float.NaN;
 		/* max( +0.0,-0.0) == +0.0 */
-		if (f1 == 0.0f
+		/*if (f1 == 0.0f
 				&& ((Float.floatToIntBits(f1) & Float.floatToIntBits(f2)) & 0x80000000) == 0)
-			return 0.0f;
+			return 0.0f;*/
 		return f1;
 	}
 
@@ -401,9 +403,9 @@ public final class StrictMath {
 		if (d1 != d2)
 			return Double.NaN;
 		/* min( +0.0,-0.0) == -0.0 */
-		if (d1 == 0.0
+		/*if (d1 == 0.0
 				&& ((Double.doubleToLongBits(d1) | Double.doubleToLongBits(d2)) & 0x8000000000000000l) != 0)
-			return 0.0 * (-1.0);
+			return 0.0 * (-1.0);*/
 		return d1;
 	}
 
@@ -428,9 +430,9 @@ public final class StrictMath {
 		if (f1 != f2)
 			return Float.NaN;
 		/* min( +0.0,-0.0) == -0.0 */
-		if (f1 == 0.0f
+		/*if (f1 == 0.0f
 				&& ((Float.floatToIntBits(f1) | Float.floatToIntBits(f2)) & 0x80000000) != 0)
-			return 0.0f * (-1.0f);
+			return 0.0f * (-1.0f);*/
 		return f1;
 	}
 

@@ -392,16 +392,16 @@ public class Arrays {
      * @j2sIgnore
      */
     private static void sort2(double a[], int fromIndex, int toIndex) {
-        final long NEG_ZERO_BITS = Double.doubleToLongBits(-0.0d);
-        /*
+        /*final long NEG_ZERO_BITS = Double.doubleToLongBits(-0.0d);
+        
          * The sort is done in three phases to avoid the expense of using
          * NaN and -0.0 aware comparisons during the main sort.
-         */
+         
 
-        /*
+        
          * Preprocessing phase:  Move any NaN's to end of array, count the
          * number of -0.0's, and turn them into 0.0's. 
-         */
+         
         int numNegZeros = 0;
         int i = fromIndex, n = toIndex;
         while(i < n) {
@@ -431,7 +431,7 @@ public class Arrays {
             // j is now one less than the index of the FIRST zero
             for (int k=0; k<numNegZeros; k++)
                 a[++j] = -0.0d;
-        }
+        }*/
     }
 
 
@@ -439,16 +439,16 @@ public class Arrays {
      * @j2sIgnore
      */
     private static void sort2(float a[], int fromIndex, int toIndex) {
-        final int NEG_ZERO_BITS = Float.floatToIntBits(-0.0f);
-        /*
+        /*final int NEG_ZERO_BITS = Float.floatToIntBits(-0.0f);
+        
          * The sort is done in three phases to avoid the expense of using
          * NaN and -0.0 aware comparisons during the main sort.
-         */
+         
 
-        /*
+        
          * Preprocessing phase:  Move any NaN's to end of array, count the
          * number of -0.0's, and turn them into 0.0's. 
-         */
+         
         int numNegZeros = 0;
         int i = fromIndex, n = toIndex;
         while(i < n) {
@@ -478,7 +478,7 @@ public class Arrays {
             // j is now one less than the index of the FIRST zero
             for (int k=0; k<numNegZeros; k++)
                 a[++j] = -0.0f;
-        }
+        }*/
     }
 
 
@@ -1202,10 +1202,11 @@ public class Arrays {
      * @j2sIgnore
      */
     private static Object cloneSubarray(Object[] a, int from, int to) {
-        int n = to - from;
+        /*int n = to - from;
         Object result = Array.newInstance(a.getClass().getComponentType(), n);
         System.arraycopy(a, from, result, 0, n);
-        return result;
+        return result;*/
+    	return null;
     }
 
     /**
@@ -1221,13 +1222,13 @@ public class Arrays {
 	int length = high - low;
 
 	// Insertion sort on smallest arrays
-        if (length < INSERTIONSORT_THRESHOLD) {
+       /* if (length < INSERTIONSORT_THRESHOLD) {
             for (int i=low; i<high; i++)
                 for (int j=i; j>low &&
                  ((Comparable)dest[j-1]).compareTo((Comparable)dest[j])>0; j--)
                     swap(dest, j, j-1);
             return;
-        }
+        }*/
 
         // Recursively sort halves of dest into src
         int destLow  = low;
@@ -1662,18 +1663,18 @@ public class Arrays {
             } else if (midVal > key) {
                 cmp = 1;    // Neither val is NaN, thisVal is larger
             } else {
-                long midBits = Double.doubleToLongBits(midVal);
+                /*long midBits = Double.doubleToLongBits(midVal);
                 long keyBits = Double.doubleToLongBits(key);
                 cmp = (midBits == keyBits ?  0 : // Values are equal
                        (midBits < keyBits ? -1 : // (-0.0, 0.0) or (!NaN, NaN)
                         1));                     // (0.0, -0.0) or (NaN, !NaN)
-            }
+*/            }
 
-	    if (cmp < 0)
+	    /*if (cmp < 0)
 		low = mid + 1;
 	    else if (cmp > 0)
 		high = mid - 1;
-	    else
+	    else*/
 		return mid; // key found
 	}
 	return -(low + 1);  // key not found.
@@ -1718,19 +1719,19 @@ public class Arrays {
                 cmp = -1;   // Neither val is NaN, thisVal is smaller
             } else if (midVal > key) {
                 cmp = 1;    // Neither val is NaN, thisVal is larger
-            } else {
+            } else {/*
                 int midBits = Float.floatToIntBits(midVal);
                 int keyBits = Float.floatToIntBits(key);
                 cmp = (midBits == keyBits ?  0 : // Values are equal
                        (midBits < keyBits ? -1 : // (-0.0, 0.0) or (!NaN, NaN)
                         1));                     // (0.0, -0.0) or (NaN, !NaN)
-            }
+*/            }
 
-	    if (cmp < 0)
+	    /*if (cmp < 0)
 		low = mid + 1;
 	    else if (cmp > 0)
 		high = mid - 1;
-	    else
+	    else*/
 		return mid; // key found
 	}
 	return -(low + 1);  // key not found.
@@ -2048,9 +2049,9 @@ public class Arrays {
         if (a2.length != length)
             return false;
 
-        for (int i=0; i<length; i++)
+       /* for (int i=0; i<length; i++)
 	    if (Double.doubleToLongBits(a[i])!=Double.doubleToLongBits(a2[i]))
-                return false;
+                return false;*/
 
         return true;
     }
@@ -2084,9 +2085,9 @@ public class Arrays {
         if (a2.length != length)
             return false;
 
-        for (int i=0; i<length; i++)
+        /*for (int i=0; i<length; i++)
 	    if (Float.floatToIntBits(a[i])!=Float.floatToIntBits(a2[i]))
-                return false;
+                return false;*/
 
         return true;
     }

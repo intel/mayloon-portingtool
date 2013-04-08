@@ -13,12 +13,6 @@
  * @create Nov 5, 2005
  *******/
 
-/**
-Provides the base java to javascript interprete model
-
-@module J2SBasic
-**/
-
 if (window["Clazz"] == null) {
 /*
  * The following *-# are used to compress the JavaScript file into small file.
@@ -43,34 +37,16 @@ if (window["Clazz"] == null) {
  #-*/
 /**
  * Class Clazz. All the methods are static in this class.
- *
- * @class Clazz
- * @static
  */
 /* static */
 Class = Clazz = function () {
 };
 
-/**
- * Class NullOjbect.  Nothing is implemented in this class. It just a object means Null java object.
- *
- * @static
- */
 NullObject = function () {
 };
 
-/**
- * Class JavaObject.  The alias name for Java Root Object. It's value is assgined by javascript Object.
- *
- * @static
- */
 JavaObject = Object;
 
-/**
- * Clazz supportsNativeObject perperty. assigned by  window["j2s.object.native"].
- * @property supportsNativeObject
- * @protected
- */
 /* protected */
 Clazz.supportsNativeObject = window["j2s.object.native"];
 
@@ -78,22 +54,10 @@ if (Clazz.supportsNativeObject) {
 	JavaObject = function () {};
 }
 
-/**
- * Implmented java equlas function in JavaObject.
- *
- * @method JavaObject.prototype.equals
- * @param any of javascript object
- */
 JavaObject.prototype.equals = function (obj) {
 	return this == obj;
 };
 
-/**
- * Implmented java hashCode function in JavaObject.
- *
- * @method JavaObject.prototype.hashCode
- * @return the hashCode of this JavaObject 
- */
 JavaObject.prototype.hashCode = function () {
 	try {
 		return this.toString ().hashCode ();
@@ -106,22 +70,10 @@ JavaObject.prototype.hashCode = function () {
 	}
 };
 
-/**
- * Implmented java  getClass function in JavaObject.
- *
- * @method JavaObject.prototype.getClass
- * @return Clazz.getClass(this)
- */
 JavaObject.prototype.getClass = function () {
 	return Clazz.getClass (this);
 };
 
-/**
- * Implmented java clone function in JavaObject.
- *
- * @method JavaObject.prototype.clone
- * @return the clone object using this object's constructor
- */
 JavaObject.prototype.clone = function () {
 	var o = new this.constructor ();
 	for (var i in this) {
@@ -133,45 +85,12 @@ JavaObject.prototype.clone = function () {
 /*
  * Methods for thread in Object
  */
-/**
- * Implmented java thread function in JavaObject. No implmentation!!!!
- *
- * @method JavaObject.prototype.finalize
- * @return undefine
- */
 JavaObject.prototype.finalize = function () {};
-
-/**
- * Implmented java thread function in JavaObject. No implmentation!!!!
- *
- * @method JavaObject.prototype.notify
- * @return undefine
- */
 JavaObject.prototype.notify = function () {};
-
-/**
- * Implmented java thread function in JavaObject. No implmentation!!!!
- *
- * @method JavaObject.prototype.notifyAll
- * @return undefine
- */
 JavaObject.prototype.notifyAll = function () {};
-
-/**
- * Implmented java thread function in JavaObject. No implmentation!!!!
- *
- * @method JavaObject.prototype.wait
- * @return undefine
- */
 JavaObject.prototype.wait = function () {};
 
 JavaObject.prototype.to$tring = Object.prototype.toString;
-/**
- * Implmented java toString function in JavaObject using javascript Object to String default implmentation.
- *
- * @method JavaObject.prototype.toString
- * @return user define's __CLASS_NAME__ or this.to$tring(it is refer to Object.prototype.toString).
- */
 JavaObject.prototype.toString = function () {
 	if (this.__CLASS_NAME__ != null) {
 		return "[" + this.__CLASS_NAME__ + " object]";
@@ -200,9 +119,8 @@ if (Clazz.supportsNativeObject) {
 InternalFunction = Object;
 
 /**
- * Return the class name of the given class or object. Clazz
+ * Return the class name of the given class or object.
  *
- * @method getClassName 
  * @param clazzHost given class or object
  * @return class name
  */
@@ -291,13 +209,11 @@ Clazz.getClassName = function (clazzHost) {
 		}
 	}
 };
-
 /**
  * Return the class of the given class or object.
  *
- * @method getClass
  * @param clazzHost given class or object
- * @return the clazzHost's class
+ * @return class name
  */
 /* public */
 Clazz.getClass = function (clazzHost) {
@@ -341,13 +257,8 @@ Clazz.getClass = function (clazzHost) {
 	}
 };
 
-/**
+/*
  * Be used to copy members of class
- *
- * @method extendsProperties
- * @param hostThis
- * @param hostSuper
- * @protected
  */
 /* protected */
 /*-# extendsProperties -> eP #-*/
@@ -361,14 +272,6 @@ Clazz.extendsProperties = function (hostThis, hostSuper) {
 	}
 };
 
-/** 
- * Be used to check the function whether is a inner function in hostSuper
- * 
- * @method checkInnerFunction
- * @param hostSuper
- * @param funName
- * @private
- */
 /* private */
 /*-# checkInnerFunction -> cIF #-*/
 Clazz.checkInnerFunction = function (hostSuper, funName) {
@@ -381,13 +284,8 @@ Clazz.checkInnerFunction = function (hostSuper, funName) {
 	return false;
 };
 
-/**
+/*
  * Be used to copy members of interface
- *
- * @method implementsProperties
- * @param hostThis
- * @param hostSuper
- * @protected
  */
 /* protected */
 /*-# implementsProperties -> ip #-*/
@@ -431,13 +329,10 @@ Clazz.inheritArgs = new Clazz.args4InheritClass ();
  * Inherit class with "extends" keyword and also copy those static members. 
  * Example, as in Java, if NAME is a static member of ClassA, and ClassB 
  * extends ClassA then ClassB.NAME can be accessed in some ways.
- * see, Clazz.extendsProperties, Clazz.inheritArgs
  *
- * @method inheritClass
  * @param clazzThis child class to be extended
  * @param clazzSuper super class which is inherited from
  * @param objSuper super class instance
- * @protected
  */
 /* protected */
 /*-#
@@ -476,9 +371,7 @@ Clazz.inheritClass = function (clazzThis, clazzSuper, objSuper) {
  * As in JavaScript there are on "implements" keyword implemented, a property
  * of "implementz" is added to the class to record the interfaces the class
  * is implemented.
- * see, Clazz.implementz, Clazz.implementsProperties
  * 
- * @method implementOf
  * @param clazzThis the class to implement
  * @param interfacez Array of interfaces
  */
@@ -510,22 +403,11 @@ Clazz.implementOf = function (clazzThis, interfacez) {
 
 /**
  * TODO: More should be done for interface's inheritance
- * 
- * @method extendInterface
- * @deprecated It is not implmented by now!!!
  */
 /* public */
 Clazz.extendInterface = Clazz.implementOf;
 
 /* protected */
-/**
- * Be used to be caculated the extends level between two clazz by getInheritedLevel
- * 
- * @method equalsOrExtendsLevel
- * @param clazzThis
- * @param clazzAncestor
- * @protected
- */
 /*-#
  # equalsOrExtendsLevel -> eOE 
  #
@@ -548,14 +430,6 @@ Clazz.equalsOrExtendsLevel = function (clazzThis, clazzAncestor) {
 };
 
 /* protected */
-/**
- * Get the inherited level between two clazz, default supported max inherited level is 10.
- *
- * @method getInheritedLevel
- * @param clazzTarget
- * @param clazzBase
- * @protected
- */
 /*-#
  # getInheritedLevel -> gIL 
  #
@@ -632,8 +506,7 @@ Clazz.getInheritedLevel = function (clazzTarget, clazzBase) {
  * Implements Java's keyword "instanceof" in JavaScript's way.
  * As in JavaScript part of the object inheritance is implemented in only-
  * JavaScript way.
- * 
- * @method instanceOf
+ *
  * @param obj the object to be tested
  * @param clazz the class to be checked
  * @return whether the object is an instance of the class
@@ -661,8 +534,7 @@ Clazz.instanceOf = function (obj, clazz) {
  * Call super method of the class. 
  * The same effect as Java's expression:
  * <code> super.* () </code>
- *
- * @method superCall
+ * 
  * @param objThis host object
  * @param clazzThis class of declaring method scope. It's hard to determine 
  * which super class is right class for "super.*()" call when it's in runtime
@@ -785,11 +657,6 @@ Clazz.superCall = function (objThis, clazzThis, funName, funParams) {
  * Call super constructor of the class. 
  * The same effect as Java's expression: 
  * <code> super () </code>
- *
- * @method superConstructor
- * @param objThis
- * @param clazzThis
- * @param funParams
  */
 /* public */
 Clazz.superConstructor = function (objThis, clazzThis, funParams) {
@@ -805,9 +672,6 @@ Clazz.superConstructor = function (objThis, clazzThis, funParams) {
  * This class will be used as an implementation of Java's casting way.
  * For example,
  * <code> this.call ((String) null); </code>
- *
- * @method CastedNull
- * @param asClazz
  */
 /* protcted */
 Clazz.CastedNull = function (asClazz) {
@@ -833,8 +697,7 @@ Clazz.CastedNull = function (asClazz) {
 /**
  * API for Java's casting null.
  * @see Clazz.CastedNull
- * 
- * @method castNullAs
+ *
  * @param asClazz given class
  * @return an instance of class Clazz.CastedNull
  */
@@ -846,29 +709,16 @@ Clazz.castNullAs = function (asClazz) {
 /** 
  * MethodException will be used as a signal to notify that the method is
  * not found in the current clazz hierarchy.
- *
- * @method MethodException
- * @return exception message, "The static Clazz instance can not found the method!"
- * @private
  */
 /* private */
 Clazz.MethodException = function () {
-    // uncommented by luqiang.
-	
+	/*
 	this.message = "The static Clazz instance can not found the method!";
 	this.toString = function () {
 		return this.message;
 	};
-	
+	*/
 };
-
-/**
- * MethodNotFoundException, the detail method information and clazz information should be attched in the future.
- * 
- * @method MethodNotFoundException
- * @return message "MethodNotFoundException"
- * @protected
- *
 /* protected */
 Clazz.MethodNotFoundException = function () {
 	this.toString = function () {
@@ -876,12 +726,6 @@ Clazz.MethodNotFoundException = function () {
 	};
 };
 
-/**
- * Be used to get function params types
- *
- * @method getParamsType
- * @return joined param type string, seperated by '\\'
- */
 /* private */
 /*x-# getParamsType -> gPT #-x*/
 Clazz.getParamsType = function (funParams) {
@@ -902,13 +746,11 @@ Clazz.getParamsType = function (funParams) {
 	//params.hasCastedNull = hasCastedNull;
 	return params;
 };
-
 /**
  * Search the given class prototype, find the method with the same
  * method name and the same parameter signatures by the given 
  * parameters, and then run the method with the given parameters.
  *
- * @method searchAndExecuteMethod
  * @param objThis the current host object
  * @param claxxRef the current host object's class
  * @param fxName the method name
@@ -916,7 +758,6 @@ Clazz.getParamsType = function (funParams) {
  * @return the result of the specified method of the host object,
  * the return maybe void.
  * @throws Clazz.MethodNotFoundException if no matched method is found
- * @protected
  */
 /* protected */
 /*-# searchAndExecuteMethod -> saem #-*/
@@ -1004,7 +845,7 @@ Clazz.searchAndExecuteMethod = function (objThis, claxxRef, fxName, funParams) {
 			fxName, params.typeString);
 };
 
-/**
+/*
  * Internet Explorer will result the following expression as 1, while the
  * other browser will have result of 2.
  * Consider IE will take extra CPU times on #substring(1) method, the
@@ -1017,16 +858,6 @@ Clazz.ie$plit = "\\2".split (/\\/).length == 1;
 Clazz.tracingCalling = false;
 /*# x<< #*/
 
-/**
- * Core implementaion of SearchAndExecute API.
- *
- * @method tryToSearchAndExecute
- * @param objThis
- * @param clazzFun
- * @param params
- * @param fx
- *
- */
 /* private */
 /*-# tryToSearchAndExecute -> tsae #-*/
 Clazz.tryToSearchAndExecute = function (objThis, clazzFun, params, funParams/*, 
@@ -1177,12 +1008,10 @@ Clazz.initializingException = false;
 /**
  * Search the existed polymorphic methods to get the matched method with
  * the given parameter types.
- * 
- * @method searchMethod
+ *
  * @param existedMethods Array of string which contains method parameters
  * @param paramTypes Array of string that is parameter type.
  * @return string of method parameters seperated by "\\"
- * @private
  */
 /* private */
 /*-# 
@@ -1206,7 +1035,6 @@ Clazz.searchMethod = function (roundOne, paramTypes) {
 	var resultOne = roundOne;
 	*/
 	//var roundOne = existedMethods;
-    
 	/*
 	 * Filter out all the fitted methods for the given parameters
 	 */
@@ -1260,14 +1088,12 @@ Clazz.searchMethod = function (roundOne, paramTypes) {
 };
 
 /**
- * Generate delegating function for the given method name. see Clazz.searchAndExecuteMethod
- * 
- * @method generateDelegatingMethod
+ * Generate delegating function for the given method name.
+ *
  * @param claxxRef the specified class for the method
  * @funName method name of the specified method
  * @return the method delegate which will try to search the method
  * from the given class by the parameters
- * @private
  */
 /* private */
 /*-# generateDelegatingMethod -> gDM #-*/
@@ -1288,7 +1114,6 @@ Clazz.generateDelegatingMethod = function (claxxRef, funName) {
 
 SAEM = Clazz.searchAndExecuteMethod;
 
-
 /* private */
 Clazz.expExpandParameters = function ($0, $1) {
 	if ($1 == 'N') {
@@ -1305,13 +1130,9 @@ Clazz.expExpandParameters = function ($0, $1) {
 	return "Unknown";
 };
 
-/**
+/*
  * Other developers may need to extend this formatParameters method
  * to deal complicated situation.
- * 
- * @method formatParameters
- * @param funParams
- * @protected
  */
 /* protected */
 Clazz.formatParameters = function (funParams) {
@@ -1329,16 +1150,14 @@ Clazz.formatParameters = function (funParams) {
 	}
 };
 
-/**
+/*
  * Override the existed methods which are in the same name.
  * Overriding methods is provided for the purpose that the JavaScript
  * does not need to search the whole hierarchied methods to find the
  * correct method to execute.
  * Be cautious about this method. Incorrectly using this method may
  * break the inheritance system.
- * Replace old methods with new method, no super methods are kept.
- * 
- * @method overrideMethod
+ *
  * @param clazzThis host class in which the method to be defined
  * @param funName method name
  * @param funBody function object, e.g function () { ... }
@@ -1358,12 +1177,10 @@ Clazz.overrideMethod = function (clazzThis, funName, funBody, funParams) {
 	return funBody;
 };
 
-/**
+/*
  * Define method for the class with the given method name and method
  * body and method parameter signature.
- * Core Method
- * 
- * @method defineMethod
+ *
  * @param clazzThis host class in which the method to be defined
  * @param funName method name
  * @param funBody function object, e.g function () { ... }
@@ -1500,7 +1317,6 @@ Clazz.defineMethod = function (clazzThis, funName, funBody, funParams) {
  * Make constructor for the class with the given function body and parameters
  * signature.
  * 
- * @method makeConstructor
  * @param clazzThis host class
  * @param funBody constructor body
  * @param funParams constructor parameters signature
@@ -1515,16 +1331,14 @@ Clazz.makeConstructor = function (clazzThis, funBody, funParams) {
 	//clazzThis.con$truct = clazzThis.prototype.con$truct = null;
 };
 
-/**
+/*
  * all root packages. e.g. java.*, org.*, com.*
- * @property allPackage
  */
 /* protected */
 Clazz.allPackage = new Object ();
 
 /**
  * Will be used to keep value of whether the class is defined or not.
- * @property allClasses
  */
 /* protected */
 Clazz.allClasses = new Object ();
@@ -1535,23 +1349,12 @@ Clazz.lastPackage = null;
 /* protected */
 Clazz.unloadedClasses = new Array ();
 
-/**
- * Be used to check Class whether is unloaded.
- *
- * @method isClassUnloaded
- */
 /* public */
 Clazz.isClassUnloaded = function (clzz) {
 	var thisClassName = Clazz.getClassName (clzz, true);
 	return Clazz.unloadedClasses[thisClassName] != null;
 };
 
-/**
- * Implementation of Java package define scheme.
- *
- * @method declarePackage
- * @param pkgName
- */
 /* public */
 Clazz.declarePackage = function (pkgName) {
 	if (Clazz.lastPackageName == pkgName) {
@@ -1580,13 +1383,6 @@ Clazz.declarePackage = function (pkgName) {
 	}
 };
 
-/**
- * Be used to get object type from {typeStr} param
- *
- * @method evalType
- * @param typeStr
- * @param isQualified
- */
 /* protected */
 /*x-# evalType -> eT  #-x*/
 Clazz.evalType = function (typeStr, isQualified) {
@@ -1631,9 +1427,7 @@ Clazz.evalType = function (typeStr, isQualified) {
 
 /**
  * Define a class or interface.
- * Core Method, export class/interface to DOM windows scope
  *
- * @method defineType
  * @param qClazzName String presents the qualified name of the class
  * @param clazzFun Function of the body
  * @param clazzParent Clazz to inherit from, may be null
@@ -1654,14 +1448,12 @@ Clazz.defineType = function (qClazzName, clazzFun, clazzParent, interfacez) {
 		var clazzName = qClazzName.substring (idx + 1);
 		if (pkg[clazzName] != null) {
 			// already defined! Should throw exception!
-            console.log("already defined! Should throw exception!");
 			return pkg[clazzName];
 		}
 		pkg[clazzName] = clazzFun;
 	} else {
 		if (window[qClazzName] != null) {
 			// already defined! Should throw exception!
-            console.log("already defined! Should throw exception!");
 			return window[qClazzName];
 		}
 		window[qClazzName] = clazzFun;
@@ -1676,12 +1468,6 @@ Clazz.defineType = function (qClazzName, clazzFun, clazzParent, interfacez) {
 	return clazzFun;
 };
 
-/** 
- * Cross Browser Supported for Safari
- *
- * @property isSafari
- * @property isSafari4Plus
- */
 Clazz.isSafari = (navigator.userAgent.indexOf ("Safari") != -1);
 Clazz.isSafari4Plus = false;
 if (Clazz.isSafari) {
@@ -1694,14 +1480,6 @@ if (Clazz.isSafari) {
 	}
 }
 
-/**
- * Be used to instantialized a class object using args.
- *
- * @method instantialize
- * @param objThis
- * @param args
- * @protected
- */
 /* protected */
 Clazz.instantialize = function (objThis, args) {
 	if (args != null && args.length == 1 && args[0] != null 
@@ -1768,8 +1546,6 @@ Clazz.instantialize = function (objThis, args) {
 /*
  * static final member of interface may be a class, which may
  * be function.
- *
- * @property innerFunctionNames
  */
 /* protected */
 /*-# innerFunctionNames -> iFN #-*/
@@ -1778,17 +1554,8 @@ Clazz.innerFunctionNames = [
 	"makeConstructor" /*# x<< #*/
 ];
 
-/**
- * Static methods for Clazz
- *
- * @property innerFunctions
- * @property equals
- * @property getName
- * @property getClassLoader
- * @property getResourceAsStream 
- * @property defineMethod 
- * @property defineStaticMethod
- * @property makeConstructor
+/*
+ * Static methods
  */
 /*x-# innerFunctions -> inF #-x*/
 Clazz.innerFunctions = {
@@ -1953,15 +1720,6 @@ Clazz.innerFunctions = {
 	/*# x<< #*/
 };
 
-/**
- * Be used to decorate function 
- *
- * @method decorateFunction
- * @param clazzFun
- * @param prefix
- * @param name
- * @private
- */
 /* private */
 /*-# decorateFunction -> dF #-*/
 Clazz.decorateFunction = function (clazzFun, prefix, name) {
@@ -2031,15 +1789,6 @@ Clazz.decorateFunction = function (clazzFun, prefix, name) {
 	}
 };
 
-/**
- * Implementation of Java declaration of Interface API.
- * Based on decorateFunction.
- *
- * @method declareInterface
- * @param clazzFun
- * @param prefix
- * @param name
- */
 /* proected */
 Clazz.declareInterface = function (prefix, name, interfacez) {
 	var clazzFun = function () {};
@@ -2050,18 +1799,6 @@ Clazz.declareInterface = function (prefix, name, interfacez) {
 	return clazzFun;
 };
 
-/**
- * Be used to decorate Class.
- *
- * @method decorateAsClass
- * @param clazzFun
- * @param prefix
- * @param name
- * @param clazzParent
- * @param interfacez
- * @param parentClazzInstance
- * @protected
- */
 /* protected */
 /*-# 
  # parentClazzInstance -> pi
@@ -2094,16 +1831,6 @@ Clazz.decorateAsClass = function (clazzFun, prefix, name, clazzParent,
 	return clazzFun;
 };
 
-/**
- * Implementation of Java Class Definition Scheme.
- *
- * @method declareType
- * @param prefix
- * @param name
- * @param clazzParent
- * @param interfacez
- * @param parentClazzInstance
- */
 /* public */
 Clazz.declareType = function (prefix, name, clazzParent, interfacez, 
 		parentClazzInstance) {
@@ -2114,16 +1841,6 @@ Clazz.declareType = function (prefix, name, clazzParent, interfacez,
 			parentClazzInstance);
 };
 
-/**
- * Implementation of Java Anonymous Class Definition Scheme.
- *
- * @method declareType
- * @param prefix
- * @param name
- * @param clazzParent
- * @param interfacez
- * @param parentClazzInstance
- */
 /* public */
 Clazz.declareAnonymous = function (prefix, name, clazzParent, interfacez, 
 		parentClazzInstance) {
@@ -2135,18 +1852,6 @@ Clazz.declareAnonymous = function (prefix, name, clazzParent, interfacez,
 			parentClazzInstance);
 };
 
-/**
- * Be used to decorate Type.
- *
- * @method decorateAsType
- * @param clazzFun
- * @param qClazzName
- * @param clazzParent
- * @param interfacez
- * @param parentClazzInstance
- * @param inheritClazzFuns
- * @protected
- */
 /* protected */
 Clazz.decorateAsType = function (clazzFun, qClazzName, clazzParent, 
 		interfacez, parentClazzInstance, inheritClazzFuns) {
@@ -2183,7 +1888,6 @@ Clazz.decorateAsType = function (clazzFun, qClazzName, clazzParent,
 /* sgurin: native exception detection mechanism. Only NullPointerException detected and wrapped to java excepions */
 /** private utility method for creating a general regexp that can be used later  
  * for detecting a certain kind of native exceptions. use with error messages like "blabla IDENTIFIER blabla"
- * @method _ex_reg
  * @param msg String - the error message
  * @param spliterName String, must be contained once in msg
  * spliterRegex String, a string with the regexp literal for identifying the spitter in exception further error messages.
@@ -2221,15 +1925,13 @@ try {
 		};
 	}		
 };
-/**
- * sgurin
+/**sgurin
  * Implements Java's keyword "instanceof" in JavaScript's way **for exception objects**.
  * 
  * calls Clazz.instanceOf if e is a Java exception. If not, try to detect known native 
  * exceptions, like native NullPointerExceptions and wrap it into a Java exception and 
  * call Clazz.instanceOf again. if the native exception can't be wrapped, false is returned.
- *
- * @method exceptionOf
+ * 
  * @param obj the object to be tested
  * @param clazz the class to be checked
  * @return whether the object is an instance of the class
@@ -2251,16 +1953,6 @@ Clazz.exceptionOf=function(e, clazz) {
 /* sgurin: preserve Number.prototype.toString */
 Number.prototype._numberToString=Number.prototype.toString;
 
-/**
- * Some basic package delcaration
- * @property java.io
- * @property java.lang.annotation
- * @property java.lang.instrument
- * @property java.lang.management
- * @property java.lang.reflect
- * @property java.lang.ref
- * @property java.util
- */
 Clazz.declarePackage ("java.io");
 //Clazz.declarePackage ("java.lang");
 Clazz.declarePackage ("java.lang.annotation"); // java.lang
@@ -2271,21 +1963,8 @@ Clazz.declarePackage ("java.lang.ref");  // java.lang.ref
 java.lang.ref.reflect = java.lang.reflect;
 Clazz.declarePackage ("java.util");
 
-/**
+/*
  * Consider these interfaces are basic!
- * @property java.io.Closeable
- * @property java.io.DataInput
- * @property java.io.DataOutput
- * @property java.io.Externalizable
- * @property java.io.Flushable
- * @property java.io.Serializable
- * @property java.lang.Iterable
- * @property java.lang.CharSequence
- * @property java.lang.Cloneable
- * @property java.lang.Appendable
- * @property java.lang.Comparable
- * @property java.lang.Runable
- * @property java.util.Comparator
  */
 Clazz.declareInterface (java.io,"Closeable");
 Clazz.declareInterface (java.io,"DataInput");
@@ -2332,14 +2011,6 @@ if (window["Clazz"] == null || window["Clazz"].unloadClass == null) {
 /**
  * Clazz.MethodNotFoundException is used to notify the developer about calling
  * methods with incorrect parameters.
- *
- * Override the Clazz.MethodNotFoundException in Class.js to give details
- * @method MethodNotFoundException2 in orginal ClassExt.js
- * @param obj
- * @param clazz
- * @param method
- * @param params
- * @protected
  */
 /* protected */
 // Override the Clazz.MethodNotFoundException in Class.js to give details
@@ -2366,15 +2037,10 @@ Clazz.MethodNotFoundException = function (obj, clazz, method, params) {
  * For example for the callback:
  *     this.callbacks.MyEditor.sayHello();
  *
- * Attention: parameters should not be null!
- * 
- * TODO, remove some SWT specific code!
- *
- * @method prepareCallback
  * @param objThis the host object for callback
  * @param args arguments object. args[0] will be classThisObj -- the "this"
  * object to be hooked
- * @protected 
+ * 
  * Attention: parameters should not be null!
  */
 /* protected */
@@ -2431,7 +2097,6 @@ Clazz.prepareCallback = function (objThis, args) {
 /**
  * Construct instance of the given inner class.
  *
- * @method innerTypeInstance
  * @param classInner given inner class, alway with name like "*$*"
  * @param objThis this instance which can be used to call back.
  * @param finalVars final variables which the inner class may use
@@ -2527,8 +2192,7 @@ Clazz.innerTypeInstance = function (clazzInner, objThis, finalVars) {
 /**
  * Clone variables whose modifier is "final".
  * Usage: var o = Clazz.cloneFinals ("name", name, "age", age);
- * 
- * @method cloneFinals
+ *
  * @return Object with all final variables
  */
 /* protected */
@@ -2541,12 +2205,6 @@ Clazz.cloneFinals = function () {
 	return o;
 };
 
-/**
- * Be used to check whether clazzName is defined
- *
- * @method isClassDefined
- * @param clazzName
- */
 /* public */
 Clazz.isClassDefined = Clazz.isDefinedClass = function (clazzName) {
 	if (clazzName != null && clazzName.length != 0) {
@@ -2583,11 +2241,8 @@ Clazz.isClassDefined = Clazz.isDefinedClass = function (clazzName) {
 		return false;
 	}
 };
-
 /**
  * Define the enum constant.
- *
- * @method defineEnumConstant
  * @param classEnum enum type
  * @param enumName enum constant
  * @param enumOrdinal enum ordinal
@@ -2614,7 +2269,6 @@ Clazz.defineEnumConstant = function (clazzEnum, enumName, enumOrdinal, initialPa
 /**
  * Make arrays.
  *
- * @method newArray
  * @return the created Array object
  */
 /* public */
@@ -2659,9 +2313,7 @@ Clazz.newArray  = function () {
 
 /**
  * Make the RunnableCompatiability instance as a JavaScript function.
- * ????
  *
- * @method makeFunction
  * @param jsr Instance of RunnableCompatiability
  * @return JavaScript function instance represents the method run of jsr.
  */
@@ -2694,13 +2346,6 @@ Clazz.makeFunction = function (jsr) {
 	};
 };
 
-/**
- * Be used to define statics
- *
- * @method defineStatics
- * @param clazz
- * @protected
- */
 /* protected */
 Clazz.defineStatics = function (clazz) {
 	for (var i = 0; i < (arguments.length - 1) / 2; i++) {
@@ -2709,13 +2354,6 @@ Clazz.defineStatics = function (clazz) {
 	}
 };
 
-/**
- * Be used to prepare Fields
- *
- * @method prepareFields
- * @param clazz
- * @param fieldsFun
- */
 /* protected */
 Clazz.prepareFields = function (clazz, fieldsFun) {
 	var stacks = new Array ();
@@ -2739,12 +2377,9 @@ Clazz.prepareFields = function (clazz, fieldsFun) {
 	clazz.con$truct.index = 0;
 };
 
-/**
+/*
  * Serialize those public or protected fields in class 
  * net.sf.j2s.ajax.SimpleSerializable.
- *
- * @method registerSerializableFields
- * @param clazz
  */
 /* protected */
 Clazz.registerSerializableFields = function (clazz) {
@@ -2777,11 +2412,10 @@ Clazz.registerSerializableFields = function (clazz) {
 	}
 };
 
-/**
+/*
  * Get the caller method for those methods that are wrapped by 
  * Clazz.searchAndExecuteMethod.
- * 
- * @method getMixedCallerMethod
+ *
  * @param args caller method's arguments
  * @return caller method, null if there is not wrapped by 
  * Clazz.searchAndExecuteMethod or is called directly.
@@ -2810,7 +2444,7 @@ Clazz.getMixedCallerMethod = function (args) {
 	return o;
 };
 
-/**
+/*
  * Check and return super private method.
  * In order make private methods be executed correctly, some extra javascript
  * must be inserted into the beggining of the method body of the non-private 
@@ -2824,7 +2458,6 @@ Clazz.getMixedCallerMethod = function (args) {
  * Be cautious about this. The above codes should be insert by Java2Script
  * compiler or with double checks to make sure things work correctly.
  *
- * @method checkPrivateMethod
  * @param args caller method's arguments
  * @return private method if there are private method fitted for the current 
  * calling environment
@@ -2886,60 +2519,27 @@ Clazz.p0p = function () {
 };
 
 /*# {$no.debug.support} >>x #*/
-/**
+/*
  * Option to switch on/off of stack traces.
- *
- * @property tracingCalling
  */
 /* protect */
 Clazz.tracingCalling = false;
 
-/**
+/*
  * Use to mark that the Throwable instance is created or not.
- *
- * @property initializingException
  */
 /* private */
 Clazz.initializingException = false;
 
-/**
- * Utilize function for Debug
- * 
- * @method callingStack
- * @param caller
- * @param owner
- */
 /* private */
 Clazz.callingStack = function (caller, owner) {
 	this.caller = caller;
 	this.owner = owner;
 };
-
-/**
- * Utilize Property for Debug calling stack
- *
- * @property callingStackTraces
- */
 Clazz.callingStackTraces = new Array ();
-
-/**
- * Utilize pu$hCalling function for Debug
- * 
- * @method pu$hCalling
- * @param caller
- * @private
- */
 Clazz.pu$hCalling = function (stack) {
 	Clazz.callingStackTraces[Clazz.callingStackTraces.length] = stack;
 };
-
-/**
- * Utilize p0pCalling function for Debug
- * 
- * @method p0pCalling
- * @param caller
- * @private
- */
 Clazz.p0pCalling = function () {
 	var length = Clazz.callingStackTraces.length;
 	if (length > 0) {
@@ -2955,8 +2555,6 @@ Clazz.p0pCalling = function () {
 /**
  * The first folder is considered as the primary folder.
  * And try to be compatiable with ClazzLoader system.
- *
- * @property binaryFolders
  */
 /* private */
 if (window["ClazzLoader"] != null && ClazzLoader.binaryFolders != null) {
@@ -2965,12 +2563,6 @@ if (window["ClazzLoader"] != null && ClazzLoader.binaryFolders != null) {
 	Clazz.binaryFolders = ["bin/", "", "j2slib/"];
 }
 
-/**
- * Utilize addBinaryFolder function
- *
- * @method addBinaryFolder
- * @param bin
- */
 Clazz.addBinaryFolder = function (bin) {
 	if (bin != null) {
 		var bins = Clazz.binaryFolders;
@@ -2982,13 +2574,6 @@ Clazz.addBinaryFolder = function (bin) {
 		bins[bins.length] = bin;
 	}
 };
-
-/**
- * Utilize removeBinaryFolder function
- *
- * @method removeBinaryFolder
- * @param bin
- */
 Clazz.removeBinaryFolder = function (bin) {
 	if (bin != null) {
 		var bins = Clazz.binaryFolders;
@@ -3004,13 +2589,6 @@ Clazz.removeBinaryFolder = function (bin) {
 	}
 	return null;
 };
-
-/**
- * Utilize setPrimaryFolder function
- *
- * @method setPrimaryFolder
- * @param bin
- */
 Clazz.setPrimaryFolder = function (bin) {
 	if (bin != null) {
 		Clazz.removeBinaryFolder (bin);
@@ -3027,12 +2605,6 @@ Clazz.setPrimaryFolder = function (bin) {
  * of the class. This will be fine for jar *.z.js file.
  * It will be overriden by ClazzLoader#load.
  * For more details, see ClazzLoader.js
- *
- * @method load
- * @param musts
- * @param clazz
- * @param optionals
- * @param declaration
  */
 /* protected */
 Clazz.load = function (musts, clazz, optionals, declaration) {
@@ -3041,7 +2613,7 @@ Clazz.load = function (musts, clazz, optionals, declaration) {
 	}
 };
 
-/**
+/*
  * Invade the Object prototype!
  * TODO: make sure that invading Object prototype does not affect other
  * existed library, such as Dojo, YUI, Prototype, ...
@@ -3052,12 +2624,6 @@ JavaObject.getName = Clazz.innerFunctions.getName;
 
 w$ = window; // Short for browser's window object
 d$ = document; // Short for browser's document object
-
-/**
- * Java System API Simulator.
- *
- * @method currentTimeMillis/getProperties/setProperties/getProperty/setProperty/currentTimeMillis/arraycopy
- */
 System = {
 	currentTimeMillis : function () {
 		return new Date ().getTime ();
@@ -3117,25 +2683,12 @@ System.err.println = function () {};
 
 popup = assert = log = error = window.alert;
 
-/**
- * Basic Java Thread Implementation for Javascript
- *
- * @method Thread
- * @property J2S_THREAD
- * @property currentThread
- */
 Thread = function () {};
 Thread.J2S_THREAD = Thread.prototype.J2S_THREAD = new Thread ();
 Thread.currentThread = Thread.prototype.currentThread = function () {
 	return this.J2S_THREAD;
 };
 
-/**
- * Basic Java Cast utilization function
- *
- * @method intCast, work for 32bit
- * @param n
- */
 /* public */
 Clazz.intCast = function (n) { // 32bit
 	var b1 = (n & 0xff000000) >> 24;
@@ -3149,12 +2702,6 @@ Clazz.intCast = function (n) { // 32bit
 	}
 };
 
-/**
- * Basic Java Cast utilization function
- *
- * @method shortCast, work for 16bit
- * @param s
- */
 /* public */
 Clazz.shortCast = function (s) { // 16bit
 	var b1 = (n & 0xff00) >> 8;
@@ -3166,12 +2713,6 @@ Clazz.shortCast = function (s) { // 16bit
 	}
 };
 
-/**
- * Basic Java Cast utilization function
- *
- * @method byteCast, work for 8bit
- * @param b
- */
 /* public */
 Clazz.byteCast = function (b) { // 8bit
 	if ((b & 0x80) != 0) {
@@ -3181,23 +2722,13 @@ Clazz.byteCast = function (b) { // 8bit
 	}
 };
 
-/**
- * Basic Java Cast utilization function
- *
- * @method charCast, work for 8bit
- * @param c
- */
 /* public */
 Clazz.charCast = function (c) { // 8bit
 	return String.fromCharCode (c & 0xff).charAt (0);
 };
 
 /**
- * Basic Java Cast utilization function
  * Warning: Unsafe conversion!
- *
- * @method floatCast, work for 32bit
- * @param f
  */
 /* public */
 Clazz.floatCast = function (f) { // 32bit
@@ -3230,14 +2761,6 @@ Clazz.longBits = [];
 	}
 }) ();
 
-/**
- * Basic Java shift utilization function
- * long shift is not support in Javascript very well.
- *
- * @method longLeftShift, work for 64bit
- * @param l
- * @param o
- */
 /* public */
 Clazz.longLeftShift = function (l, o) { // 64bit
 	if (o == 0) return l;
@@ -3258,25 +2781,11 @@ Clazz.longLeftShift = function (l, o) { // 64bit
 	}
 };
 
-/**
- * Basic Java shift utilization function
- *
- * @method intLeftShift, work for 32bit
- * @param n
- * @param o
- */
 /* public */
 Clazz.intLeftShift = function (n, o) { // 32bit
 	return (n << o) & 0xffffffff;
 };
 
-/**
- * Basic Java shift utilization function
- *
- * @method longRightShift, work for 32bit
- * @param n
- * @param o
- */
 /* public */
 Clazz.longRightShift = function (l, o) { // 64bit
 	if ((l & Clazz.longMasks[52 - 32]) != 0) {
@@ -3286,73 +2795,21 @@ Clazz.longRightShift = function (l, o) { // 64bit
 	}
 };
 
-/**
- * Basic Java shift utilization function
- *
- * @method intRightShift, work for 32bit
- * @param n
- * @param o
- */
 /* public */
 Clazz.intRightShift = function (n, o) { // 32bit
 	return n >> o; // no needs for this shifting wrapper
 };
 
-/**
- * Basic Java shift utilization function
- *
- * @method long0RightShift, work for 64bit
- * @param n
- * @param o
- */
 /* public */
 Clazz.long0RightShift = function (l, o) { // 64bit
 	return l >>> o;
 };
 
-/**
- * Basic Java shift utilization function
- *
- * @method int0RightShift, work for 64bit
- * @param n
- * @param o
- */
 /* public */
 Clazz.int0RightShift = function (n, o) { // 64bit
 	return n >>> o; // no needs for this shifting wrapper
 };
 
-/**
- * Compress the common public API method in shorter name
- *
- * @property
- *  $_L=Clazz.load;
- *  $_W=Clazz.declareAnonymous;
- *  $_T=Clazz.declareType;
- *  $_J=Clazz.declarePackage;
- *  $_C=Clazz.decorateAsClass;
- *  $_Z=Clazz.instantialize;
- *  $_I=Clazz.declareInterface;
- *  $_D=Clazz.isClassDefined;
- *  $_H=Clazz.pu$h;$_P=Clazz.p0p;
- *  $_B=Clazz.prepareCallback;
- *  $_N=Clazz.innerTypeInstance;
- *  $_K=Clazz.makeConstructor;
- *  $_U=Clazz.superCall;
- *  $_R=Clazz.superConstructor;
- *  $_M=Clazz.defineMethod;
- *  $_V=Clazz.overrideMethod;
- *  $_S=Clazz.defineStatics;
- *  $_E=Clazz.defineEnumConstant;
- *  $_F=Clazz.cloneFinals;
- *  $_Y=Clazz.prepareFields;
- *  $_A=Clazz.newArray;
- *  $_O=Clazz.instanceOf;
- *  $_G=Clazz.inheritArgs;
- *  $_X=Clazz.checkPrivateMethod;
- *  $_Q=Clazz.makeFunction;
- *  $_s=Clazz.registerSerializableFields;
- */
 // Compress the common public API method in shorter name
 $_L=Clazz.load;$_W=Clazz.declareAnonymous;$_T=Clazz.declareType;$_J=Clazz.declarePackage;$_C=Clazz.decorateAsClass;$_Z=Clazz.instantialize;$_I=Clazz.declareInterface;$_D=Clazz.isClassDefined;$_H=Clazz.pu$h;$_P=Clazz.p0p;$_B=Clazz.prepareCallback;$_N=Clazz.innerTypeInstance;$_K=Clazz.makeConstructor;$_U=Clazz.superCall;$_R=Clazz.superConstructor;$_M=Clazz.defineMethod;$_V=Clazz.overrideMethod;$_S=Clazz.defineStatics;$_E=Clazz.defineEnumConstant;$_F=Clazz.cloneFinals;$_Y=Clazz.prepareFields;$_A=Clazz.newArray;$_O=Clazz.instanceOf;$_G=Clazz.inheritArgs;$_X=Clazz.checkPrivateMethod;$_Q=Clazz.makeFunction;$_s=Clazz.registerSerializableFields;
 
@@ -3360,50 +2817,22 @@ $_L=Clazz.load;$_W=Clazz.declareAnonymous;$_T=Clazz.declareType;$_J=Clazz.declar
 var reflect = Clazz.declarePackage ("java.lang.reflect");
 Clazz.declarePackage ("java.security");
 
-/**
- * Addition Clazz innerFunctionNames
- *
- * @property innerFunctionNames2
- *
- */
 Clazz.innerFunctionNames = Clazz.innerFunctionNames.concat (["getSuperclass",
 		"isAssignableFrom", "getMethods", "getMethod", "getDeclaredMethods", 
 		"getDeclaredMethod", "getConstructor", "getModifiers", "isArray", "newInstance"]);
 
-/**
- * Addition Clazz innerFunctions Implementation.
- *
- * @method getSupperclass
- */
 Clazz.innerFunctions.getSuperclass = function () {
 	return this.superClazz;	
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- *
- * @method isAssignableFrom
- */
 Clazz.innerFunctions.isAssignableFrom = function (clazz) {
 	return Clazz.getInheritedLevel (clazz, this) >= 0;	
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- *
- * @method getConstructor
- */
 Clazz.innerFunctions.getConstructor = function () {
 	return new java.lang.reflect.Constructor (this, [], [], 
 			java.lang.reflect.Modifier.PUBLIC);
 };
-
 /**
- * Addition Clazz innerFunctions Implementation.
  * TODO: fix bug for polymorphic methods!
- * Where is bug? use case? (<-00->)
- * 
- * @method getDeclareMethods
  */
 Clazz.innerFunctions.getDeclaredMethods = Clazz.innerFunctions.getMethods = function () {
 	var ms = new Array ();
@@ -3425,14 +2854,6 @@ Clazz.innerFunctions.getDeclaredMethods = Clazz.innerFunctions.getMethods = func
 	}
 	return ms;
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- * TODO: fix bug for polymorphic methods!
- * Where is bug? use case? (<-00->)
- * 
- * @method getDeclareMethod
- */
 Clazz.innerFunctions.getDeclaredMethod = Clazz.innerFunctions.getMethod = function (name, clazzes) {
 	var p = this.prototype;
 	for (var attr in p) {
@@ -3454,30 +2875,12 @@ Clazz.innerFunctions.getDeclaredMethod = Clazz.innerFunctions.getMethod = functi
 	}
 	return null;
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- * 
- * @method getModifiers
- */
 Clazz.innerFunctions.getModifiers = function () {
 	return java.lang.reflect.Modifier.PUBLIC;
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- * 
- * @method isArray
- */
 Clazz.innerFunctions.isArray = function () {
 	return false;
 };
-
-/**
- * Addition Clazz innerFunctions Implementation.
- * 
- * @method newInstance
- */
 Clazz.innerFunctions.newInstance = function () {
 	var clz = this;
 	return new clz ();
@@ -3495,12 +2898,6 @@ Clazz.innerFunctions.newInstance = function () {
 	};
 }
 
-/**
- * Addition Clazz innerFunctions Implementation.
- * 
- * @method forName
- * @param clazzName
- */
 /* public */
 Clazz.forName = function (clazzName) {
 	if (Clazz.isClassDefined (clazzName)) {
@@ -3517,12 +2914,6 @@ Clazz.forName = function (clazzName) {
 
 /* For hotspot and unloading */
 
-/**
- * Methods for hotspot and unloading
- *
- * @method cleanDelegateMethod
- * @param
- */
 /* private */
 Clazz.cleanDelegateMethod = function (m) {
 	if (m == null) return;
@@ -3534,12 +2925,6 @@ Clazz.cleanDelegateMethod = function (m) {
 	}
 };
 
-/**
- * Methods for hotspot and unloading
- *
- * @method unloadClass
- * @param
- */
 /* public */
 Clazz.unloadClass = function (qClazzName) {
 	var cc = Clazz.evalType (qClazzName);
@@ -3602,19 +2987,12 @@ Clazz.unloadClass = function (qClazzName) {
 	return false;
 };
 
-/**
- * Implementation addEvent logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method addEvent
- * @param element
- * @param type
- * @param handler
- */
+//written by Dean Edwards, 2005
+//with input from Tino Zijdel, Matthias Miller, Diego Perini
+
+//http://dean.edwards.name/weblog/2005/10/add-event/
+
+// Merge Dean Edwards' addEvent for Java2Script
 /* public */
 Clazz.addEvent = function (element, type, handler) {
 	if (element.addEventListener) {
@@ -3643,19 +3021,6 @@ Clazz.addEvent = function (element, type, handler) {
 //a counter used to create unique IDs
 Clazz.addEvent.guid = 1;
 
-/**
- * Implementation removeEvent logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method removeEvent
- * @param element
- * @param type
- * @param handler
- */
 /* public */
 Clazz.removeEvent = function (element, type, handler) {
 	if (element.removeEventListener) {
@@ -3668,25 +3033,9 @@ Clazz.removeEvent = function (element, type, handler) {
 	}
 };
 
-/**
- * Old version IE detection logic.
- *
- * @deprecated
- */
 /* private */
 Clazz.isVeryOldIE = navigator.userAgent.indexOf("MSIE 6.0") != -1 || navigator.userAgent.indexOf("MSIE 5.5") != -1 || navigator.userAgent.indexOf("MSIE 5.0") != -1;
 
-/**
- * Implementation handleEvent logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method handleEvent
- * @param event
- */
 /* protected */
 Clazz.handleEvent = function (event) {
 	var returnValue = true;
@@ -3725,17 +3074,6 @@ Clazz.handleEvent = function (event) {
 	return returnValue;
 };
 
-/**
- * Implementation fixEvent logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method fixEvent
- * @param event
- */
 /* private */
 Clazz.fixEvent = function (event) {
 	// add W3C standard event methods
@@ -3743,32 +3081,9 @@ Clazz.fixEvent = function (event) {
 	event.stopPropagation = Clazz.fixEvent.stopPropagation;
 	return event;
 };
-
-/**
- * Implementation preventDefault logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method fixEvent
- * @param event
- */
 Clazz.fixEvent.preventDefault = function() {
 	this.returnValue = false;
 };
-
-/**
- * Implementation stopPropagation logic as Dean Edward's implementation.
- * written by Dean Edwards, 2005 
- * with input from Tino Zijdel, Matthias Miller, Diego Perini
- * http://dean.edwards.name/weblog/2005/10/add-event/
- *
- * Merge Dean Edwards' addEvent for Java2Script
- *
- * @method stopPropagation
- */
 Clazz.fixEvent.stopPropagation = function() {
 	this.cancelBubble = true;
 };
@@ -3797,9 +3112,7 @@ if (window["ClazzNode"] == null) {
 
 /*
  * ClassLoader Summary
- *
- * TODO: Make optimization over class dependency tree.
- *
+ * 
  * ClassLoader creates SCRIPT elements and setup class path and onload 
  * callback to continue class loading.
  *
@@ -3815,9 +3128,6 @@ if (window["ClazzNode"] == null) {
  * triggers onload event.
  * 3. In Opera, similar to IE, but trigger onload event. (TODO: More details 
  * should be studied. Currently, Opera supports no multiple-thread-loading)
- * //added by luqiang
- * 4. In Chrome, similar to Firefox, loading *.js will first executes, then 
- * triggers onload event
  * 
  * For class dependency tree, actually, it is not a tree. It is a reference
  * net with nodes have n parents and n children. There is a root, which 
@@ -3876,9 +3186,6 @@ if (window["ClazzNode"] == null) {
  * 3. First time loading has errors, but reloading it gets no errors (Maybe 
  * HTTP connections timeout, but should not accur in local file system, or it
  * is a loading bug by using JavaScript timeout thread).
- *
- * //added by luqiang
- * ClazzLoader has some utilization function similar to Clazz, for example, addBinaryFolder, ....
  */
 
 /*
@@ -3903,9 +3210,7 @@ if (window["ClazzNode"] == null) {
  #-*/
  
 /**
- * Class dependency tree node for ClassLoader
- * 
- * @method ClazzNode
+ * Class dependency tree node
  */
 /* private */
 ClazzNode = function () {
@@ -3951,19 +3256,8 @@ ClazzNode.STATUS_OPTIONALS_LOADED = 5;
  */
 ClazzLoader = function () {};
 
-/**
- * Class loaders array for ClassLoader
- * 
- * @property loaders
- */
 ClazzLoader.loaders = [];
 
-/**
- * Class Base Loader for ClassLoader
- *
- * @method requireLoaderByBase
- * @param base
- */
 ClazzLoader.requireLoaderByBase = function (base) {
 	for (var i = 0; i < ClazzLoader.loaders.length; i++) {
 		if (ClazzLoader.loaders[i].base == base) {
@@ -3977,17 +3271,13 @@ ClazzLoader.requireLoaderByBase = function (base) {
 };
 
 /**
- * Class dependency tree for ClassLoader
- *
- * @property clazzTreeRoot
+ * Class dependency tree
  */
 /*-# clazzTreeRoot -> tr #-*/
 ClazzLoader.clazzTreeRoot = new ClazzNode ();
 
 /**
  * Used to keep the status whether a given *.js path is loaded or not.
- *
- * @property loadedScripts
  */
 /* private */
 /*-# loadedScripts -> ls #-*/
@@ -3995,8 +3285,6 @@ ClazzLoader.loadedScripts = new Object ();
 
 /**
  * Multiple threads are used to speed up *.js loading.
- *
- * @property inLoadingThreads, default is 0
  */
 /* private */
 /*-# inLoadingThreads -> ilt #-*/
@@ -4004,8 +3292,6 @@ ClazzLoader.inLoadingThreads = 0;
 
 /**
  * Maximum of loading threads
- *
- * @property maxLoadingThreads
  */
 /* protected */
 ClazzLoader.maxLoadingThreads = 6;
@@ -4110,34 +3396,20 @@ ClazzLoader.setPrimaryFolder = function (bin) {
 /**
  * Indicate whether ClazzLoader is loading script synchronously or 
  * asynchronously.
- *
- * @property isAsynchronousLoading, default is true
  */
 /* protected */
 /*-# isAsynchronousLoading -> async #-*/
 ClazzLoader.isAsynchronousLoading = true;
 
-/**
- * Indicate whether ClazzLoader is loading script through XMLHttpRequest.
- *
- * @property isUsingXMLHttpRequest
- */
 /* protected */
 /*-# isUsingXMLHttpRequest -> xhr #-*/
 ClazzLoader.isUsingXMLHttpRequest = false;
 
-/**
- * Defualt ClazzLoader loading delay timeout.
- *
- * @property loadingTimeLag, default is -1
- */
 /* protected */
 /*-# loadingTimeLag -> ltl #-*/
 ClazzLoader.loadingTimeLag = -1;
 
 /**
- * ClazzLoader loading mode
- *
  * String mode:
  * asynchronous modes:
  * async(...).script, async(...).xhr, async(...).xmlhttprequest,
@@ -4159,10 +3431,6 @@ ClazzLoader.loadingTimeLag = -1;
  * 1: XHR & Asynchronous
  * 2: Script & Synchronous [Never]
  * 3: XHR & Synchronous
- *
- * @method setLoadingMode
- * @param mode
- * @param timeLag
  */
 /* public */
 ClazzLoader.setLoadingMode = function (mode, timeLag) {
@@ -4174,7 +3442,6 @@ ClazzLoader.setLoadingMode = function (mode, timeLag) {
 		}
 		return;
 	}
-
 	if (typeof mode == "string") {
 		mode = mode.toLowerCase ();
 		if (mode.length == 0 || mode.indexOf ("script") != -1) {
@@ -4217,9 +3484,7 @@ ClazzLoader.MODE_XHR = 3;
 ClazzLoader.MODE_XHR_SYNC = 3;
 ClazzLoader.MODE_XHR_ASYNC = 1;
 /*# x<< #*/
-
 /**
- * SWT Specific Function
  * Expand the shorten list of class names.
  * For example:
  * $wt.widgets.Shell, $.Display, $.Decorations
@@ -4231,8 +3496,6 @@ ClazzLoader.MODE_XHR_ASYNC = 1;
  *
  * This method will be used to unwrap the required/optional classes list and 
  * the ignored classes list.
- *
- * @method unwrapArray, SWT specific
  */
 /* private */
 /*x-# unwrapArray -> uA #-x*/
@@ -4266,8 +3529,6 @@ ClazzLoader.unwrapArray = function (arr) {
 
 /**
  * Used to keep to-be-loaded classes.
- *
- * @propert classQueue
  */
 /* private */
 /*-# classQueue -> cq #-*/
@@ -4276,14 +3537,6 @@ ClazzLoader.classQueue = new Array ();
 /* protected */
 ClazzLoader.classpathMap = new Object ();
 
-/**
- * package classpath initilization.
- *
- * @method packageClasspath
- * @param pkg
- * @param base
- * @param index
- */
 /* public */
 ClazzLoader.packageClasspath = function (pkg, base, index) {
 	var map = ClazzLoader.classpathMap;
@@ -4352,10 +3605,6 @@ ClazzLoader.pkgRefCount = 0;
 /**
  * Register classes to a given *.z.js path, so only a single *.z.js is loaded
  * for all those classes.
- *
- * @method jarClasspath
- * @param jar
- * @param clazzes
  */
 /* public */
 /*-# clazzes -> zs #-*/
@@ -4375,10 +3624,6 @@ ClazzLoader.jarClasspath = function (jar, clazzes) {
 /**
  * Usually be used in .../package.js. All given packages will be registered
  * to the same classpath of given prefix package.
- *
- * @method registerPackages
- * @param prefix
- * @param pkgs
  */
 /* public */
 ClazzLoader.registerPackages = function (prefix, pkgs) {
@@ -4404,9 +3649,6 @@ ClazzLoader.registerPackages = function (prefix, pkgs) {
  * 4. http://orchive.java2script.org or http://o.java2script.org
  * 5. http://urchive.java2script.org or http://u.java2script.org
  * 6. http://yrchive.java2script.org or http://y.java2script.org
- *
- * @method multipleSites
- * @depricated maybe not to enable by default
  */
 /* protected */
 ClazzLoader.multipleSites = function (path) {
@@ -4451,8 +3693,6 @@ ClazzLoader.multipleSites = function (path) {
 /**
  * Return the *.js path of the given class. Maybe the class is contained
  * in a *.z.js jar file.
- *
- * @method getClasspathFor
  * @param clazz Given class that the path is to be calculated for. May
  * be java.package, or java.lang.String
  * @param forRoot Optional argument, if true, the return path will be root
@@ -4531,12 +3771,6 @@ ClazzLoader.getClasspathFor = function (clazz, forRoot, ext) {
 	return ClazzLoader.multipleSites (jsPath);
 };
 
-/**
- * Assure Base binary folder
- *
- * @method assureBase
- * @param base
- */
 /* private */
 /*-# assureBase -> aB #-*/
 ClazzLoader.assureBase = function (base) {
@@ -4559,11 +3793,7 @@ ClazzLoader.assureBase = function (base) {
 	return base;
 };
 
-/** 
- * Used to keep ignored classes for ClazzLoader
- * 
- * @property excludeClassMap
- */
+/* Used to keep ignored classes */
 /* private */
 /*-# excludeClassMap -> exmap #-*/
 ClazzLoader.excludeClassMap = new Object ();
@@ -4601,101 +3831,40 @@ ClazzLoader.isClassExcluded = function (clazz) {
  * The following *.script* can be overriden to indicate the 
  * status of classes loading.
  *
- * @method scriptLoading
- *
  * TODO: There should be a Java interface with name like INativeLoaderStatus
  */
 /* protected */
 ClazzLoader.scriptLoading = function (file) {};
 
-/**
- * The following *.script* can be overriden to indicate the 
- * status of classes loading.
- *
- * @method scriptLoaded
- *
- * TODO: There should be a Java interface with name like INativeLoaderStatus
- */
 /* protected */
 ClazzLoader.scriptLoaded = function (file) {};
 
-/**
- * The following *.script* can be overriden to indicate the 
- * status of classes loading.
- *
- * @method scriptLoading
- *
- * TODO: There should be a Java interface with name like INativeLoaderStatus
- */
 /* protected */
-ClazzLoader.scriptLoading = function (file) {};
+ClazzLoader.scriptInited = function (file) {};
 
-/**
- * The following *.script* can be overriden to indicate the 
- * status of classes loading.
- *
- * @method scriptCompleted
- *
- * TODO: There should be a Java interface with name like INativeLoaderStatus
- */
 /* protected */
 ClazzLoader.scriptCompleted = function (file) {};
 
-/**
- * The following *.script* can be overriden to indicate the 
- * status of classes loading.
- *
- * @method classUnloaded
- *
- * TODO: There should be a Java interface with name like INativeLoaderStatus
- */
 /* protected */
 ClazzLoader.classUnloaded = function (clazz) {};
 
-/**
- * The following *.script* can be overriden to indicate the 
- * status of classes loading.
- *
- * @method classReloaded
- *
- * TODO: There should be a Java interface with name like INativeLoaderStatus
- */
 /* protected */
 ClazzLoader.classReloaded = function (clazz) {};
 
 /**
  * After all the classes are loaded, this method will be called.
  * Should be overriden to run *.main([]).
- *
- * @method globalLoaded
  */
 /* protected */
 ClazzLoader.globalLoaded = function () {};
 
-/**
- * Indicated flag for keeping on loading
- *
- * @property keepOnLoading, default is true
- */
 /* protected */
 ClazzLoader.keepOnLoading = true;
 
-/**
- * Object for describe mapPath 2 ClassNode
- *
- * @property scriptLoading
- */
 /* private */
 /*-# mapPath2ClassNode -> p2node #-*/
 ClazzLoader.mapPath2ClassNode = new Object ();
 
-/**
- * XMLHttpRequest Load Function
- *
- * @method xhrOnload
- * @param transport
- * @param file
- */
 /* private */
 ClazzLoader.xhrOnload = function (transport, file) {
 	if (transport.status >= 400 || transport.responseText == null
@@ -4735,46 +3904,23 @@ ClazzLoader.xhrOnload = function (transport, file) {
 
 /**
  * Empty onreadystatechange for fixing IE's memeory leak on XMLHttpRequest
- *
- * @method emptyOnRSC
  */
 /* private */
 /*-# emptyOnRSC -> rsc #-*/
 ClazzLoader.emptyOnRSC = function () {
 };
 
-/**
- * Fail loaded scripts object
- *
- * @property failedScripts
- */
 /* protected */
 /*-# failedScripts -> fss #-*/
 ClazzLoader.failedScripts = new Object ();
 
-/**
- * Failed Handles
- *
- * @property failedhandles
- */
 /* protected */
 /*-# failedHandles -> fhs #-*/
 ClazzLoader.failedHandles = new Object ();
 
-/**
- * Indicated ClassLoader whether try load failed script again.
- *
- * @property takeAnotherTry, default is true
- */
 /* protected */
 ClazzLoader.takeAnotherTry = true;
 
-/**
- * Removeing Script Node Function
- *
- * @method generateRemovingFunction
- * @param node
- */
 /* private */
 /*-# generateRemovingFunction -> gRF #-*/
 ClazzLoader.generateRemovingFunction = function (node) {
@@ -4790,7 +3936,7 @@ ClazzLoader.generateRemovingFunction = function (node) {
 	};
 };
 
-/**
+/*
  * Dynamically SCRIPT elements are removed after they are parsed into memory.
  * And removed *.js may not be fetched again by "Refresh" action. And it will
  * save loading time for Java2Script applications.
@@ -4798,8 +3944,6 @@ ClazzLoader.generateRemovingFunction = function (node) {
  * This may disturb debugging tools such as Firebug. Setting
  * window["j2s.script.debugging"] = true;
  * will ignore removing SCRIPT elements requests.
- *
- * @method removeScriptNode
  */
 /* private */
 /*-# removeScriptNode -> RsN #-*/
@@ -4811,13 +3955,6 @@ ClazzLoader.removeScriptNode = function (n) {
 	window.setTimeout (ClazzLoader.generateRemovingFunction (n), 1);
 };
 
-/**
- * Generating XMLHttpRequest load function
- *
- * @method generatingXHROnload
- * @param transport
- * @param file
- */
 /* private */
 /*-# generatingXHROnload -> gXOd #-*/
 ClazzLoader.generatingXHROnload = function (transport, file) {
@@ -4828,13 +3965,6 @@ ClazzLoader.generatingXHROnload = function (transport, file) {
 	};
 };
 
-/**
- * Generating XMLHttpRequest callback function
- *
- * @method generatingXHRCallback
- * @param transport
- * @param file
- */
 /* private */
 /*-# generatingXHRCallback -> gXcb #-*/
 ClazzLoader.generatingXHRCallback = function (transport, file) {
@@ -4863,13 +3993,6 @@ ClazzLoader.generatingXHRCallback = function (transport, file) {
 	};
 };
 
-
-/**
- * Loading Next Javascript by path
- *
- * @method loadingNextByPath
- * @param path
- */
 /* private */
 /*-# loadingNextByPath -> lNBP #-*/
 ClazzLoader.loadingNextByPath = function (path) {
@@ -4882,13 +4005,6 @@ ClazzLoader.loadingNextByPath = function (path) {
 	}
 };
 
-/**
- * IE Specific, Loding script again function
- *
- * @method ieToLoadScriptAgain
- * @param path
- * @param local
- */
 /* private */
 /*-# ieToLoadScriptAgain -> iTLA #-*/
 ClazzLoader.ieToLoadScriptAgain = function (path, local) {
@@ -4917,12 +4033,6 @@ ClazzLoader.ieToLoadScriptAgain = function (path, local) {
 	return window.setTimeout (fun, waitingTime);
 };
 
-/**
- * Test function for w3c loading
- *
- * @method w3cFailedLoadingTest
- * @param script, default loading a local file is 500ms
- */
 /* private */
 /*-# w3cFailedLoadingTest -> wFLT #-*/
 ClazzLoader.w3cFailedLoadingTest = function (script) {
@@ -4933,12 +4043,6 @@ ClazzLoader.w3cFailedLoadingTest = function (script) {
 			}, 500); // 0.5s for loading a local file is considered enough long
 };
 
-/**
- * Lazily Reloading Script Function.
- *
- * @method lazilyReloadScript
- * @param path, defualt interval is 100 ms,
- */
 /* private */
 /*-# lazilyReloadScript -> lRlS #-*/
 ClazzLoader.lazilyReloadScript = function (path) {
@@ -4947,13 +4051,6 @@ ClazzLoader.lazilyReloadScript = function (path) {
 			}, 100); // 0.1s for script reloading interval
 };
 
-/**
- * W3C Script Callback Generation Function
- *
- * @method generatingW3CScriptOnCallback
- * @param path
- * @param forError
- */
 /* private */
 /*-# generatingW3CScriptOnCallback -> gWSC #-*/
 ClazzLoader.generatingW3CScriptOnCallback = function (path, forError) {
@@ -5000,15 +4097,6 @@ ClazzLoader.generatingW3CScriptOnCallback = function (path, forError) {
 	};
 };
 
-
-/**
- * IE Specific
- * IE Script Callback Generation Function
- *
- * @method generatingIEScriptOnCallback
- * @param path
- * @param forError
- */
 /* private */
 /*-# generatingIEScriptOnCallback -> gISC #-*/
 ClazzLoader.generatingIEScriptOnCallback = function (path) {
@@ -5106,10 +4194,6 @@ ClazzLoader.generatingIEScriptOnCallback = function (path) {
 /**
  * Load *.js by adding script elements into head. Hook the onload event to
  * load the next class in dependency tree.
- * Core Method for dynamic load Script
- *
- * @method loadScript
- * @param file
  */
 /* protected */
 /*-#
@@ -5140,8 +4224,6 @@ ClazzLoader.loadScript = function (file) {
 	}
 
 	if (ClazzLoader.isUsingXMLHttpRequest) {
-
-        console.log("in ClazzLoader.loadScript, isUsingXMLHttpRequest is true!!");
 		ClazzLoader.scriptLoading (file);
 		var transport = null;
 		var isActiveX = false;
@@ -5185,7 +4267,6 @@ ClazzLoader.loadScript = function (file) {
 		}
 		return;
 	}
-    // if not XMLHttpRequest script, then
 	// Create script DOM element
 	var script = document.createElement ("SCRIPT");
 	script.type = "text/javascript";
@@ -5235,14 +4316,6 @@ ClazzLoader.loadScript = function (file) {
 	ClazzLoader.scriptLoading (file);
 };
 
-/**
- * Check some resource whether is existed. css/js/..
- *
- * @method isResourceExisted
- * @param id
- * @param path
- * @param base
- */
 /* protected */
 ClazzLoader.isResourceExisted = function (id, path, base) {
 	if (id != null && document.getElementById (id) != null) {
@@ -5281,39 +4354,18 @@ ClazzLoader.isResourceExisted = function (id, path, base) {
 	return false;
 };
 
-/**
- * Queue for SWT ClazzLoader
- *
- * @proerty queueBe4SWT
- */
 /* private */
 /*-# queueBe4SWT -> q4T #-*/
 ClazzLoader.queueBe4SWT = [];
 
-/**
- * lock Queue for SWT ClazzLoader
- *
- * @proerty lockQueueBe4SWT
- */
 /* private */
 /*-# lockQueueBe4SWT -> l4T #-*/
 ClazzLoader.lockQueueBe4SWT = true;
 
-/**
- * Check whether is loading Entry Class for SWT ClazzLoader
- * Class with #main method and is to be executed is called Entry Class.
- *
- * @proerty isLoadingEntryClass
- */
 /* private */
 /*-# isLoadingEntryClass -> lec #-*/
 ClazzLoader.isLoadingEntryClass = true;
 
-/**
- * Flag for besides Java Package  ClazzLoader
- *
- * @proerty besidesJavaPackage
- */
 /* private */
 /*-# besidesJavaPackage -> bJP #-*/
 ClazzLoader.besidesJavaPackage = false;
@@ -5321,12 +4373,6 @@ ClazzLoader.besidesJavaPackage = false;
 /**
  * After class is loaded, this method will be executed to check whether there
  * are classes in the dependency tree that need to be loaded.
- *
- * long, complicated, bug exsited, need more test, need to optimization
- * 
- *
- * @method tryToLoadNext
- * @param file
  */
 /* private */
 /*-# tryToLoadNext -> next #-*/
@@ -5589,9 +4635,6 @@ ClazzLoader.tracks = new Array ();
  * There are classes reference cycles. Try to detect and break those cycles.
  * TODO: Reference cycles should be broken down carefully. Or there will be 
  * bugs!
- *
- * @method checkOptionalCycle
- * @param node
  */
 /* protected */
 ClazzLoader.checkOptionalCycle = function (node) {
@@ -5653,10 +4696,6 @@ ClazzLoader.checkOptionalCycle = function (node) {
 
 /**
  * Update the dependency tree nodes recursively.
- * Core method, bug exsited, see Soheil reported in function code.
- *
- * @method updateNode
- *
  */
 /* private */
 /*-# 
@@ -5883,13 +4922,6 @@ $_L(["$wt.widgets.Widget","$wt.graphics.Drawable"],"$wt.widgets.Control",
 	}
 };
 
-/**
- * Update Parents Nodes
- *
- * @method updateParents
- * @param node
- * @param level
- */
 /* private */
 /*-# updateParents -> uP #-*/
 ClazzLoader.updateParents = function (node, level) {
@@ -5908,13 +4940,6 @@ ClazzLoader.updateParents = function (node, level) {
 	}
 };
 
-/**
- * Find next must load class
- *
- * @method findNextmustClass
- * @param node
- * @param status
- */
 /* private */
 /*-# findNextMustClass -> fNM #-*/
 ClazzLoader.findNextMustClass = function (node, status) {
@@ -5950,23 +4975,15 @@ ClazzLoader.findNextMustClass = function (node, status) {
 	return null;
 };
 
-/**
+/*
  * Be used to record already used random numbers. And next new random
  * number should not be in the property set.
- *
- * @property usedRandoms, ClazzLoader
  */
 /* private */
 /*-# usedRandoms -> Rms #-*/
 ClazzLoader.usedRandoms = {};
 ClazzLoader.usedRandoms["r" + 0.13412] = 0.13412;
 
-/**
- * Find next optinal load class
- * 
- * @method findNextOptionalClass
- * @param status
- */
 /* private */
 /*-# findNextOptionalClass -> fNO #-*/
 ClazzLoader.findNextOptionalClass = function (status) {
@@ -5984,13 +5001,6 @@ ClazzLoader.findNextOptionalClass = function (status) {
 	return ClazzLoader.findNodeNextOptionalClass (node, status);
 };
 
-/**
- * Find next optinal load class based on node parameter
- *
- * @method findNodeNextOptionalClass
- * @param node
- * @param status
- */
 /* private */
 /*-# findNodeNextOptionalClass -> fNNO #-*/
 ClazzLoader.findNodeNextOptionalClass = function (node, status) {
@@ -6025,14 +5035,6 @@ ClazzLoader.findNodeNextOptionalClass = function (node, status) {
 	return null;
 };
 
-/**
- * search node in class array
- *
- * @method searchClassArray
- * @param arr
- * @param rnd
- * @param status
- */
 /* private */
 ClazzLoader.searchClassArray = function (arr, rnd, status) {
 	for (var i = 0; i < arr.length; i++) {
@@ -6060,8 +5062,6 @@ ClazzLoader.searchClassArray = function (arr, rnd, status) {
  * This map variable is used to mark that *.js is correctly loaded.
  * In IE, ClazzLoader has defects to detect whether a *.js is correctly
  * loaded or not, so inner loading mark is used for detecting.
- *
- * @property innerLoadedScripts
  */
 /* private */
 /*-# innerLoadedScripts -> ilss #-*/
@@ -6069,8 +5069,6 @@ ClazzLoader.innerLoadedScripts = new Object ();
 
 /**
  * This variable is used to keep the latest interactive SCRIPT element.
- *
- * @property interactiveScript
  */
 /* private */
 /*-# interactiveScript -> itst #-*/
@@ -6078,21 +5076,15 @@ ClazzLoader.interactiveScript = null;
 
 /**
  * IE and Firefox/Mozilla are different in using <SCRIPT> tag to load *.js.
- *
- * @property needOnloadCheck
  */
 /* private */
 ClazzLoader.needOnloadCheck = false;
 
 /**
- * IE,Opera Specific
- *
  * Check the interactive status of SCRIPT elements to determine whether a
  * *.js file is correctly loaded or not.
  *
  * Only make senses for IE.
- *
- * @method checkInteractive
  */
 /* protected */
 ClazzLoader.checkInteractive = function () {
@@ -6123,13 +5115,6 @@ ClazzLoader.checkInteractive = function () {
 /**
  * This method will be called in almost every *.js generated by Java2Script
  * compiler.
- * Core Method
- *
- * @method load
- * @param musts
- * @param clazz
- * @param optionals
- * @param declaration
  */
 /* protected */
 ClazzLoader.load = function (musts, clazz, optionals, declaration) {
@@ -6278,10 +5263,7 @@ if (window["Clazz"] != null) {
 }
 
 /**
- * find class node based on parameter clazzName
  *
- * @method findClass
- * @param clazzName
  */
 /* protected */
 /*-# findClass -> fC #-*/
@@ -6300,13 +5282,6 @@ ClazzLoader.findClass = function (clazzName) {
 			ClazzLoader.clazzTreeRoot);
 };
 
-/**
- * find class node under assigned node
- *
- * @method findClassUnderNode
- * @param clazzName
- * @param node
- */
 /* private */
 /*-# findClassUnderNode -> fCU #-*/
 ClazzLoader.findClassUnderNode = function (clazzName, node) {
@@ -6350,11 +5325,10 @@ ClazzLoader.findClassUnderNode = function (clazzName, node) {
 /**
  * Map different class to the same path! Many classes may be packed into
  * a *.z.js already.
- * 
- * @method mappingPathNameNode
- * @param path *.js path
- * @param name class name
- * @param node ClazzNode object
+ *
+ * @path *.js path
+ * @name class name
+ * @node ClazzNode object
  */
 /* private */
 /*-# mappingPathNameNode -> mpp #-*/
@@ -6386,12 +5360,6 @@ ClazzLoader.mappingPathNameNode = function (path, name, node) {
 	map["#" + name] = node;
 };
 
-/**
- * Load class as parameter node
- *
- * @method loadClassNode
- * @param node
- */
 /* protected */
 /*-# loadClassNode -> lCN #-*/
 ClazzLoader.loadClassNode = function (node) {
@@ -6410,26 +5378,17 @@ ClazzLoader.loadClassNode = function (node) {
 };
 
 
-/**
- * Runtime Key Class
- *
- * @property runtimeKeyClass "java.lang.String"
- */
 /* protected */
 ClazzLoader.runtimeKeyClass = "java.lang.String";
 
 /**
  * Queue used to store classes before key class is loaded.
- *
- * @property queueBe4KeyClazz
  */
 /* private */
 ClazzLoader.queueBe4KeyClazz = new Array ();
 
 /**
  * Return J2SLib base path from existed SCRIPT src attribute.
- *
- * @method getJ2SLibBase
  */
 /* private */
 /*-# getJ2SLibBase -> gLB #-*/
@@ -6467,12 +5426,6 @@ ClazzLoader.getJ2SLibBase = function () {
 /* private static */
 /*-# J2SLibBase -> JLB #-*/
 ClazzLoader.J2SLibBase = null;
-
-/**
- * Fast get J2SLib Base Folder
- *
- * @method fastGetJ2SLibBase
- */
 /*-# fastGetJ2SLibBase -> fgLB #-*/
 ClazzLoader.fastGetJ2SLibBase = function () {
 	if (ClazzLoader.J2SLibBase == null) {
@@ -6484,9 +5437,6 @@ ClazzLoader.fastGetJ2SLibBase = function () {
 /*
  * Check whether given package's classpath is setup or not.
  * Only "java" and "org.eclipse.swt" are accepted in argument.
- *
- * @method assurePackageClasspath
- * @param pkg
  */
 /* private */
 /*-# assurePackageClasspath -> acp #-*/
@@ -6503,25 +5453,10 @@ ClazzLoader.assurePackageClasspath = function (pkg) {
 };
 
 /**
- * Load the given class and its related classes.
- *
- * @method loadClass
- * @param name
- * @param optinalsLoaded
- * @param forced
- * @param async
+ * Load the given class ant its related classes.
  */
 /* public */
 ClazzLoader.loadClass = function (name, optionalsLoaded, forced, async) {
-
-    console.log("ClazzLoader.loadClass");
-    console.log("this.callee = " + this.callee);
-    console.log("this.caller = " + this.caller);
-    console.log("name = " + name);
-    console.log("optionalsLoaded = " + optionalsLoaded);
-    console.log("forced = " + forced);
-    console.log("async = " + async);
-
 	if (typeof optionalsLoaded == "boolean") {
 		return Clazz.evalType (name);
 	}
@@ -6677,11 +5612,6 @@ ClazzLoader.loadClass = function (name, optionalsLoaded, forced, async) {
 
 /**
  * Load the application by the given class name and run its static main method.
- *
- * @method loadJ2SApp
- * @param clazz
- * @param args
- * @param loaded
  */
 /* public */
 $w$ = ClazzLoader.loadJ2SApp = function (clazz, args, loaded) {
@@ -6721,10 +5651,6 @@ $w$ = ClazzLoader.loadJ2SApp = function (clazz, args, loaded) {
 };
 /**
  * Load JUnit tests by the given class name.
- *
- * @method loadJUnit
- * @param clazz
- * @param args
  */
 /* public */
 $u$ = ClazzLoader.loadJUnit = function (clazz, args) {
@@ -6738,11 +5664,6 @@ $u$ = ClazzLoader.loadJUnit = function (clazz, args) {
 	ClazzLoader.loadJ2SApp (clazz, args, afterLoaded);
 };
 
-/**
- * Load runtime class
- *
- * @method runtimeLoaded
- */
 /* private */
 ClazzLoader.runtimeLoaded = function () {
 	if (ClazzLoader.pkgRefCount != 0 
@@ -6766,10 +5687,6 @@ ClazzLoader.runtimeLoaded = function () {
 /*
  * Load those key *.z.js. This *.z.js will be surely loaded before other 
  * queued *.js.
- *
- * @method loadZJar
- * @param zjarPath
- * @param keyClazz
  */
 /* public */
 ClazzLoader.loadZJar = function (zjarPath, keyClazz) {
@@ -6789,11 +5706,6 @@ ClazzLoader.loadZJar = function (zjarPath, keyClazz) {
 
 /**
  * The method help constructing the multiple-binary class dependency tree.
- *
- * @method addChildClassNode
- * @param parent
- * @param child
- * @param type
  */
 /* private */
 /*-# addChildClassNode -> addCCN #-*/
@@ -6859,8 +5771,6 @@ ClazzLoader.addChildClassNode = function (parent, child, type) {
  * Some SWT classes may already skip ClazzLoader#tryToLoadNext when it's
  * detected that SWT is in lazy loading mode. Here it will try to re-execute
  * those ClazzLoader#tryToLoadNext
- *
- * @method swtLazyLoading
  */
 /* private */
 ClazzLoader.swtLazyLoading = function () {
@@ -6872,13 +5782,6 @@ ClazzLoader.swtLazyLoading = function () {
 	ClazzLoader.queueBe4SWT  = [];
 };
 
-/**
- * utilization function for remove node from class Array
- *
- * @method removeFromArray
- * @param node
- * @param arr
- */
 /* private */
 ClazzLoader.removeFromArray = function (node, arr) {
 	if (arr == null || node == null) {
@@ -6900,12 +5803,6 @@ ClazzLoader.removeFromArray = function (node, arr) {
 	return false;
 };
 
-/**
- * Destroy class node
- *
- * @method destroyClassNode
- * @param node
- */
 /* private */
 /*-# destroyClassNode -> dCN #-*/
 ClazzLoader.destroyClassNode = function (node) {
@@ -6930,12 +5827,6 @@ ClazzLoader.destroyClassNode = function (node) {
 
 /* For hotspot and unloading */
 
-/**
- * unload class function
- *
- * @method unloadClassExt
- * @param qClazzName
- */
 /* protected */
 ClazzLoader.unloadClassExt = function (qClazzName) {
 	if (ClazzLoader.definedClasses != null) {
@@ -6974,13 +5865,6 @@ ClazzLoader.unloadClassExt = function (qClazzName) {
 	ClazzLoader.classUnloaded (qClazzName);
 };
 
-/**
- * utilization function for assuring inner class
- *
- * @method assureInnerClass
- * @param clzz
- * @param fun
- */
 /* protected */ /* Clazz#assureInnerClass */
 ClazzLoader.assureInnerClass = function (clzz, fun) {
 	var clzzName = clzz.__CLASS_NAME__;
@@ -7040,7 +5924,6 @@ if (ClazzLoader.isChrome) {
  * 134324345, 2, "org.eclipse.swt.widgets.MenuItem",
  * null);
  *
- * @method updateHotspot
  */
 /* public */
 ClazzLoader.updateHotspot = function () {
@@ -7099,11 +5982,6 @@ ClazzLoader.updateHotspot = function () {
 	ClazzLoader.lastHotspotJSFailed = false;
 };
 
-/**
- * Remove hotspot script node.
- *
- * @method removeHotspotScriptNode
- */
 /* private */
 /*-# removeHotspotScriptNode -> rtSN #-*/
 ClazzLoader.removeHotspotScriptNode = function (node) {
@@ -7132,11 +6010,6 @@ ClazzLoader.hotspotJSTimeout = null;
 /*-# lastHotspotJSFailed -> ltJF #-*/
 ClazzLoader.lastHotspotJSFailed = false;
 
-/**
- * generate hotspot W3C Callback
- *
- * @method generatingHotspotIEOnCallback
- */
 /*-# generatingHotspotW3COnCallback -> gHWC #-*/
 ClazzLoader.generatingHotspotW3COnCallback = function () {
 	return function () {
@@ -7149,11 +6022,6 @@ ClazzLoader.generatingHotspotW3COnCallback = function () {
 	};
 };
 
-/**
- * generate hotspot IE callback
- *
- * @method generatingHotspotIEOnCallback
- */
 /*-# generatingHotspotIEOnCallback -> gHIC #-*/
 ClazzLoader.generatingHotspotIEOnCallback = function () {
 	return function () {
@@ -7168,11 +6036,6 @@ ClazzLoader.generatingHotspotIEOnCallback = function () {
 	};
 };
 
-/**
- * Load hotspot script
- *
- * @method loadHotspotScript
- */
 /* private */
 ClazzLoader.loadHotspotScript = function (hotspotURL, iframeID) {
 	var script = document.createElement ("SCRIPT");
@@ -7195,12 +6058,6 @@ ClazzLoader.hotspotLoadingTimeout = function () {
 	ClazzLoader.lastHotspotJSFailed = false; // timeout
 };
 
-
-/**
- * Hotspot Monitoring
- *
- * @method hotspotMonitoring
- */
 /* protected */
 /*-# hotspotMonitoring -> htMr #-*/
 ClazzLoader.hotspotMonitoring = function () {
@@ -7291,8 +6148,6 @@ if (window["ClazzLoaderProgressMonitor"] == null) {
 ...
 ClazzLoader.scriptLoading = function (file) {
 	ClassLoaderProgressMonitor.showStatus ("Loading " + file + "...");
- * @method scriptLoaded
- * @parm file
 };
 ClazzLoader.scriptLoaded = function (file) {
 	ClassLoaderProgressMonitor.showStatus (file + " loaded.", true);
@@ -7472,11 +6327,6 @@ if (window["ClazzLoader"] != null) {
  * @author zhou renjian
  * @create Nov 5, 2005
  *******/
-/**
- * J2S Console Utilization implementation.
- *
- * @property Console
- */
 
 if (window["Console"] == null) {
 /*-#

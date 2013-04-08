@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Composite"],"$wt.browser.Browser",["$wt.internal.browser.OS"],function(){
-$WTC$$.registerCSS ("$wt.browser.Browser"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.browser.Browser", ".browser-default {\nwidth:100%;\nheight:100%;\nbackground-color:white;\n}\n* html .browser-default {\nborder:2px solid menu;\n}\n.swt-browser-browser {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.$back = false;
 this.$forward = false;
 this.navigate = false;

@@ -1,5 +1,6 @@
 ﻿$_L(["$wt.widgets.Control"],"$wt.widgets.ProgressBar",["$wt.graphics.Point","$wt.internal.browser.OS"],function(){
-$WTC$$.registerCSS ("$wt.widgets.ProgressBar"); c$ = $_C (function () {
+$WTC$$.registerCSS ("$wt.widgets.ProgressBar", ".progress-bar-default {\nposition:absolute;\nmargin:0;\npadding:0;\nborder:1px inset white;\noverflow:hidden;\n}\n.progress-bar-horizontal {\nbackground-color:highlight;\nwidth:0;\nfont-size:0;\nposition:absolute;\ntop:1px;\nleft:1px;\n}\n.progress-bar-vertical {\nbackground-color:highlight;\nheight:0;\nfont-size:0;\nposition:absolute;\nbottom:1px;\nleft:1px;\n}\n.swt-widgets-progressbar {\nwidth:324px;\n}\n");
+ c$ = $_C (function () {
 this.minimum = 0;
 this.maximum = 0;
 this.selection = 0;

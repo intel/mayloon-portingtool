@@ -416,7 +416,8 @@ public class RandomAccessFile implements DataInput, DataOutput, Closeable {
      * @see #writeDouble(double)
      */
     public final double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
+//        return Double.longBitsToDouble(readLong());
+    	return 0.0;
     }
 
     /**
@@ -432,7 +433,8 @@ public class RandomAccessFile implements DataInput, DataOutput, Closeable {
      * @see #writeFloat(float)
      */
     public final float readFloat() throws IOException {
-        return Float.intBitsToFloat(readInt());
+//        return Float.intBitsToFloat(readInt());
+    	return (float) 0;
     }
 
     /**
@@ -935,7 +937,7 @@ public class RandomAccessFile implements DataInput, DataOutput, Closeable {
      * @see #readDouble()
      */
     public final void writeDouble(double val) throws IOException {
-        writeLong(Double.doubleToLongBits(val));
+//        writeLong(Double.doubleToLongBits(val));
     }
 
     /**
@@ -950,7 +952,7 @@ public class RandomAccessFile implements DataInput, DataOutput, Closeable {
      * @see #readFloat()
      */
     public final void writeFloat(float val) throws IOException {
-        writeInt(Float.floatToIntBits(val));
+//        writeInt(Float.floatToIntBits(val));
     }
 
     /**

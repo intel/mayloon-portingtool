@@ -532,7 +532,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
 	 * 
 	 * @see #equals
 	 */
-	@Override
+/*	@Override
     public int hashCode() {
 		int result = 1;
 		Iterator<?> it = iterator();
@@ -541,7 +541,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
 			result = (31 * result) + (object == null ? 0 : object.hashCode());
 		}
 		return result;
-	}
+	}*/
 
 	/**
 	 * Searches this List for the specified object and returns the index of the

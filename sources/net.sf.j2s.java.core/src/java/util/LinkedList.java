@@ -758,10 +758,10 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
             throw new NullPointerException();
         }
 		int index = 0;
-		if (size > contents.length) {
+		/*if (size > contents.length) {
             Class<?> ct = contents.getClass().getComponentType();
             contents = (T[]) Array.newInstance(ct, size);
-        }
+        }*/
 		Link<E> link = voidLink.next;
 		while (link != voidLink) {
 			contents[index++] = (T)link.data;
