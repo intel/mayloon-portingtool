@@ -10,13 +10,6 @@
  *******************************************************************************/
 package net.sf.j2s.core.builder;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Calendar;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-
 import net.sf.j2s.core.utils.CorePluginConsole;
 
 import org.eclipse.core.resources.*;
@@ -52,8 +45,10 @@ protected int totalWork;
 protected String previousSubtask;
 private static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 private static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
-private static final String BUILD_TAG = "Build";
+public static final String BUILD_TAG = "Build";
+public static final String CLEAN_TAG = "Clean";
 private String j2sDeployMode;
+private String builderMode;
 private IProject currentProject;
 
 public static int NewErrorCount = 0;
@@ -68,9 +63,10 @@ public static void resetProblemCounters() {
 	FixedWarningCount = 0;
 }
 
-public BuildNotifier(IProgressMonitor monitor, IProject project, String deployMode) {
+public BuildNotifier(IProgressMonitor monitor, IProject project, String deployMode, String builderMode) {
 	this.j2sDeployMode = deployMode;
 	this.currentProject = project;
+	this.builderMode = builderMode;
 	
 	this.monitor = monitor;
 	this.cancelling = false;
@@ -159,9 +155,11 @@ public void done() {
 				}
 			});
 		}else{
-			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			if(BUILD_TAG.equals(builderMode)){
+				CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			}
 		}
-	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode)){
+	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode) && BUILD_TAG.equals(builderMode)){
 		if (NewErrorCount != 0) {
 			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
 		}else{
@@ -342,4 +340,19 @@ public void updateProgress(float newPercentComplete) {
 public void updateProgressDelta(float percentWorked) {
 	updateProgress(this.percentComplete + percentWorked);
 }
+
+/**
+ * @return the builderMode
+ */
+public String getBuilderMode() {
+	return builderMode;
+}
+
+/**
+ * @param builderMode the builderMode to set
+ */
+public void setBuilderMode(String builderMode) {
+	this.builderMode = builderMode;
+}
+
 }
