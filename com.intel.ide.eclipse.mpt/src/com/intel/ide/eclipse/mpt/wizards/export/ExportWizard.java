@@ -133,13 +133,17 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	 */
 	private void performTizenPackage() {
 		try {
+			//set export destination
+			ProjectUtil.setMayloonOutputFolder(fProject, fDestinationFile);
 			// get package name from AndroidManifest.xml
 			// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
 			String packageName = ProjectUtil.extractPackageFromManifest(fProject);
 			
 			// generate the .project, config.xml, Icon.png and project name.html file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
-			// copy mayloon runtime resource to mayloon_bin
+			MptPluginConsole.general(MptConstants.EXPORT_TAG, "%1$s has been copyed to %2$s", 
+					fProject.getName() + MptConstants.MAYLOON_START_ENTRY_FILE, fDestinationFile.toString());
+			// copy mayloon runtime resource to export destination
 			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
 			
 			// copy mayloon Icon to mayloon_bin
@@ -148,9 +152,6 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);	
-			
-			// copy exprot files to destination folder, and delete mayloon_bin 
-			ProjectUtil.addMayloonOutput2Destination(fProject, fDestinationFile);
 			
 			// TODO luqiang, add monitor for it.
 			fProject.refreshLocal(IResource.DEPTH_INFINITE, null);

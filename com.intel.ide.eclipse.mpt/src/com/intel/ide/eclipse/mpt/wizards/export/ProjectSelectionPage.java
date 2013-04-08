@@ -35,8 +35,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
+import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
+import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 /**
  * Project selection page. In this page, user can choose a project to export. 
@@ -106,7 +108,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		fProjectText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProjectText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
-				onProjectChange();
+				onChange();
 			}
 		});
 		if(fWizard.getProject() != null){
@@ -138,7 +140,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		fDestinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDestinationText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
-				onDestinationChange();
+				onChange();
 			}
 		});
 		
@@ -148,10 +150,11 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			IProject project = root.getProject(text);
 			if(project != null && project.exists()){
 				try {
-					IFolder folder = getOutputFolder(project);
-					fDestinationText.setText(folder.getRawLocation().toString());
+					IPath destPath = ProjectUtil.getMayloonOutputFolder(project);
+					fDestinationText.setText(destPath.toString());
 				} catch (CoreException e1) {
 					this.setErrorMessage("Can not get project default output folder");
+					e1.printStackTrace();
 				} 
 			}
 		}
@@ -171,8 +174,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	@Override
 	public void onVisible(){
 		super.onVisible();
-		onProjectChange();
-		onDestinationChange();
+		onChange();
 	}
 	/**
 	 * Browse project and choose
@@ -223,24 +225,24 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		}
 	}
 	/**
-	 * Perform a variety of project checks.
+	 * Perform a variety of checks.
 	 */
-	protected void onProjectChange(){
+	protected void onChange(){
 		this.setMessage(null);
 		this.setErrorMessage(null);
 		this.setPageComplete(false);
 		
-		String text = this.fProjectText.getText().trim();
-		if(text.length() == 0){
+		String projectText = this.fProjectText.getText().trim();
+		if(projectText.length() == 0){
 			this.setErrorMessage("Please select a project to export.");
 		}else{
 			// TODO luqiang, add check whether the xxxx.html is generated
 			
 			
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject project = root.getProject(text);
+			IProject project = root.getProject(projectText);
 			if(project==null || !project.exists()){
-				this.setErrorMessage(String.format("%1$s is not a valid project name", text));
+				this.setErrorMessage(String.format("%1$s is not a valid project name", projectText));
 			}else{
 				try {
 					if(project.hasNature(MayloonNature.NATURE_ID)){
@@ -262,29 +264,29 @@ public class ProjectSelectionPage extends ExportWizardPage {
 						}
 						this.setPageComplete(true);
 					}else{
-						this.setErrorMessage(String.format("%1$s is not a Kona project",text));
+						this.setErrorMessage(String.format("%1$s is not a Kona project",projectText));
 					}
 				} catch (CoreException e) {
 					this.setErrorMessage("Can not get project nature");
 				}
 			}
 		}
-	}
-	/**
-	 * Perform a variety of destination checks.
-	 */
-	protected void onDestinationChange(){
-		String text = this.fDestinationText.getText().trim();
-		if(text.length() == 0){
-			this.setErrorMessage("Please select a destination directory to export.");
-		}
-		else{
-			File destinationDir = new File(text);
-			if(!destinationDir.isDirectory()){
-				this.setErrorMessage("The destination directory doesn't exist.");
+		
+		if(fDestinationText != null){
+			this.setPageComplete(false);
+			String destinationText = this.fDestinationText.getText().trim();
+			if(destinationText.length() == 0){
+				this.setErrorMessage("Please select a destination directory to export.");
 			}
 			else{
-				this.fWizard.setDestinationFile(destinationDir);
+				File destinationDir = new File(destinationText);
+				if(!destinationDir.isDirectory()){
+					this.setErrorMessage("The destination directory doesn't exist.");
+				}
+				else{
+					this.fWizard.setDestinationFile(destinationDir);
+					this.setPageComplete(true);
+				}
 			}
 		}
 	}
@@ -320,19 +322,5 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			MptPluginLogger.throwable(e);
 		}
 		return null;
-	}
-	/**
-	 * Get outputFolder of project. 
-	 * @param project          Project to search
-	 * @return IFolder         output folder
-	 * @throws CoreException 
-	 */
-	private IFolder getOutputFolder(IProject project) throws CoreException {
-		IFolder folder = project.getFolder(MptConstants.WS_ROOT
-				+ MptConstants.MAYLOON_OUTPUT_DIR);
-		if (!folder.exists()) {
-			folder.create(true, true, null);
-		}
-		return folder;
 	}
 }
