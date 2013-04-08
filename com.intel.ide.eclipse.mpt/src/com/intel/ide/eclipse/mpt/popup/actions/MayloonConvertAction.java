@@ -5,6 +5,9 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +45,7 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 		if(!MayloonSDK.isSdkLocationSet(true)) {
 			return;
 		}
+		
 		if (selection instanceof IStructuredSelection) {
 			for (Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
 				Object element = it.next();
@@ -72,7 +76,15 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 
 							// 8 steps to convert project
 							monitor.beginTask("Project converting...", 8);
-							try {
+							try { 
+								// disable AutoBuild
+								IWorkspace workspace = ResourcesPlugin.getWorkspace();
+								IWorkspaceDescription description = workspace.getDescription();
+								if (description.isAutoBuilding()) {
+									description.setAutoBuilding(false);
+									workspace.setDescription(description);
+								}
+								
 								// generate .j2s configuration file
 								MayloonPropertiesBuilder.mayloonPropBuild(project);
 								monitor.worked(1);
