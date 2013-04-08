@@ -37,7 +37,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -65,10 +64,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.framework.adaptor.FilePath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -83,7 +80,6 @@ import com.intel.ide.eclipse.mpt.builder.AntPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.project.AndroidXPathFactory;
 import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
-import com.intel.ide.eclipse.mpt.project.MayloonJREClasspathContainerInitializer;
 import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 

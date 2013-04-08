@@ -166,7 +166,7 @@ protected IProject[] build(int kind, Map ignored, IProgressMonitor monitor) thro
 	if (DEBUG)
 		System.out.println("\nStarting build of " + this.currentProject.getName() //$NON-NLS-1$
 			+ " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
-	this.notifier = new BuildNotifier(monitor, this.currentProject, j2sDeployMode);
+	this.notifier = new BuildNotifier(monitor, this.currentProject, j2sDeployMode,BuildNotifier.BUILD_TAG);
 	this.notifier.begin();
 	boolean ok = false;
 	try {
@@ -315,7 +315,7 @@ protected void clean(IProgressMonitor monitor) throws CoreException {
 	if (DEBUG)
 		System.out.println("\nCleaning " + this.currentProject.getName() //$NON-NLS-1$
 			+ " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
-	this.notifier = new BuildNotifier(monitor, this.currentProject, j2sDeployMode);
+	this.notifier = new BuildNotifier(monitor, this.currentProject, j2sDeployMode, BuildNotifier.CLEAN_TAG);
 	this.notifier.begin();
 	try {
 		this.notifier.checkCancel();
