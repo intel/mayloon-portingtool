@@ -465,6 +465,7 @@
     		</fileset>
     		-->
     	</copy>
+        <antcall target="j2s.lib.replace"/>
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
@@ -1174,6 +1175,18 @@
 	    		<pathelement path="${j2s.lib.project}/bin"/>
 	    	</classpath>
 	    </java>
+    </target>
+
+    <!-- ================================= 
+          target: j2s.lib.replace
+         ================================= -->
+    <target name="j2s.lib.replace" description="replace java/util/StringTokinzer.js">
+        <java classname="net.sf.j2s.lib.build.ReplaceStringTokenizer">
+            <arg value="${j2s.lib.dist}/java/util/StringTokenizer.js"/>
+            <classpath>
+                <pathelement path="${j2s.lib.project}/bin"/>
+            </classpath>
+        </java>
     </target>
 
 </project>
