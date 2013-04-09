@@ -130,7 +130,7 @@ public class MayloonNature implements IProjectNature {
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
-    		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.AndroidNature");
+    		removeFromNatures(project, "com.android.ide.eclipse.adt.AndroidNature");
             
 		}
 	}
@@ -248,7 +248,25 @@ public class MayloonNature implements IProjectNature {
 		}
 		return -1;
 	}
+	/**
+	 * Removes the given builder from the natures for the given project.
+	 */
+	public static void removeFromNatures(IProject project, String builderID) throws CoreException {
 
+		IProjectDescription description = project.getDescription();
+        String[] natures = description.getNatureIds();
+		
+		for (int i = 0; i < natures.length; ++i) {
+			if (natures[i].equals(builderID)) {
+				String[] newNatures = new String[natures.length - 1];
+				System.arraycopy(natures, 0, newNatures, 0, i);
+				System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
+				description.setNatureIds(newNatures);
+				project.setDescription(description, null);
+				return;
+			}
+		}
+	}
 	/**
 	 * Removes the given builder from the build spec for the given project.
 	 */
