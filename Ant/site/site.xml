@@ -6,9 +6,5 @@
    <feature url="features/com.intel.ide.eclipse.mpt.feature_1.0.0.qualifier.jar" id="com.intel.ide.eclipse.mpt.feature" version="1.0.0.qualifier">
       <category name="com.intel.ide.eclipse.mpt"/>
    </feature>
-   <category-def name="com.intel.ide.eclipse.mpt" label="MPT">
-      <description>
-         com.intel.ide.eclipse.mpt
-      </description>
-   </category-def>
+   <category-def name="com.intel.ide.eclipse.mpt" label="MPT"/>
 </site>

@@ -3,31 +3,41 @@
       id="com.intel.ide.eclipse.mpt.feature"
       label="MPT Feature"
       version="1.0.0.qualifier"
-      provider-name="INTEL"
-      os="linux,macosx,win32"
-      ws="gtk,win32"
-      nl="en_US"
-      arch="x86,x86_64">
+      provider-name="INTEL">
 
-   <description url="http://www.mpt.com/description">
+   <description url="http://www.example.com/description">
       [Enter Feature Description here.]
    </description>
 
-   <copyright url="http://www.mpt.com/copyright">
+   <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
    </copyright>
 
-   <license url="http://www.mpt.com/license">
+   <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
 
    <requires>
-      <import feature="com.android.ide.eclipse.adt" version="21.0.0.v201210310015-519525"/>
-      <import feature="org.eclipse.jdt" version="3.7.2.v20120120-1414-7z8gFcuFMP7BW5XTz0jLTnz0l9B1"/>
+      <import plugin="com.android.ide.eclipse.adt"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jdt"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.ide"/>
    </requires>
 
    <plugin
          id="com.intel.ide.eclipse.mpt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.intel.ide.eclipse.mpt.json"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -45,12 +55,5 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="com.intel.ide.eclipse.mpt.json"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
