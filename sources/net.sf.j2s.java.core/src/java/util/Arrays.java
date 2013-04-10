@@ -2777,7 +2777,13 @@ public class Arrays {
         }
         int resultLength = end - start;
         int copyLength = Math.min(resultLength, originalLength - start);
-        T[] result = (T[]) Array.newInstance(original.getClass().getComponentType(), resultLength);
+        /**
+         * newInstance use Object.class for portingtool complier normally, portingtool
+         * no method getComponentType() of Class object. And JS does not
+         * distinguish the types of any Java array types are the use of JS Array
+         * object.
+         */
+        T[] result = (T[]) Array.newInstance(Object.class, resultLength);
         System.arraycopy(original, start, result, 0, copyLength);
         return result;
     }
