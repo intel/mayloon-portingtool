@@ -20,6 +20,8 @@ public class MayloonNature implements IProjectNature {
 	public static final String NATURE_ID = "com.intel.ide.eclipse.mpt.MayloonNature"; //$NON-NLS-1$
 
 	private IProject project;
+	
+
 
 	/*
 	 * (non-Javadoc)
@@ -43,14 +45,14 @@ public class MayloonNature implements IProjectNature {
 		}
 		
 		if(!isPropertiesBuilderConfigured) {
-			ICommand newCommand = desc.newCommand();
-			newCommand.setBuilderName(MayloonPropertiesBuilder.BUILDER_ID);
-			commands.addFirst(newCommand);
+//			ICommand newCommand = desc.newCommand();
+//			newCommand.setBuilderName(MayloonPropertiesBuilder.BUILDER_ID);
+//			commands.addFirst(newCommand);
 		}
 		if(!isPackageBuilderConfigured) {
-			ICommand newCommand = desc.newCommand();
-			newCommand.setBuilderName(MayloonPackageBuilder.BUILDER_ID);
-			commands.addLast(newCommand);
+//			ICommand newCommand = desc.newCommand();
+//			newCommand.setBuilderName(MayloonPackageBuilder.BUILDER_ID);
+//			commands.addLast(newCommand);
 		}
 		
 		desc.setBuildSpec((ICommand[])commands.toArray(new ICommand[commands.size()]));

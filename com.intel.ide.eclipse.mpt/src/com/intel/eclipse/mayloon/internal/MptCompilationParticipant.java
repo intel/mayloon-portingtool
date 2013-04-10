@@ -40,10 +40,18 @@ import org.eclipse.jdt.internal.compiler.ClassFile;
 import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.ASTParserMoveVariableDeclaration;
+import com.intel.ide.eclipse.mpt.ast.ASTParserRemoveNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.LocalNativeMethodDetector;
+
 public class MptCompilationParticipant extends CompilationParticipant {
+
+	private IJavaProject selectedProject;
 
 	/**
 	 * ICompilerRequestor implementation
@@ -89,6 +97,7 @@ public class MptCompilationParticipant extends CompilationParticipant {
 
 	@Override
 	public boolean isActive(IJavaProject project) {
+		selectedProject = project;
 		return true;
 	}
 
@@ -122,89 +131,68 @@ public class MptCompilationParticipant extends CompilationParticipant {
 	private void AddBlankLine() throws MalformedTreeException,
 			BadLocationException, CoreException, IOException {
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		// Get all projects in the workspace
-		IProject[] projects = root.getProjects();
-		// Loop over all projects
-		for (IProject project : projects) {
-			try {
-				if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+		// IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		// IWorkspaceRoot root = workspace.getRoot();
+		// // Get all projects in the workspace
+		// IProject[] projects = root.getProjects();
+		// // Loop over all projects
+		// for (IProject project : projects) {
 
-					IPackageFragment[] packages = JavaCore.create(project)
-							.getPackageFragments();
-					// parse(JavaCore.create(project));
-					for (IPackageFragment mypackage : packages) {
-						if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
-							for (ICompilationUnit unit : mypackage
-									.getCompilationUnits()) {
-								// Now create the AST for the ICompilationUnits
+		// Update the user interface asynchronously
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					IProject project = selectedProject.getProject();
 
-								// parse compilation unit
-								CompilationUnit astRoot = parse(unit);
+					if (project
+							.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
 
-								// create a ASTRewrite
-								AST ast = astRoot.getAST();
-								ASTRewrite rewriter = ASTRewrite.create(ast);
-
-								// for getting insertion position
-								TypeDeclaration typeDecl = (TypeDeclaration) astRoot
-										.types().get(0);
-								
-								if (typeDecl.getMethods().length != 0) {
-									MethodDeclaration methodDecl = typeDecl
-											.getMethods()[0];
-									Block block = methodDecl.getBody();
-
-									ListRewrite listRewrite = rewriter
-											.getListRewrite(block,
-													Block.STATEMENTS_PROPERTY);
-									// notice here, we just create a string
-									// placeholder, and string is simply as empty
-									Statement placeHolder = (Statement) rewriter
-											.createStringPlaceholder(
-													"int test_temp = 0;",
-													ASTNode.EXPRESSION_STATEMENT);
-									listRewrite.insertFirst(placeHolder, null);
-
-									TextEdit edits = rewriter.rewriteAST();
-
-									// apply the text edits to the compilation unit
-									Document document = new Document(
-											unit.getSource());
-
-									edits.apply(document);
-
-									// this is the code for adding statements
-									unit.getBuffer().setContents(document.get());
-
-									System.out.println("done");
-								} else {
-									System.out.println("No method is defined in " + typeDecl.getName().toString());
+						IPackageFragment[] packages = JavaCore.create(project)
+								.getPackageFragments();
+						// parse(JavaCore.create(project));
+						for (IPackageFragment mypackage : packages) {
+							if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+								for (ICompilationUnit unit : mypackage
+										.getCompilationUnits()) {
+									// Now create the AST for the
+									// ICompilationUnits
+									//ASTParserMoveVariableDeclaration astParserMoveVariable = new ASTParserMoveVariableDeclaration();
+									//astParserMoveVariable.run(unit);
+//									ASTParserRemoveNativeMethodDeclaration astParserNativeMethodRemove = new ASTParserRemoveNativeMethodDeclaration();
+//									astParserNativeMethodRemove.run(unit);
+									
+									ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+									astParserAddNativeMethod.run(unit);
+									
+									ASTParserRemoveNativeMethodDeclaration astParserNativeMethodRemove = new ASTParserRemoveNativeMethodDeclaration();
+									astParserNativeMethodRemove.run(unit);
+									
 								}
-								
-								
 							}
 						}
 					}
+				} catch (JavaModelException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (MalformedTreeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (CoreException e) {
-				e.printStackTrace();
-			} catch (MalformedTreeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
-		}
+		});
+
 	}
 
 	// give error message when build project
+	@SuppressWarnings("deprecation")
 	@Override
 	public void buildStarting(BuildContext[] files, boolean isBatch) {
 		for (BuildContext context : files) {
-			String fileNAme = context.getFile().getName();
+			String fileName = context.getFile().getName();
 			CompilationUnit ast = (CompilationUnit) createAstFromFile(context
 					.getFile());
 
@@ -213,6 +201,7 @@ public class MptCompilationParticipant extends CompilationParticipant {
 				public void acceptProblem(IProblem problem) {
 					System.out.println(problem.getID() + ": "
 							+ problem.getMessage());
+
 				}
 
 				public void beginReporting() {
@@ -230,15 +219,18 @@ public class MptCompilationParticipant extends CompilationParticipant {
 			try {
 				ICompilationUnit cu = JavaCore
 						.createCompilationUnitFrom(context.getFile());
+
 				cu.getWorkingCopy(new WorkingCopyOwner() {
 				}, problemRequestor, null);
+				
 			} catch (JavaModelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// List<MyProblems> problems = createProblems(fileNAme, ast);
-			// context.recordNewProblems(
-			// problems.toArray(new MyProblems[problems.size()]));
+			List<MptUnsupportedProblems> problems = createProblems(fileName, ast);
+			context.recordNewProblems(problems.toArray(new MptUnsupportedProblems[problems
+					.size()]));
+
 		}
 
 		try {
@@ -270,24 +262,24 @@ public class MptCompilationParticipant extends CompilationParticipant {
 	}
 
 	// generate error message from AST
-	// private List<MyProblems> createProblems(final String fileName,
-	// final CompilationUnit ast) {
-	// final List<MyProblems> problems = new ArrayList<MyProblems>();
-	//
-	// ast.accept(new ASTVisitor() {
-	// @Override
-	// public boolean visit(MethodInvocation node) {
-	// MyProblems prom = new MyProblems(IStatus.WARNING, node
-	// .getName().toString(), fileName);
-	// int start = node.getStartPosition();
-	// prom.setSourceStart(start);
-	// prom.setSourceEnd(start + node.getLength());
-	// prom.setSourceLineNumber(ast.getLineNumber(start));
-	// problems.add(prom);
-	// return false;
-	// }
-	// });
-	// return problems;
-	// }
+	private List<MptUnsupportedProblems> createProblems(final String fileName,
+			final CompilationUnit ast) {
+		final List<MptUnsupportedProblems> problems = new ArrayList<MptUnsupportedProblems>();
+
+		ast.accept(new ASTVisitor() {
+			@Override
+			public boolean visit(MethodInvocation node) {
+				MptUnsupportedProblems prom = new MptUnsupportedProblems(IStatus.ERROR, node
+						.getName().toString(), fileName);
+				int start = node.getStartPosition();
+				prom.setSourceStart(start);
+				prom.setSourceEnd(start + node.getLength());
+				prom.setSourceLineNumber(ast.getLineNumber(start));
+				problems.add(prom);
+				return false;
+			}
+		});
+		return problems;
+	}
 
 }
