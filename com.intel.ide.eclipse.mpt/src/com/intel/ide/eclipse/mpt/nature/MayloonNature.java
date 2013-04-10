@@ -61,7 +61,7 @@ public class MayloonNature implements IProjectNature {
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
-		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.AndroidNature");
+		removeFromNatures(project, "com.android.ide.eclipse.adt.AndroidNature");
 	}
 
 	/*
