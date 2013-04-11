@@ -192,39 +192,19 @@ public abstract class AbstractManipulator {
 	 *            used to create the new MethodDeclaration
 	 * @return the created {@link MethodDeclaration}
 	 */
-	@SuppressWarnings("unchecked")
 	protected MethodDeclaration createNewMethodDeclaration(
 			NativeMethodBindingManager manager, AST ast, ASTRewrite rewrite) {
 
 		String methodName = manager.getNativeMethodDeclarationNode().getName().toString();
-		Type fullType = manager.getNativeMethodDeclarationNode().getReturnType2();
-		int modifier = manager.getNativeMethodDeclarationNode().getModifiers();
 		
+		Type fullType = manager.getNativeMethodDeclarationNode().getReturnType2();
+		
+		int modifier = manager.getNativeMethodDeclarationNode().getModifiers();
+		// remove NATIVE
 		int modifierWithoutNative = modifier & ~Modifier.NATIVE;
 		
 		List parameters = manager.getNativeMethodDeclarationNode().parameters();
 		
-//        MethodDeclaration md = rewrite.getAST().newMethodDeclaration();
-//        md.setName(rewrite.getAST().newSimpleName(methodName));
-//        md.setConstructor(false);
-//		  
-//        md.modifiers().addAll(ASTNodeFactory.newModifiers(rewrite.getAST(),  ));
-//        if (fullType.isPrimitiveType()) {
-//        	System.out.println("returnType is : " + fullType.toString());
-//        	PrimitiveType primitiveType = (PrimitiveType)fullType;
-//        	//md.setReturnType2(rewrite.getAST().newPrimitiveType(PrimitiveType.INT));
-//        	md.setReturnType2(rewrite.getAST().newPrimitiveType(primitiveType.getPrimitiveTypeCode()));
-//        } else {
-//        	md.setReturnType2(fullType);
-//        }
-//        
-//        Block stubBlock = ast.newBlock();
-//
-//        md.setBody(stubBlock);
-
-//        ListRewrite statements = rewrite.getListRewrite(md.getBody(),
-//                Block.STATEMENTS_PROPERTY);
-        
         return ASTUtil.generateStubMethodBody(rewrite.getAST(), methodName, fullType, modifierWithoutNative, parameters);
 	}
 	
