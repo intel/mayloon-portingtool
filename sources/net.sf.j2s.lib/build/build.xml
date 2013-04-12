@@ -1180,13 +1180,14 @@
     <!-- ================================= 
           target: j2s.lib.replace
          ================================= -->
-    <target name="j2s.lib.replace" description="replace java/util/StringTokinzer.js">
+    <target name="j2s.lib.replace" description="replace java/util/StringTokinzer.js and java/lang/Enum.js">
         <java classname="net.sf.j2s.lib.build.ReplaceStringTokenizer">
             <arg value="${j2s.lib.dist}/java/util/StringTokenizer.js"/>
             <classpath>
                 <pathelement path="${j2s.lib.project}/bin"/>
             </classpath>
         </java>
+        <copy file="${j2s.core.src}/java/lang/Enum.js" todir="${j2s.lib.dist}/java/lang" overwrite="true"/>
     </target>
 
 </project>
