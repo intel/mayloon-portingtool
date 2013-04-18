@@ -9,13 +9,13 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
  * local variable and the first reference to a local variable.
  *
  */
-public class NativeMethodBindingManager {
+public class StubMethodBindingManager {
 	
 	private final MethodDeclaration methodDeclarationNode;
 	
-	private int nativeMethodLen = 0;
+	private int stubMethodLen = 0;
 	
-	private int nativeMethodStartPosition = 0;
+	private int stubMethodStartPosition = 0;
 
 	/**
 	 * Constructor.
@@ -24,15 +24,15 @@ public class NativeMethodBindingManager {
 	 *            the method declaration of this manager
 	 *            handles.
 	 */
-	public NativeMethodBindingManager(MethodDeclaration methodDeclarationNode) {
+	public StubMethodBindingManager(MethodDeclaration methodDeclarationNode) {
 		this.methodDeclarationNode = methodDeclarationNode;
 		
-		this.nativeMethodLen = methodDeclarationNode.getLength();
-		this.nativeMethodStartPosition = methodDeclarationNode.getStartPosition();
+		this.stubMethodLen = methodDeclarationNode.getLength();
+		this.stubMethodStartPosition = methodDeclarationNode.getStartPosition();
 		
 		ASTNode astNode = methodDeclarationNode.getRoot();
 		
-		System.out.println("Native Method, nativeMethodLen = " + nativeMethodLen + ", nativeMethodStartPosition = " + nativeMethodStartPosition);
+		System.out.println("Stub Method, stubMethodLen = " + stubMethodLen + ", StubMethodStartPosition = " + stubMethodStartPosition);
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class NativeMethodBindingManager {
 	 * @return the {@link methodDeclarationNode} of the method handled
 	 *         by this manager
 	 */
-	public MethodDeclaration getNativeMethodDeclarationNode() {
+	public MethodDeclaration getStubMethodDeclarationNode() {
 		return methodDeclarationNode;
 	}
 

@@ -12,9 +12,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * Main class of the native method stub generator 
  *
  */
-public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
-
-	LocalNativeMethodDetector localNativeMethod = new LocalNativeMethodDetector();
+public class ASTParserAddStubMethodDeclaration extends AbstractASTParser {
+	LocalStubMethodDetector localStubMethod = new LocalStubMethodDetector();
 	CompilationUnit unit = null;
 	ASTRewriteBasedManipulator astRewriteBasedManipulator = null;
 	
@@ -23,11 +22,9 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 	 *
 	 */
 	public void run(ICompilationUnit lwUnit) {
-		
 		unit = parse(lwUnit);
-		localNativeMethod.process(unit);
+		localStubMethod.process(unit);
 		astRewriteBasedManipulator = new ASTRewriteBasedManipulator(unit);
-//		rewrite(unit, localStubMethod.getStubMethodBindingManagers());
 		System.out.println("Add done");
 	}
 	
@@ -35,8 +32,8 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 	 * Return LocalStubMethodDetector
 	 *
 	 */
-	public LocalNativeMethodDetector getLocalStubMethodDetector() {
-		return localNativeMethod;
+	public LocalStubMethodDetector getLocalStubMethodDetector() {
+		return localStubMethod;
 	}
 	
 	/*
@@ -74,11 +71,12 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 	 *            collected information about the native method
 	 */
 	public void rewrite(CompilationUnit unit,
-			Map<IMethodBinding, NativeMethodBindingManager> localNativeMethodManagers) {
-		Collection<NativeMethodBindingManager> managers = localNativeMethodManagers
+			Map<IMethodBinding, StubMethodBindingManager> localStubMethodManagers) {
+		Collection<StubMethodBindingManager> managers = localStubMethodManagers
 				.values();
 
-		astRewriteBasedManipulator.manipulateNativeMethod4Add(unit, managers);
+		
+		astRewriteBasedManipulator.manipulateStubMethod4Add(unit, managers);
 
 	}
 }

@@ -18,8 +18,8 @@ import org.eclipse.jdt.core.dom.TypeParameter;
  * {@link ASTVisitor}.</i>
  *
  */
-public class LocalNativeMethodDetector extends ASTVisitor {
-	Map<IMethodBinding, NativeMethodBindingManager> localNativeMethodManagers = new HashMap<IMethodBinding, NativeMethodBindingManager>();
+public class LocalStubMethodDetector extends ASTVisitor {
+	Map<IMethodBinding, StubMethodBindingManager> localStubMethodManagers = new HashMap<IMethodBinding, StubMethodBindingManager>();
 	
 	/**
 	 * Visits {@link MethodDeclaration} AST nodes. 
@@ -34,12 +34,12 @@ public class LocalNativeMethodDetector extends ASTVisitor {
 		
 		int iModifier = node.getModifiers();
 		
-		if (isMethodNativeIgnored(iModifier)) {
+		if (!isMethodNativeIgnored(iModifier)) {
 			// save to localNativeMethodManagers
 			
 			IMethodBinding methodBinding = node.resolveBinding();
-			NativeMethodBindingManager nativeMethodManager = new NativeMethodBindingManager(node);
-			localNativeMethodManagers.put(methodBinding, nativeMethodManager);
+			StubMethodBindingManager stubMethodManager = new StubMethodBindingManager(node);
+			localStubMethodManagers.put(methodBinding, stubMethodManager);
 		}
 		
 		return true;
@@ -49,10 +49,10 @@ public class LocalNativeMethodDetector extends ASTVisitor {
 	 * Getter for the resulting map.
 	 *
 	 * @return a map with Method bindings as keys and
-	 *         {@link NativeMethodBindingManager} as values
+	 *         {@link StubMethodBindingManager} as values
 	 */
-	public Map<IMethodBinding, NativeMethodBindingManager> getNativeMethodBindingManagers() {
-		return localNativeMethodManagers;
+	public Map<IMethodBinding, StubMethodBindingManager> getStubMethodBindingManagers() {
+		return localStubMethodManagers;
 	}
 
 	/**
