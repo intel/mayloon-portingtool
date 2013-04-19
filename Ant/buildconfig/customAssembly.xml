@@ -22,9 +22,6 @@
 	<!-- folder ${target.folder}/${projectName}                                 -->
 	<!-- =====================================================================  -->
 	<target name="gather.bin.parts">
-	    <echo>
-	        In gather.bin.parts : ${target.folder}/${projectName} 
-	    </echo>
 	</target>
 	
 	
