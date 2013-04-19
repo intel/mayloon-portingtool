@@ -33,7 +33,7 @@
             <and>
                <objectState
                      name="projectNature"
-                     value="com.android.ide.eclipse.adt.AndroidNature">
+                     value="org.eclipse.jdt.core.javanature">
                </objectState>
                <objectState
                      name="open"

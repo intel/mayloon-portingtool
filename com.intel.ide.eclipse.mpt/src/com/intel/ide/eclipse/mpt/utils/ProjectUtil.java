@@ -213,6 +213,84 @@ public class ProjectUtil {
 //			}	
 		}
 	}
+	
+	/**
+	 * Get miss class's package location
+	 * 
+	 * @param packageSplit
+	 * @param project
+	 * @return IPath
+	 */
+	public static IPath GetPackageLocation(String[] packageSplit, IProject project) {
+
+		IPath destFilePath = project.getLocation().append(MptConstants.MAYLOON_SRC_DIR);
+
+		for (int i = 0; i < packageSplit.length - 1; i++) {
+			destFilePath = destFilePath.append(packageSplit[i]);
+		}
+		return destFilePath;
+	}
+	
+	/**
+	 * Create the package folder from missing class string
+	 * 
+	 * @param destFilePath
+	 * @param project
+	 * @return retVal
+	 */
+	public static boolean CreateMissClassPackageFolder(IPath destFilePath, IProject project) {
+		boolean retVal = true;
+		File files = new File(destFilePath.toOSString());
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				System.out.println("Miss Class Package directories are created!");
+				
+			} else {
+				System.out.println("Failed to create Miss Class Package directories!");
+				retVal = false;
+			}
+		}
+		
+		return retVal;
+	}
+	
+	
+	/**
+	 * Copy missed android framework class to user's application src folder
+	 * 
+	 * @param missClassName
+	 */
+	public static boolean AddMissedAndroidClass2UserApp(String missClassName, IProject project) {
+		boolean retVal = false;
+		
+//		IPath destFilePath = project.getLocation().append(MptConstants.MAYLOON_SRC_DIR);
+		String[] packageSplit = missClassName.split("\\.");
+		String className = missClassName.substring(missClassName.lastIndexOf('.') + 1) + ".java";
+
+		// TODO luqiang, only for test
+		String mayloonSDK = "C:\\Dev\\mayloon\\mayloon_sdk";//MayloonSDK.getSdkLocation();
+		
+		IPath mayloonSDKPath = new Path(mayloonSDK);
+		for (int i = 0; i < packageSplit.length - 1; i++) {
+			mayloonSDKPath = mayloonSDKPath.append(packageSplit[i]);
+		}
+		
+		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
+		
+		// create folder accroding to missClassName
+		if (CreateMissClassPackageFolder(packageFolderPath, project)) {
+			
+			String srcFile = mayloonSDKPath.toOSString() + IPath.SEPARATOR + className;
+					
+			String destFile = packageFolderPath.toOSString() + IPath.SEPARATOR + className;
+			
+			copyFile(srcFile, destFile);
+			
+			retVal = true;
+		}
+
+		return retVal;
+	}
 
 	/**
 	 * move file from src to dest

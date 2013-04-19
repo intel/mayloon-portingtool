@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
@@ -193,18 +194,18 @@ public abstract class AbstractManipulator {
 		Type fullType = manager.getNativeMethodDeclarationNode().getReturnType2();
 		
 		int modifier = manager.getNativeMethodDeclarationNode().getModifiers();
+		
 		// remove NATIVE
-//		int modifierWithoutNative = modifier & ~Modifier.NATIVE;
+		int modifierWithoutNative = modifier & ~Modifier.NATIVE;
 		
-		List parameters = manager.getNativeMethodDeclarationNode().parameters();
+		List<?> parameters = manager.getNativeMethodDeclarationNode().parameters();
 		
-//        return ASTUtil.generateStubMethodBody(rewrite.getAST(), methodName, fullType, modifierWithoutNative, parameters);
-        return ASTUtil.generateStubMethodBody(rewrite.getAST(), methodName, fullType, modifier, parameters);
+        return ASTUtil.generateStubMethodBody(rewrite.getAST(), methodName, fullType, modifierWithoutNative, parameters);
 	}
 	
 	/**
 	 * Creates a new {@link MethodDeclaration} with empty block.
-	 *
+	 * 
 	 * @param manager
 	 *            the native method binding manager
 	 * @param ast
