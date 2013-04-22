@@ -14,7 +14,7 @@ public class MptConstants {
 	public static final String MAYLOON_JRE_LIB = "mayloon_jre.jar"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
 	public static final String MAYLOON_JRE_LIB_NAME = "MayloonJRE"; //$NON-NLS-1$
-	public static final String J2S_DEPLOY_MODE = "j2s.deploy.mode";
+	public static final String MAYLOON_DEPLOY_MODE = "mayloon.deploy.mode";
 	public static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 	public static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
 	public static final String TIZEN_PROJECT_FILE = ".project";
@@ -49,6 +49,7 @@ public class MptConstants {
 	// MAYLOON External Resource property file name
 	public static final String MAYLOON_EXTERNAL_PROPERTY = "external-info.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_RUNTIME_PACKAGE = "package_name.json"; //$NON-NLS-1$
+	public static final String ANDROID_RUNTIME_STUB_CLASS = "android_class.json";
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
 	public static final String MAYLOON_NJS_LIBRARY_PATH = "Mayloon.Framework.Njs.Path";

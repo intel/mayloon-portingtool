@@ -91,6 +91,7 @@ public static IMarker[] getTasksFor(IResource resource) {
  */
 public static void buildStarting() {
 	// build is about to start
+	System.out.println("Starting to build Mayloon project!");
 }
 
 /**
@@ -159,7 +160,7 @@ protected IProject[] build(int kind, Map ignored, IProgressMonitor monitor) thro
 
 	String j2sDeployMode = getDeployMode();
 	
-	if (j2sDeployMode.equals("") || j2sDeployMode == null) {
+	if (j2sDeployMode == null) {
 		return new IProject[0];
 	}
 	
@@ -279,7 +280,7 @@ private void buildDeltas(SimpleLookupTable deltas) {
 }
 
 private String getDeployMode() {
-	String j2sDeployMode = null;
+	String j2sDeployMode = "";
 	File file = new File(this.currentProject.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
 	if (!file.exists()) {
 		/*

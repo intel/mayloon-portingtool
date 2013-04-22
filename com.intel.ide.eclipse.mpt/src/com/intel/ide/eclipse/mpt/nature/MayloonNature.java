@@ -20,6 +20,8 @@ public class MayloonNature implements IProjectNature {
 	public static final String NATURE_ID = "com.intel.ide.eclipse.mpt.MayloonNature"; //$NON-NLS-1$
 
 	private IProject project;
+	
+
 
 	/*
 	 * (non-Javadoc)
@@ -56,8 +58,8 @@ public class MayloonNature implements IProjectNature {
 		desc.setBuildSpec((ICommand[])commands.toArray(new ICommand[commands.size()]));
 		project.setDescription(desc, null);
 		
-		addToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
-		removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+//		addToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER);
+//		removeFromBuildSpec(project, JavaCore.BUILDER_ID);
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
 		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
@@ -126,7 +128,7 @@ public class MayloonNature implements IProjectNature {
             project.setDescription(description, null);
             MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
             
-            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+//            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
@@ -134,6 +136,57 @@ public class MayloonNature implements IProjectNature {
             
 		}
 	}
+	
+	public static void addMaloonProjectBuilder(IProject project) throws CoreException {
+		if (project == null || !project.isOpen()) return;
+		if (!project.hasNature(MayloonNature.NATURE_ID)) {
+            IProjectDescription description = project.getDescription();
+            String[] natures = description.getNatureIds();
+            String[] newNatures = new String[natures.length + 1];
+
+            System.arraycopy(natures, 0, newNatures, 0, natures.length);
+            newNatures[natures.length] = MayloonNature.NATURE_ID;
+
+            description.setNatureIds(newNatures);
+            project.setDescription(description, null);
+            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
+            
+            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+    		addMayloonToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER, project);
+            
+		}
+	}
+	
+	/**
+	 * Adds a builder to the build spec for the given project.
+	 */
+	public static void addMayloonToBuildSpec(String builderID, IProject project) throws CoreException {
+		if (MptConstants.MAYLOON_J2S_BUILDER.equals(builderID)) {
+			IProjectDescription description = project.getDescription();
+			int javaCommandIndex = getJava2ScriptCommandIndex(description.getBuildSpec());
+
+			if (javaCommandIndex == -1) {
+
+				// Add a Java command to the build spec
+				ICommand command = description.newCommand();
+				command.setBuilderName(builderID);
+				setJava2ScriptCommand(description, command, project);
+			}
+			return;
+		}
+
+		IProjectDescription description = project.getDescription();
+		int javaCommandIndex = getJavaCommandIndex(description.getBuildSpec());
+
+		if (javaCommandIndex == -1) {
+
+			// Add a Java command to the build spec
+			ICommand command = description.newCommand();
+			command.setBuilderName(builderID);
+			setJavaCommand(description, command, project);
+		}
+	}
+	
 	
 	/**
 	 * Adds a builder to the build spec for the given project.
@@ -148,7 +201,7 @@ public class MayloonNature implements IProjectNature {
 				// Add a Java command to the build spec
 				ICommand command = description.newCommand();
 				command.setBuilderName(builderID);
-				setJava2ScriptCommand(description, command);
+				setJava2ScriptCommand(description, command, project);
 			}
 			return;
 		}
@@ -161,7 +214,7 @@ public class MayloonNature implements IProjectNature {
 			// Add a Java command to the build spec
 			ICommand command = description.newCommand();
 			command.setBuilderName(builderID);
-			setJavaCommand(description, command);
+			setJavaCommand(description, command, project);
 		}
 	}
 	
@@ -169,9 +222,9 @@ public class MayloonNature implements IProjectNature {
 	 * Update the Java command in the build spec (replace existing one if present,
 	 * add one first if none).
 	 */
-	private void setJava2ScriptCommand(
+	private static void setJava2ScriptCommand(
 		IProjectDescription description,
-		ICommand newCommand)
+		ICommand newCommand, IProject project)
 		throws CoreException {
 
 		ICommand[] oldBuildSpec = description.getBuildSpec();
@@ -190,16 +243,16 @@ public class MayloonNature implements IProjectNature {
 
 		// Commit the spec change into the project
 		description.setBuildSpec(newCommands);
-		this.project.setDescription(description, null);
+		project.setDescription(description, null);
 	}
 	
 	/**
 	 * Update the Java command in the build spec (replace existing one if present,
 	 * add one first if none).
 	 */
-	private void setJavaCommand(
+	private static void setJavaCommand(
 		IProjectDescription description,
-		ICommand newCommand)
+		ICommand newCommand, IProject project)
 		throws CoreException {
 
 		ICommand[] oldBuildSpec = description.getBuildSpec();
@@ -218,7 +271,7 @@ public class MayloonNature implements IProjectNature {
 
 		// Commit the spec change into the project
 		description.setBuildSpec(newCommands);
-		this.project.setDescription(description, null);
+		project.setDescription(description, null);
 	}
 
 	/**

@@ -1,6 +1,0 @@
-#Java2Script Configuration
-#Mon Apr 08 17:29:34 CST 2013
-j2s.resources.list=../../../../../Program Files/eclipse-3.7.2/plugins/net.sf.j2s.lib_2.0.0/j2slib/java.runtime.j2x,bin/net/sf/j2s/lib/providers/JavaRuntimeJSProvider4MPT.js,bin/net/sf/j2s/lib/build/UTF8Concat.js,bin/net/sf/j2s/lib/build/SmartJSCompressor.js,bin/net/sf/j2s/lib/build/RegExCompress.js,bin/net/sf/j2s/lib/build/PackImage.js,bin/net/sf/j2s/lib/build/PackCSSIntoJS.js,bin/net/sf/j2s/lib/build/J2SVersionDelta.js,bin/net/sf/j2s/lib/build/J2SConcat.js,bin/net/sf/j2s/lib/build/Bundle2StringUtil.js,bin/net/sf/j2s/lib/LibPlugin.js
-j2s.abandoned.resources.list=
-j2s.output.path=bin
-j2s.compiler.status=enable

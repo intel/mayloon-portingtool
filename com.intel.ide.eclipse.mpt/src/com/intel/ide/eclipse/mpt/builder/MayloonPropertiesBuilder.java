@@ -38,17 +38,11 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 		if(ProjectUtil.isLibraryProject(project)) {
 			return project.getReferencedProjects();
 		}
-		AntPropertiesBuilder antPropertiesbuilder = new AntPropertiesBuilder(JavaCore.create(getProject()));
-		antPropertiesbuilder.build();
-		
-		// .mayloon properties generation
-		// move to conversion logic
-		// mayloonPropBuild();
 		
 		return project.getReferencedProjects();
 	}
 	
-	public static void mayloonPropBuild(IProject project) {
+	public static void j2sPropBuild(IProject project) {
 		Properties prop = new Properties();
 		IJavaProject javaProject = JavaCore.create(project);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -72,9 +66,13 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 		
 		prop.setProperty(J2S_COMPILER_STATUS, "enable");
 		prop.setProperty(J2S_COMPILER_MODE, "debug");
-		prop.setProperty(MptConstants.J2S_DEPLOY_MODE, "browser");
 		
 		saveProperty(prop, javaProject);
+	}
+	
+	public static void mayloonPropBuild(IProject project) throws CoreException {
+		AntPropertiesBuilder antPropertiesbuilder = new AntPropertiesBuilder(JavaCore.create(project));
+		antPropertiesbuilder.build();
 	}
 	
 	/**

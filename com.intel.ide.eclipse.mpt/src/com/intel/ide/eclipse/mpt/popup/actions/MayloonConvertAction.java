@@ -15,23 +15,30 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
+import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
+public class MayloonConvertAction implements IObjectActionDelegate {
 
-public class MayloonConvertAction  implements IObjectActionDelegate {
-	
 	private ISelection selection;
+	private IProject project;
 
 	public MayloonConvertAction() {
 		// TODO Auto-generated constructor stub
@@ -42,92 +49,168 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void run(IAction action) {
-		if(!MayloonSDK.isSdkLocationSet(true)) {
+		if (!MayloonSDK.isSdkLocationSet(true)) {
 			return;
 		}
-		
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
+			for (Iterator it = ((IStructuredSelection) selection).iterator(); it
+					.hasNext();) {
 				Object element = it.next();
-				final IProject project;
-				
+
 				if (element instanceof IProject) {
 					project = (IProject) element;
 				} else if (element instanceof IAdaptable) {
-					project = (IProject)((IAdaptable)element).getAdapter(IProject.class);
-				} else{
-					project = null;
+					project = (IProject) ((IAdaptable) element)
+							.getAdapter(IProject.class);
 				}
-				
 				if (project != null) {
-					if(ProjectUtil.isLibraryProject(project)) {
-						MptPluginConsole.error(MptConstants.CONVERT_TAG, "Convert library project '%1$s' is not supported.", project.getName());
-						return;
-					}
-						
+
 					if (!ProjectUtil.checkVersionMatch(project)) {
 						return;
 					}
-					
-					//do convert and use monitor to show convert progress 
-					Job convertJob = new Job("Convert Project") {		
+
+					// do convert and use monitor to show convert progress
+					Job convertJob = new Job("Convert Project") {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 
 							// 8 steps to convert project
 							monitor.beginTask("Project converting...", 8);
-							try { 
+							try {
 								// disable AutoBuild
-								IWorkspace workspace = ResourcesPlugin.getWorkspace();
-								IWorkspaceDescription description = workspace.getDescription();
+								IWorkspace workspace = ResourcesPlugin
+										.getWorkspace();
+								IWorkspaceDescription description = workspace
+										.getDescription();
 								if (description.isAutoBuilding()) {
 									description.setAutoBuilding(false);
 									workspace.setDescription(description);
 								}
-								
+
 								// generate .j2s configuration file
-								MayloonPropertiesBuilder.mayloonPropBuild(project);
+								MayloonPropertiesBuilder
+										.mayloonPropBuild(project);
+								MayloonPropertiesBuilder.j2sPropBuild(project);
 								monitor.worked(1);
-								
-								String deployMode = ProjectUtil.getDeployMode(project);
-								
+
+								String deployMode = ProjectUtil
+										.getDeployMode(project);
+
 								ProjectUtil.backupProject(project);
 								monitor.worked(1);
-								
+
 								// get package name from AndroidManifest.xml
-								// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
-								String packageName = ProjectUtil.extractPackageFromManifest(project);
-								
+								// packageName is [packageName], not include the
+								// main activity name.(not compatible with
+								// android internal implementation)
+								String packageName = ProjectUtil
+										.extractPackageFromManifest(project);
+
 								// merge j2s class path modify logic to it.
 								ProjectUtil.fixMayloonClassEntry(project);
 								monitor.worked(1);
-								
+
 								// merge j2s nature to it.
 								MayloonNature.addProjectNature(project);
 								monitor.worked(1);
-								
-								// copy mayloon framework resource and js library
-								ProjectUtil.addMayloonFrameworkFolder(project, deployMode, packageName);
+
+								// copy mayloon framework resource and js
+								// library
+								ProjectUtil.addMayloonFrameworkFolder(project,
+										deployMode, packageName);
 								monitor.worked(1);
-								
-								// copy android build output resource to /bin/apps/[package name]/
-								ProjectUtil.addAndroidOutput2Mayloon(project, deployMode, packageName, false);
+
+								// copy android build output resource to
+								// /bin/apps/[package name]/
+								ProjectUtil.addAndroidOutput2Mayloon(project,
+										deployMode, packageName, false);
 								monitor.worked(1);
-								
+
 								// clear android generated gen/ folder
-								ProjectUtil.clearAndroidGenFolder(project);		
+								ProjectUtil.clearAndroidGenFolder(project);
 								monitor.worked(1);
-								
+
+								// Update the user interface asynchronously
+								Display.getDefault().asyncExec(new Runnable() {
+									public void run() {
+										try {
+											// IProject project =
+											// selectedProject.getProject();
+
+											if (project
+													.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+
+												IPackageFragment[] packages = JavaCore
+														.create(project)
+														.getPackageFragments();
+												// parse(JavaCore.create(project));
+												for (IPackageFragment mypackage : packages) {
+													if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+														for (ICompilationUnit unit : mypackage
+																.getCompilationUnits()) {
+
+															// for local native
+															// method
+															ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+															astParserAddNativeMethod
+																	.run(unit);
+															astParserAddNativeMethod.rewrite(
+																	astParserAddNativeMethod
+																			.getCompilationUnit(),
+																	astParserAddNativeMethod
+																			.getLocalStubMethodDetector()
+																			.getNativeMethodBindingManagers());
+
+															// for local method
+															// ASTParserAddStubMethodDeclaration
+															// astParserAddStubMethod
+															// = new
+															// ASTParserAddStubMethodDeclaration();
+															// astParserAddStubMethod.run(unit);
+															// astParserAddStubMethod.rewrite(astParserAddStubMethod.getCompilationUnit(),
+															// astParserAddStubMethod.getLocalStubMethodDetector().getStubMethodBindingManagers());
+
+														}
+													}
+												}
+											}
+										} catch (JavaModelException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (CoreException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (MalformedTreeException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+
+									}
+								});
+
+
 								// TODO luqiang, skip this release
-								// ProjectUtil.addAntBuildSupport(project);	
+								// ProjectUtil.addAntBuildSupport(project);
 								
+								// Add mayloon project builder to classpath
+								MayloonNature.addMaloonProjectBuilder(project);
+
 								// TODO luqiang, add monitor for it.
-								project.refreshLocal(IResource.DEPTH_INFINITE, null);
+								project.refreshLocal(IResource.DEPTH_INFINITE,
+										null);
 								monitor.worked(1);
-								MptPluginConsole.success(MptConstants.CONVERT_TAG, "Project '%1$s' has been converted successfully.", project.getName());
+								MptPluginConsole
+										.success(
+												MptConstants.CONVERT_TAG,
+												"Project '%1$s' has been converted successfully.",
+												project.getName());
 							} catch (CoreException e) {
 								MptPluginLogger.throwable(e);
-								MptPluginConsole.error(MptConstants.CONVERT_TAG, "Project '%1$s' could not be converted due to cause {%2$s}", project.getName(), e.getMessage());
+								MptPluginConsole
+										.error(MptConstants.CONVERT_TAG,
+												"Project '%1$s' could not be converted due to cause {%2$s}",
+												project.getName(),
+												e.getMessage());
 							}
 							monitor.done();
 							return Status.OK_STATUS;
@@ -140,17 +223,29 @@ public class MayloonConvertAction  implements IObjectActionDelegate {
 		}
 	}
 
-	/* 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
+	/*
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.selection = selection;
+		if (selection instanceof IStructuredSelection) {
+			for (Iterator it = ((IStructuredSelection) selection).iterator(); it
+					.hasNext();) {
+				Object element = it.next();
+
+				if (element instanceof IProject) {
+					project = (IProject) element;
+				}
+			}
+		}
 	}
 
-	/* 
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * @see
+	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
+	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
