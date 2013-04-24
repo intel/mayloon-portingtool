@@ -58,7 +58,7 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 		
 		MethodDeclaration methodDecl = manager.getNativeMethodDeclarationNode();		
 		
-		MethodDeclaration methodStub = createNewMethodDeclaration(
+		MethodDeclaration methodStub = createNewMethodDeclaration4Native(
 				manager, mAST, mRewrite);
 		
 //		ListRewrite listRewrite  = mRewrite.getListRewrite(methodDecl, MethodDeclaration.MODIFIERS2_PROPERTY);

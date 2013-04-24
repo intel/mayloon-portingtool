@@ -97,7 +97,16 @@ public class ASTUtil {
             	PrimitiveType primitiveType = (PrimitiveType)returnType;
             	md.setReturnType2(ast.newPrimitiveType(primitiveType.getPrimitiveTypeCode()));
             } else {
-            	md.setReturnType2(returnType);
+            	//md.setReturnType2(returnType);
+            	if (returnType.isArrayType()) {
+ 					ArrayType arrayType = (ArrayType)returnType;
+ 					String arrayTypeString = arrayType.getComponentType().toString();
+ 					md.setReturnType2(ast.newArrayType(ast.newSimpleType(ast.newSimpleName(arrayTypeString))));
+ 				} else {
+ 					//md.setReturnType2(returnType);
+ 					md.setReturnType2(ast.newSimpleType(ast.newSimpleName(returnType.toString())));
+
+ 				}
             }
         }      
         

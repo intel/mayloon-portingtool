@@ -186,7 +186,7 @@ public abstract class AbstractManipulator {
 	 *            used to create the new MethodDeclaration
 	 * @return the created {@link MethodDeclaration}
 	 */
-	protected MethodDeclaration createNewMethodDeclaration(
+	protected MethodDeclaration createNewMethodDeclaration4Native(
 			NativeMethodBindingManager manager, AST ast, ASTRewrite rewrite) {
 
 		String methodName = manager.getNativeMethodDeclarationNode().getName().toString();
