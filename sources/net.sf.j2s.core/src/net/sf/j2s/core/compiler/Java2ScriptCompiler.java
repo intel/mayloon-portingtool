@@ -220,6 +220,7 @@ public class Java2ScriptCompiler implements IExtendedCompiler {
 				visitor.setDebugging(isDebugging);
 				dvisitor.setDebugging(isDebugging);
 				boolean toCompress = "release".equals(props.getProperty("j2s.compiler.mode"));
+                PropertiesHolder.j2s_compiler_mode = toCompress;
 				//visitor.setToCompileVariableName(toCompress);
 				((ASTVariableVisitor) visitor.getAdaptable(ASTVariableVisitor.class)).setToCompileVariableName(toCompress);
 				dvisitor.setToCompileVariableName(toCompress);

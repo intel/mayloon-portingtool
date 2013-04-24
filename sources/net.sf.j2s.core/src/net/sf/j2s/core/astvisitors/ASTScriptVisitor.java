@@ -13,6 +13,10 @@ package net.sf.j2s.core.astvisitors;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+
+import net.sf.j2s.core.compiler.PropertiesHolder;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -3061,6 +3065,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 			}
 			((ASTTypeVisitor) visitor.getAdaptable(ASTTypeVisitor.class)).setClassName(visitorClassName);
 			((ASTPackageVisitor) visitor.getAdaptable(ASTPackageVisitor.class)).setPackageName(((ASTPackageVisitor) getAdaptable(ASTPackageVisitor.class)).getPackageName());
+            ((ASTVariableVisitor) visitor.getAdaptable(ASTVariableVisitor.class)).setToCompileVariableName(PropertiesHolder.j2s_compiler_mode);
 			node.accept(visitor);
 			if (node.isInterface() || (node.getModifiers() & Modifier.STATIC) != 0 
 					|| (node.getParent() instanceof TypeDeclaration 
