@@ -150,11 +150,9 @@ public class MayloonNature implements IProjectNature {
             description.setNatureIds(newNatures);
             project.setDescription(description, null);
             MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
-            
-            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
-    		addMayloonToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER, project);
-            
 		}
+        removeFromBuildSpec(project, JavaCore.BUILDER_ID);
+		addMayloonToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER, project);
 	}
 	
 	/**
