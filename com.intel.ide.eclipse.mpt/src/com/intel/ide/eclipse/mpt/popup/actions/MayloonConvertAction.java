@@ -74,8 +74,8 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 
-							// 8 steps to convert project
-							monitor.beginTask("Project converting...", 8);
+							// 9 steps to convert project
+							monitor.beginTask("Project converting...", 9);
 							try {
 								// disable AutoBuild
 								IWorkspace workspace = ResourcesPlugin
@@ -151,15 +151,15 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 
 															// for local native
 															// method
-															ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
-															astParserAddNativeMethod
-																	.run(unit);
-															astParserAddNativeMethod.rewrite(
-																	astParserAddNativeMethod
-																			.getCompilationUnit(),
-																	astParserAddNativeMethod
-																			.getLocalStubMethodDetector()
-																			.getNativeMethodBindingManagers());
+//															ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+//															astParserAddNativeMethod
+//																	.run(unit);
+//															astParserAddNativeMethod.rewrite(
+//																	astParserAddNativeMethod
+//																			.getCompilationUnit(),
+//																	astParserAddNativeMethod
+//																			.getLocalStubMethodDetector()
+//																			.getNativeMethodBindingManagers());
 
 															// for local method
 															// ASTParserAddStubMethodDeclaration

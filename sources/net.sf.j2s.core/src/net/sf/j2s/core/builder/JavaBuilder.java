@@ -36,7 +36,8 @@ BuildNotifier notifier;
 char[][] extraResourceFileFilters;
 String[] extraResourceFolderFilters;
 public static final String SOURCE_ID = "JDT"; //$NON-NLS-1$
-private static final String J2S_DEPLOY_MODE = "j2s.deploy.mode";
+private static final String MAYLOON_DEPLOY_MODE = "mayloon.deploy.mode";
+private static final String MAYLOON_BUILD_PROPERTIES = "mayloon.build.properties";
 
 public static boolean DEBUG = false;
 public static boolean SHOW_STATS = false;
@@ -281,7 +282,7 @@ private void buildDeltas(SimpleLookupTable deltas) {
 
 private String getDeployMode() {
 	String j2sDeployMode = "";
-	File file = new File(this.currentProject.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
+	File file = new File(this.currentProject.getLocation().toOSString(), MAYLOON_BUILD_PROPERTIES); //$NON-NLS-1$
 	if (!file.exists()) {
 		/*
 		 * The file .j2s is a marker for Java2Script to compile JavaScript
@@ -291,7 +292,7 @@ private String getDeployMode() {
 	Properties props = new Properties();
 	try {
 		props.load(new FileInputStream(file));
-		j2sDeployMode = props.getProperty(J2S_DEPLOY_MODE, null);
+		j2sDeployMode = props.getProperty(MAYLOON_DEPLOY_MODE, null);
 		
 	} catch (FileNotFoundException e1) {
 		e1.printStackTrace();
