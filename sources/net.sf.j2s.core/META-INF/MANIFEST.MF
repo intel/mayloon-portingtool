@@ -19,7 +19,8 @@ Export-Package: net.sf.j2s.core.astvisitors,
 Bundle-ClassPath: .,
  lib/js.jar,
  lib/narrativejs.jar
-Import-Package: org.eclipse.swt,
+Import-Package: org.eclipse.core.filesystem,
+ org.eclipse.swt,
  org.eclipse.swt.graphics,
  org.eclipse.swt.widgets,
  org.eclipse.ui

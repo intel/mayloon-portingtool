@@ -130,6 +130,13 @@ public class ProjectUtil {
 		}
 		String destnation = prop
 				.getProperty(MptConstants.PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION);
+		if(destnation == null){
+			IFolder MayloonOutputFolder = project.getFolder(MptConstants.MAYLOON_OUTPUT_DIR);
+			if(MayloonOutputFolder==null || !MayloonOutputFolder.exists()){
+				MayloonOutputFolder.create(true, true, null);
+			}
+			destnation = MayloonOutputFolder.getRawLocation().toString();
+		}
 		IPath path = new Path(destnation);
 		return path;
 	}
