@@ -13,10 +13,6 @@
 	<!-- ${pluginPath} locations.												-->
  	<!-- ===================================================================== 	-->
  	<target name="allElementsDelegator">
- 	    <echo>
- 		    target:   ${target}
- 		    target type + id:   ${topLevelElementType} + ${topLevelElementId}
- 		</echo>
  		<ant antfile="${genericTargets}" target="${target}">
 	 		<property name="type" value="${topLevelElementType}" />
 	 		<property name="id" value="${topLevelElementId}" />

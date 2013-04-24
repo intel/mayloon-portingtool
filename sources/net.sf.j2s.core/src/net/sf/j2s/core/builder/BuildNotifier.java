@@ -11,6 +11,7 @@
 package net.sf.j2s.core.builder;
 
 import net.sf.j2s.core.utils.CorePluginConsole;
+import net.sf.j2s.core.utils.ProjectUtil;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -156,6 +157,7 @@ public void done() {
 			});
 		}else{
 			if(BUILD_TAG.equals(builderMode)){
+				ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
 				CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 			}
 		}
@@ -163,6 +165,7 @@ public void done() {
 		if (NewErrorCount != 0) {
 			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
 		}else{
+			ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
 			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}
