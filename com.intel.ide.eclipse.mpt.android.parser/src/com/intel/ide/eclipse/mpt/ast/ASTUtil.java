@@ -2,6 +2,8 @@ package com.intel.ide.eclipse.mpt.ast;
 
 import java.util.List;
 
+import javax.management.openmbean.SimpleType;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -12,6 +14,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -96,7 +99,13 @@ public class ASTUtil {
         	if (returnType.isPrimitiveType()) {
             	PrimitiveType primitiveType = (PrimitiveType)returnType;
             	md.setReturnType2(ast.newPrimitiveType(primitiveType.getPrimitiveTypeCode()));
-            } else {
+            }else if(returnType.isSimpleType()){
+            	md.setReturnType2(ast.newSimpleType(ast.newSimpleName(returnType.toString())));
+            }else if(returnType.isArrayType()){
+            	md.setReturnType2(generateArrayType(ast, returnType));	
+            }else if(returnType.isParameterizedType()){
+            	md.setReturnType2(generateParameterizedType(ast, returnType));
+            }else {
             	md.setReturnType2(returnType);
             }
         }      
@@ -111,14 +120,14 @@ public class ASTUtil {
  			if (para.getType().isPrimitiveType()) {
  				PrimitiveType primitiveType = (PrimitiveType)para.getType();
  				hashCodeParam.setType(ast.newPrimitiveType(primitiveType.getPrimitiveTypeCode()));
+ 			} else if (para.getType().isArrayType()) {
+ 				hashCodeParam.setType(generateArrayType(ast, para.getType()));
+ 			} else if(para.getType().isSimpleType()){
+ 				hashCodeParam.setType(ast.newSimpleType(ast.newSimpleName(para.getType().toString())));
+ 			} else if(para.getType().isParameterizedType()){
+ 				hashCodeParam.setType(generateParameterizedType(ast, para.getType()));
  			} else {
- 				if (para.getType().isArrayType()) {
- 					ArrayType arrayType = (ArrayType)para.getType();
- 					String arrayTypeString = arrayType.getComponentType().toString();
- 					hashCodeParam.setType(ast.newArrayType(ast.newSimpleType(ast.newSimpleName(arrayTypeString))));
- 				} else {
- 					hashCodeParam.setType(para.getType());
- 				}
+ 				hashCodeParam.setType(para.getType());
  			}
  			hashCodeParam.setName(ast.newSimpleName(para.getName().toString()));
  			mdParameters.add(hashCodeParam);
@@ -173,4 +182,55 @@ public class ASTUtil {
 		return md;
 	}
 
+	/**
+	 * generate ArrayType to satisfy the SetType demand
+	 * 
+	 * @param ast
+	 * @param originalType
+	 * @return
+	 */
+	public static ArrayType generateArrayType(AST ast, Type originalType) {
+		ArrayType arrayType = (ArrayType)originalType;
+		ArrayType generateType;
+		if(arrayType.getComponentType().isArrayType()){
+			ArrayType componentType = generateArrayType(ast, arrayType.getComponentType());
+			generateType = ast.newArrayType(componentType);
+		}else if(arrayType.getComponentType().isSimpleType()){
+    		String simpleName = arrayType.getComponentType().toString();
+    		generateType = ast.newArrayType(ast.newSimpleType(ast.newSimpleName(simpleName)));
+    	}else if(arrayType.getComponentType().isPrimitiveType()){
+    		PrimitiveType primitiveType = (PrimitiveType)arrayType.getComponentType();
+    		generateType = ast.newArrayType(ast.newPrimitiveType(primitiveType.getPrimitiveTypeCode()));
+    	}else {
+    		generateType = arrayType;
+    	}
+		
+    	return generateType;
+	}
+	
+	public static ParameterizedType generateParameterizedType(AST ast, Type originalType){
+		ParameterizedType parameterizedType = (ParameterizedType) originalType;
+		ParameterizedType generateType;
+		if(parameterizedType.getType().isSimpleType()){
+			String parameterizedTypeName = parameterizedType.getType().toString();
+			generateType = ast.newParameterizedType(ast.newSimpleType(ast.newSimpleName(parameterizedTypeName)));
+		}else{
+			generateType = parameterizedType;
+		}
+		
+		List<Type> arguments = parameterizedType.typeArguments();
+		for (int i = 0; i != arguments.size(); i++){
+			Type argumentType;
+			if(arguments.get(i).isSimpleType()){
+				String simpleName = arguments.get(i).toString();
+				argumentType = ast.newSimpleType(ast.newSimpleName(simpleName));
+			}else if(arguments.get(i).isParameterizedType()){
+				argumentType = generateParameterizedType(ast, arguments.get(i));
+			}else{
+				argumentType = ast.newParameterizedType(arguments.get(i));
+			}
+			generateType.typeArguments().add(argumentType);
+		}
+		return generateType;
+	}
 }
