@@ -879,25 +879,19 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		ITypeBinding resolveTypeBinding = node.resolveTypeBinding();
 		QNTypeBinding qn = new QNTypeBinding();
 		String qualifiedName = null;
-		if (resolveTypeBinding != null && resolveTypeBinding.isAnonymous()) {
-			qualifiedName = node.getType().resolveBinding().getQualifiedName();
-			qn.binding = node.getType().resolveBinding();
-		} else if(resolveTypeBinding != null){
-			ITypeBinding declaringClass = resolveTypeBinding.getDeclaringClass();
-			if (declaringClass != null) {
-				ITypeBinding dclClass = null;
-				while ((dclClass = declaringClass.getDeclaringClass()) != null) {
-					declaringClass = dclClass;
-				}
-				qualifiedName = declaringClass.getQualifiedName();
-				qn.binding = declaringClass;
-			} else {
-				qualifiedName = resolveTypeBinding.getQualifiedName();
-				qn.binding = resolveTypeBinding;
-			}
-		}else{
-			return super.visit(node);
-		}
+        if (resolveTypeBinding != null) {
+            if (resolveTypeBinding.isAnonymous()) {
+                resolveTypeBinding = node.getType().resolveBinding();
+            }
+            ITypeBinding dclClass = null;
+            while ((dclClass = resolveTypeBinding.getDeclaringClass()) != null) {
+                resolveTypeBinding = dclClass;
+            }
+            qualifiedName = resolveTypeBinding.getQualifiedName();
+            qn.binding = resolveTypeBinding;
+        } else{
+            return super.visit(node);
+        }
 		qualifiedName = discardGenericType(qualifiedName);
 		qn.qualifiedName = qualifiedName;
 		if (isQualifiedNameOK(qualifiedName, node) 
