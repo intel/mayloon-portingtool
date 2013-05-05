@@ -75,7 +75,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 						protected IStatus run(IProgressMonitor monitor) {
 
 							// 9 steps to convert project
-							monitor.beginTask("Project converting...", 9);
+							monitor.beginTask("Project converting...", 8);
 							try {
 								// disable AutoBuild
 								IWorkspace workspace = ResourcesPlugin
@@ -124,10 +124,6 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 								// /bin/apps/[package name]/
 								ProjectUtil.addAndroidOutput2Mayloon(project,
 										deployMode, packageName, false);
-								monitor.worked(1);
-
-								// clear android generated gen/ folder
-								ProjectUtil.clearAndroidGenFolder(project);
 								monitor.worked(1);
 
 								// Update the user interface asynchronously
