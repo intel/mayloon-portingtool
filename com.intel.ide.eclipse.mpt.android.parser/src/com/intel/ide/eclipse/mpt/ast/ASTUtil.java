@@ -80,9 +80,15 @@ public class ASTUtil {
 		text = ast.newTextElement();
 		text.setText("alert(\"Missing method: " + methodName + "\");");
 		tagCommentAlert.fragments().add(text);
+		
+		final TagElement tagCommentConsole = ast.newTagElement();
+		text = ast.newTextElement();
+		text.setText("console.log(\"Missing method: " + methodName + "\");");
+		tagCommentConsole.fragments().add(text);
 
 		javadoc.tags().add(tagCommentJ2SNative);
 		javadoc.tags().add(tagCommentAlert);
+		javadoc.tags().add(tagCommentConsole);
 		
 		md.setJavadoc(javadoc);
 		
