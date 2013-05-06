@@ -18,7 +18,9 @@ import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -64,6 +66,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -865,6 +870,61 @@ public class ProjectUtil {
 
 		moveFiles(new Path(tempOutPutFile), filePath);
 
+	}
+	
+	/**
+	 * Add missed class stub file to user's application
+	 * 
+	 * @param filePath
+	 * @param packageName
+	 */
+	public static void AddMissedClass2UserApp(IPath filePath, String packageName) {
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+
+		String tempOutPutFile = filePath.toOSString() + ".temp";
+
+		try {
+			String sCurrentLine;
+
+			br = new BufferedReader(new FileReader(filePath.toOSString()));
+			bw = new BufferedWriter(new FileWriter(tempOutPutFile));
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				if (sCurrentLine
+						.contains(MptConstants.MAYLOON_START_ENTRY_BASE)) {
+					String insatllPackageEntry = MptConstants.MAYLOON_START_ENTRY_BASE
+							.replaceAll(MptConstants.MAYLOON_START_ENTRY_MATCH,
+									packageName);
+					bw.write(insatllPackageEntry);
+					bw.newLine();
+				} else {
+					bw.write(sCurrentLine);
+					bw.newLine();
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (bw != null)
+					bw.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		// rm original template file
+		deleteFiles(filePath);
+
+		moveFiles(new Path(tempOutPutFile), filePath);
 	}
 
 	/**
@@ -2127,6 +2187,127 @@ public class ProjectUtil {
 			zipFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Add missed class stub file to user's application
+	 * 
+	 * @param filePath
+	 * @param packageName
+	 */
+	public static boolean AddMissedClass2UserApp(IPath filePath, String missClassName, IProject project) {
+		boolean retVal = true;
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+
+		String tempOutPutFile = filePath.toOSString() + ".temp";
+		
+		String[] packageSplit = missClassName.split("\\.");
+		
+		String packageName = missClassName.substring(0, missClassName
+				.lastIndexOf('.') - 1);
+		
+		String className = missClassName.substring(missClassName
+				.lastIndexOf('.') + 1);
+
+		try {
+			String sCurrentLine;
+
+			br = new BufferedReader(new FileReader(filePath.toOSString()));
+			bw = new BufferedWriter(new FileWriter(tempOutPutFile));
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				if (sCurrentLine
+						.contains("package ")) {
+					String packageStatement = sCurrentLine.replaceAll("android.mayloon.template", packageName);
+					bw.write(packageStatement);
+					bw.newLine();
+				} else if (sCurrentLine
+						.contains("MissClassTemplate")) {
+					String constructorStatement = sCurrentLine.replaceAll("MissClassTemplate", className);
+					bw.write(constructorStatement);
+					bw.newLine();
+				} else {
+					bw.write(sCurrentLine);
+					bw.newLine();
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (bw != null)
+					bw.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		
+		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
+
+		// create folder accroding to missClassName
+		if (CreateMissClassPackageFolder(packageFolderPath, project)) {
+
+			String srcFile = tempOutPutFile;
+
+			String destFile = packageFolderPath.toOSString() + IPath.SEPARATOR
+					+ className + ".java";
+
+			copyFile(srcFile, destFile);
+
+			retVal = true;
+		}
+		
+		deleteFiles(new Path(tempOutPutFile));
+		return retVal;
+	}
+	
+	public static void getAndroidStubPackage(Set<String> stubClassSet) {
+
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+
+		File packageNameFile = new File(mayloonSDKPath + MptConstants.WS_ROOT
+				+ MptConstants.ANDROID_RUNTIME_STUB_CLASS);
+		JSONParser parser = new JSONParser();
+
+		BufferedReader input;
+		try {
+			input = new BufferedReader(new FileReader(packageNameFile));
+			try {
+
+				Object obj = parser.parse(input);
+
+				JSONArray jsonArray = (JSONArray) obj;
+				Iterator<?> iterator = jsonArray.iterator();
+				while (iterator.hasNext()) {
+					stubClassSet.add(iterator.next().toString());
+				}
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 

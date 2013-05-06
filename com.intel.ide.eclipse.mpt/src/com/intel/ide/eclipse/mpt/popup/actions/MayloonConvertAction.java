@@ -1,6 +1,8 @@
 package com.intel.ide.eclipse.mpt.popup.actions;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -19,6 +21,9 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,6 +35,7 @@ import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.LocalImportDeclaration;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
@@ -44,6 +50,14 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 		// TODO Auto-generated constructor stub
 	}
 
+	private static CompilationUnit parse(ICompilationUnit unit) {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setSource(unit);
+		parser.setResolveBindings(true);
+		return (CompilationUnit) parser.createAST(null); // parse
+	}
+	
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -160,6 +174,12 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 																	astParserAddNativeMethod
 																			.getLocalStubMethodDetector()
 																			.getNativeMethodBindingManagers());
+															
+															HashSet<String> mayloonStubClassSet = new HashSet<String>();
+															ProjectUtil.getAndroidStubPackage(mayloonStubClassSet);
+															
+															LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
+															localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
 
 															// for local method
 															// ASTParserAddStubMethodDeclaration

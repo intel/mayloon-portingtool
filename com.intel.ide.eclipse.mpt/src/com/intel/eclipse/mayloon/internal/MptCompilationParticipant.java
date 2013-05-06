@@ -80,7 +80,7 @@ public class MptCompilationParticipant extends CompilationParticipant {
 			mayloonStubClassSet = new HashSet<String>();
 			getAndroidStubPackage(mayloonStubClassSet);
 		}
-		return true;
+		return false;
 	}
 
 	// give error message when save file
@@ -287,7 +287,6 @@ public class MptCompilationParticipant extends CompilationParticipant {
 
 					ASTNode astNode = NodeFinder.perform(ast.getRoot(),
 							problem.getSourceStart(), 0);
-					astNode.getParent().getNodeType();
 					int nodeType = astNode.getNodeType();
 					System.out.println("Problem Node Type is : " + nodeType);
 
