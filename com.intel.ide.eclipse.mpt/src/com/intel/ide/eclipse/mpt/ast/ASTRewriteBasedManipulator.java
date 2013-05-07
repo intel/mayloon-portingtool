@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
@@ -65,6 +66,12 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 		
 //		listRewrite.insertAt(methodStub, 0, null);
 		mRewrite.replace(methodDecl, methodStub, null);
+		
+		NormalAnnotation a = mAST.newNormalAnnotation();		
+	    a.setTypeName(mAST.newName("MayloonAnnotation"));
+//	    a.values().add(createAnnotationMember(mAST, "infoAnnotation", "MaloonStub"));
+	    ListRewrite lr = mRewrite.getListRewrite(methodStub, MethodDeclaration.MODIFIERS2_PROPERTY);
+	    lr.insertFirst(a, null);
 	}
 
 	/*
@@ -88,6 +95,12 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 		
 		mRewrite.replace(methodDecl, methodStub, null);
 //		listRewrite.insertAt(methodStub, 0, null);
+		
+		NormalAnnotation a = mAST.newNormalAnnotation();		
+	    a.setTypeName(mAST.newName("MayloonAnnotation"));
+//	    a.values().add(createAnnotationMember(mAST, "infoAnnotation", "MaloonStub"));
+	    ListRewrite lr = mRewrite.getListRewrite(methodStub, MethodDeclaration.MODIFIERS2_PROPERTY);
+	    lr.insertFirst(a, null);
 		
 	}
 
