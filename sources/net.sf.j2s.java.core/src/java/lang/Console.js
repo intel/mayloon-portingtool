@@ -453,6 +453,13 @@ window.assert = function () {
 
 	/* public */
 	System.arraycopy = function (src, srcPos, dest, destPos, length) {
+        if (src==null || dest == null) {
+            throw  new NullPointerException ();
+        }
+        if (srcPos < 0 || destPos < 0 || length < 0 ||
+               (srcPos + length) > src.length || (destPos + length) > dest.length) {
+            throw  new ArrayIndexOutOfBoundsException ();
+        }
 		if (src != dest) {
 			for (var i = 0; i < length; i++) {
 				dest[destPos + i] = src[srcPos + i];
