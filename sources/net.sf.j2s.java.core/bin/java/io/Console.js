@@ -101,8 +101,8 @@ return this.$writer;
 $_H();
 c$=$_T(java.io.Console,"ConsoleReader",java.io.BufferedReader);
 $_K(c$,
-function($in){
-$_R(this,java.io.Console.ConsoleReader,[new java.io.InputStreamReader($in,System.getProperty("file.encoding")),256]);
+function(a){
+$_R(this,java.io.Console.ConsoleReader,[new java.io.InputStreamReader(a,System.getProperty("file.encoding")),256]);
 this.lock=java.io.Console.CONSOLE_LOCK;
 },"java.io.InputStream");
 $_V(c$,"close",
@@ -112,8 +112,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.io.Console,"ConsoleWriter",java.io.PrintWriter);
 $_K(c$,
-function(out){
-$_R(this,java.io.Console.ConsoleWriter,[out,true]);
+function(a){
+$_R(this,java.io.Console.ConsoleWriter,[a,true]);
 this.lock=java.io.Console.CONSOLE_LOCK;
 },"java.io.OutputStream");
 $_V(c$,"close",

@@ -1,4 +1,4 @@
-﻿$_L(["java.lang.ref.WeakReference","java.util.AbstractMap","$.Iterator","$.Map"],"java.util.WeakHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","java.lang.ref.ReferenceQueue","java.util.AbstractCollection","$.AbstractSet","$.Arrays","$.ConcurrentModificationException","$.NoSuchElementException"],function(){
+﻿$_L(["java.lang.ref.WeakReference","java.util.AbstractMap","$.Iterator","$.Map"],"java.util.WeakHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","$.NullPointerException","java.lang.ref.ReferenceQueue","java.util.AbstractCollection","$.AbstractSet","$.Arrays","$.ConcurrentModificationException","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.referenceQueue=null;
 this.elementCount=0;
@@ -229,7 +229,9 @@ this.computeMaxSize();
 },$fz.isPrivate=true,$fz));
 $_M(c$,"putAll",
 function(map){
-this.putAllImpl(map);
+if(map==null){
+throw new NullPointerException();
+}this.putAllImpl(map);
 },"java.util.Map");
 $_V(c$,"remove",
 function(key){
@@ -283,8 +285,8 @@ this.type=null;
 $_Z(this,arguments);
 },java.util.WeakHashMap,"HashIterator",null,java.util.Iterator);
 $_K(c$,
-function(type){
-this.type=type;
+function(a){
+this.type=a;
 this.expectedModCount=this.b$["java.util.WeakHashMap"].modCount;
 },"java.util.WeakHashMap.Entry.Type");
 $_V(c$,"hasNext",
@@ -311,9 +313,9 @@ if(this.expectedModCount==this.b$["java.util.WeakHashMap"].modCount){
 if(this.hasNext()){
 this.currentEntry=this.nextEntry;
 this.nextEntry=this.currentEntry.$next;
-var result=this.type.get(this.currentEntry);
+var a=this.type.get(this.currentEntry);
 this.nextKey=null;
-return result;
+return a;
 }throw new java.util.NoSuchElementException();
 }throw new java.util.ConcurrentModificationException();
 });
@@ -450,11 +452,11 @@ this.$next=null;
 $_Z(this,arguments);
 },java.util.WeakHashMap,"Entry",java.lang.ref.WeakReference,java.util.Map.Entry);
 $_K(c$,
-function(key,object,queue){
-$_R(this,java.util.WeakHashMap.Entry,[key,queue]);
-this.isNull=key==null;
-this.hash=this.isNull?0:key.hashCode();
-this.value=object;
+function(a,b,c){
+$_R(this,java.util.WeakHashMap.Entry,[a,c]);
+this.isNull=a==null;
+this.hash=this.isNull?0:a.hashCode();
+this.value=b;
 },"~O,~O,java.lang.ref.ReferenceQueue");
 $_V(c$,"getKey",
 function(){
@@ -465,18 +467,18 @@ function(){
 return this.value;
 });
 $_V(c$,"setValue",
-function(object){
-var result=this.value;
-this.value=object;
-return result;
+function(a){
+var b=this.value;
+this.value=a;
+return b;
 },"~O");
 $_M(c$,"equals",
-function(other){
-if(!($_O(other,java.util.Map.Entry))){
+function(a){
+if(!($_O(a,java.util.Map.Entry))){
 return false;
-}var entry=other;
-var key=$_U(this,java.util.WeakHashMap.Entry,"get",[]);
-return(key==null?key===entry.getKey():key.equals(entry.getKey()))&&(this.value==null?this.value===entry.getValue():this.value.equals(entry.getValue()));
+}var b=a;
+var c=$_U(this,java.util.WeakHashMap.Entry,"get",[]);
+return(c==null?c===b.getKey():c.equals(b.getKey()))&&(this.value==null?this.value===b.getValue():this.value.equals(b.getValue()));
 },"~O");
 $_M(c$,"hashCode",
 function(){

@@ -1,4 +1,4 @@
-﻿$_L(["java.util.Map"],"java.util.AbstractMap",["java.lang.StringBuilder","$.UnsupportedOperationException","java.util.AbstractCollection","$.AbstractSet","$.Iterator"],function(){
+﻿$_L(["java.util.Map"],"java.util.AbstractMap",["java.lang.NullPointerException","$.StringBuilder","$.UnsupportedOperationException","java.util.AbstractCollection","$.AbstractSet","$.Iterator"],function(){
 c$=$_C(function(){
 this.$keySet=null;
 this.valuesCollection=null;
@@ -100,7 +100,9 @@ throw new UnsupportedOperationException();
 },"~O,~O");
 $_V(c$,"putAll",
 function(map){
-for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
+if(map==null){
+throw new NullPointerException();
+}for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
 this.put(entry.getKey(),entry.getValue());
 }
 },"java.util.Map");

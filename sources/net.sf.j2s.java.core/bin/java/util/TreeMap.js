@@ -518,14 +518,14 @@ this.color=false;
 $_Z(this,arguments);
 },java.util.TreeMap,"Entry",java.util.MapEntry);
 $_M(c$,"clone",
-function(parent){
-var clone=$_U(this,java.util.TreeMap.Entry,"clone",[]);
-clone.parent=parent;
+function(a){
+var b=$_U(this,java.util.TreeMap.Entry,"clone",[]);
+b.parent=a;
 if(this.left!=null){
-clone.left=this.left.clone(clone);
+b.left=this.left.clone(b);
 }if(this.right!=null){
-clone.right=this.right.clone(clone);
-}return clone;
+b.right=this.right.clone(b);
+}return b;
 },"java.util.TreeMap.Entry");
 c$=$_P();
 $_H();
@@ -537,10 +537,10 @@ this.lastNode=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"AbstractMapIterator");
 $_K(c$,
-function(map,startNode){
-this.backingMap=map;
-this.expectedModCount=map.modCount;
-this.node=startNode;
+function(a,b){
+this.backingMap=a;
+this.expectedModCount=a.modCount;
+this.node=b;
 },"java.util.TreeMap,java.util.TreeMap.Entry");
 $_M(c$,"hasNext",
 function(){
@@ -571,8 +571,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.TreeMap,"UnboundedEntryIterator",java.util.TreeMap.AbstractMapIterator,java.util.Iterator);
 $_K(c$,
-function(map){
-$_R(this,java.util.TreeMap.UnboundedEntryIterator,[map,map.root==null?null:java.util.TreeMap.minimum(map.root)]);
+function(a){
+$_R(this,java.util.TreeMap.UnboundedEntryIterator,[a,a.root==null?null:java.util.TreeMap.minimum(a.root)]);
 },"java.util.TreeMap");
 $_V(c$,"next",
 function(){
@@ -583,8 +583,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.TreeMap,"UnboundedKeyIterator",java.util.TreeMap.AbstractMapIterator,java.util.Iterator);
 $_K(c$,
-function(map){
-$_R(this,java.util.TreeMap.UnboundedKeyIterator,[map,map.root==null?null:java.util.TreeMap.minimum(map.root)]);
+function(a){
+$_R(this,java.util.TreeMap.UnboundedKeyIterator,[a,a.root==null?null:java.util.TreeMap.minimum(a.root)]);
 },"java.util.TreeMap");
 $_V(c$,"next",
 function(){
@@ -595,8 +595,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.TreeMap,"UnboundedValueIterator",java.util.TreeMap.AbstractMapIterator,java.util.Iterator);
 $_K(c$,
-function(map){
-$_R(this,java.util.TreeMap.UnboundedValueIterator,[map,map.root==null?null:java.util.TreeMap.minimum(map.root)]);
+function(a){
+$_R(this,java.util.TreeMap.UnboundedValueIterator,[a,a.root==null?null:java.util.TreeMap.minimum(a.root)]);
 },"java.util.TreeMap");
 $_V(c$,"next",
 function(){
@@ -611,10 +611,10 @@ this.cmp=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"ComparatorBoundedIterator",java.util.TreeMap.AbstractMapIterator);
 $_K(c$,
-function(map,startNode,end){
-$_R(this,java.util.TreeMap.ComparatorBoundedIterator,[map,startNode]);
-this.endKey=end;
-this.cmp=map.comparator();
+function(a,b,c){
+$_R(this,java.util.TreeMap.ComparatorBoundedIterator,[a,b]);
+this.endKey=c;
+this.cmp=a.comparator();
 },"java.util.TreeMap,java.util.TreeMap.Entry,~O");
 $_M(c$,"cleanNext",
 function(){
@@ -659,9 +659,9 @@ this.endKey=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"ComparableBoundedIterator",java.util.TreeMap.AbstractMapIterator);
 $_K(c$,
-function(treeMap,entry,endKey){
-$_R(this,java.util.TreeMap.ComparableBoundedIterator,[treeMap,entry]);
-this.endKey=endKey;
+function(a,b,c){
+$_R(this,java.util.TreeMap.ComparableBoundedIterator,[a,b]);
+this.endKey=c;
 },"java.util.TreeMap,java.util.TreeMap.Entry,Comparable");
 $_M(c$,"cleanNext",
 function(){
@@ -711,35 +711,35 @@ this.$entrySet=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"SubMap",java.util.AbstractMap,[java.util.SortedMap,java.io.Serializable]);
 $_K(c$,
-function(start,map){
+function(a,b){
 $_R(this,java.util.TreeMap.SubMap,[]);
-this.backingMap=map;
+this.backingMap=b;
 this.hasStart=true;
-this.startKey=start;
+this.startKey=a;
 },"~O,java.util.TreeMap");
 $_K(c$,
-function(start,map,end){
+function(a,b,c){
 $_R(this,java.util.TreeMap.SubMap,[]);
-this.backingMap=map;
+this.backingMap=b;
 this.hasStart=this.hasEnd=true;
-this.startKey=start;
-this.endKey=end;
+this.startKey=a;
+this.endKey=c;
 },"~O,java.util.TreeMap,~O");
 $_K(c$,
-function(map,end){
+function(a,b){
 $_R(this,java.util.TreeMap.SubMap,[]);
-this.backingMap=map;
+this.backingMap=a;
 this.hasEnd=true;
-this.endKey=end;
+this.endKey=b;
 },"java.util.TreeMap,~O");
 $_V(c$,"comparator",
 function(){
 return this.backingMap.comparator();
 });
 $_V(c$,"containsKey",
-function(key){
-if(this.isInRange(key)){
-return this.backingMap.containsKey(key);
+function(a){
+if(this.isInRange(a)){
+return this.backingMap.containsKey(a);
 }return false;
 },"~O");
 $_V(c$,"entrySet",
@@ -750,39 +750,39 @@ this.$entrySet=new java.util.TreeMap.SubMapEntrySet(this);
 });
 $_V(c$,"firstKey",
 function(){
-var node=this.firstEntry();
-if(node!=null){
-return node.key;
+var a=this.firstEntry();
+if(a!=null){
+return a.key;
 }throw new java.util.NoSuchElementException();
 });
 $_M(c$,"firstEntry",
 function(){
 if(!this.hasStart){
-var root=this.backingMap.root;
-return(root==null)?null:java.util.TreeMap.minimum(this.backingMap.root);
-}var node=this.backingMap.findAfter(this.startKey);
-if(node!=null&&this.checkUpperBound(node.key)){
-return node;
+var a=this.backingMap.root;
+return(a==null)?null:java.util.TreeMap.minimum(this.backingMap.root);
+}var a=this.backingMap.findAfter(this.startKey);
+if(a!=null&&this.checkUpperBound(a.key)){
+return a;
 }return null;
 });
 $_V(c$,"get",
-function(key){
-if(this.isInRange(key)){
-return this.backingMap.get(key);
+function(a){
+if(this.isInRange(a)){
+return this.backingMap.get(a);
 }return null;
 },"~O");
 $_V(c$,"headMap",
-function(endKey){
-this.checkRange(endKey);
+function(a){
+this.checkRange(a);
 if(this.hasStart){
-return new java.util.TreeMap.SubMap(this.startKey,this.backingMap,endKey);
-}return new java.util.TreeMap.SubMap(this.backingMap,endKey);
+return new java.util.TreeMap.SubMap(this.startKey,this.backingMap,a);
+}return new java.util.TreeMap.SubMap(this.backingMap,a);
 },"~O");
 $_V(c$,"isEmpty",
 function(){
 if(this.hasStart){
-var node=this.backingMap.findAfter(this.startKey);
-return node==null||!this.checkUpperBound(node.key);
+var a=this.backingMap.findAfter(this.startKey);
+return a==null||!this.checkUpperBound(a.key);
 }return this.backingMap.findBefore(this.endKey)==null;
 });
 $_V(c$,"keySet",
@@ -795,42 +795,42 @@ $_V(c$,"lastKey",
 function(){
 if(!this.hasEnd){
 return this.backingMap.lastKey();
-}var node=this.backingMap.findBefore(this.endKey);
-if(node!=null&&this.checkLowerBound(node.key)){
-return node.key;
+}var a=this.backingMap.findBefore(this.endKey);
+if(a!=null&&this.checkLowerBound(a.key)){
+return a.key;
 }throw new java.util.NoSuchElementException();
 });
 $_V(c$,"put",
-function(key,value){
-if(this.isInRange(key)){
-return this.backingMap.put(key,value);
+function(a,b){
+if(this.isInRange(a)){
+return this.backingMap.put(a,b);
 }throw new IllegalArgumentException();
 },"~O,~O");
 $_V(c$,"remove",
-function(key){
-if(this.isInRange(key)){
-return this.backingMap.remove(key);
+function(a){
+if(this.isInRange(a)){
+return this.backingMap.remove(a);
 }return null;
 },"~O");
 $_V(c$,"subMap",
-function(startKey,endKey){
-this.checkRange(startKey);
-this.checkRange(endKey);
+function(a,b){
+this.checkRange(a);
+this.checkRange(b);
 var c=this.backingMap.comparator();
 if(c==null){
-if(java.util.TreeMap.toComparable(startKey).compareTo(endKey)<=0){
-return new java.util.TreeMap.SubMap(startKey,this.backingMap,endKey);
+if(java.util.TreeMap.toComparable(a).compareTo(b)<=0){
+return new java.util.TreeMap.SubMap(a,this.backingMap,b);
 }}else{
-if(c.compare(startKey,endKey)<=0){
-return new java.util.TreeMap.SubMap(startKey,this.backingMap,endKey);
+if(c.compare(a,b)<=0){
+return new java.util.TreeMap.SubMap(a,this.backingMap,b);
 }}throw new IllegalArgumentException();
 },"~O,~O");
 $_V(c$,"tailMap",
-function(startKey){
-this.checkRange(startKey);
+function(a){
+this.checkRange(a);
 if(this.hasEnd){
-return new java.util.TreeMap.SubMap(startKey,this.backingMap,this.endKey);
-}return new java.util.TreeMap.SubMap(startKey,this.backingMap);
+return new java.util.TreeMap.SubMap(a,this.backingMap,this.endKey);
+}return new java.util.TreeMap.SubMap(a,this.backingMap);
 },"~O");
 $_V(c$,"values",
 function(){
@@ -845,9 +845,9 @@ this.subMap=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"SubMapEntrySet",java.util.AbstractSet,java.util.Set);
 $_K(c$,
-function(map){
+function(a){
 $_R(this,java.util.TreeMap.SubMapEntrySet,[]);
-this.subMap=map;
+this.subMap=a;
 },"java.util.TreeMap.SubMap");
 $_V(c$,"isEmpty",
 function(){
@@ -855,33 +855,33 @@ return this.subMap.isEmpty();
 });
 $_V(c$,"iterator",
 function(){
-var startNode=this.subMap.firstEntry();
+var a=this.subMap.firstEntry();
 if(this.subMap.hasEnd){
-var cmp=this.subMap.comparator();
-if(cmp==null){
-return new java.util.TreeMap.ComparableBoundedEntryIterator(this.subMap.backingMap,startNode,java.util.TreeMap.toComparable(this.subMap.endKey));
-}return new java.util.TreeMap.ComparatorBoundedEntryIterator(this.subMap.backingMap,startNode,this.subMap.endKey);
-}return new java.util.TreeMap.UnboundedEntryIterator(this.subMap.backingMap,startNode);
+var b=this.subMap.comparator();
+if(b==null){
+return new java.util.TreeMap.ComparableBoundedEntryIterator(this.subMap.backingMap,a,java.util.TreeMap.toComparable(this.subMap.endKey));
+}return new java.util.TreeMap.ComparatorBoundedEntryIterator(this.subMap.backingMap,a,this.subMap.endKey);
+}return new java.util.TreeMap.UnboundedEntryIterator(this.subMap.backingMap,a);
 });
 $_V(c$,"size",
 function(){
-var size=0;
-var it=this.iterator();
-while(it.hasNext()){
-size++;
-it.next();
+var a=0;
+var b=this.iterator();
+while(b.hasNext()){
+a++;
+b.next();
 }
-return size;
+return a;
 });
 $_V(c$,"contains",
-function(object){
-if($_O(object,java.util.Map.Entry)){
-var entry=object;
-var key=entry.getKey();
-if(this.subMap.isInRange(key)){
-var v1=this.subMap.get(key);
-var v2=entry.getValue();
-return v1==null?v2==null:v1.equals(v2);
+function(a){
+if($_O(a,java.util.Map.Entry)){
+var b=a;
+var c=b.getKey();
+if(this.subMap.isInRange(c)){
+var d=this.subMap.get(c);
+var e=b.getValue();
+return d==null?e==null:d.equals(e);
 }}return false;
 },"~O");
 c$=$_P();
@@ -891,13 +891,13 @@ this.subMap=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"SubMapKeySet",java.util.AbstractSet,java.util.Set);
 $_K(c$,
-function(map){
+function(a){
 $_R(this,java.util.TreeMap.SubMapKeySet,[]);
-this.subMap=map;
+this.subMap=a;
 },"java.util.TreeMap.SubMap");
 $_V(c$,"contains",
-function(object){
-return this.subMap.containsKey(object);
+function(a){
+return this.subMap.containsKey(a);
 },"~O");
 $_V(c$,"isEmpty",
 function(){
@@ -905,23 +905,23 @@ return this.subMap.isEmpty();
 });
 $_V(c$,"size",
 function(){
-var size=0;
-var it=this.iterator();
-while(it.hasNext()){
-size++;
-it.next();
+var a=0;
+var b=this.iterator();
+while(b.hasNext()){
+a++;
+b.next();
 }
-return size;
+return a;
 });
 $_V(c$,"iterator",
 function(){
-var startNode=this.subMap.firstEntry();
+var a=this.subMap.firstEntry();
 if(this.subMap.hasEnd){
-var cmp=this.subMap.comparator();
-if(cmp==null){
-return new java.util.TreeMap.ComparableBoundedKeyIterator(this.subMap.backingMap,startNode,java.util.TreeMap.toComparable(this.subMap.endKey));
-}return new java.util.TreeMap.ComparatorBoundedKeyIterator(this.subMap.backingMap,startNode,this.subMap.endKey);
-}return new java.util.TreeMap.UnboundedKeyIterator(this.subMap.backingMap,startNode);
+var b=this.subMap.comparator();
+if(b==null){
+return new java.util.TreeMap.ComparableBoundedKeyIterator(this.subMap.backingMap,a,java.util.TreeMap.toComparable(this.subMap.endKey));
+}return new java.util.TreeMap.ComparatorBoundedKeyIterator(this.subMap.backingMap,a,this.subMap.endKey);
+}return new java.util.TreeMap.UnboundedKeyIterator(this.subMap.backingMap,a);
 });
 c$=$_P();
 $_H();
@@ -930,9 +930,9 @@ this.subMap=null;
 $_Z(this,arguments);
 },java.util.TreeMap,"SubMapValuesCollection",java.util.AbstractCollection);
 $_K(c$,
-function(subMap){
+function(a){
 $_R(this,java.util.TreeMap.SubMapValuesCollection,[]);
-this.subMap=subMap;
+this.subMap=a;
 },"java.util.TreeMap.SubMap");
 $_V(c$,"isEmpty",
 function(){
@@ -940,22 +940,22 @@ return this.subMap.isEmpty();
 });
 $_V(c$,"iterator",
 function(){
-var startNode=this.subMap.firstEntry();
+var a=this.subMap.firstEntry();
 if(this.subMap.hasEnd){
-var cmp=this.subMap.comparator();
-if(cmp==null){
-return new java.util.TreeMap.ComparableBoundedValueIterator(this.subMap.backingMap,startNode,java.util.TreeMap.toComparable(this.subMap.endKey));
-}return new java.util.TreeMap.ComparatorBoundedValueIterator(this.subMap.backingMap,startNode,this.subMap.endKey);
-}return new java.util.TreeMap.UnboundedValueIterator(this.subMap.backingMap,startNode);
+var b=this.subMap.comparator();
+if(b==null){
+return new java.util.TreeMap.ComparableBoundedValueIterator(this.subMap.backingMap,a,java.util.TreeMap.toComparable(this.subMap.endKey));
+}return new java.util.TreeMap.ComparatorBoundedValueIterator(this.subMap.backingMap,a,this.subMap.endKey);
+}return new java.util.TreeMap.UnboundedValueIterator(this.subMap.backingMap,a);
 });
 $_V(c$,"size",
 function(){
-var cnt=0;
-for(var it=this.iterator();it.hasNext();){
-it.next();
-cnt++;
+var a=0;
+for(var b=this.iterator();b.hasNext();){
+b.next();
+a++;
 }
-return cnt;
+return a;
 });
 c$=$_P();
 });

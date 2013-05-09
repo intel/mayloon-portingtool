@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractList","$.RandomAccess"],"java.util.Arrays",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.NullPointerException"],function(){
+﻿$_L(["java.util.AbstractList","$.RandomAccess"],"java.util.Arrays",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.NullPointerException","$.StringBuilder","java.lang.reflect.Array"],function(){
 c$=$_T(java.util,"Arrays");
 c$.sort=$_M(c$,"sort",
 function(a){
@@ -137,16 +137,47 @@ c$.asList=$_M(c$,"asList",
 function(a){
 return new java.util.Arrays.ArrayList(a);
 },"~A");
+c$.copyOfRange=$_M(c$,"copyOfRange",
+function(original,start,end){
+if(start>end){
+throw new IllegalArgumentException();
+}if(original==null){
+throw new NullPointerException();
+}var originalLength=original.length;
+if(start<0||start>originalLength){
+throw new ArrayIndexOutOfBoundsException();
+}var resultLength=end-start;
+var copyLength=Math.min(resultLength,originalLength-start);
+var result=java.lang.reflect.Array.newInstance(JavaObject,resultLength);
+System.arraycopy(original,start,result,0,copyLength);
+return result;
+},"~A,~N,~N");
+c$.toString=$_M(c$,"toString",
+function(array){
+if(array==null){
+return"null";
+}if(array.length==0){
+return"[]";
+}var sb=new StringBuilder();
+sb.append('[');
+sb.append(array[0]);
+for(var i=1;i<array.length;i++){
+sb.append(",");
+sb.append(array[i]);
+}
+sb.append(']');
+return sb.toString();
+},"~A");
 $_H();
 c$=$_C(function(){
 this.a=null;
 $_Z(this,arguments);
 },java.util.Arrays,"ArrayList",java.util.AbstractList,[java.util.RandomAccess,java.io.Serializable]);
 $_K(c$,
-function(array){
+function(a){
 $_R(this,java.util.Arrays.ArrayList,[]);
-if(array==null)throw new NullPointerException();
-this.a=array;
+if(a==null)throw new NullPointerException();
+this.a=a;
 },"~A");
 $_V(c$,"size",
 function(){
@@ -157,29 +188,39 @@ function(){
 return this.a.clone();
 });
 $_V(c$,"get",
-function(index){
-return this.a[index];
+function(a){
+return this.a[a];
 },"~N");
 $_V(c$,"set",
-function(index,element){
-var oldValue=this.a[index];
-this.a[index]=element;
-return oldValue;
+function(a,b){
+var c=this.a[a];
+this.a[a]=b;
+return c;
 },"~N,~O");
 $_V(c$,"indexOf",
-function(o){
-if(o==null){
-for(var i=0;i<this.a.length;i++)if(this.a[i]==null)return i;
+function(a){
+if(a==null){
+for(var b=0;b<this.a.length;b++)if(this.a[b]==null)return b;
 
 }else{
-for(var i=0;i<this.a.length;i++)if(o.equals(this.a[i]))return i;
+for(var b=0;b<this.a.length;b++)if(a.equals(this.a[b]))return b;
 
 }return-1;
 },"~O");
 $_V(c$,"contains",
-function(o){
-return this.indexOf(o)!=-1;
+function(a){
+return this.indexOf(a)!=-1;
 },"~O");
+$_M(c$,"hashCode",
+function(){
+var a=1;
+var b=this.iterator();
+while(b.hasNext()){
+var c=b.next();
+a=(31*a)+(c==null?0:c.hashCode());
+}
+return a;
+});
 c$=$_P();
 $_S(c$,
 "INSERTIONSORT_THRESHOLD",7);

@@ -66,7 +66,7 @@ $_M(c$,"clone",
 function(){
 try{
 var hashtable=$_U(this,java.util.Hashtable,"clone",[]);
-hashtable.elementData=this.elementData.clone();
+hashtable.elementData=new Array(this.elementCount);
 var entry;
 for(var i=this.elementData.length;--i>=0;){
 if((entry=this.elementData[i])!=null){
@@ -101,7 +101,9 @@ return false;
 },"~O");
 $_V(c$,"containsKey",
 function(key){
-return this.getEntry(key)!=null;
+if(key==null){
+throw new NullPointerException();
+}return this.getEntry(key)!=null;
 },"~O");
 $_V(c$,"containsValue",
 function(value){
@@ -213,7 +215,9 @@ return result;
 },"~O,~O");
 $_V(c$,"putAll",
 function(map){
-for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
+if(map==null){
+throw new NullPointerException();
+}for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
 this.put(entry.getKey(),entry.getValue());
 }
 },"java.util.Map");
@@ -246,7 +250,9 @@ this.computeMaxSize();
 });
 $_V(c$,"remove",
 function(key){
-var hash=key.hashCode();
+if(key==null){
+throw new NullPointerException();
+}var hash=key.hashCode();
 var index=(hash&0x7FFFFFFF)%this.elementData.length;
 var last=null;
 var entry=this.elementData[index];
@@ -314,8 +320,8 @@ this.canRemove=false;
 $_Z(this,arguments);
 },java.util.Hashtable,"HashIterator",null,java.util.Iterator);
 $_K(c$,
-function(value){
-this.type=value;
+function(a){
+this.type=a;
 this.position=this.b$["java.util.Hashtable"].lastSlot;
 this.expectedModCount=this.b$["java.util.Hashtable"].modCount;
 },"java.util.MapEntry.Type");
@@ -355,19 +361,19 @@ if(this.expectedModCount==this.b$["java.util.Hashtable"].modCount){
 if(this.canRemove){
 this.canRemove=false;
 {
-var removed=false;
-var entry=this.b$["java.util.Hashtable"].elementData[this.lastPosition];
-if(entry===this.lastEntry){
-this.b$["java.util.Hashtable"].elementData[this.lastPosition]=entry.next;
-removed=true;
+var a=false;
+var b=this.b$["java.util.Hashtable"].elementData[this.lastPosition];
+if(b===this.lastEntry){
+this.b$["java.util.Hashtable"].elementData[this.lastPosition]=b.next;
+a=true;
 }else{
-while(entry!=null&&entry.next!==this.lastEntry){
-entry=entry.next;
+while(b!=null&&b.next!==this.lastEntry){
+b=b.next;
 }
-if(entry!=null){
-entry.next=this.lastEntry.next;
-removed=true;
-}}if(removed){
+if(b!=null){
+b.next=this.lastEntry.next;
+a=true;
+}}if(a){
 this.b$["java.util.Hashtable"].modCount++;
 this.b$["java.util.Hashtable"].elementCount--;
 this.expectedModCount++;
@@ -388,8 +394,8 @@ this.entry=null;
 $_Z(this,arguments);
 },java.util.Hashtable,"HashEnumerator",null,java.util.Enumeration);
 $_K(c$,
-function(isKey){
-this.key=isKey;
+function(a){
+this.key=a;
 this.start=this.b$["java.util.Hashtable"].lastSlot+1;
 },"~B");
 $_V(c$,"hasMoreElements",
@@ -406,9 +412,9 @@ return false;
 $_V(c$,"nextElement",
 function(){
 if(this.hasMoreElements()){
-var result=this.key?this.entry.key:this.entry.value;
+var a=this.key?this.entry.key:this.entry.value;
 this.entry=this.entry.next;
-return result;
+return a;
 }throw new java.util.NoSuchElementException();
 });
 c$=$_P();
@@ -538,32 +544,32 @@ this.hashcode=0;
 $_Z(this,arguments);
 },java.util.Hashtable,"Entry",java.util.MapEntry);
 $_K(c$,
-function(theKey,theValue){
-$_R(this,java.util.Hashtable.Entry,[theKey,theValue]);
-this.hashcode=theKey.hashCode();
+function(a,b){
+$_R(this,java.util.Hashtable.Entry,[a,b]);
+this.hashcode=a.hashCode();
 },"~O,~O");
 $_M(c$,"clone",
 function(){
-var entry=$_U(this,java.util.Hashtable.Entry,"clone",[]);
+var a=$_U(this,java.util.Hashtable.Entry,"clone",[]);
 if(this.next!=null){
-entry.next=this.next.clone();
-}return entry;
+a.next=this.next.clone();
+}return a;
 });
 $_V(c$,"setValue",
-function(object){
-if(object==null){
+function(a){
+if(a==null){
 throw new NullPointerException();
-}var result=this.value;
-this.value=object;
-return result;
+}var b=this.value;
+this.value=a;
+return b;
 },"~O");
 $_M(c$,"getKeyHash",
 function(){
 return this.key.hashCode();
 });
 $_M(c$,"equalsKey",
-function(aKey,hash){
-return this.hashcode==aKey.hashCode()&&this.key.equals(aKey);
+function(a,b){
+return this.hashcode==a.hashCode()&&this.key.equals(a);
 },"~O,~N");
 $_V(c$,"toString",
 function(){

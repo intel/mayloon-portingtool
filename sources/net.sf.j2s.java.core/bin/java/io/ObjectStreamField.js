@@ -59,9 +59,7 @@ return(this.type).get();
 $_M(c$,"getType",
 function(){
 var cl=this.getTypeInternal();
-if(this.isDeserialized&&!cl.isPrimitive()){
-return JavaObject;
-}return cl;
+return cl;
 });
 $_M(c$,"getTypeCode",
 function(){
@@ -99,8 +97,7 @@ this.typeString=str.intern();
 });
 $_M(c$,"isPrimitive",
 function(){
-var t=this.getTypeInternal();
-return t!=null&&t.isPrimitive();
+return true;
 });
 $_M(c$,"setOffset",
 function(newValue){

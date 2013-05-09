@@ -77,7 +77,9 @@ return this.string.substring(i);
 });
 $_M(c$,"nextToken",
 function(delims){
-this.delimiters=delims;
+if(delims==null){
+throw new NullPointerException();
+}this.delimiters=delims;
 return this.nextToken();
 },"~S");
 });

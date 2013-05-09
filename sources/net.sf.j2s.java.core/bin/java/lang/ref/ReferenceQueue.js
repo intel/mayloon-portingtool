@@ -61,7 +61,7 @@ return this.remove(0);
 $_H();
 c$=$_T(java.lang.ref.ReferenceQueue,"Null",java.lang.ref.ReferenceQueue);
 $_V(c$,"enqueue",
-function(r){
+function(a){
 return false;
 },"java.lang.ref.Reference");
 c$=$_P();

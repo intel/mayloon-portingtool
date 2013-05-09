@@ -1,5 +1,5 @@
 #Java2Script Configuration
-#Wed Apr 24 10:55:12 CST 2013
+#Thu May 09 13:34:52 CST 2013
 j2s.compiler.visitor=SWTScriptVisitor
 j2s.abandoned.resources.list=
 j2s.compiler.abbreviation=true

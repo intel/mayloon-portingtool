@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractList","$.List","$.RandomAccess"],"java.util.Vector",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.IndexOutOfBoundsException","$.StringBuffer","java.lang.reflect.Array","java.util.Arrays","$.Collections","$.Enumeration","$.NoSuchElementException"],function(){
+﻿$_L(["java.util.AbstractList","$.List","$.RandomAccess"],"java.util.Vector",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.IndexOutOfBoundsException","$.NullPointerException","$.StringBuffer","java.util.Arrays","$.Collections","$.Enumeration","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.elementCount=0;
 this.elementData=null;
@@ -16,7 +16,9 @@ this.construct(capacity,0);
 $_K(c$,
 function(capacity,capacityIncrement){
 $_R(this,java.util.Vector,[]);
-this.elementCount=0;
+if(capacity<0){
+throw new IllegalArgumentException();
+}this.elementCount=0;
 try{
 this.elementData=this.newElementArray(capacity);
 }catch(e){
@@ -51,7 +53,9 @@ return true;
 },"~O");
 $_M(c$,"addAll",
 function(location,collection){
-if(0<=location&&location<=this.elementCount){
+if(collection==null){
+throw new NullPointerException();
+}if(0<=location&&location<=this.elementCount){
 var size=collection.size();
 if(size==0){
 return false;
@@ -107,13 +111,21 @@ $_V(c$,"contains",
 function(object){
 return this.indexOf(object,0)!=-1;
 },"~O");
+$_M(c$,"containsAll",
+function(collection){
+if(collection==null){
+throw new NullPointerException();
+}return $_U(this,java.util.Vector,"containsAll",[collection]);
+},"java.util.Collection");
 $_M(c$,"copyInto",
 function(elements){
-System.arraycopy(this.elementData,0,elements,0,this.elementCount);
+if(elements==null){
+throw new NullPointerException();
+}System.arraycopy(this.elementData,0,elements,0,this.elementCount);
 },"~A");
 $_M(c$,"elementAt",
 function(location){
-if(location<this.elementCount){
+if(location<this.elementCount&&location>=0){
 return this.elementData[location];
 }throw new ArrayIndexOutOfBoundsException(location);
 },"~N");
@@ -154,7 +166,9 @@ return this.elementData[0];
 });
 $_V(c$,"get",
 function(location){
-return this.elementAt(location);
+if(location<0||location>=this.size()){
+throw new ArrayIndexOutOfBoundsException(location);
+}return this.elementAt(location);
 },"~N");
 $_M(c$,"grow",
 ($fz=function(newCapacity){
@@ -191,7 +205,7 @@ adding+=this.capacityIncrement;
 System.arraycopy(this.elementData,0,newData,0,this.elementCount);
 this.elementData=newData;
 },$fz.isPrivate=true,$fz),"~N");
-$_V(c$,"hashCode",
+$_M(c$,"hashCode",
 function(){
 var result=1;
 for(var i=0;i<this.elementCount;i++){
@@ -205,7 +219,9 @@ return this.indexOf(object,0);
 },"~O");
 $_M(c$,"indexOf",
 function(object,location){
-if(object!=null){
+if(location<0){
+throw new IndexOutOfBoundsException();
+}if(object!=null){
 for(var i=location;i<this.elementCount;i++){
 if(object.equals(this.elementData[i])){
 return i;
@@ -237,7 +253,9 @@ return this.elementCount==0;
 });
 $_M(c$,"lastElement",
 function(){
-try{
+if(this.elementCount==0){
+throw new java.util.NoSuchElementException();
+}try{
 return this.elementData[this.elementCount-1];
 }catch(e){
 if($_O(e,IndexOutOfBoundsException)){
@@ -269,7 +287,7 @@ return i;
 },"~O,~N");
 $_M(c$,"remove",
 function(location){
-if(location<this.elementCount){
+if(location<this.elementCount&&location>=0){
 var result=this.elementData[location];
 this.elementCount--;
 var size=this.elementCount-location;
@@ -284,6 +302,12 @@ $_M(c$,"remove",
 function(object){
 return this.removeElement(object);
 },"~O");
+$_M(c$,"removeAll",
+function(collection){
+if(collection==null){
+throw new NullPointerException();
+}return $_U(this,java.util.Vector,"removeAll",[collection]);
+},"java.util.Collection");
 $_M(c$,"removeAllElements",
 function(){
 java.util.Arrays.fill(this.elementData,0,this.elementCount,null);
@@ -329,7 +353,7 @@ throw new IndexOutOfBoundsException();
 }},"~N,~N");
 $_V(c$,"set",
 function(location,object){
-if(location<this.elementCount){
+if(location<this.elementCount&&location>=0){
 var result=this.elementData[location];
 this.elementData[location]=object;
 return result;
@@ -337,7 +361,7 @@ return result;
 },"~N,~O");
 $_M(c$,"setElementAt",
 function(object,location){
-if(location<this.elementCount){
+if(location<this.elementCount&&location>=0){
 this.elementData[location]=object;
 }else{
 throw new ArrayIndexOutOfBoundsException(location);
@@ -368,10 +392,7 @@ return result;
 });
 $_M(c$,"toArray",
 function(contents){
-if(this.elementCount>contents.length){
-var ct=contents.getClass().getComponentType();
-contents=java.lang.reflect.Array.newInstance(ct,this.elementCount);
-}System.arraycopy(this.elementData,0,contents,0,this.elementCount);
+System.arraycopy(this.elementData,0,contents,0,this.elementCount);
 if(this.elementCount<contents.length){
 contents[this.elementCount]=null;
 }return contents;

@@ -1,4 +1,4 @@
-﻿$_L(["java.io.DataOutput","$.FilterOutputStream"],"java.io.DataOutputStream",["java.io.UTFDataFormatException","java.lang.Double","$.Float","$.NullPointerException"],function(){
+﻿$_L(["java.io.DataOutput","$.FilterOutputStream"],"java.io.DataOutputStream",["java.io.UTFDataFormatException","java.lang.NullPointerException"],function(){
 c$=$_C(function(){
 this.written=0;
 this.buff=null;
@@ -68,11 +68,9 @@ this.written+=newBytes.length;
 },"~S");
 $_V(c$,"writeDouble",
 function(val){
-this.writeLong(Double.doubleToLongBits(val));
 },"~N");
 $_V(c$,"writeFloat",
 function(val){
-this.writeInt(Float.floatToIntBits(val));
 },"~N");
 $_V(c$,"writeInt",
 function(val){

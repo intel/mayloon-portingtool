@@ -40,13 +40,13 @@ c$=$_T(java.lang.ref.Reference,"ReferenceHandler",Thread);
 $_V(c$,"run",
 function(){
 for(;;){
-var r;
+var a;
 {
 if(java.lang.ref.Reference.pending!=null){
-r=java.lang.ref.Reference.pending;
-var rn=r.next;
-($t$=java.lang.ref.Reference.pending=(rn===r)?null:rn,java.lang.ref.Reference.prototype.pending=java.lang.ref.Reference.pending,$t$);
-r.next=r;
+a=java.lang.ref.Reference.pending;
+var b=a.next;
+($t$=java.lang.ref.Reference.pending=(b===a)?null:b,java.lang.ref.Reference.prototype.pending=java.lang.ref.Reference.pending,$t$);
+a.next=a;
 }else{
 try{
 java.lang.ref.Reference.lock.wait();
@@ -56,10 +56,10 @@ if($_O(x,InterruptedException)){
 throw x;
 }
 }
-continue;}}if($_O(r,sun.misc.Cleaner)){
-(r).clean();
-continue;}var q=r.queue;
-if(q!==java.lang.ref.ReferenceQueue.NULL)q.enqueue(r);
+continue;}}if($_O(a,sun.misc.Cleaner)){
+(a).clean();
+continue;}var b=a.queue;
+if(b!==java.lang.ref.ReferenceQueue.NULL)b.enqueue(a);
 }
 });
 c$=$_P();

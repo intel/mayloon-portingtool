@@ -1,214 +1,213 @@
-Clazz.load (["java.lang.Comparable", "$.Number"], "java.lang.Integer", null, function () {
-java.lang.Integer = Integer = function () {
-Clazz.instantialize (this, arguments);
-};
-Clazz.decorateAsType (Integer, "Integer", Number, Comparable, null, true);
-Integer.prototype.valueOf = function () { return 0; };
-Integer.toString = Integer.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Integer) {
-		return "class java.lang.Integer"; // Integer.class.toString
-	}
-	return "" + this.valueOf ();
-};
-Clazz.makeConstructor (Integer, 
-function () {
-this.valueOf = function () {
-	return 0;
-};
+﻿$_L(null,"java.lang.Integer",["java.lang.Character","$.NumberFormatException"],function(){
+c$=$_C(function(){
+this.value=0;
+$_Z(this,arguments);
+},java.lang,"Integer");
+$_K(c$,
+function(value){
+this.value=value;
+},"~N");
+$_K(c$,
+function(string){
+this.construct(Integer.parseInt(string));
+},"~S");
+$_M(c$,"compareTo",
+function(object){
+var thisValue=this.value;
+var thatValue=object.value;
+return thisValue<thatValue?-1:(thisValue==thatValue?0:1);
+},"Integer");
+c$.decode=$_M(c$,"decode",
+function(string){
+var length=string.length;
+var i=0;
+if(length==0){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}var firstDigit=string.charAt(i);
+var negative=(firstDigit).charCodeAt(0)==('-').charCodeAt(0);
+if(negative){
+if(length==1){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}firstDigit=string.charAt(++i);
+}var base=10;
+if((firstDigit).charCodeAt(0)==('0').charCodeAt(0)){
+if(++i==length){
+return Integer.$valueOf(0);
+}if(((firstDigit=string.charAt(i))).charCodeAt(0)==('x').charCodeAt (0) || (firstDigit).charCodeAt (0) == ('X').charCodeAt(0)){
+if(++i==length){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}base=16;
+}else{
+base=8;
+}}else if((firstDigit).charCodeAt(0)==('#').charCodeAt(0)){
+if(++i==length){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}base=16;
+}var result=Integer.parse(string,i,base,negative);
+return Integer.$valueOf(result);
+},"~S");
+$_V(c$,"equals",
+function(o){
+return $_O(o,Integer)&&(o).value==this.value;
+},"~O");
+c$.parseInt=$_M(c$,"parseInt",
+function(string){
+return Integer.parseInt(string,10);
+},"~S");
+c$.parseInt=$_M(c$,"parseInt",
+function(string,radix){
+if(string==null||radix<2||radix>36){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}var length=string.length;
+var i=0;
+if(length==0){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}var negative=(string.charAt(i)).charCodeAt(0)==('-').charCodeAt(0);
+if(negative&&++i==length){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}return Integer.parse(string,i,radix,negative);
+},"~S,~N");
+c$.parse=$_M(c$,"parse",
+($fz=function(string,offset,radix,negative){
+var max=Math.floor(-2147483648/radix);
+var result=0;
+var length=string.length;
+while(offset<length){
+var digit=Character.digit(string.charAt(offset++),radix);
+if(digit==-1){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}if(max>result){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}var next=result*radix-digit;
+if(next>result){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}result=next;
+}
+if(!negative){
+result=-result;
+if(result<0){
+throw new NumberFormatException("unable to parse'" + string + "'as integer");
+}}return result;
+},$fz.isPrivate=true,$fz),"~S,~N,~N,~B");
+c$.toBinaryString=$_M(c$,"toBinaryString",
+function(i){
+return"";
+},"~N");
+c$.toHexString=$_M(c$,"toHexString",
+function(i){
+return"";
+},"~N");
+c$.toOctalString=$_M(c$,"toOctalString",
+function(i){
+return"";
+},"~N");
+$_M(c$,"toString",
+function(){
+return Integer.toString(this.value);
 });
-Clazz.makeConstructor (Integer, 
-function (value) {
-var v = Math.round (value) & 0xffffffff;
-this.valueOf = function () {
-	return v;
-};
-}, "Number");
-Clazz.makeConstructor (Integer, 
-function (s) {
-var value = Integer.parseInt (s, 10);
-this.valueOf = function () {
-	return value;
-};
-}, "String");
-Integer.serialVersionUID = Integer.prototype.serialVersionUID = 1360826667806852920;
-Integer.MIN_VALUE = Integer.prototype.MIN_VALUE = -0x80000000;
-Integer.MAX_VALUE = Integer.prototype.MAX_VALUE = 0x7fffffff;
-Integer.TYPE = Integer.prototype.TYPE = Integer;
-
-Clazz.defineMethod (Integer, "parseInt", 
-function (s, radix) {
-if (s == null) {
-throw new NumberFormatException ("null");
-}if (radix < 2) {
-throw new NumberFormatException ("radix " + radix + " less than Character.MIN_RADIX");
-}if (radix > 36) {
-throw new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
+c$.toString=$_M(c$,"toString",
+function(i){
+return"";
+},"~N");
+c$.toString=$_M(c$,"toString",
+function(i,radix){
+return"";
+},"~N,~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string){
+return Integer.$valueOf(Integer.parseInt(string));
+},"~S");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string,radix){
+return Integer.$valueOf(Integer.parseInt(string,radix));
+},"~S,~N");
+c$.highestOneBit=$_M(c$,"highestOneBit",
+function(i){
+i|=(i>>1);
+i|=(i>>2);
+i|=(i>>4);
+i|=(i>>8);
+i|=(i>>16);
+return i-(i>>>1);
+},"~N");
+c$.lowestOneBit=$_M(c$,"lowestOneBit",
+function(i){
+return i&-i;
+},"~N");
+c$.numberOfLeadingZeros=$_M(c$,"numberOfLeadingZeros",
+function(i){
+if(i<=0){
+return(~i>>26)&32;
+}var n=1;
+if(i>>16==0){
+n+=16;
+i<<=16;
+}if(i>>24==0){
+n+=8;
+i<<=8;
+}if(i>>28==0){
+n+=4;
+i<<=4;
+}if(i>>30==0){
+n+=2;
+i<<=2;
+}return n-(i>>>31);
+},"~N");
+c$.numberOfTrailingZeros=$_M(c$,"numberOfTrailingZeros",
+function(i){
+i&=-i;
+i=(i<<4)+i;
+i=(i<<6)+i;
+i=(i<<16)-i;
+return Integer.NTZ_TABLE[i>>>26];
+},"~N");
+c$.bitCount=$_M(c$,"bitCount",
+function(i){
+i-=(i>>1)&0x55555555;
+i=(i&0x33333333)+((i>>2)&0x33333333);
+i=((i>>4)+i)&0x0F0F0F0F;
+i+=i>>8;
+i+=i>>16;
+return i&0x0000003F;
+},"~N");
+c$.rotateLeft=$_M(c$,"rotateLeft",
+function(i,distance){
+return(i<<distance)|(i>>>-distance);
+},"~N,~N");
+c$.rotateRight=$_M(c$,"rotateRight",
+function(i,distance){
+return(i>>>distance)|(i<<-distance);
+},"~N,~N");
+c$.reverseBytes=$_M(c$,"reverseBytes",
+function(i){
+i=((i>>>8)&0x00FF00FF)|((i&0x00FF00FF)<<8);
+return(i>>>16)|(i<<16);
+},"~N");
+c$.reverse=$_M(c$,"reverse",
+function(i){
+i=((i>>>1)&0x55555555)|((i&0x55555555)<<1);
+i=((i>>>2)&0x33333333)|((i&0x33333333)<<2);
+i=((i>>>4)&0x0F0F0F0F)|((i&0x0F0F0F0F)<<4);
+i=((i>>>8)&0x00FF00FF)|((i&0x00FF00FF)<<8);
+return((i>>>16))|((i)<<16);
+},"~N");
+c$.signum=$_M(c$,"signum",
+function(i){
+return(i>>31)|(-i>>>31);
+},"~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(i){
+return i>=128||i<-128?new Integer(i):Integer.SMALL_VALUES[i+128];
+},"~N");
+$_S(c$,
+"MAX_VALUE",0x7FFFFFFF,
+"MIN_VALUE",0x80000000,
+"SIZE",32,
+"NTZ_TABLE",[32,0,1,12,2,6,-1,13,3,-1,7,-1,-1,-1,-1,14,10,4,-1,-1,8,-1,-1,25,-1,-1,-1,-1,-1,21,27,15,31,11,5,-1,-1,-1,-1,-1,9,-1,-1,24,-1,-1,20,26,30,-1,-1,-1,-1,23,-1,19,29,-1,22,18,28,17,16,-1],
+"TYPE",null);
+c$.SMALL_VALUES=c$.prototype.SMALL_VALUES=new Array(256);
+{
+for(var i=-128;i<128;i++){
+Integer.SMALL_VALUES[i+128]=new Integer(i);
 }
-var integer = parseInt (s, radix);
-if(isNaN(integer)){
-throw new NumberFormatException ("Not a Number : " + s);
-}
-return integer;
-}, "String, Number");
-Integer.parseInt = Integer.prototype.parseInt;
-Clazz.defineMethod (Integer, "parseInt", 
-function (s) {
-return Integer.parseInt (s, 10);
-}, "String");
-
-Integer.parseInt = Integer.prototype.parseInt;
-
-Clazz.defineMethod (Integer, "$valueOf", 
-function (s) {
-return new Integer(Integer.parseInt (s, 10));
-}, "String");
-
-Clazz.defineMethod (Integer, "$valueOf", 
-function (s) {
-return new Integer(s);
-}, "Number");
-
-Clazz.defineMethod (Integer, "$valueOf", 
-function (s, r) {
-return new Integer(Integer.parseInt (s, r));
-}, "String, Number");
-
-Integer.$valueOf = Integer.prototype.$valueOf;
-Clazz.defineMethod (Integer, "equals", 
-function (s) {
-if(s == null || ! Clazz.instanceOf(s, Integer) ){
-	return false;
-}
-return s.valueOf()  == this.valueOf();
-}, "Object");
-Integer.toHexString = Integer.prototype.toHexString = function (d) {
-	if(d.valueOf)d=d.valueOf();
-	return d._numberToString(16);
-};
-Integer.toOctalString = Integer.prototype.toOctalString = function (d) {
-	if(d.valueOf)d=d.valueOf();
-	return d._numberToString(8);
-};
-Integer.toBinaryString = Integer.prototype.toBinaryString = function (d) {
-	if(d.valueOf)d=d.valueOf();
-	return d._numberToString(2);
-};
-Integer.decode = Clazz.defineMethod (Integer, "decode", 
-function (nm) {
-var radix = 10;
-var index = 0;
-var negative = false;
-var result;
-if (nm.startsWith ("-")) {
-negative = true;
-index++;
-}if (nm.startsWith ("0x", index) || nm.startsWith ("0X", index)) {
-index += 2;
-radix = 16;
-} else if (nm.startsWith ("#", index)) {
-index++;
-radix = 16;
-} else if (nm.startsWith ("0", index) && nm.length > 1 + index) {
-index++;
-radix = 8;
-}if (nm.startsWith ("-", index)) throw  new NumberFormatException ("Negative sign in wrong position");
-try {
-result = Integer.$valueOf (nm.substring (index), radix);
-result = negative ?  new Integer (-result.intValue ()) : result;
-} catch (e) {
-if (Clazz.instanceOf (e, NumberFormatException)) {
-var constant = negative ?  String.instantialize ("-" + nm.substring (index)) : nm.substring (index);
-result = Integer.$valueOf (constant, radix);
-} else {
-throw e;
-}
-}
-return result;
-}, "~S");
-//sgurin compare and compareTo 
-Integer.compare = Clazz.defineMethod (Integer, "compare", 
-function (f1, f2) {
-if (f1 < f2) return -1;
-if (f1 > f2) return 1;
-return 0;
-}, "~N,~N");
-Integer.prototype.compareTo=function(anotherInt) {
-var otherValue = anotherInt;
-if(anotherInt.valueOf) otherValue=anotherInt.valueOf();	
-return java.lang.Integer.compare(this.valueOf(), otherValue);
-};
-//sgurin bit related methods
-Integer.highestOneBit = Clazz.defineMethod (Integer, "highestOneBit", 
-function (i) {
-i |= (i >> 1);
-i |= (i >> 2);
-i |= (i >> 4);
-i |= (i >> 8);
-i |= (i >> 16);
-return i - (i >>> 1);
-}, "~N");
-Integer.lowestOneBit = Clazz.defineMethod (Integer, "lowestOneBit", 
-function (i) {return i & -i;}, "~N");
-Integer.numberOfLeadingZeros = Clazz.defineMethod (Integer, "numberOfLeadingZeros", 
-function (i) {
-if (i == 0) return 32;
-var n = 1;
-if (i >>> 16 == 0) {n += 16;i <<= 16;}
-if (i >>> 24 == 0) {n += 8;i <<= 8;}
-if (i >>> 28 == 0) {n += 4;i <<= 4;}
-if (i >>> 30 == 0) {n += 2;i <<= 2;}
-n -= i >>> 31;
-return n;
-}, "~N");
-Integer.numberOfTrailingZeros = Clazz.defineMethod (Integer, "numberOfTrailingZeros", 
-function (i) {
-var y;
-if (i == 0) return 32;
-var n = 31;
-y = i << 16;
-if (y != 0) {n = n - 16;i = y;}
-y = i << 8;
-if (y != 0) {n = n - 8;i = y;}
-y = i << 4;
-if (y != 0) {n = n - 4;i = y;}
-y = i << 2;
-if (y != 0) {n = n - 2;i = y;}
-return n - ((i << 1) >>> 31);
-}, "~N");
-Integer.reverse = Clazz.defineMethod (Integer, "reverse", 
-function (i) {
-i = (i & 0x55555555) << 1 | (i >>> 1) & 0x55555555;
-i = (i & 0x33333333) << 2 | (i >>> 2) & 0x33333333;
-i = (i & 0x0f0f0f0f) << 4 | (i >>> 4) & 0x0f0f0f0f;
-i = (i << 24) | ((i & 0xff00) << 8) | ((i >>> 8) & 0xff00) | (i >>> 24);
-return i;
-}, "~N");
-Integer.reverseBytes = Clazz.defineMethod (Integer, "reverseBytes", 
-function (i) {
-return ((i >>> 24)) | ((i >> 8) & 0xFF00) | ((i << 8) & 0xFF0000) | ((i << 24));
-}, "~N");
-Integer.rotateLeft = Clazz.defineMethod (Integer, "rotateLeft", 
-function (i, distance) {
-return (i << distance) | (i >>> -distance);
-}, "~N,~N");
-Integer.rotateRight = Clazz.defineMethod (Integer, "rotateRight", 
-function (i, distance) {
-return (i >>> distance) | (i << -distance);
-}, "~N,~N");
-Integer.signum = Clazz.defineMethod (Integer, "signum", 
-function (i) {
-return (i >> 31) | (-i >>> 31);
-}, "~N");
-Integer.bitCount = Clazz.defineMethod (Integer, "bitCount", 
-function (i) {
-i = i - ((i >>> 1) & 0x55555555);
-i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);
-i = (i + (i >>> 4)) & 0x0f0f0f0f;
-i = i + (i >>> 8);
-i = i + (i >>> 16);
-return i & 0x3f;
-}, "~N");
-});
-
+}});

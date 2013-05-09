@@ -1,85 +1,74 @@
-Clazz.load (["java.lang.Comparable", "$.Number"], "java.lang.Double", null, function () {
-java.lang.Double = Double = function () {
-Clazz.instantialize (this, arguments);
-};
-Clazz.decorateAsType (Double, "Double", Number, Comparable, null, true);
-Double.prototype.valueOf = function () { return 0; };
-Double.toString = Double.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Double) {
-		return "class java.lang.Double"; // Double.class.toString
-	}
-	return "" + this.valueOf ();
-};
-Clazz.makeConstructor (Double, 
-function () {
-this.valueOf = function () {
-	return 0.0;
-};
+﻿c$=$_C(function(){
+this.value=0;
+$_Z(this,arguments);
+},java.lang,"Double");
+$_K(c$,
+function(value){
+this.value=value;
+},"~N");
+$_K(c$,
+function(string){
+this.construct(Double.parseDouble(string));
+},"~S");
+$_M(c$,"doubleValue",
+function(){
+return this.value;
 });
-Clazz.makeConstructor (Double, 
-function (value) {
-this.valueOf = function () {
-	return value;
-};
-}, "Number");
-Clazz.makeConstructor (Double, 
-function (s) {
-var value = Double.parseDouble (s);
-this.valueOf = function () {
-	return value;
-};
-}, "String");
-
-Double.serialVersionUID = Double.prototype.serialVersionUID = -9172774392245257468;
-Double.MIN_VALUE = Double.prototype.MIN_VALUE = 4.9e-324;
-Double.MAX_VALUE = Double.prototype.MAX_VALUE = 1.7976931348623157e+308;
-Double.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
-Double.POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-Double.NaN = Number.NaN;
-Double.TYPE = Double.prototype.TYPE = Double;
-
-Clazz.defineMethod (Double, "isNaN", 
-function (num) {
-return isNaN (num);
-}, "Number");
-Double.isNaN = Double.prototype.isNaN;
-Clazz.defineMethod (Double, "isInfinite", 
-function (num) {
-return !isFinite (num);
-}, "Number");
-Double.isInfinite = Double.prototype.isInfinite;
-
-Clazz.defineMethod (Double, "parseDouble", 
-function (s) {
-if(s==null) throw new NullPointerException();//sgurin . if s==null a NPE should be thrown and not NumberFormatException because isNaN(null)==true
-var doubleVal = parseFloat (s);
-if(isNaN(doubleVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
-}
-return doubleVal;
-}, "String");
-Double.parseDouble = Double.prototype.parseDouble;
-
-Clazz.defineMethod (Double, "$valueOf", 
-function (s) {
-return new Double(this.parseDouble(s));
-}, "String");
-
-Clazz.defineMethod (Double, "$valueOf", 
-function (v) {
-return new Double(v);
-}, "Number");
-
-Double.$valueOf = Double.prototype.$valueOf;
-
-Clazz.defineMethod (Double, "equals", 
-function (s) {
-if(s == null || ! Clazz.instanceOf(s, Double) ){
-	return false;
-}
-return s.valueOf()  == this.valueOf();
-}, "Object");
+$_V(c$,"equals",
+function(object){
+return true;
+},"~O");
+$_M(c$,"isInfinite",
+function(){
+return Double.isInfinite(this.value);
 });
-
+c$.isInfinite=$_M(c$,"isInfinite",
+function(d){
+return(d==Infinity)||(d==-Infinity);
+},"~N");
+$_M(c$,"isNaN",
+function(){
+return Double.isNaN(this.value);
+});
+c$.isNaN=$_M(c$,"isNaN",
+function(d){
+return d!=d;
+},"~N");
+c$.parseDouble=$_M(c$,"parseDouble",
+function(string){
+return new Double("");
+},"~S");
+$_M(c$,"toString",
+function(){
+return Double.toString(this.value);
+});
+c$.toString=$_M(c$,"toString",
+function(d){
+return null;
+},"~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string){
+return Double.parseDouble(string);
+},"~S");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(d){
+return new Double(d);
+},"~N");
+$_S(c$,
+"EXPONENT_BIAS",1023,
+"EXPONENT_BITS",12,
+"MANTISSA_BITS",52,
+"NON_MANTISSA_BITS",12,
+"SIGN_MASK",0x8000000000000000,
+"EXPONENT_MASK",0x7ff0000000000000,
+"MANTISSA_MASK",0x000fffffffffffff,
+"MAX_VALUE",1.79769313486231570e+308,
+"MIN_VALUE",5e-324,
+"NaN",NaN,
+"POSITIVE_INFINITY",Infinity,
+"NEGATIVE_INFINITY",-Infinity,
+"MIN_NORMAL",2.2250738585072014E-308,
+"MAX_EXPONENT",1023,
+"MIN_EXPONENT",-1022,
+"TYPE",null,
+"SIZE",64);

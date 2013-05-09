@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractCollection","$.Iterator","$.List","$.ListIterator","$.RandomAccess","$.NoSuchElementException"],"java.util.AbstractList",["java.lang.IllegalArgumentException","$.IllegalStateException","$.IndexOutOfBoundsException","$.UnsupportedOperationException","java.util.ConcurrentModificationException"],function(){
+﻿$_L(["java.util.AbstractCollection","$.Iterator","$.List","$.ListIterator","$.RandomAccess","$.NoSuchElementException"],"java.util.AbstractList",["java.lang.IllegalArgumentException","$.IllegalStateException","$.IndexOutOfBoundsException","$.NullPointerException","$.UnsupportedOperationException","java.util.ConcurrentModificationException"],function(){
 c$=$_C(function(){
 this.modCount=0;
 if(!$_D("java.util.AbstractList.SimpleListIterator")){
@@ -20,7 +20,9 @@ return true;
 },"~O");
 $_M(c$,"addAll",
 function(location,collection){
-var it=collection.iterator();
+if(collection==null){
+throw new NullPointerException();
+}var it=collection.iterator();
 while(it.hasNext()){
 this.add(location++,it.next());
 }
@@ -49,16 +51,6 @@ return false;
 return true;
 }return false;
 },"~O");
-$_M(c$,"hashCode",
-function(){
-var result=1;
-var it=this.iterator();
-while(it.hasNext()){
-var object=it.next();
-result=(31*result)+(object==null?0:object.hashCode());
-}
-return result;
-});
 $_V(c$,"indexOf",
 function(object){
 var it=this.listIterator();
@@ -148,9 +140,9 @@ $_V(c$,"next",
 function(){
 if(this.expectedModCount==this.b$["java.util.AbstractList"].modCount){
 try{
-var result=this.b$["java.util.AbstractList"].get(this.pos+1);
+var a=this.b$["java.util.AbstractList"].get(this.pos+1);
 this.lastPosition=++this.pos;
-return result;
+return a;
 }catch(e){
 if($_O(e,IndexOutOfBoundsException)){
 throw new java.util.NoSuchElementException();
@@ -189,18 +181,18 @@ $_B(this,arguments);
 $_Z(this,arguments);
 },java.util.AbstractList,"FullListIterator",java.util.AbstractList.SimpleListIterator,java.util.ListIterator,$_N(java.util.AbstractList.SimpleListIterator,this,null,$_G));
 $_K(c$,
-function(start){
+function(a){
 $_R(this,java.util.AbstractList.FullListIterator);
-if(0<=start&&start<=this.b$["java.util.AbstractList"].size()){
-this.pos=start-1;
+if(0<=a&&a<=this.b$["java.util.AbstractList"].size()){
+this.pos=a-1;
 }else{
 throw new IndexOutOfBoundsException();
 }},"~N");
 $_V(c$,"add",
-function(object){
+function(a){
 if(this.expectedModCount==this.b$["java.util.AbstractList"].modCount){
 try{
-this.b$["java.util.AbstractList"].add(this.pos+1,object);
+this.b$["java.util.AbstractList"].add(this.pos+1,a);
 }catch(e){
 if($_O(e,IndexOutOfBoundsException)){
 throw new java.util.NoSuchElementException();
@@ -227,10 +219,10 @@ $_V(c$,"previous",
 function(){
 if(this.expectedModCount==this.b$["java.util.AbstractList"].modCount){
 try{
-var result=this.b$["java.util.AbstractList"].get(this.pos);
+var a=this.b$["java.util.AbstractList"].get(this.pos);
 this.lastPosition=this.pos;
 this.pos--;
-return result;
+return a;
 }catch(e){
 if($_O(e,IndexOutOfBoundsException)){
 throw new java.util.NoSuchElementException();
@@ -245,10 +237,10 @@ function(){
 return this.pos;
 });
 $_V(c$,"set",
-function(object){
+function(a){
 if(this.expectedModCount==this.b$["java.util.AbstractList"].modCount){
 try{
-this.b$["java.util.AbstractList"].set(this.lastPosition,object);
+this.b$["java.util.AbstractList"].set(this.lastPosition,a);
 }catch(e){
 if($_O(e,IndexOutOfBoundsException)){
 throw new IllegalStateException();
@@ -272,18 +264,18 @@ this.$size=0;
 $_Z(this,arguments);
 },java.util.AbstractList,"SubAbstractList",java.util.AbstractList);
 $_K(c$,
-function(list,start,end){
+function(a,b,c){
 $_R(this,java.util.AbstractList.SubAbstractList);
-this.fullList=list;
+this.fullList=a;
 this.modCount=this.fullList.modCount;
-this.offset=start;
-this.$size=end-start;
+this.offset=b;
+this.$size=c-b;
 },"java.util.AbstractList,~N,~N");
 $_M(c$,"add",
-function(location,object){
+function(a,b){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<=this.$size){
-this.fullList.add(location+this.offset,object);
+if(0<=a&&a<=this.$size){
+this.fullList.add(a+this.offset,b);
 this.$size++;
 this.modCount=this.fullList.modCount;
 }else{
@@ -292,32 +284,32 @@ throw new IndexOutOfBoundsException();
 throw new java.util.ConcurrentModificationException();
 }},"~N,~O");
 $_M(c$,"addAll",
-function(location,collection){
+function(a,b){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<=this.$size){
-var result=this.fullList.addAll(location+this.offset,collection);
-if(result){
-this.$size+=collection.size();
+if(0<=a&&a<=this.$size){
+var c=this.fullList.addAll(a+this.offset,b);
+if(c){
+this.$size+=b.size();
 this.modCount=this.fullList.modCount;
-}return result;
+}return c;
 }throw new IndexOutOfBoundsException();
 }throw new java.util.ConcurrentModificationException();
 },"~N,java.util.Collection");
 $_M(c$,"addAll",
-function(collection){
+function(a){
 if(this.modCount==this.fullList.modCount){
-var result=this.fullList.addAll(this.offset+this.$size,collection);
-if(result){
-this.$size+=collection.size();
+var b=this.fullList.addAll(this.offset+this.$size,a);
+if(b){
+this.$size+=a.size();
 this.modCount=this.fullList.modCount;
-}return result;
+}return b;
 }throw new java.util.ConcurrentModificationException();
 },"java.util.Collection");
 $_M(c$,"get",
-function(location){
+function(a){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<this.$size){
-return this.fullList.get(location+this.offset);
+if(0<=a&&a<this.$size){
+return this.fullList.get(a+this.offset);
 }throw new IndexOutOfBoundsException();
 }throw new java.util.ConcurrentModificationException();
 },"~N");
@@ -326,39 +318,39 @@ function(){
 return this.listIterator(0);
 });
 $_M(c$,"listIterator",
-function(location){
+function(a){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<=this.$size){
-return new java.util.AbstractList.SubAbstractList.SubAbstractListIterator(this.fullList.listIterator(location+this.offset),this,this.offset,this.$size);
+if(0<=a&&a<=this.$size){
+return new java.util.AbstractList.SubAbstractList.SubAbstractListIterator(this.fullList.listIterator(a+this.offset),this,this.offset,this.$size);
 }throw new IndexOutOfBoundsException();
 }throw new java.util.ConcurrentModificationException();
 },"~N");
 $_M(c$,"remove",
-function(location){
+function(a){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<this.$size){
-var result=this.fullList.remove(location+this.offset);
+if(0<=a&&a<this.$size){
+var b=this.fullList.remove(a+this.offset);
 this.$size--;
 this.modCount=this.fullList.modCount;
-return result;
+return b;
 }throw new IndexOutOfBoundsException();
 }throw new java.util.ConcurrentModificationException();
 },"~N");
 $_M(c$,"removeRange",
-function(start,end){
-if(start!=end){
+function(a,b){
+if(a!=b){
 if(this.modCount==this.fullList.modCount){
-this.fullList.removeRange(start+this.offset,end+this.offset);
-this.$size-=end-start;
+this.fullList.removeRange(a+this.offset,b+this.offset);
+this.$size-=b-a;
 this.modCount=this.fullList.modCount;
 }else{
 throw new java.util.ConcurrentModificationException();
 }}},"~N,~N");
 $_M(c$,"set",
-function(location,object){
+function(a,b){
 if(this.modCount==this.fullList.modCount){
-if(0<=location&&location<this.$size){
-return this.fullList.set(location+this.offset,object);
+if(0<=a&&a<this.$size){
+return this.fullList.set(a+this.offset,b);
 }throw new IndexOutOfBoundsException();
 }throw new java.util.ConcurrentModificationException();
 },"~N,~O");
@@ -367,13 +359,23 @@ function(){
 return this.$size;
 });
 $_M(c$,"sizeChanged",
-function(increment){
-if(increment){
+function(a){
+if(a){
 this.$size++;
 }else{
 this.$size--;
 }this.modCount=this.fullList.modCount;
 },"~B");
+$_M(c$,"hashCode",
+function(){
+var a=1;
+var b=this.iterator();
+while(b.hasNext()){
+var c=b.next();
+a=(31*a)+(c==null?0:c.hashCode());
+}
+return a;
+});
 $_H();
 c$=$_C(function(){
 this.subList=null;
@@ -383,15 +385,15 @@ this.end=0;
 $_Z(this,arguments);
 },java.util.AbstractList.SubAbstractList,"SubAbstractListIterator",null,java.util.ListIterator);
 $_K(c$,
-function(it,list,offset,length){
-this.iterator=it;
-this.subList=list;
-this.start=offset;
-this.end=this.start+length;
+function(a,b,c,d){
+this.iterator=a;
+this.subList=b;
+this.start=c;
+this.end=this.start+d;
 },"java.util.ListIterator,java.util.AbstractList.SubAbstractList,~N,~N");
 $_M(c$,"add",
-function(object){
-this.iterator.add(object);
+function(a){
+this.iterator.add(a);
 this.subList.sizeChanged(true);
 this.end++;
 },"~O");
@@ -421,9 +423,9 @@ return this.iterator.previous();
 });
 $_M(c$,"previousIndex",
 function(){
-var previous=this.iterator.previousIndex();
-if(previous>=this.start){
-return previous-this.start;
+var a=this.iterator.previousIndex();
+if(a>=this.start){
+return a-this.start;
 }return-1;
 });
 $_M(c$,"remove",
@@ -433,8 +435,8 @@ this.subList.sizeChanged(false);
 this.end--;
 });
 $_M(c$,"set",
-function(object){
-this.iterator.set(object);
+function(a){
+this.iterator.set(a);
 },"~O");
 c$=$_P();
 c$=$_P();
