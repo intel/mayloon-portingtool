@@ -337,6 +337,32 @@ public class ProjectUtil {
 
 		return retVal;
 	}
+	
+	/**
+	 * Create the Annotation Class folder
+	 * 
+	 * @param destFilePath
+	 * @param project
+	 * @return retVal
+	 */
+	public static boolean CreateAnnotationFolder(IPath destFilePath,
+			IProject project) {
+		boolean retVal = false;
+		File files = new File(destFilePath.toOSString());
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				System.out
+						.println("Mayloon Stub Annotation Class directories are created!");
+				retVal = true;
+			} else {
+				System.out
+						.println("Failed to create Mayloon Stub Annotation Class directories!");
+				
+			}
+		}
+
+		return retVal;
+	}
 
 	/**
 	 * Copy missed android framework class to user's application src folder
@@ -2206,7 +2232,7 @@ public class ProjectUtil {
 		String[] packageSplit = missClassName.split("\\.");
 		
 		String packageName = missClassName.substring(0, missClassName
-				.lastIndexOf('.') - 1);
+				.lastIndexOf('.'));
 		
 		String className = missClassName.substring(missClassName
 				.lastIndexOf('.') + 1);
@@ -2219,13 +2245,13 @@ public class ProjectUtil {
 
 			while ((sCurrentLine = br.readLine()) != null) {
 				if (sCurrentLine
-						.contains("package ")) {
-					String packageStatement = sCurrentLine.replaceAll("android.mayloon.template", packageName);
+						.contains(MptConstants.MAYLOON_MISSCLASS_TEMPLATE_PACKAGE_TARGET)) {
+					String packageStatement = sCurrentLine.replaceAll(MptConstants.MAYLOON_MISSCLASS_TEMPLATE_PACKAGE, packageName);
 					bw.write(packageStatement);
 					bw.newLine();
 				} else if (sCurrentLine
-						.contains("MissClassTemplate")) {
-					String constructorStatement = sCurrentLine.replaceAll("MissClassTemplate", className);
+						.contains(MptConstants.MAYLOON_MISSCLASS_TEMPLATE_NAME)) {
+					String constructorStatement = sCurrentLine.replaceAll(MptConstants.MAYLOON_MISSCLASS_TEMPLATE_NAME, className);
 					bw.write(constructorStatement);
 					bw.newLine();
 				} else {
@@ -2251,7 +2277,6 @@ public class ProjectUtil {
 			}
 		}
 		
-		
 		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
 
 		// create folder accroding to missClassName
@@ -2268,7 +2293,20 @@ public class ProjectUtil {
 		}
 		
 		deleteFiles(new Path(tempOutPutFile));
+		
 		return retVal;
+	}
+	
+	public static void AddAnnotationClass2UserApp(IProject project){
+		String[] packageSplit = MptConstants.MAYLOON_STUB_ANNOTATION_PATH.split("\\.");
+		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
+		if(CreateAnnotationFolder(packageFolderPath, project)){
+			String mayloonSDKPath = MayloonSDK.getSdkLocation();
+			String srcFile = mayloonSDKPath + MptConstants.MAYLOON_STUB_ANNOTATION_FILE;
+			String destFile = packageFolderPath.toOSString() + IPath.SEPARATOR
+					+ MptConstants.MAYLOON_STUB_ANNOTATION_FILE;
+			copyFile(srcFile, destFile);
+		}
 	}
 	
 	public static void getAndroidStubPackage(Set<String> stubClassSet) {
