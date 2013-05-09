@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 
+import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
@@ -32,10 +33,11 @@ public class LocalImportDeclaration extends ASTVisitor {
 		
 		String importNodeName = node.getName().toString();
 		
-		IPath templateFilePath = new Path(MayloonSDK.getSdkLocation() + IPath.SEPARATOR + "MissClassTemplate.java");
+		IPath templateFilePath = new Path(MayloonSDK.getSdkLocation() + IPath.SEPARATOR + MptConstants.MAYLOON_MISSCLASS_TEMPLATE_FILE);
 		
 		if (mayloonStubClassSet.contains(importNodeName)) {
 			ProjectUtil.AddMissedClass2UserApp(templateFilePath, importNodeName, project);
+			ProjectUtil.AddAnnotationClass2UserApp(project);
 		}
 
 		return true;

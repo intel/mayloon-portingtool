@@ -46,6 +46,14 @@ public class MptConstants {
 	public static final String MAYLOON_JRE_CLASSPATH_ENTRY_ID = "com.intel.ide.eclipse.mpt.JRE_CONTAINER"; //$NON-NLS-1$
 	// MAYLOON Sdk property file name
 	public static final String MAYLOON_SDK_PROPERTY = "sdk-info.properties"; //$NON-NLS-1$
+	//MAYLOON stub Constants
+	public static final String MAYLOON_STUB_ANNOTATION_PATH = "com.intel.mpt.annotation.MayloonStubAnnotation";
+	public static final String MAYLOON_STUB_ANNOTATION_FILE = "MayloonStubAnnotation.java";
+	public static final String MAYLOON_MISSCLASS_TEMPLATE_PACKAGE = "android.mayloon.template";
+	public static final String MAYLOON_MISSCLASS_TEMPLATE_NAME = "MissClassTemplate";
+	public static final String MAYLOON_MISSCLASS_TEMPLATE_FILE = "MissClassTemplate.java";
+	public static final String MAYLOON_MISSCLASS_TEMPLATE_PACKAGE_TARGET = "package ";
+	
 	// MAYLOON External Resource property file name
 	public static final String MAYLOON_EXTERNAL_PROPERTY = "external-info.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_RUNTIME_PACKAGE = "package_name.json"; //$NON-NLS-1$

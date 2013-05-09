@@ -80,7 +80,7 @@ public class MptCompilationParticipant extends CompilationParticipant {
 			mayloonStubClassSet = new HashSet<String>();
 			getAndroidStubPackage(mayloonStubClassSet);
 		}
-		return false;
+		return true;
 	}
 
 	// give error message when save file
