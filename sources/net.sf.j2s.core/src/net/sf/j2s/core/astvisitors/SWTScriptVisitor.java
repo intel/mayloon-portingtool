@@ -125,64 +125,6 @@ public class SWTScriptVisitor extends ASTScriptVisitor {
 				return false;
 			}
 		}
-		ASTNode parent = node.getParent();
-		if (parent != null && !(parent instanceof QualifiedName)) {
-			Name qualifier = node.getQualifier();
-			while (qualifier instanceof QualifiedName) {
-				IBinding binding = qualifier.resolveBinding();
-				if (binding != null && !(binding instanceof IVariableBinding)) {
-					Name xqualifier = ((QualifiedName) qualifier).getQualifier();
-					if (xqualifier instanceof QualifiedName) {
-						IBinding xbinding = qualifier.resolveBinding();
-						if (xbinding != null && !(xbinding instanceof IVariableBinding)) {
-							qualifier = xqualifier;
-							continue;
-						}
-					}
-				}
-				break;
-			}
-			IBinding binding = qualifier.resolveBinding();
-			if (binding != null) {
-				if (!(binding instanceof IVariableBinding)) {
-					ITypeBinding typeBinding = qualifier.resolveTypeBinding();
-					if (typeBinding != null) {
-						String name = null;
-						ITypeBinding declaringClass = typeBinding.getDeclaringClass();
-						if (declaringClass != null) {
-							name = declaringClass.getQualifiedName();
-						} else {
-							name = "";
-						}
-						name = shortenQualifiedName(name);
-						if (name.indexOf("java.lang.") == 0) {
-							name = name.substring(10);
-						}
-						String xhtml = "org.eclipse.swt.internal.xhtml.";
-						if (name.indexOf(xhtml) == 0) {
-							name = name.substring(xhtml.length());
-						}
-						xhtml = "net.sf.j2s.html.";
-						if (name.indexOf(xhtml) == 0) {
-							name = name.substring(xhtml.length());
-						}
-						xhtml = "$wt.internal.xhtml.";
-						if (name.indexOf(xhtml) == 0) {
-							name = name.substring(xhtml.length());
-						}
-						if ("window".equals(name)) {
-							name = "w$";
-						} else if ("document".equals(name)) {
-							name = "d$";
-						}
-						if (name.length() != 0) {
-							buffer.append(name);
-							buffer.append('.');
-						}
-					}
-				}
-			}
-		}
 		Name qName = node.getQualifier();
 		String nodeStr = qName.toString();
 		if (nodeStr.equals("net.sf.j2s.html")
