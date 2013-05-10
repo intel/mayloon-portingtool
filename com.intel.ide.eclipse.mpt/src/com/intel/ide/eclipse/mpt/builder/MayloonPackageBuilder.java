@@ -52,25 +52,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
 		
 		// check if apk is built successfully
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IJavaProject javaProject = JavaCore.create(project);
-		IFolder apkOutputFolder = (IFolder)root.findMember(javaProject.getPath().append("/bin"));
-		apkOutputFolder.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
-		IFile apk = null;
-		for(IResource resoruce : apkOutputFolder.members(IResource.FILE)){
-			if(resoruce.exists() && resoruce.getLocation().toString().endsWith(EXT_APK)){
-				apk = (IFile)resoruce;
-				break;
-			}
-		}
-		
-		// mark a problem and return if apk doesn't exist 
-		if(apk == null){
-			ProjectUtil.markProject(project, 
-					    MptConstants.MARKER_BUILDER, 
-					    "Mayloon builder aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build", 
-					    IMarker.SEVERITY_ERROR, 
-					    IMarker.PRIORITY_HIGH);
+		if(!ProjectUtil.checkAndroidApk(project)){
 			return project.getReferencedProjects();
 		}
 		

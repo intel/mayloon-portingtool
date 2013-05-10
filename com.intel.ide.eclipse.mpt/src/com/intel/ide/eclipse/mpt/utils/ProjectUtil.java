@@ -2317,9 +2317,12 @@ public class ProjectUtil {
 			String destFile = packageFolderPath.toOSString() + IPath.SEPARATOR
 					+ MptConstants.MAYLOON_STUB_ANNOTATION_FILE;
 			copyFile(srcFile, destFile);
-			MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG,
-					"Annotation class '%1$s' has been added to project '%2$s'.",
-					MptConstants.MAYLOON_STUB_ANNOTATION_PATH, project.getName());
+			MptPluginConsole
+					.general(
+							MptConstants.PARTIAL_CONVERSION_TAG,
+							"Annotation class '%1$s' has been added to project '%2$s'.",
+							MptConstants.MAYLOON_STUB_ANNOTATION_PATH,
+							project.getName());
 		}
 	}
 
@@ -2363,4 +2366,39 @@ public class ProjectUtil {
 		}
 	}
 
+	/**
+	 * check if apk is built successfully
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 */
+	public static boolean checkAndroidApk(IProject project)
+			throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IJavaProject javaProject = JavaCore.create(project);
+		IFolder apkOutputFolder = (IFolder) root.findMember(javaProject
+				.getPath().append("/bin"));
+		apkOutputFolder.refreshLocal(IResource.DEPTH_ONE, null);
+		IFile apk = null;
+		for (IResource resoruce : apkOutputFolder.members(IResource.FILE)) {
+			if (resoruce.exists()
+					&& resoruce.getLocation().toString()
+							.endsWith(MptConstants.ANDROID_APK_EXTENSION)) {
+				apk = (IFile) resoruce;
+				break;
+			}
+		}
+
+		// mark a problem and return if apk doesn't exist
+		if (apk == null) {
+			ProjectUtil
+					.markProject(
+							project,
+							MptConstants.MARKER_BUILDER,
+							"Mayloon builder aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build",
+							IMarker.SEVERITY_ERROR, IMarker.PRIORITY_HIGH);
+			return false;
+		}
+		return true;
+	}
 }
