@@ -42,7 +42,7 @@
                <not>
                   <objectState
                         name="projectNature"
-                        value="com.intel.ide.eclipse.mpt.MaloonNature">
+                        value="com.intel.ide.eclipse.mpt.MayloonNature">
                   </objectState>
                </not>
             </and>
