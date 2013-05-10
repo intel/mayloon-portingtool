@@ -181,6 +181,9 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 															LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
 															localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
 
+															//after partial conversion, refresh local
+															project.refreshLocal(IResource.DEPTH_INFINITE,
+																	null);
 															// for local method
 															// ASTParserAddStubMethodDeclaration
 															// astParserAddStubMethod
