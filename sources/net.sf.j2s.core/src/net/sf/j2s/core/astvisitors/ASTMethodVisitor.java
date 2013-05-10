@@ -130,6 +130,7 @@ public class ASTMethodVisitor extends AbstractPluginVisitor {
 		register("java.lang.String", "length", "length");
 		register("java.lang.String", "replace", "~replace");
 		register("java.lang.String", "split", "~plit");
+        register("java.lang.CharSequence", "length", "toString().length");
 		ASTMethodVisitor.registerAllMaps();
 	}
 
