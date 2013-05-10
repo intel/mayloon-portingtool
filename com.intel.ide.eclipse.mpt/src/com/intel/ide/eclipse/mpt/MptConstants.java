@@ -100,6 +100,8 @@ public class MptConstants {
     public static final String GENERAL_TAG = "General";
     // Tag for convert message in console
     public static final String CONVERT_TAG = "Convert";
+    // Tag for partial conversion in console
+    public static final String PARTIAL_CONVERSION_TAG = "Partial Conversion";
     // Tag for build message in console
     public static final String BUILD_TAG = "Build";
     // Tag for run message in console
