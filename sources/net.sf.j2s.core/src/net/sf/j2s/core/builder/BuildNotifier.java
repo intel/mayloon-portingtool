@@ -140,7 +140,7 @@ public void done() {
 	if (J2S_DEPLOY_MODE_TIZEN.equals(j2sDeployMode)){
 		// Message with ok and cancel button and info icon
 		if (NewErrorCount != 0) {
-			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.warning(BUILD_TAG, "There is problem exsit in project '%1$s'.(build type: '%2$s')", currentProject.getName(),j2sDeployMode);
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			    public void run() {
 				    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -157,18 +157,20 @@ public void done() {
 			});
 		}else{
 			if(BUILD_TAG.equals(builderMode)){
-				ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
+//				ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
 				CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 			}
 		}
 	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode) && BUILD_TAG.equals(builderMode)){
 		if (NewErrorCount != 0) {
-			CorePluginConsole.error(BUILD_TAG, "Project '%1$s' could not be built for '%2$s'", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.warning(BUILD_TAG, "There is problem exsit in project '%1$s'.(build type: '%2$s')", currentProject.getName(),j2sDeployMode);
 		}else{
-			ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
+//			ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
 			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
 		}
 	}
+	
+	ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
 	
 	try {
 		currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
