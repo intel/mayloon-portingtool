@@ -2368,12 +2368,13 @@ public class ProjectUtil {
 
 		// mark a problem and return if apk doesn't exist
 		if (apk == null) {
-			ProjectUtil
-					.markProject(
-							project,
-							MptConstants.MARKER_BUILDER,
-							"Mayloon builder aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build",
-							IMarker.SEVERITY_ERROR, IMarker.PRIORITY_HIGH);
+//			ProjectUtil
+//					.markProject(
+//							project,
+//							MptConstants.MARKER_BUILDER,
+//							"Mayloon builder aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build",
+//							IMarker.SEVERITY_ERROR, IMarker.PRIORITY_HIGH);
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, "Mayloon builder aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build");
 			return false;
 		}
 		return true;

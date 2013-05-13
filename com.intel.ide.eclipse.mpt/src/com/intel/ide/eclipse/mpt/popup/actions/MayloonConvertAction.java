@@ -83,7 +83,6 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 							.getAdapter(IProject.class);
 				}
 				if (project != null) {
-
 					try {
 						if (!ProjectUtil.checkAndroidApk(project)){
 							return;
