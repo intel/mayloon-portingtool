@@ -257,7 +257,6 @@ public class ProjectSelectionPage extends ExportWizardPage {
 								this.setErrorMessage(String.format("Referenced project '%1$s' has severe problem, please fix first.",
 										             markProject.getName()));
 							}
-							return;
 						}
 						if(!project.equals(this.fWizard.getProject())){
 							this.fWizard.setProject(project);
