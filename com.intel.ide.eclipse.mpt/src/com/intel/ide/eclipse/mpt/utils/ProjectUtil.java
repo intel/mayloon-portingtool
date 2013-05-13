@@ -207,26 +207,29 @@ public class ProjectUtil {
 			// genRPath = packageName.substring(0,
 			// packageName.lastIndexOf("."));
 
-			if (!isExport) {
-				IPath srcFilePath = project.getLocation().append(
-						MptConstants.ANDROID_GEN_DIR);
-
-				IPath destFilePath = project.getLocation().append("src");
-
-				// String srcFile = srcFilePath.toOSString() + "/"
-				// + genRPath.replaceAll("\\.", "/") + "/R.java";
-				//
-				// String destFile = destFilePath.toOSString() + "/"
-				// + genRPath.replaceAll("\\.", "/") + "/R.java";
-				String srcFile = srcFilePath.toOSString() + "/"
-						+ packageName.replaceAll("\\.", "/") + "/R.java";
-
-				String destFile = destFilePath.toOSString() + "/"
-						+ packageName.replaceAll("\\.", "/") + "/R.java";
-
-				copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-						destFile));
-			}
+//            if (!isExport) {
+//                /**
+//                 * Move all Java files from gen/ to src/
+//                 */
+//                IPath srcFilePath = project.getLocation().append(
+//                        MptConstants.ANDROID_GEN_DIR).append(packageName.replaceAll("\\.", "/"));
+//
+//                IPath destFilePath = project.getLocation().append("src")
+//                        .append(packageName.replaceAll("\\.", "/"));
+//
+//                File srcDir = srcFilePath.toFile();
+//
+//                FilenameFilter javaFileFilter = new FilenameFilter() {
+//                    @Override
+//                    public boolean accept(File dir, String name) {
+//                        return name.endsWith(".java");
+//                    }
+//                };
+//
+//                for (File javaFile : srcDir.listFiles(javaFileFilter)) {
+//                    javaFile.renameTo(destFilePath.append(javaFile.getName()).toFile());
+//                }
+//            }
 
 			IPath filePath = project.getLocation().append(
 					MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
@@ -469,17 +472,6 @@ public class ProjectUtil {
 					"Could not clear Android gen folder due to cause {%1$s}",
 					e.getMessage());
 		}
-	}
-
-	/**
-	 * Clear Android's Gen Folder
-	 * 
-	 * @param project
-	 */
-	public static void clearAndroidGenFolder(IProject project) {
-		IPath genPath = project.getLocation().append(
-				MptConstants.ANDROID_GEN_DIR);
-		deleteFiles(genPath);
 	}
 
 	/**
@@ -1073,21 +1065,6 @@ public class ProjectUtil {
 			entries = ProjectUtil.removeClassPathEntry(entries, adtIndex);
 		}
 
-		// check android gen classpath entry
-		IClasspathEntry[] classpathEntries = null;
-		classpathEntries = javaProject.getResolvedClasspath(true);
-		IPath android_gen_path = javaProject.getPath().append(
-				MptConstants.ANDROID_GEN_DIR);
-
-		int androidGenIndex = ProjectUtil.findClassPathEntry(entries,
-				android_gen_path.toOSString(), IClasspathEntry.CPE_SOURCE);
-		if (androidGenIndex != -1) {
-			// no jre classpath entry, add a jre container to Mayloon class path
-			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Remove Android Gen src from classpath.");
-			entries = ProjectUtil
-					.removeClassPathEntry(entries, androidGenIndex);
-		}
 
 		// add Mayloon framework classpath if not exist
 		int MayloonRuntimeIndex = ProjectUtil.findClassPathEntry(entries,
