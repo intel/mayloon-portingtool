@@ -111,13 +111,10 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 		// listRewrite.insertAt(methodStub, 0, null);
 
 		NormalAnnotation a = mAST.newNormalAnnotation();
-		a.setTypeName(mAST.newName("MayloonAnnotation"));
-		// a.values().add(createAnnotationMember(mAST, "infoAnnotation",
-		// "MaloonStub"));
+		a.setTypeName(mAST.newName("MayloonStubAnnotation"));
 		ListRewrite lr = mRewrite.getListRewrite(methodStub,
 				MethodDeclaration.MODIFIERS2_PROPERTY);
 		lr.insertFirst(a, null);
-
 	}
 
 	@Override
