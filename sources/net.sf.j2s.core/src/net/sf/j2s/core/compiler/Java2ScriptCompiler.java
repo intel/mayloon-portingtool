@@ -413,7 +413,7 @@ public class Java2ScriptCompiler implements IExtendedCompiler {
 			InnerHotspotServer.addCompiledItem(elementName);
 		}
 		
-		String jsExtension = ".js"; //visitor.isNarrativeJS() ? ".njs" : ".js";
+		String jsExtension = ".js";
 		File jsFile = new File(folderPath, elementName + jsExtension); //$NON-NLS-1$
 		try {
 			FileOutputStream fos = new FileOutputStream(jsFile);
@@ -422,15 +422,6 @@ public class Java2ScriptCompiler implements IExtendedCompiler {
 			fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		if (jsExtension.equals(".njs")) {
-			try {
-				com.neilmix.narrativejs.CompilerMain.main(
-						new String[]{jsFile.getAbsolutePath()});
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		
 		String[] classNameSet = dvisitor.getClassNames();

@@ -1757,12 +1757,6 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		if (!read) {
 			read = readSources(node, "@j2sNative", prefix, suffix, false);
 		}
-		if (!read) {
-			read = readSources(node, "@j2sNativeNJS", prefix, suffix, false);
-			if (read) {
-				SetNarrativeJS();
-			}
-		}
 		return read;
 	}
 

@@ -51,16 +51,6 @@ public class ASTJ2SDocVisitor extends ASTKeywordVisitor {
 	private ASTNode javadocRoot = null;
 	
 	private boolean isDebugging = false;
-
-	private boolean isNarrativeJS = false;
-	
-	public boolean isNarrativeJS() {
-		return isNarrativeJS;
-	}
-	
-	public void SetNarrativeJS() {
-		isNarrativeJS = true;
-	}
 	
 	public boolean isDebugging() {
 		return isDebugging;
@@ -183,16 +173,7 @@ public class ASTJ2SDocVisitor extends ASTKeywordVisitor {
 						visitJavadocJ2SSource(tagEl);
 						return false;
 					}
-				}
-				for (Iterator iter = tags.iterator(); iter.hasNext();) {
-					TagElement tagEl = (TagElement) iter.next();
-					if ("@j2sNativeNJS".equals(tagEl.getTagName())) {
-						if (superVisit) super.visit(node);
-						visitJavadocJ2SSource(tagEl);
-						SetNarrativeJS();
-						return false;
-					}
-				}				
+				}			
 			}
 		}
 		return true;
@@ -329,8 +310,7 @@ public class ASTJ2SDocVisitor extends ASTKeywordVisitor {
 								String tagName = tagEl.getTagName();
 								if ("@j2sIgnore".equals(tagName)
 										|| "@j2sDebug".equals(tagName)
-										|| "@j2sNative".equals(tagName)
-										|| "@j2sNativeNJS".equals(tagName)) {
+										|| "@j2sNative".equals(tagName)) {
 									list.add(comment);
 								}
 							}

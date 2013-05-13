@@ -375,7 +375,6 @@ buf.append ("span.alaa-icon {\r\n");
 buf.append ("\tdisplay:block;\r\n\tposition:absolute;\r\n\twidth:16px;\r\n\theight:16px;\r\n\tmargin:2px 8px 0 -24px;\r\n\tbackground-color:rgb(57,61,254);\r\n");
 buf.append ("}\r\n");
 buf.append ("</style>\r\n");
-buf.append ("<script src=\"njs/njs_runtime.js\"></script>");
 buf.append ("<script src=\"external/jsthread.js\"></script>");
 buf.append ("<script src=\"external/fileapi.js\"></script>");
 buf.append ("</head>\r\n");
