@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractSequentialList","$.List","$.ListIterator","$.Queue"],"java.util.LinkedList",["java.lang.IllegalStateException","$.IndexOutOfBoundsException","java.lang.reflect.Array","java.util.ConcurrentModificationException","$.NoSuchElementException"],function(){
+﻿$_L(["java.util.AbstractSequentialList","$.List","$.ListIterator","$.Queue"],"java.util.LinkedList",["java.lang.IllegalStateException","$.IndexOutOfBoundsException","$.NullPointerException","java.util.ConcurrentModificationException","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.$size=0;
 this.voidLink=null;
@@ -51,6 +51,8 @@ $_M(c$,"addAll",
 function(location,collection){
 if(location<0||location>this.$size){
 throw new IndexOutOfBoundsException();
+}if(collection==null){
+throw new NullPointerException();
 }var adding=collection.size();
 if(adding==0){
 return false;
@@ -77,7 +79,9 @@ return true;
 },"~N,java.util.Collection");
 $_M(c$,"addAll",
 function(collection){
-var adding=collection.size();
+if(collection==null){
+throw new NullPointerException();
+}var adding=collection.size();
 if(adding==0){
 return false;
 }var previous=this.voidLink.previous;
@@ -334,11 +338,10 @@ return contents;
 });
 $_M(c$,"toArray",
 function(contents){
-var index=0;
-if(this.$size>contents.length){
-var ct=contents.getClass().getComponentType();
-contents=java.lang.reflect.Array.newInstance(ct,this.$size);
-}var link=this.voidLink.next;
+if(contents==null){
+throw new NullPointerException();
+}var index=0;
+var link=this.voidLink.next;
 while(link!==this.voidLink){
 contents[index++]=link.data;
 link=link.next;

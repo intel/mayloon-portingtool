@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractList","$.RandomAccess"],"java.util.Arrays",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.NullPointerException"],function(){
+﻿$_L(["java.util.AbstractList","$.RandomAccess"],"java.util.Arrays",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.NullPointerException","$.StringBuilder","java.lang.reflect.Array"],function(){
 c$=$_T(java.util,"Arrays");
 c$.sort=$_M(c$,"sort",
 function(a){
@@ -137,6 +137,37 @@ c$.asList=$_M(c$,"asList",
 function(a){
 return new java.util.Arrays.ArrayList(a);
 },"~A");
+c$.copyOfRange=$_M(c$,"copyOfRange",
+function(original,start,end){
+if(start>end){
+throw new IllegalArgumentException();
+}if(original==null){
+throw new NullPointerException();
+}var originalLength=original.length;
+if(start<0||start>originalLength){
+throw new ArrayIndexOutOfBoundsException();
+}var resultLength=end-start;
+var copyLength=Math.min(resultLength,originalLength-start);
+var result=java.lang.reflect.Array.newInstance(JavaObject,resultLength);
+System.arraycopy(original,start,result,0,copyLength);
+return result;
+},"~A,~N,~N");
+c$.toString=$_M(c$,"toString",
+function(array){
+if(array==null){
+return"null";
+}if(array.length==0){
+return"[]";
+}var sb=new StringBuilder();
+sb.append('[');
+sb.append(array[0]);
+for(var i=1;i<array.length;i++){
+sb.append(",");
+sb.append(array[i]);
+}
+sb.append(']');
+return sb.toString();
+},"~A");
 $_H();
 c$=$_C(function(){
 this.a=null;
@@ -180,6 +211,16 @@ $_V(c$,"contains",
 function(a){
 return this.indexOf(a)!=-1;
 },"~O");
+$_M(c$,"hashCode",
+function(){
+var a=1;
+var b=this.iterator();
+while(b.hasNext()){
+var c=b.next();
+a=(31*a)+(c==null?0:c.hashCode());
+}
+return a;
+});
 c$=$_P();
 $_S(c$,
 "INSERTIONSORT_THRESHOLD",7);

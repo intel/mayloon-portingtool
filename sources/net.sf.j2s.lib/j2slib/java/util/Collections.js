@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractList","$.AbstractMap","$.AbstractSet","$.Collection","$.Iterator","$.List","$.ListIterator","$.Map","$.RandomAccess","$.Set","$.SortedMap","$.SortedSet","java.lang.NullPointerException","$.UnsupportedOperationException","java.lang.reflect.Array"],"java.util.Collections",["java.lang.ArrayIndexOutOfBoundsException","$.ClassCastException","$.IllegalArgumentException","$.IndexOutOfBoundsException","java.util.ArrayList","$.Arrays","$.Enumeration","java.util.Map.Entry","java.util.NoSuchElementException","$.Random"],function(){
+﻿$_L(["java.util.AbstractList","$.AbstractMap","$.AbstractSet","$.Collection","$.Iterator","$.List","$.ListIterator","$.Map","$.RandomAccess","$.Set","$.SortedMap","$.SortedSet","java.lang.NullPointerException","$.UnsupportedOperationException"],"java.util.Collections",["java.lang.ArrayIndexOutOfBoundsException","$.IllegalArgumentException","$.IndexOutOfBoundsException","java.util.ArrayList","$.Arrays","$.Enumeration","java.util.Map.Entry","java.util.NoSuchElementException","$.Random"],function(){
 c$=$_T(java.util,"Collections");
 c$.binarySearch=$_M(c$,"binarySearch",
 function(list,object){
@@ -499,9 +499,7 @@ return true;
 },"java.util.Collection,java.util.Collection");
 c$.checkType=$_M(c$,"checkType",
 function(obj,type){
-if(!type.isInstance(obj)){
-throw new ClassCastException("Attempt to insert"+obj.getClass()+"element into collection with element type"+type);
-}return obj;
+return obj;
 },"~O,Class");
 c$.$Collections$1$=function(){
 $_H();
@@ -551,6 +549,16 @@ if(0<=a&&a<this.n){
 return this.element;
 }throw new IndexOutOfBoundsException();
 },"~N");
+$_M(c$,"hashCode",
+function(){
+var a=1;
+var b=this.iterator();
+while(b.hasNext()){
+var c=b.next();
+a=(31*a)+(c==null?0:c.hashCode());
+}
+return a;
+});
 c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"EmptyList",java.util.AbstractList,java.io.Serializable);
@@ -718,6 +726,16 @@ return this.element;
 $_V(c$,"size",
 function(){
 return 1;
+});
+$_M(c$,"hashCode",
+function(){
+var a=1;
+var b=this.iterator();
+while(b.hasNext()){
+var c=b.next();
+a=(31*a)+(c==null?0:c.hashCode());
+}
+return a;
 });
 c$=$_P();
 $_H();
@@ -1486,10 +1504,7 @@ function(a){
 var b=this.c.size();
 var c=0;
 var d=this.iterator();
-if(b>a.length){
-var e=a.getClass().getComponentType();
-a=java.lang.reflect.Array.newInstance(e,b);
-}while(c<b){
+while(c<b){
 a[c++]=d.next();
 }
 if(c<a.length){
@@ -2001,10 +2016,7 @@ return b;
 $_M(c$,"toArray",
 function(a){
 var b=this.size();
-if(a.length<b){
-var c=a.getClass().getComponentType();
-a=java.lang.reflect.Array.newInstance(c,b);
-}var c=this.iterator();
+var c=this.iterator();
 for(var d=0;d<b;d++){
 a[d]=c.next();
 }

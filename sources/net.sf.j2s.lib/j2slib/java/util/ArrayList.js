@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractList","$.List","$.RandomAccess"],"java.util.ArrayList",["java.lang.IllegalArgumentException","$.IndexOutOfBoundsException","java.lang.reflect.Array","java.util.Arrays"],function(){
+﻿$_L(["java.util.AbstractList","$.List","$.RandomAccess"],"java.util.ArrayList",["java.lang.IllegalArgumentException","$.IndexOutOfBoundsException","$.NullPointerException","java.util.Arrays"],function(){
 c$=$_C(function(){
 this.firstIndex=0;
 this.lastIndex=0;
@@ -12,7 +12,9 @@ this.construct(0);
 $_K(c$,
 function(capacity){
 $_R(this,java.util.ArrayList,[]);
-this.firstIndex=this.lastIndex=0;
+if(capacity<0){
+throw new IllegalArgumentException();
+}this.firstIndex=this.lastIndex=0;
 try{
 this.array=this.newElementArray(capacity);
 }catch(e){
@@ -26,7 +28,9 @@ throw e;
 $_K(c$,
 function(collection){
 $_R(this,java.util.ArrayList,[]);
-var size=collection.size();
+if(collection==null){
+throw new NullPointerException();
+}var size=collection.size();
 this.firstIndex=this.lastIndex=0;
 this.array=this.newElementArray(size+(Math.floor(size/10)));
 this.addAll(collection);
@@ -73,6 +77,8 @@ function(location,collection){
 var size=this.size();
 if(location<0||location>size){
 throw new IndexOutOfBoundsException();
+}if(collection==null){
+throw new NullPointerException();
 }var growSize=collection.size();
 if(0<location&&location<size){
 if(this.array.length-size<growSize){
@@ -110,7 +116,9 @@ return true;
 },"~N,java.util.Collection");
 $_M(c$,"addAll",
 function(collection){
-var growSize=collection.size();
+if(collection==null){
+throw new NullPointerException();
+}var growSize=collection.size();
 if(growSize>0){
 if(this.lastIndex>this.array.length-growSize){
 this.growAtEnd(growSize);
@@ -340,10 +348,7 @@ return result;
 $_M(c$,"toArray",
 function(contents){
 var size=this.size();
-if(size>contents.length){
-var ct=contents.getClass().getComponentType();
-contents=java.lang.reflect.Array.newInstance(ct,size);
-}System.arraycopy(this.array,this.firstIndex,contents,0,size);
+System.arraycopy(this.array,this.firstIndex,contents,0,size);
 if(size<contents.length){
 contents[size]=null;
 }return contents;
