@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractMap","$.AbstractSet","$.Iterator","$.Map","$.MapEntry"],"java.util.IdentityHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","java.util.AbstractCollection","$.ConcurrentModificationException","java.util.MapEntry.Type","java.util.NoSuchElementException"],function(){
+﻿$_L(["java.util.AbstractMap","$.AbstractSet","$.Iterator","$.Map","$.MapEntry"],"java.util.IdentityHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","$.NullPointerException","java.util.AbstractCollection","$.ConcurrentModificationException","java.util.MapEntry.Type","java.util.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.elementData=null;
 this.$size=0;
@@ -133,7 +133,9 @@ return this.massageValue(result);
 },"~O,~O");
 $_M(c$,"putAll",
 function(map){
-this.putAllImpl(map);
+if(map==null){
+throw new NullPointerException();
+}this.putAllImpl(map);
 },"java.util.Map");
 $_M(c$,"rehash",
 ($fz=function(){

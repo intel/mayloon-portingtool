@@ -1,4 +1,4 @@
-﻿$_L(["java.lang.ref.WeakReference","java.util.AbstractMap","$.Iterator","$.Map"],"java.util.WeakHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","java.lang.ref.ReferenceQueue","java.util.AbstractCollection","$.AbstractSet","$.Arrays","$.ConcurrentModificationException","$.NoSuchElementException"],function(){
+﻿$_L(["java.lang.ref.WeakReference","java.util.AbstractMap","$.Iterator","$.Map"],"java.util.WeakHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","$.NullPointerException","java.lang.ref.ReferenceQueue","java.util.AbstractCollection","$.AbstractSet","$.Arrays","$.ConcurrentModificationException","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.referenceQueue=null;
 this.elementCount=0;
@@ -229,7 +229,9 @@ this.computeMaxSize();
 },$fz.isPrivate=true,$fz));
 $_M(c$,"putAll",
 function(map){
-this.putAllImpl(map);
+if(map==null){
+throw new NullPointerException();
+}this.putAllImpl(map);
 },"java.util.Map");
 $_V(c$,"remove",
 function(key){

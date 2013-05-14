@@ -72,6 +72,10 @@ return m;
 },"~O,~N,~O");
 $_V(c$,"put",
 function(key,value){
+return this.putEntry(key,value);
+},"~O,~O");
+$_M(c$,"putEntry",
+($fz=function(key,value){
 var index=this.getModuloHash(key);
 var m=this.findEntry(key,index);
 if(m==null){
@@ -87,7 +91,7 @@ m.value=value;
 if(this.removeEldestEntry(this.head)){
 this.remove(this.head.key);
 }return result;
-},"~O,~O");
+},$fz.isPrivate=true,$fz),"~O,~O");
 $_M(c$,"linkEntry",
 function(m){
 if(this.tail===m){
@@ -163,13 +167,15 @@ $_M(c$,"clear",
 function(){
 $_U(this,java.util.LinkedHashMap,"clear",[]);
 this.head=this.tail=null;
+this.valuesCollection=null;
+this.$keySet=null;
 });
 $_M(c$,"clone",
 function(){
 var map=$_U(this,java.util.LinkedHashMap,"clone",[]);
 map.clear();
 for(var entry,$entry=this.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
-map.put(entry.getKey(),entry.getValue());
+map.putEntry(entry.getKey(),entry.getValue());
 }
 return map;
 });

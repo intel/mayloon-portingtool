@@ -8,7 +8,7 @@ $_Z(this,arguments);
 },java.util,"StringTokenizer",null,java.util.Enumeration);
 $_K(c$,
 function(string){
-this.construct(string,"\t\n\r\f",false);
+this.construct(string," \t\n\r\f",false);
 },"~S");
 $_K(c$,
 function(string,delimiters){
@@ -77,7 +77,9 @@ return this.string.substring(i);
 });
 $_M(c$,"nextToken",
 function(delims){
-this.delimiters=delims;
+if(delims==null){
+throw new NullPointerException();
+}this.delimiters=delims;
 return this.nextToken();
 },"~S");
 });

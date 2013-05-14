@@ -66,7 +66,7 @@ $_M(c$,"clone",
 function(){
 try{
 var hashtable=$_U(this,java.util.Hashtable,"clone",[]);
-hashtable.elementData=this.elementData.clone();
+hashtable.elementData=new Array(this.elementCount);
 var entry;
 for(var i=this.elementData.length;--i>=0;){
 if((entry=this.elementData[i])!=null){
@@ -101,7 +101,9 @@ return false;
 },"~O");
 $_V(c$,"containsKey",
 function(key){
-return this.getEntry(key)!=null;
+if(key==null){
+throw new NullPointerException();
+}return this.getEntry(key)!=null;
 },"~O");
 $_V(c$,"containsValue",
 function(value){
@@ -213,7 +215,9 @@ return result;
 },"~O,~O");
 $_V(c$,"putAll",
 function(map){
-for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
+if(map==null){
+throw new NullPointerException();
+}for(var entry,$entry=map.entrySet().iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
 this.put(entry.getKey(),entry.getValue());
 }
 },"java.util.Map");
@@ -246,7 +250,9 @@ this.computeMaxSize();
 });
 $_V(c$,"remove",
 function(key){
-var hash=key.hashCode();
+if(key==null){
+throw new NullPointerException();
+}var hash=key.hashCode();
 var index=(hash&0x7FFFFFFF)%this.elementData.length;
 var last=null;
 var entry=this.elementData[index];

@@ -1,75 +1,83 @@
-﻿$_L(null,"java.lang.Enum",["java.lang.CloneNotSupportedException","$.IllegalArgumentException","$.NullPointerException","org.apache.harmony.luni.util.Msg"],function(){
-c$=$_C(function(){
-this.$name=null;
-this.$ordinal=0;
-$_Z(this,arguments);
-},java.lang,"Enum",null,[java.io.Serializable,Comparable]);
-$_K(c$,
-function(name,ordinal){
-this.$name=name;
-this.$ordinal=ordinal;
-},"~S,~N");
-$_M(c$,"name",
-function(){
+Clazz.load (["java.io.Serializable", "java.lang.Comparable"], "java.lang.Enum", ["java.lang.ClassCastException", "$.CloneNotSupportedException", "$.IllegalArgumentException", "$.NullPointerException"], function () {
+c$ = java.lang.Enum = Enum = function () {
+this.$name = null;
+this.$ordinal = 0;
+Clazz.instantialize (this, arguments);
+};
+Clazz.decorateAsType (c$, "Enum", null, [Comparable, java.io.Serializable]);
+Clazz.defineMethod (c$, "name", 
+function () {
 return this.$name;
 });
-$_M(c$,"ordinal",
-function(){
+Clazz.defineMethod (c$, "ordinal", 
+function () {
 return this.$ordinal;
 });
-$_V(c$,"toString",
-function(){
+Clazz.makeConstructor (c$, 
+function (name, ordinal) {
+this.$name = name;
+this.$ordinal = ordinal;
+}, "String, Number");
+Clazz.defineMethod (c$, "toString", 
+function () {
 return this.$name;
 });
-$_V(c$,"equals",
-function(other){
-return this===other;
-},"~O");
-$_V(c$,"hashCode",
-function(){
-return this.$ordinal+(this.$name==null?0:this.$name.hashCode());
+Clazz.defineMethod (c$, "equals", 
+function (other) {
+return this == other;
+}, "Object");
+Clazz.defineMethod (c$, "hashCode", 
+function () {
+return System.identityHashCode (this);
 });
-$_V(c$,"clone",
-function(){
-throw new CloneNotSupportedException(org.apache.harmony.luni.util.Msg.getString("KA004"));
+Clazz.defineMethod (c$, "clone", 
+function () {
+throw  new CloneNotSupportedException ();
 });
-$_V(c$,"compareTo",
-function(o){
-return this.$ordinal-o.$ordinal;
-},"~O");
-$_M(c$,"getDeclaringClass",
-function(){
-var myClass=this.getClass();
-var mySuperClass=myClass.getSuperclass();
-if(Enum===mySuperClass){
-return myClass;
-}return mySuperClass;
+Clazz.defineMethod (c$, "compareTo", 
+function (o) {
+var other = o;
+var self = this;
+if (self.getClass () != other.getClass () && self.getDeclaringClass () != other.getDeclaringClass ()) throw  new ClassCastException ();
+return self.ordinal - other.ordinal;
+}, "E");
+Clazz.defineMethod (c$, "getDeclaringClass", 
+function () {
+var clazz = this.getClass ();
+var zuper = clazz.getSuperclass ();
+return (zuper == Enum) ? clazz : zuper;
 });
-c$.$valueOf=$_M(c$,"$valueOf",
-function(enumType,name){
-if((enumType==null)||(name==null)){
-throw new NullPointerException(org.apache.harmony.luni.util.Msg.getString("KA001"));
-}var values=Enum.getValues(enumType);
-if(values==null){
-throw new IllegalArgumentException(org.apache.harmony.luni.util.Msg.getString("KA005",enumType));
-}for(var enumConst,$enumConst=0,$$enumConst=values;$enumConst<$$enumConst.length&&((enumConst=$$enumConst[$enumConst])||true);$enumConst++){
-if(enumConst.$name.equals(name)){
-return enumConst;
-}}
-throw new IllegalArgumentException(org.apache.harmony.luni.util.Msg.getString("KA006",name,enumType));
-},"Class,~S");
-c$.getValues=$_M(c$,"getValues",
-function(enumType){
-try{
-var values=enumType.getMethod("values",[null]);
-values.setAccessible(true);
-return values.invoke(enumType,Clazz.castNullAs("Array"));
-}catch(e){
-if($_O(e,Exception)){
-return null;
-}else{
-throw e;
+Clazz.defineMethod (Enum, "$valueOf", 
+function (enumType, name) {
+	return enumType.$valueOf (name);
+}, "Object, String"); /* "Class, String" */
+Clazz.defineMethod (Enum, "$valueOf", 
+function (name) {
+if (name == null) throw  new NullPointerException ("Name is null");
+var vals = this.values ();
+for (var i = 0; i < vals.length; i++) {
+	if (name == vals[i].name ()) {
+		return vals[i];
+	}
 }
-}
-},"Class");
+throw  new IllegalArgumentException ("No enum const " + enumType + "." + name);
+}, "String");
+Enum.$valueOf = Enum.prototype.$valueOf;
+Clazz.defineMethod (Enum, "values", 
+function () {
+	if (this.$ALL$ENUMS != null) {
+		return this.$ALL$ENUMS;
+	}
+	this.$ALL$ENUMS = new Array ();
+	var clazzThis = this.getClass ();
+	for (var e in clazzThis) {
+		if (clazzThis[e] != null && clazzThis[e].__CLASS_NAME__ != null 
+				&& e != "prototype"
+				&& Clazz.instanceOf (clazzThis[e], clazzThis)) {
+			this.$ALL$ENUMS[this.$ALL$ENUMS.length] = clazzThis[e];
+		}
+	}
+	return this.$ALL$ENUMS;
+});
+Enum.values = Enum.prototype.values;
 });
