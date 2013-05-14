@@ -249,9 +249,9 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.LinkedHashMap,"LinkedHashIterator",java.util.HashMap.HashMapIterator);
 $_K(c$,
-function(a,b){
-$_R(this,java.util.LinkedHashMap.LinkedHashIterator,[a,b]);
-this.entry=b.head;
+function(value,hm){
+$_R(this,java.util.LinkedHashMap.LinkedHashIterator,[value,hm]);
+this.entry=hm.head;
 },"java.util.MapEntry.Type,java.util.LinkedHashMap");
 $_V(c$,"hasNext",
 function(){
@@ -262,11 +262,11 @@ function(){
 this.checkConcurrentMod();
 if(!this.hasNext()){
 throw new java.util.NoSuchElementException();
-}var a=this.type.get(this.entry);
+}var result=this.type.get(this.entry);
 this.lastEntry=this.entry;
 this.entry=(this.entry).chainForward;
 this.canRemove=true;
-return a;
+return result;
 });
 $_V(c$,"remove",
 function(){
@@ -275,33 +275,33 @@ if(!this.canRemove){
 throw new IllegalStateException();
 }this.canRemove=false;
 this.associatedMap.modCount++;
-var a=this.associatedMap.getModuloHash(this.lastEntry.key);
-var b=this.associatedMap.elementData[a];
-if(b===this.lastEntry){
-this.associatedMap.elementData[a]=this.lastEntry.next;
+var index=this.associatedMap.getModuloHash(this.lastEntry.key);
+var m=this.associatedMap.elementData[index];
+if(m===this.lastEntry){
+this.associatedMap.elementData[index]=this.lastEntry.next;
 }else{
-while(b.next!=null){
-if(b.next===this.lastEntry){
+while(m.next!=null){
+if(m.next===this.lastEntry){
 break;
-}b=b.next;
+}m=m.next;
 }
-b.next=this.lastEntry.next;
-}var c=this.lastEntry;
-var d=c.chainBackward;
-var e=c.chainForward;
-var f=this.associatedMap;
-if(d!=null){
-d.chainForward=e;
-if(e!=null){
-e.chainBackward=d;
+m.next=this.lastEntry.next;
+}var lhme=this.lastEntry;
+var p=lhme.chainBackward;
+var n=lhme.chainForward;
+var lhm=this.associatedMap;
+if(p!=null){
+p.chainForward=n;
+if(n!=null){
+n.chainBackward=p;
 }else{
-f.tail=d;
+lhm.tail=p;
 }}else{
-f.head=e;
-if(e!=null){
-e.chainBackward=null;
+lhm.head=n;
+if(n!=null){
+n.chainBackward=null;
 }else{
-f.tail=null;
+lhm.tail=null;
 }}this.associatedMap.elementCount--;
 this.expectedModCount++;
 });
@@ -316,8 +316,8 @@ c$.$LinkedHashMap$LinkedHashMapEntrySet$1$=function(){
 $_H();
 c$=$_W(java.util,"LinkedHashMap$LinkedHashMapEntrySet$1",null,java.util.MapEntry.Type);
 $_V(c$,"get",
-function(a){
-return a;
+function(entry){
+return entry;
 },"java.util.MapEntry");
 c$=$_P();
 };
@@ -329,20 +329,20 @@ this.chainBackward=null;
 $_Z(this,arguments);
 },java.util.LinkedHashMap,"LinkedHashMapEntry",java.util.HashMap.Entry);
 $_K(c$,
-function(a,b){
-$_R(this,java.util.LinkedHashMap.LinkedHashMapEntry,[a,b]);
+function(theKey,theValue){
+$_R(this,java.util.LinkedHashMap.LinkedHashMapEntry,[theKey,theValue]);
 this.chainForward=null;
 this.chainBackward=null;
 },"~O,~O");
 $_M(c$,"clone",
 function(){
-var a=$_U(this,java.util.LinkedHashMap.LinkedHashMapEntry,"clone",[]);
-a.chainBackward=this.chainBackward;
-a.chainForward=this.chainForward;
-var b=a.next;
-if(b!=null){
-a.next=b.clone();
-}return a;
+var entry=$_U(this,java.util.LinkedHashMap.LinkedHashMapEntry,"clone",[]);
+entry.chainBackward=this.chainBackward;
+entry.chainForward=this.chainForward;
+var lnext=entry.next;
+if(lnext!=null){
+entry.next=lnext.clone();
+}return entry;
 });
 c$=$_P();
 });

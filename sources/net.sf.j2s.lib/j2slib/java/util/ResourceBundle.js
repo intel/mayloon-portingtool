@@ -80,15 +80,15 @@ this.map=new Array(0);
 this.keys=new Array(0);
 });
 $_K(c$,
-function(a){
+function(bundleName){
 $_R(this,java.util.ResourceBundle.TextResourceBundle,[]);
-this.bundleName=a;
+this.bundleName=bundleName;
 },"~S");
 $_K(c$,
-function(a,b){
+function(bundleName,content){
 $_R(this,java.util.ResourceBundle.TextResourceBundle,[]);
-this.bundleName=a;
-this.content=b;
+this.bundleName=bundleName;
+this.content=content;
 },"~S,~S");
 $_M(c$,"evalString",
 function(a){
@@ -156,22 +156,22 @@ x++;
 this.content=a;
 }if(this.content==null){
 return;
-}var c=this.content.$plit("\n");
-for(var d=0;d<c.length;d++){
-var e=c[d].trim();
-if(!e.startsWith("#")){
-var f=e.indexOf('=');
-if(f!=-1){
-var g=e.substring(0,f).trim();
-var h=e.substring(f+1).trim();
-if(h.indexOf('\\')!=-1){
-h=this.evalString(h);
-}var i=this.map;
-var j=this.keys;
-if(i[g]==null){
-j[j.length]=g;
+}var bundleLines=this.content.$plit("\n");
+for(var i=0;i<bundleLines.length;i++){
+var trimedLine=bundleLines[i].trim();
+if(!trimedLine.startsWith("#")){
+var index=trimedLine.indexOf('=');
+if(index!=-1){
+var key=trimedLine.substring(0,index).trim();
+var value=trimedLine.substring(index+1).trim();
+if(value.indexOf('\\')!=-1){
+value=this.evalString(value);
+}var m=this.map;
+var k=this.keys;
+if(m[key]==null){
+k[k.length]=key;
 }
-i[g]=h;
+m[key]=value;
 }}}
 },$fz.isPrivate=true,$fz));
 $_V(c$,"getKeys",
@@ -179,12 +179,12 @@ function(){
 return(($_D("java.util.ResourceBundle$TextResourceBundle$1")?0:java.util.ResourceBundle.TextResourceBundle.$ResourceBundle$TextResourceBundle$1$()),$_N(java.util.ResourceBundle$TextResourceBundle$1,this,null));
 });
 $_V(c$,"handleGetObject",
-function(a){
+function(key){
 if(!this.initialized){
 this.initBundle();
-}var b=this.map;
-return b[a];
-return b;
+}var m=this.map;
+return m[key];
+return m;
 },"~S");
 c$.$ResourceBundle$TextResourceBundle$1$=function(){
 $_H();

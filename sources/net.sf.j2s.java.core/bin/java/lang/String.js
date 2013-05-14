@@ -766,8 +766,8 @@ throw new NullPointerException();
 $_H();
 c$=$_T(String,"CaseInsensitiveComparator",null,[java.util.Comparator,java.io.Serializable]);
 $_V(c$,"compare",
-function(a,b){
-return a.compareToIgnoreCase(b);
+function(o1,o2){
+return o1.compareToIgnoreCase(o2);
 },"~S,~S");
 c$=$_P();
 $_S(c$,

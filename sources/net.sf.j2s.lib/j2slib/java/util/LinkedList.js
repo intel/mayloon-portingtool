@@ -358,10 +358,10 @@ this.next=null;
 $_Z(this,arguments);
 },java.util.LinkedList,"Link");
 $_K(c$,
-function(a,b,c){
-this.data=a;
-this.previous=b;
-this.next=c;
+function(o,p,n){
+this.data=o;
+this.previous=p;
+this.next=n;
 },"~O,java.util.LinkedList.Link,java.util.LinkedList.Link");
 c$=$_P();
 $_H();
@@ -374,30 +374,30 @@ this.lastLink=null;
 $_Z(this,arguments);
 },java.util.LinkedList,"LinkIterator",null,java.util.ListIterator);
 $_K(c$,
-function(a,b){
-this.list=a;
+function(object,location){
+this.list=object;
 this.expectedModCount=this.list.modCount;
-if(0<=b&&b<=this.list.$size){
+if(0<=location&&location<=this.list.$size){
 this.link=this.list.voidLink;
-if(b<Math.floor(this.list.$size/2)){
-for(this.pos=-1;this.pos+1<b;this.pos++){
+if(location<Math.floor(this.list.$size/2)){
+for(this.pos=-1;this.pos+1<location;this.pos++){
 this.link=this.link.next;
 }
 }else{
-for(this.pos=this.list.$size;this.pos>=b;this.pos--){
+for(this.pos=this.list.$size;this.pos>=location;this.pos--){
 this.link=this.link.previous;
 }
 }}else{
 throw new IndexOutOfBoundsException();
 }},"java.util.LinkedList,~N");
 $_V(c$,"add",
-function(a){
+function(object){
 if(this.expectedModCount==this.list.modCount){
-var b=this.link.next;
-var c=new java.util.LinkedList.Link(a,this.link,b);
-this.link.next=c;
-b.previous=c;
-this.link=c;
+var next=this.link.next;
+var newLink=new java.util.LinkedList.Link(object,this.link,next);
+this.link.next=newLink;
+next.previous=newLink;
+this.link=newLink;
 this.lastLink=null;
 this.pos++;
 this.expectedModCount++;
@@ -417,9 +417,9 @@ return this.link!==this.list.voidLink;
 $_V(c$,"next",
 function(){
 if(this.expectedModCount==this.list.modCount){
-var a=this.link.next;
-if(a!==this.list.voidLink){
-this.lastLink=this.link=a;
+var next=this.link.next;
+if(next!==this.list.voidLink){
+this.lastLink=this.link=next;
 this.pos++;
 return this.link.data;
 }throw new java.util.NoSuchElementException();
@@ -448,13 +448,13 @@ $_V(c$,"remove",
 function(){
 if(this.expectedModCount==this.list.modCount){
 if(this.lastLink!=null){
-var a=this.lastLink.next;
-var b=this.lastLink.previous;
-a.previous=b;
-b.next=a;
+var next=this.lastLink.next;
+var previous=this.lastLink.previous;
+next.previous=previous;
+previous.next=next;
 if(this.lastLink===this.link){
 this.pos--;
-}this.link=b;
+}this.link=previous;
 this.lastLink=null;
 this.expectedModCount++;
 this.list.$size--;
@@ -465,10 +465,10 @@ throw new IllegalStateException();
 throw new java.util.ConcurrentModificationException();
 }});
 $_V(c$,"set",
-function(a){
+function(object){
 if(this.expectedModCount==this.list.modCount){
 if(this.lastLink!=null){
-this.lastLink.data=a;
+this.lastLink.data=object;
 }else{
 throw new IllegalStateException();
 }}else{

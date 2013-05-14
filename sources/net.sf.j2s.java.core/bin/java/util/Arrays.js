@@ -174,10 +174,10 @@ this.a=null;
 $_Z(this,arguments);
 },java.util.Arrays,"ArrayList",java.util.AbstractList,[java.util.RandomAccess,java.io.Serializable]);
 $_K(c$,
-function(a){
+function(array){
 $_R(this,java.util.Arrays.ArrayList,[]);
-if(a==null)throw new NullPointerException();
-this.a=a;
+if(array==null)throw new NullPointerException();
+this.a=array;
 },"~A");
 $_V(c$,"size",
 function(){
@@ -188,38 +188,38 @@ function(){
 return this.a.clone();
 });
 $_V(c$,"get",
-function(a){
-return this.a[a];
+function(index){
+return this.a[index];
 },"~N");
 $_V(c$,"set",
-function(a,b){
-var c=this.a[a];
-this.a[a]=b;
-return c;
+function(index,element){
+var oldValue=this.a[index];
+this.a[index]=element;
+return oldValue;
 },"~N,~O");
 $_V(c$,"indexOf",
-function(a){
-if(a==null){
-for(var b=0;b<this.a.length;b++)if(this.a[b]==null)return b;
+function(o){
+if(o==null){
+for(var i=0;i<this.a.length;i++)if(this.a[i]==null)return i;
 
 }else{
-for(var b=0;b<this.a.length;b++)if(a.equals(this.a[b]))return b;
+for(var i=0;i<this.a.length;i++)if(o.equals(this.a[i]))return i;
 
 }return-1;
 },"~O");
 $_V(c$,"contains",
-function(a){
-return this.indexOf(a)!=-1;
+function(o){
+return this.indexOf(o)!=-1;
 },"~O");
 $_M(c$,"hashCode",
 function(){
-var a=1;
-var b=this.iterator();
-while(b.hasNext()){
-var c=b.next();
-a=(31*a)+(c==null?0:c.hashCode());
+var result=1;
+var it=this.iterator();
+while(it.hasNext()){
+var object=it.next();
+result=(31*result)+(object==null?0:object.hashCode());
 }
-return a;
+return result;
 });
 c$=$_P();
 $_S(c$,

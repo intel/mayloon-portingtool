@@ -327,12 +327,12 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.IdentityHashMap,"IdentityHashMapEntry",java.util.MapEntry);
 $_V(c$,"equals",
-function(a){
-if(this===a){
+function(object){
+if(this===object){
 return true;
-}if($_O(a,java.util.Map.Entry)){
-var b=a;
-return(this.key===b.getKey())&&(this.value===b.getValue());
+}if($_O(object,java.util.Map.Entry)){
+var entry=object;
+return(this.key===entry.getKey())&&(this.value===entry.getValue());
 }return false;
 },"~O");
 $_V(c$,"hashCode",
@@ -355,10 +355,10 @@ this.canRemove=false;
 $_Z(this,arguments);
 },java.util.IdentityHashMap,"IdentityHashMapIterator",null,java.util.Iterator);
 $_K(c$,
-function(a,b){
-this.associatedMap=b;
-this.type=a;
-this.expectedModCount=b.modCount;
+function(value,hm){
+this.associatedMap=hm;
+this.type=value;
+this.expectedModCount=hm.modCount;
 },"java.util.MapEntry.Type,java.util.IdentityHashMap");
 $_V(c$,"hasNext",
 function(){
@@ -380,11 +380,11 @@ function(){
 this.checkConcurrentMod();
 if(!this.hasNext()){
 throw new java.util.NoSuchElementException();
-}var a=this.associatedMap.getEntry(this.position);
+}var result=this.associatedMap.getEntry(this.position);
 this.lastPosition=this.position;
 this.position+=2;
 this.canRemove=true;
-return this.type.get(a);
+return this.type.get(result);
 });
 $_V(c$,"remove",
 function(){
@@ -403,9 +403,9 @@ this.associatedMap=null;
 $_Z(this,arguments);
 },java.util.IdentityHashMap,"IdentityHashMapEntrySet",java.util.AbstractSet);
 $_K(c$,
-function(a){
+function(hm){
 $_R(this,java.util.IdentityHashMap.IdentityHashMapEntrySet,[]);
-this.associatedMap=a;
+this.associatedMap=hm;
 },"java.util.IdentityHashMap");
 $_M(c$,"hashMap",
 function(){
@@ -420,17 +420,17 @@ function(){
 this.associatedMap.clear();
 });
 $_V(c$,"remove",
-function(a){
-if(this.contains(a)){
-this.associatedMap.remove((a).getKey());
+function(object){
+if(this.contains(object)){
+this.associatedMap.remove((object).getKey());
 return true;
 }return false;
 },"~O");
 $_V(c$,"contains",
-function(a){
-if($_O(a,java.util.Map.Entry)){
-var b=this.associatedMap.getEntry((a).getKey());
-return b!=null&&b.equals(a);
+function(object){
+if($_O(object,java.util.Map.Entry)){
+var entry=this.associatedMap.getEntry((object).getKey());
+return entry!=null&&entry.equals(object);
 }return false;
 },"~O");
 $_V(c$,"iterator",
@@ -441,8 +441,8 @@ c$.$IdentityHashMap$IdentityHashMapEntrySet$1$=function(){
 $_H();
 c$=$_W(java.util,"IdentityHashMap$IdentityHashMapEntrySet$1",null,java.util.MapEntry.Type);
 $_V(c$,"get",
-function(a){
-return a;
+function(entry){
+return entry;
 },"java.util.MapEntry");
 c$=$_P();
 };

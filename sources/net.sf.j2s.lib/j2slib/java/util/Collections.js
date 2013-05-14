@@ -528,42 +528,42 @@ this.element=null;
 $_Z(this,arguments);
 },java.util.Collections,"CopiesList",java.util.AbstractList,java.io.Serializable);
 $_K(c$,
-function(a,b){
+function(length,object){
 $_R(this,java.util.Collections.CopiesList,[]);
-if(a<0){
+if(length<0){
 throw new IllegalArgumentException();
-}this.n=a;
-this.element=b;
+}this.n=length;
+this.element=object;
 },"~N,~O");
 $_V(c$,"contains",
-function(a){
-return this.element==null?a==null:this.element.equals(a);
+function(object){
+return this.element==null?object==null:this.element.equals(object);
 },"~O");
 $_V(c$,"size",
 function(){
 return this.n;
 });
 $_V(c$,"get",
-function(a){
-if(0<=a&&a<this.n){
+function(location){
+if(0<=location&&location<this.n){
 return this.element;
 }throw new IndexOutOfBoundsException();
 },"~N");
 $_M(c$,"hashCode",
 function(){
-var a=1;
-var b=this.iterator();
-while(b.hasNext()){
-var c=b.next();
-a=(31*a)+(c==null?0:c.hashCode());
+var result=1;
+var it=this.iterator();
+while(it.hasNext()){
+var object=it.next();
+result=(31*result)+(object==null?0:object.hashCode());
 }
-return a;
+return result;
 });
 c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"EmptyList",java.util.AbstractList,java.io.Serializable);
 $_V(c$,"contains",
-function(a){
+function(object){
 return false;
 },"~O");
 $_V(c$,"size",
@@ -571,14 +571,14 @@ function(){
 return 0;
 });
 $_V(c$,"get",
-function(a){
+function(location){
 throw new IndexOutOfBoundsException();
 },"~N");
 c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"EmptySet",java.util.AbstractSet,java.io.Serializable);
 $_V(c$,"contains",
-function(a){
+function(object){
 return false;
 },"~O");
 $_V(c$,"size",
@@ -610,11 +610,11 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"EmptyMap",java.util.AbstractMap,java.io.Serializable);
 $_V(c$,"containsKey",
-function(a){
+function(key){
 return false;
 },"~O");
 $_V(c$,"containsValue",
-function(a){
+function(value){
 return false;
 },"~O");
 $_V(c$,"entrySet",
@@ -622,7 +622,7 @@ function(){
 return java.util.Collections.EMPTY_SET;
 });
 $_V(c$,"get",
-function(a){
+function(key){
 return null;
 },"~O");
 $_V(c$,"keySet",
@@ -637,9 +637,9 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"ReverseComparator",null,[java.util.Comparator,java.io.Serializable]);
 $_V(c$,"compare",
-function(a,b){
-var c=b;
-return c.compareTo(a);
+function(o1,o2){
+var c2=o2;
+return c2.compareTo(o1);
 },"~O,~O");
 c$=$_P();
 $_H();
@@ -648,12 +648,12 @@ this.comparator=null;
 $_Z(this,arguments);
 },java.util.Collections,"ReverseComparatorWithComparator",null,[java.util.Comparator,java.io.Serializable]);
 $_K(c$,
-function(a){
-this.comparator=a;
+function(comparator){
+this.comparator=comparator;
 },"java.util.Comparator");
 $_M(c$,"compare",
-function(a,b){
-return this.comparator.compare(b,a);
+function(o1,o2){
+return this.comparator.compare(o2,o1);
 },"~O,~O");
 c$=$_P();
 $_H();
@@ -662,13 +662,13 @@ this.element=null;
 $_Z(this,arguments);
 },java.util.Collections,"SingletonSet",java.util.AbstractSet,java.io.Serializable);
 $_K(c$,
-function(a){
+function(object){
 $_R(this,java.util.Collections.SingletonSet,[]);
-this.element=a;
+this.element=object;
 },"~O");
 $_V(c$,"contains",
-function(a){
-return this.element==null?a==null:this.element.equals(a);
+function(object){
+return this.element==null?object==null:this.element.equals(object);
 },"~O");
 $_V(c$,"size",
 function(){
@@ -709,17 +709,17 @@ this.element=null;
 $_Z(this,arguments);
 },java.util.Collections,"SingletonList",java.util.AbstractList,java.io.Serializable);
 $_K(c$,
-function(a){
+function(object){
 $_R(this,java.util.Collections.SingletonList,[]);
-this.element=a;
+this.element=object;
 },"~O");
 $_V(c$,"contains",
-function(a){
-return this.element==null?a==null:this.element.equals(a);
+function(object){
+return this.element==null?object==null:this.element.equals(object);
 },"~O");
 $_V(c$,"get",
-function(a){
-if(a==0){
+function(location){
+if(location==0){
 return this.element;
 }throw new IndexOutOfBoundsException();
 },"~N");
@@ -729,13 +729,13 @@ return 1;
 });
 $_M(c$,"hashCode",
 function(){
-var a=1;
-var b=this.iterator();
-while(b.hasNext()){
-var c=b.next();
-a=(31*a)+(c==null?0:c.hashCode());
+var result=1;
+var it=this.iterator();
+while(it.hasNext()){
+var object=it.next();
+result=(31*result)+(object==null?0:object.hashCode());
 }
-return a;
+return result;
 });
 c$=$_P();
 $_H();
@@ -745,22 +745,22 @@ this.v=null;
 $_Z(this,arguments);
 },java.util.Collections,"SingletonMap",java.util.AbstractMap,java.io.Serializable);
 $_K(c$,
-function(a,b){
+function(key,value){
 $_R(this,java.util.Collections.SingletonMap,[]);
-this.k=a;
-this.v=b;
+this.k=key;
+this.v=value;
 },"~O,~O");
 $_V(c$,"containsKey",
-function(a){
-return this.k==null?a==null:this.k.equals(a);
+function(key){
+return this.k==null?key==null:this.k.equals(key);
 },"~O");
 $_V(c$,"containsValue",
-function(a){
-return this.v==null?a==null:this.v.equals(a);
+function(value){
+return this.v==null?value==null:this.v.equals(value);
 },"~O");
 $_V(c$,"get",
-function(a){
-if(this.containsKey(a)){
+function(key){
+if(this.containsKey(key)){
 return this.v;
 }return null;
 },"~O");
@@ -776,10 +776,10 @@ c$.$Collections$SingletonMap$1$=function(){
 $_H();
 c$=$_W(java.util,"Collections$SingletonMap$1",java.util.AbstractSet);
 $_V(c$,"contains",
-function(a){
-if($_O(a,java.util.Map.Entry)){
-var b=a;
-return this.b$["java.util.Collections.SingletonMap"].containsKey(b.getKey())&&this.b$["java.util.Collections.SingletonMap"].containsValue(b.getValue());
+function(object){
+if($_O(object,java.util.Map.Entry)){
+var entry=object;
+return this.b$["java.util.Collections.SingletonMap"].containsKey(entry.getKey())&&this.b$["java.util.Collections.SingletonMap"].containsValue(entry.getValue());
 }return false;
 },"~O");
 $_V(c$,"size",
@@ -820,8 +820,8 @@ c$.$Collections$SingletonMap$1$1$1$=function(){
 $_H();
 c$=$_W(java.util,"Collections$SingletonMap$1$1$1",null,java.util.Map.Entry);
 $_M(c$,"equals",
-function(a){
-return this.b$["java.util.Collections$SingletonMap$1"].contains(a);
+function(object){
+return this.b$["java.util.Collections$SingletonMap$1"].contains(object);
 },"~O");
 $_V(c$,"getKey",
 function(){
@@ -836,7 +836,7 @@ function(){
 return(this.b$["java.util.Collections.SingletonMap"].k==null?0:this.b$["java.util.Collections.SingletonMap"].k.hashCode())^(this.b$["java.util.Collections.SingletonMap"].v==null?0:this.b$["java.util.Collections.SingletonMap"].v.hashCode());
 });
 $_V(c$,"setValue",
-function(a){
+function(value){
 throw new UnsupportedOperationException();
 },"~O");
 c$=$_P();
@@ -849,24 +849,24 @@ this.mutex=null;
 $_Z(this,arguments);
 },java.util.Collections,"SynchronizedCollection",null,[java.util.Collection,java.io.Serializable]);
 $_K(c$,
-function(a){
-this.c=a;
+function(collection){
+this.c=collection;
 this.mutex=this;
 },"java.util.Collection");
 $_K(c$,
-function(a,b){
-this.c=a;
-this.mutex=b;
+function(collection,mutex){
+this.c=collection;
+this.mutex=mutex;
 },"java.util.Collection,~O");
 $_M(c$,"add",
-function(a){
+function(object){
 {
-return this.c.add(a);
+return this.c.add(object);
 }},"~O");
 $_M(c$,"addAll",
-function(a){
+function(collection){
 {
-return this.c.addAll(a);
+return this.c.addAll(collection);
 }},"java.util.Collection");
 $_M(c$,"clear",
 function(){
@@ -874,14 +874,14 @@ function(){
 this.c.clear();
 }});
 $_M(c$,"contains",
-function(a){
+function(object){
 {
-return this.c.contains(a);
+return this.c.contains(object);
 }},"~O");
 $_M(c$,"containsAll",
-function(a){
+function(collection){
 {
-return this.c.containsAll(a);
+return this.c.containsAll(collection);
 }},"java.util.Collection");
 $_M(c$,"isEmpty",
 function(){
@@ -894,19 +894,19 @@ function(){
 return this.c.iterator();
 }});
 $_M(c$,"remove",
-function(a){
+function(object){
 {
-return this.c.remove(a);
+return this.c.remove(object);
 }},"~O");
 $_M(c$,"removeAll",
-function(a){
+function(collection){
 {
-return this.c.removeAll(a);
+return this.c.removeAll(collection);
 }},"java.util.Collection");
 $_M(c$,"retainAll",
-function(a){
+function(collection){
 {
-return this.c.retainAll(a);
+return this.c.retainAll(collection);
 }},"java.util.Collection");
 $_M(c$,"size",
 function(){
@@ -924,17 +924,17 @@ function(){
 return this.c.toString();
 }});
 $_M(c$,"toArray",
-function(a){
+function(array){
 {
-return this.c.toArray(a);
+return this.c.toArray(array);
 }},"~A");
 c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"SynchronizedRandomAccessList",java.util.Collections.SynchronizedList,java.util.RandomAccess);
 $_V(c$,"subList",
-function(a,b){
+function(start,end){
 {
-return new java.util.Collections.SynchronizedRandomAccessList(this.list.subList(a,b),this.mutex);
+return new java.util.Collections.SynchronizedRandomAccessList(this.list.subList(start,end),this.mutex);
 }},"~N,~N");
 c$=$_P();
 $_H();
@@ -943,34 +943,34 @@ this.list=null;
 $_Z(this,arguments);
 },java.util.Collections,"SynchronizedList",java.util.Collections.SynchronizedCollection,java.util.List);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.SynchronizedList,[a]);
-this.list=a;
+function(l){
+$_R(this,java.util.Collections.SynchronizedList,[l]);
+this.list=l;
 },"java.util.List");
 $_K(c$,
-function(a,b){
-$_R(this,java.util.Collections.SynchronizedList,[a,b]);
-this.list=a;
+function(l,mutex){
+$_R(this,java.util.Collections.SynchronizedList,[l,mutex]);
+this.list=l;
 },"java.util.List,~O");
 $_M(c$,"add",
-function(a,b){
+function(location,object){
 {
-this.list.add(a,b);
+this.list.add(location,object);
 }},"~N,~O");
 $_M(c$,"addAll",
-function(a,b){
+function(location,collection){
 {
-return this.list.addAll(a,b);
+return this.list.addAll(location,collection);
 }},"~N,java.util.Collection");
 $_V(c$,"equals",
-function(a){
+function(object){
 {
-return this.list.equals(a);
+return this.list.equals(object);
 }},"~O");
 $_M(c$,"get",
-function(a){
+function(location){
 {
-return this.list.get(a);
+return this.list.get(location);
 }},"~N");
 $_V(c$,"hashCode",
 function(){
@@ -978,14 +978,14 @@ function(){
 return this.list.hashCode();
 }});
 $_M(c$,"indexOf",
-function(a){
+function(object){
 {
-return this.list.indexOf(a);
+return this.list.indexOf(object);
 }},"~O");
 $_M(c$,"lastIndexOf",
-function(a){
+function(object){
 {
-return this.list.lastIndexOf(a);
+return this.list.lastIndexOf(object);
 }},"~O");
 $_M(c$,"listIterator",
 function(){
@@ -993,24 +993,24 @@ function(){
 return this.list.listIterator();
 }});
 $_M(c$,"listIterator",
-function(a){
+function(location){
 {
-return this.list.listIterator(a);
+return this.list.listIterator(location);
 }},"~N");
 $_M(c$,"remove",
-function(a){
+function(location){
 {
-return this.list.remove(a);
+return this.list.remove(location);
 }},"~N");
 $_M(c$,"set",
-function(a,b){
+function(location,object){
 {
-return this.list.set(a,b);
+return this.list.set(location,object);
 }},"~N,~O");
 $_M(c$,"subList",
-function(a,b){
+function(start,end){
 {
-return new java.util.Collections.SynchronizedList(this.list.subList(a,b),this.mutex);
+return new java.util.Collections.SynchronizedList(this.list.subList(start,end),this.mutex);
 }},"~N,~N");
 c$=$_P();
 $_H();
@@ -1020,14 +1020,14 @@ this.mutex=null;
 $_Z(this,arguments);
 },java.util.Collections,"SynchronizedMap",null,[java.util.Map,java.io.Serializable]);
 $_K(c$,
-function(a){
-this.m=a;
+function(map){
+this.m=map;
 this.mutex=this;
 },"java.util.Map");
 $_K(c$,
-function(a,b){
-this.m=a;
-this.mutex=b;
+function(map,mutex){
+this.m=map;
+this.mutex=mutex;
 },"java.util.Map,~O");
 $_M(c$,"clear",
 function(){
@@ -1035,14 +1035,14 @@ function(){
 this.m.clear();
 }});
 $_M(c$,"containsKey",
-function(a){
+function(key){
 {
-return this.m.containsKey(a);
+return this.m.containsKey(key);
 }},"~O");
 $_M(c$,"containsValue",
-function(a){
+function(value){
 {
-return this.m.containsValue(a);
+return this.m.containsValue(value);
 }},"~O");
 $_M(c$,"entrySet",
 function(){
@@ -1050,14 +1050,14 @@ function(){
 return new java.util.Collections.SynchronizedSet(this.m.entrySet(),this.mutex);
 }});
 $_V(c$,"equals",
-function(a){
+function(object){
 {
-return this.m.equals(a);
+return this.m.equals(object);
 }},"~O");
 $_M(c$,"get",
-function(a){
+function(key){
 {
-return this.m.get(a);
+return this.m.get(key);
 }},"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1075,19 +1075,19 @@ function(){
 return new java.util.Collections.SynchronizedSet(this.m.keySet(),this.mutex);
 }});
 $_M(c$,"put",
-function(a,b){
+function(key,value){
 {
-return this.m.put(a,b);
+return this.m.put(key,value);
 }},"~O,~O");
 $_M(c$,"putAll",
-function(a){
+function(map){
 {
-this.m.putAll(a);
+this.m.putAll(map);
 }},"java.util.Map");
 $_M(c$,"remove",
-function(a){
+function(key){
 {
-return this.m.remove(a);
+return this.m.remove(key);
 }},"~O");
 $_M(c$,"size",
 function(){
@@ -1108,9 +1108,9 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"SynchronizedSet",java.util.Collections.SynchronizedCollection,java.util.Set);
 $_V(c$,"equals",
-function(a){
+function(object){
 {
-return this.c.equals(a);
+return this.c.equals(object);
 }},"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1124,14 +1124,14 @@ this.sm=null;
 $_Z(this,arguments);
 },java.util.Collections,"SynchronizedSortedMap",java.util.Collections.SynchronizedMap,java.util.SortedMap);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.SynchronizedSortedMap,[a]);
-this.sm=a;
+function(map){
+$_R(this,java.util.Collections.SynchronizedSortedMap,[map]);
+this.sm=map;
 },"java.util.SortedMap");
 $_K(c$,
-function(a,b){
-$_R(this,java.util.Collections.SynchronizedSortedMap,[a,b]);
-this.sm=a;
+function(map,mutex){
+$_R(this,java.util.Collections.SynchronizedSortedMap,[map,mutex]);
+this.sm=map;
 },"java.util.SortedMap,~O");
 $_M(c$,"comparator",
 function(){
@@ -1144,9 +1144,9 @@ function(){
 return this.sm.firstKey();
 }});
 $_M(c$,"headMap",
-function(a){
+function(endKey){
 {
-return new java.util.Collections.SynchronizedSortedMap(this.sm.headMap(a),this.mutex);
+return new java.util.Collections.SynchronizedSortedMap(this.sm.headMap(endKey),this.mutex);
 }},"~O");
 $_M(c$,"lastKey",
 function(){
@@ -1154,14 +1154,14 @@ function(){
 return this.sm.lastKey();
 }});
 $_M(c$,"subMap",
-function(a,b){
+function(startKey,endKey){
 {
-return new java.util.Collections.SynchronizedSortedMap(this.sm.subMap(a,b),this.mutex);
+return new java.util.Collections.SynchronizedSortedMap(this.sm.subMap(startKey,endKey),this.mutex);
 }},"~O,~O");
 $_M(c$,"tailMap",
-function(a){
+function(startKey){
 {
-return new java.util.Collections.SynchronizedSortedMap(this.sm.tailMap(a),this.mutex);
+return new java.util.Collections.SynchronizedSortedMap(this.sm.tailMap(startKey),this.mutex);
 }},"~O");
 c$=$_P();
 $_H();
@@ -1170,14 +1170,14 @@ this.ss=null;
 $_Z(this,arguments);
 },java.util.Collections,"SynchronizedSortedSet",java.util.Collections.SynchronizedSet,java.util.SortedSet);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.SynchronizedSortedSet,[a]);
-this.ss=a;
+function(set){
+$_R(this,java.util.Collections.SynchronizedSortedSet,[set]);
+this.ss=set;
 },"java.util.SortedSet");
 $_K(c$,
-function(a,b){
-$_R(this,java.util.Collections.SynchronizedSortedSet,[a,b]);
-this.ss=a;
+function(set,mutex){
+$_R(this,java.util.Collections.SynchronizedSortedSet,[set,mutex]);
+this.ss=set;
 },"java.util.SortedSet,~O");
 $_M(c$,"comparator",
 function(){
@@ -1190,9 +1190,9 @@ function(){
 return this.ss.first();
 }});
 $_M(c$,"headSet",
-function(a){
+function(end){
 {
-return new java.util.Collections.SynchronizedSortedSet(this.ss.headSet(a),this.mutex);
+return new java.util.Collections.SynchronizedSortedSet(this.ss.headSet(end),this.mutex);
 }},"~O");
 $_M(c$,"last",
 function(){
@@ -1200,14 +1200,14 @@ function(){
 return this.ss.last();
 }});
 $_M(c$,"subSet",
-function(a,b){
+function(start,end){
 {
-return new java.util.Collections.SynchronizedSortedSet(this.ss.subSet(a,b),this.mutex);
+return new java.util.Collections.SynchronizedSortedSet(this.ss.subSet(start,end),this.mutex);
 }},"~O,~O");
 $_M(c$,"tailSet",
-function(a){
+function(start){
 {
-return new java.util.Collections.SynchronizedSortedSet(this.ss.tailSet(a),this.mutex);
+return new java.util.Collections.SynchronizedSortedSet(this.ss.tailSet(start),this.mutex);
 }},"~O");
 c$=$_P();
 $_H();
@@ -1216,15 +1216,15 @@ this.c=null;
 $_Z(this,arguments);
 },java.util.Collections,"UnmodifiableCollection",null,[java.util.Collection,java.io.Serializable]);
 $_K(c$,
-function(a){
-this.c=a;
+function(collection){
+this.c=collection;
 },"java.util.Collection");
 $_V(c$,"add",
-function(a){
+function(object){
 throw new UnsupportedOperationException();
 },"~O");
 $_V(c$,"addAll",
-function(a){
+function(collection){
 throw new UnsupportedOperationException();
 },"java.util.Collection");
 $_V(c$,"clear",
@@ -1232,12 +1232,12 @@ function(){
 throw new UnsupportedOperationException();
 });
 $_M(c$,"contains",
-function(a){
-return this.c.contains(a);
+function(object){
+return this.c.contains(object);
 },"~O");
 $_M(c$,"containsAll",
-function(a){
-return this.c.containsAll(a);
+function(collection){
+return this.c.containsAll(collection);
 },"java.util.Collection");
 $_M(c$,"isEmpty",
 function(){
@@ -1248,15 +1248,15 @@ function(){
 return(($_D("java.util.Collections$UnmodifiableCollection$1")?0:java.util.Collections.UnmodifiableCollection.$Collections$UnmodifiableCollection$1$()),$_N(java.util.Collections$UnmodifiableCollection$1,this,null));
 });
 $_V(c$,"remove",
-function(a){
+function(object){
 throw new UnsupportedOperationException();
 },"~O");
 $_V(c$,"removeAll",
-function(a){
+function(collection){
 throw new UnsupportedOperationException();
 },"java.util.Collection");
 $_V(c$,"retainAll",
-function(a){
+function(collection){
 throw new UnsupportedOperationException();
 },"java.util.Collection");
 $_M(c$,"size",
@@ -1268,8 +1268,8 @@ function(){
 return this.c.toArray();
 });
 $_M(c$,"toArray",
-function(a){
-return this.c.toArray(a);
+function(array){
+return this.c.toArray(array);
 },"~A");
 $_M(c$,"toString",
 function(){
@@ -1303,8 +1303,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"UnmodifiableRandomAccessList",java.util.Collections.UnmodifiableList,java.util.RandomAccess);
 $_V(c$,"subList",
-function(a,b){
-return new java.util.Collections.UnmodifiableRandomAccessList(this.list.subList(a,b));
+function(start,end){
+return new java.util.Collections.UnmodifiableRandomAccessList(this.list.subList(start,end));
 },"~N,~N");
 c$=$_P();
 $_H();
@@ -1313,57 +1313,57 @@ this.list=null;
 $_Z(this,arguments);
 },java.util.Collections,"UnmodifiableList",java.util.Collections.UnmodifiableCollection,java.util.List);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.UnmodifiableList,[a]);
-this.list=a;
+function(l){
+$_R(this,java.util.Collections.UnmodifiableList,[l]);
+this.list=l;
 },"java.util.List");
 $_M(c$,"add",
-function(a,b){
+function(location,object){
 throw new UnsupportedOperationException();
 },"~N,~O");
 $_M(c$,"addAll",
-function(a,b){
+function(location,collection){
 throw new UnsupportedOperationException();
 },"~N,java.util.Collection");
 $_V(c$,"equals",
-function(a){
-return this.list.equals(a);
+function(object){
+return this.list.equals(object);
 },"~O");
 $_M(c$,"get",
-function(a){
-return this.list.get(a);
+function(location){
+return this.list.get(location);
 },"~N");
 $_V(c$,"hashCode",
 function(){
 return this.list.hashCode();
 });
 $_M(c$,"indexOf",
-function(a){
-return this.list.indexOf(a);
+function(object){
+return this.list.indexOf(object);
 },"~O");
 $_M(c$,"lastIndexOf",
-function(a){
-return this.list.lastIndexOf(a);
+function(object){
+return this.list.lastIndexOf(object);
 },"~O");
 $_M(c$,"listIterator",
 function(){
 return this.listIterator(0);
 });
 $_M(c$,"listIterator",
-function(a){
+function(location){
 return(($_D("java.util.Collections$UnmodifiableList$1")?0:java.util.Collections.UnmodifiableList.$Collections$UnmodifiableList$1$()),$_N(java.util.Collections$UnmodifiableList$1,this,null));
 },"~N");
 $_M(c$,"remove",
-function(a){
+function(location){
 throw new UnsupportedOperationException();
 },"~N");
 $_V(c$,"set",
-function(a,b){
+function(location,object){
 throw new UnsupportedOperationException();
 },"~N,~O");
 $_M(c$,"subList",
-function(a,b){
-return new java.util.Collections.UnmodifiableList(this.list.subList(a,b));
+function(start,end){
+return new java.util.Collections.UnmodifiableList(this.list.subList(start,end));
 },"~N,~N");
 c$.$Collections$UnmodifiableList$1$=function(){
 $_H();
@@ -1376,7 +1376,7 @@ $_Y(c$,function(){
 this.iterator=this.b$["java.util.Collections.UnmodifiableList"].list.listIterator(location);
 });
 $_V(c$,"add",
-function(b){
+function(object){
 throw new UnsupportedOperationException();
 },"~O");
 $_M(c$,"hasNext",
@@ -1408,7 +1408,7 @@ function(){
 throw new UnsupportedOperationException();
 });
 $_V(c$,"set",
-function(b){
+function(object){
 throw new UnsupportedOperationException();
 },"~O");
 c$=$_P();
@@ -1420,32 +1420,32 @@ this.m=null;
 $_Z(this,arguments);
 },java.util.Collections,"UnmodifiableMap",null,[java.util.Map,java.io.Serializable]);
 $_K(c$,
-function(a){
-this.m=a;
+function(map){
+this.m=map;
 },"java.util.Map");
 $_V(c$,"clear",
 function(){
 throw new UnsupportedOperationException();
 });
 $_M(c$,"containsKey",
-function(a){
-return this.m.containsKey(a);
+function(key){
+return this.m.containsKey(key);
 },"~O");
 $_M(c$,"containsValue",
-function(a){
-return this.m.containsValue(a);
+function(value){
+return this.m.containsValue(value);
 },"~O");
 $_M(c$,"entrySet",
 function(){
 return new java.util.Collections.UnmodifiableMap.UnmodifiableEntrySet(this.m.entrySet());
 });
 $_V(c$,"equals",
-function(a){
-return this.m.equals(a);
+function(object){
+return this.m.equals(object);
 },"~O");
 $_M(c$,"get",
-function(a){
-return this.m.get(a);
+function(key){
+return this.m.get(key);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1460,15 +1460,15 @@ function(){
 return new java.util.Collections.UnmodifiableSet(this.m.keySet());
 });
 $_V(c$,"put",
-function(a,b){
+function(key,value){
 throw new UnsupportedOperationException();
 },"~O,~O");
 $_V(c$,"putAll",
-function(a){
+function(map){
 throw new UnsupportedOperationException();
 },"java.util.Map");
 $_V(c$,"remove",
-function(a){
+function(key){
 throw new UnsupportedOperationException();
 },"~O");
 $_M(c$,"size",
@@ -1491,25 +1491,25 @@ return(($_D("java.util.Collections$UnmodifiableMap$UnmodifiableEntrySet$1")?0:ja
 });
 $_M(c$,"toArray",
 function(){
-var a=this.c.size();
-var b=new Array(a);
-var c=this.iterator();
-for(var d=a;--d>=0;){
-b[d]=c.next();
+var length=this.c.size();
+var result=new Array(length);
+var it=this.iterator();
+for(var i=length;--i>=0;){
+result[i]=it.next();
 }
-return b;
+return result;
 });
 $_M(c$,"toArray",
-function(a){
-var b=this.c.size();
-var c=0;
-var d=this.iterator();
-while(c<b){
-a[c++]=d.next();
+function(contents){
+var size=this.c.size();
+var index=0;
+var it=this.iterator();
+while(index<size){
+contents[index++]=it.next();
 }
-if(c<a.length){
-a[c]=null;
-}return a;
+if(index<contents.length){
+contents[index]=null;
+}return contents;
 },"~A");
 c$.$Collections$UnmodifiableMap$UnmodifiableEntrySet$1$=function(){
 $_H();
@@ -1541,12 +1541,12 @@ this.mapEntry=null;
 $_Z(this,arguments);
 },java.util.Collections.UnmodifiableMap.UnmodifiableEntrySet,"UnmodifiableMapEntry",null,java.util.Map.Entry);
 $_K(c$,
-function(a){
-this.mapEntry=a;
+function(entry){
+this.mapEntry=entry;
 },"java.util.Map.Entry");
 $_V(c$,"equals",
-function(a){
-return this.mapEntry.equals(a);
+function(object){
+return this.mapEntry.equals(object);
 },"~O");
 $_M(c$,"getKey",
 function(){
@@ -1561,7 +1561,7 @@ function(){
 return this.mapEntry.hashCode();
 });
 $_V(c$,"setValue",
-function(a){
+function(object){
 throw new UnsupportedOperationException();
 },"~O");
 $_M(c$,"toString",
@@ -1574,8 +1574,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"UnmodifiableSet",java.util.Collections.UnmodifiableCollection,java.util.Set);
 $_V(c$,"equals",
-function(a){
-return this.c.equals(a);
+function(object){
+return this.c.equals(object);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1588,9 +1588,9 @@ this.sm=null;
 $_Z(this,arguments);
 },java.util.Collections,"UnmodifiableSortedMap",java.util.Collections.UnmodifiableMap,java.util.SortedMap);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.UnmodifiableSortedMap,[a]);
-this.sm=a;
+function(map){
+$_R(this,java.util.Collections.UnmodifiableSortedMap,[map]);
+this.sm=map;
 },"java.util.SortedMap");
 $_M(c$,"comparator",
 function(){
@@ -1601,20 +1601,20 @@ function(){
 return this.sm.firstKey();
 });
 $_M(c$,"headMap",
-function(a){
-return new java.util.Collections.UnmodifiableSortedMap(this.sm.headMap(a));
+function(before){
+return new java.util.Collections.UnmodifiableSortedMap(this.sm.headMap(before));
 },"~O");
 $_M(c$,"lastKey",
 function(){
 return this.sm.lastKey();
 });
 $_M(c$,"subMap",
-function(a,b){
-return new java.util.Collections.UnmodifiableSortedMap(this.sm.subMap(a,b));
+function(start,end){
+return new java.util.Collections.UnmodifiableSortedMap(this.sm.subMap(start,end));
 },"~O,~O");
 $_M(c$,"tailMap",
-function(a){
-return new java.util.Collections.UnmodifiableSortedMap(this.sm.tailMap(a));
+function(after){
+return new java.util.Collections.UnmodifiableSortedMap(this.sm.tailMap(after));
 },"~O");
 c$=$_P();
 $_H();
@@ -1623,9 +1623,9 @@ this.ss=null;
 $_Z(this,arguments);
 },java.util.Collections,"UnmodifiableSortedSet",java.util.Collections.UnmodifiableSet,java.util.SortedSet);
 $_K(c$,
-function(a){
-$_R(this,java.util.Collections.UnmodifiableSortedSet,[a]);
-this.ss=a;
+function(set){
+$_R(this,java.util.Collections.UnmodifiableSortedSet,[set]);
+this.ss=set;
 },"java.util.SortedSet");
 $_M(c$,"comparator",
 function(){
@@ -1636,20 +1636,20 @@ function(){
 return this.ss.first();
 });
 $_M(c$,"headSet",
-function(a){
-return new java.util.Collections.UnmodifiableSortedSet(this.ss.headSet(a));
+function(before){
+return new java.util.Collections.UnmodifiableSortedSet(this.ss.headSet(before));
 },"~O");
 $_M(c$,"last",
 function(){
 return this.ss.last();
 });
 $_M(c$,"subSet",
-function(a,b){
-return new java.util.Collections.UnmodifiableSortedSet(this.ss.subSet(a,b));
+function(start,end){
+return new java.util.Collections.UnmodifiableSortedSet(this.ss.subSet(start,end));
 },"~O,~O");
 $_M(c$,"tailSet",
-function(a){
-return new java.util.Collections.UnmodifiableSortedSet(this.ss.tailSet(a));
+function(after){
+return new java.util.Collections.UnmodifiableSortedSet(this.ss.tailSet(after));
 },"~O");
 c$=$_P();
 $_H();
@@ -1659,11 +1659,11 @@ this.type=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedCollection",null,[java.util.Collection,java.io.Serializable]);
 $_K(c$,
-function(a,b){
-if(a==null||b==null){
+function(c,type){
+if(c==null||type==null){
 throw new NullPointerException();
-}this.c=a;
-this.type=b;
+}this.c=c;
+this.type=type;
 },"java.util.Collection,Class");
 $_M(c$,"size",
 function(){
@@ -1674,59 +1674,59 @@ function(){
 return this.c.isEmpty();
 });
 $_M(c$,"contains",
-function(a){
-return this.c.contains(a);
+function(obj){
+return this.c.contains(obj);
 },"~O");
 $_M(c$,"iterator",
 function(){
-var a=this.c.iterator();
-if($_O(a,java.util.ListIterator)){
-a=new java.util.Collections.CheckedListIterator(a,this.type);
-}return a;
+var i=this.c.iterator();
+if($_O(i,java.util.ListIterator)){
+i=new java.util.Collections.CheckedListIterator(i,this.type);
+}return i;
 });
 $_M(c$,"toArray",
 function(){
 return this.c.toArray();
 });
 $_M(c$,"toArray",
-function(a){
-return this.c.toArray(a);
+function(arr){
+return this.c.toArray(arr);
 },"~A");
 $_M(c$,"add",
-function(a){
-return this.c.add(java.util.Collections.checkType(a,this.type));
+function(obj){
+return this.c.add(java.util.Collections.checkType(obj,this.type));
 },"~O");
 $_M(c$,"remove",
-function(a){
-return this.c.remove(a);
+function(obj){
+return this.c.remove(obj);
 },"~O");
 $_M(c$,"containsAll",
-function(a){
-return this.c.containsAll(a);
+function(c1){
+return this.c.containsAll(c1);
 },"java.util.Collection");
 $_V(c$,"addAll",
-function(a){
-var b=a.size();
-if(b==0){
+function(c1){
+var size=c1.size();
+if(size==0){
 return false;
-}var c=new Array(b);
-var d=a.iterator();
-for(var e=0;e<b;e++){
-c[e]=java.util.Collections.checkType(d.next(),this.type);
+}var arr=new Array(size);
+var it=c1.iterator();
+for(var i=0;i<size;i++){
+arr[i]=java.util.Collections.checkType(it.next(),this.type);
 }
-var f=false;
-for(var g=0;g<b;g++){
-f=new Boolean(f|this.c.add(c[g])).valueOf();
+var added=false;
+for(var i=0;i<size;i++){
+added=new Boolean(added|this.c.add(arr[i])).valueOf();
 }
-return f;
+return added;
 },"java.util.Collection");
 $_M(c$,"removeAll",
-function(a){
-return this.c.removeAll(a);
+function(c1){
+return this.c.removeAll(c1);
 },"java.util.Collection");
 $_M(c$,"retainAll",
-function(a){
-return this.c.retainAll(a);
+function(c1){
+return this.c.retainAll(c1);
 },"java.util.Collection");
 $_M(c$,"clear",
 function(){
@@ -1744,9 +1744,9 @@ this.type=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedListIterator",null,java.util.ListIterator);
 $_K(c$,
-function(a,b){
-this.i=a;
-this.type=b;
+function(i,type){
+this.i=i;
+this.type=type;
 },"java.util.ListIterator,Class");
 $_M(c$,"hasNext",
 function(){
@@ -1777,12 +1777,12 @@ function(){
 return this.i.previousIndex();
 });
 $_M(c$,"set",
-function(a){
-this.i.set(java.util.Collections.checkType(a,this.type));
+function(obj){
+this.i.set(java.util.Collections.checkType(obj,this.type));
 },"~O");
 $_M(c$,"add",
-function(a){
-this.i.add(java.util.Collections.checkType(a,this.type));
+function(obj){
+this.i.add(java.util.Collections.checkType(obj,this.type));
 },"~O");
 c$=$_P();
 $_H();
@@ -1791,61 +1791,61 @@ this.l=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedList",java.util.Collections.CheckedCollection,java.util.List);
 $_K(c$,
-function(a,b){
-$_R(this,java.util.Collections.CheckedList,[a,b]);
-this.l=a;
+function(l,type){
+$_R(this,java.util.Collections.CheckedList,[l,type]);
+this.l=l;
 },"java.util.List,Class");
 $_M(c$,"addAll",
-function(a,b){
-var c=b.size();
-if(c==0){
+function(index,c1){
+var size=c1.size();
+if(size==0){
 return false;
-}var d=new Array(c);
-var e=b.iterator();
-for(var f=0;f<c;f++){
-d[f]=java.util.Collections.checkType(e.next(),this.type);
+}var arr=new Array(size);
+var it=c1.iterator();
+for(var i=0;i<size;i++){
+arr[i]=java.util.Collections.checkType(it.next(),this.type);
 }
-return this.l.addAll(a,java.util.Arrays.asList(d));
+return this.l.addAll(index,java.util.Arrays.asList(arr));
 },"~N,java.util.Collection");
 $_M(c$,"get",
-function(a){
-return this.l.get(a);
+function(index){
+return this.l.get(index);
 },"~N");
 $_M(c$,"set",
-function(a,b){
-return this.l.set(a,java.util.Collections.checkType(b,this.type));
+function(index,obj){
+return this.l.set(index,java.util.Collections.checkType(obj,this.type));
 },"~N,~O");
 $_M(c$,"add",
-function(a,b){
-this.l.add(a,java.util.Collections.checkType(b,this.type));
+function(index,obj){
+this.l.add(index,java.util.Collections.checkType(obj,this.type));
 },"~N,~O");
 $_M(c$,"remove",
-function(a){
-return this.l.remove(a);
+function(index){
+return this.l.remove(index);
 },"~N");
 $_M(c$,"indexOf",
-function(a){
-return this.l.indexOf(a);
+function(obj){
+return this.l.indexOf(obj);
 },"~O");
 $_M(c$,"lastIndexOf",
-function(a){
-return this.l.lastIndexOf(a);
+function(obj){
+return this.l.lastIndexOf(obj);
 },"~O");
 $_M(c$,"listIterator",
 function(){
 return new java.util.Collections.CheckedListIterator(this.l.listIterator(),this.type);
 });
 $_M(c$,"listIterator",
-function(a){
-return new java.util.Collections.CheckedListIterator(this.l.listIterator(a),this.type);
+function(index){
+return new java.util.Collections.CheckedListIterator(this.l.listIterator(index),this.type);
 },"~N");
 $_M(c$,"subList",
-function(a,b){
-return java.util.Collections.checkedList(this.l.subList(a,b),this.type);
+function(fromIndex,toIndex){
+return java.util.Collections.checkedList(this.l.subList(fromIndex,toIndex),this.type);
 },"~N,~N");
 $_V(c$,"equals",
-function(a){
-return this.l.equals(a);
+function(obj){
+return this.l.equals(obj);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1858,8 +1858,8 @@ c$=$_P();
 $_H();
 c$=$_T(java.util.Collections,"CheckedSet",java.util.Collections.CheckedCollection,java.util.Set);
 $_V(c$,"equals",
-function(a){
-return this.c.equals(a);
+function(obj){
+return this.c.equals(obj);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1874,12 +1874,12 @@ this.valueType=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedMap",null,[java.util.Map,java.io.Serializable]);
 $_K(c$,
-($fz=function(a,b,c){
-if(a==null||b==null||c==null){
+($fz=function(m,keyType,valueType){
+if(m==null||keyType==null||valueType==null){
 throw new NullPointerException();
-}this.m=a;
-this.keyType=b;
-this.valueType=c;
+}this.m=m;
+this.keyType=keyType;
+this.valueType=valueType;
 },$fz.isPrivate=true,$fz),"java.util.Map,Class,Class");
 $_M(c$,"size",
 function(){
@@ -1890,40 +1890,40 @@ function(){
 return this.m.isEmpty();
 });
 $_M(c$,"containsKey",
-function(a){
-return this.m.containsKey(a);
+function(key){
+return this.m.containsKey(key);
 },"~O");
 $_M(c$,"containsValue",
-function(a){
-return this.m.containsValue(a);
+function(value){
+return this.m.containsValue(value);
 },"~O");
 $_M(c$,"get",
-function(a){
-return this.m.get(a);
+function(key){
+return this.m.get(key);
 },"~O");
 $_M(c$,"put",
-function(a,b){
-return this.m.put(java.util.Collections.checkType(a,this.keyType),java.util.Collections.checkType(b,this.valueType));
+function(key,value){
+return this.m.put(java.util.Collections.checkType(key,this.keyType),java.util.Collections.checkType(value,this.valueType));
 },"~O,~O");
 $_M(c$,"remove",
-function(a){
-return this.m.remove(a);
+function(key){
+return this.m.remove(key);
 },"~O");
 $_V(c$,"putAll",
-function(a){
-var b=a.size();
-if(b==0){
+function(map){
+var size=map.size();
+if(size==0){
 return;
-}var c=new Array(b);
-var d=a.entrySet().iterator();
-for(var e=0;e<b;e++){
-var f=d.next();
-java.util.Collections.checkType(f.getKey(),this.keyType);
-java.util.Collections.checkType(f.getValue(),this.valueType);
-c[e]=f;
+}var entries=new Array(size);
+var it=map.entrySet().iterator();
+for(var i=0;i<size;i++){
+var e=it.next();
+java.util.Collections.checkType(e.getKey(),this.keyType);
+java.util.Collections.checkType(e.getValue(),this.valueType);
+entries[i]=e;
 }
-for(var f=0;f<b;f++){
-this.m.put(c[f].getKey(),c[f].getValue());
+for(var i=0;i<size;i++){
+this.m.put(entries[i].getKey(),entries[i].getValue());
 }
 },"java.util.Map");
 $_M(c$,"clear",
@@ -1943,8 +1943,8 @@ function(){
 return new java.util.Collections.CheckedMap.CheckedEntrySet(this.m.entrySet(),this.valueType);
 });
 $_V(c$,"equals",
-function(a){
-return this.m.equals(a);
+function(obj){
+return this.m.equals(obj);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1961,11 +1961,11 @@ this.valueType=null;
 $_Z(this,arguments);
 },java.util.Collections.CheckedMap,"CheckedEntry",null,java.util.Map.Entry);
 $_K(c$,
-function(a,b){
-if(a==null){
+function(e,valueType){
+if(e==null){
 throw new NullPointerException();
-}this.e=a;
-this.valueType=b;
+}this.e=e;
+this.valueType=valueType;
 },"java.util.Map.Entry,Class");
 $_M(c$,"getKey",
 function(){
@@ -1976,12 +1976,12 @@ function(){
 return this.e.getValue();
 });
 $_M(c$,"setValue",
-function(a){
-return this.e.setValue(java.util.Collections.checkType(a,this.valueType));
+function(obj){
+return this.e.setValue(java.util.Collections.checkType(obj,this.valueType));
 },"~O");
 $_V(c$,"equals",
-function(a){
-return this.e.equals(a);
+function(obj){
+return this.e.equals(obj);
 },"~O");
 $_V(c$,"hashCode",
 function(){
@@ -1995,9 +1995,9 @@ this.valueType=null;
 $_Z(this,arguments);
 },java.util.Collections.CheckedMap,"CheckedEntrySet",null,java.util.Set);
 $_K(c$,
-function(a,b){
-this.s=a;
-this.valueType=b;
+function(s,valueType){
+this.s=s;
+this.valueType=valueType;
 },"java.util.Set,Class");
 $_M(c$,"iterator",
 function(){
@@ -2005,51 +2005,51 @@ return new java.util.Collections.CheckedMap.CheckedEntrySet.CheckedEntryIterator
 });
 $_M(c$,"toArray",
 function(){
-var a=this.size();
-var b=new Array(a);
-var c=this.iterator();
-for(var d=0;d<a;d++){
-b[d]=c.next();
+var thisSize=this.size();
+var array=new Array(thisSize);
+var it=this.iterator();
+for(var i=0;i<thisSize;i++){
+array[i]=it.next();
 }
-return b;
+return array;
 });
 $_M(c$,"toArray",
-function(a){
-var b=this.size();
-var c=this.iterator();
-for(var d=0;d<b;d++){
-a[d]=c.next();
+function(array){
+var thisSize=this.size();
+var it=this.iterator();
+for(var i=0;i<thisSize;i++){
+array[i]=it.next();
 }
-if(b<a.length){
-a[b]=null;
-}return a;
+if(thisSize<array.length){
+array[thisSize]=null;
+}return array;
 },"~A");
 $_M(c$,"retainAll",
-function(a){
-return this.s.retainAll(a);
+function(c){
+return this.s.retainAll(c);
 },"java.util.Collection");
 $_M(c$,"removeAll",
-function(a){
-return this.s.removeAll(a);
+function(c){
+return this.s.removeAll(c);
 },"java.util.Collection");
 $_M(c$,"containsAll",
-function(a){
-return this.s.containsAll(a);
+function(c){
+return this.s.containsAll(c);
 },"java.util.Collection");
 $_V(c$,"addAll",
-function(a){
+function(c){
 throw new UnsupportedOperationException();
 },"java.util.Collection");
 $_M(c$,"remove",
-function(a){
-return this.s.remove(a);
+function(o){
+return this.s.remove(o);
 },"~O");
 $_M(c$,"contains",
-function(a){
-return this.s.contains(a);
+function(o){
+return this.s.contains(o);
 },"~O");
 $_V(c$,"add",
-function(a){
+function(o){
 throw new UnsupportedOperationException();
 },"java.util.Map.Entry");
 $_M(c$,"isEmpty",
@@ -2069,8 +2069,8 @@ function(){
 return this.s.hashCode();
 });
 $_V(c$,"equals",
-function(a){
-return this.s.equals(a);
+function(object){
+return this.s.equals(object);
 },"~O");
 $_H();
 c$=$_C(function(){
@@ -2079,9 +2079,9 @@ this.valueType=null;
 $_Z(this,arguments);
 },java.util.Collections.CheckedMap.CheckedEntrySet,"CheckedEntryIterator",null,java.util.Iterator);
 $_K(c$,
-function(a,b){
-this.i=a;
-this.valueType=b;
+function(i,valueType){
+this.i=i;
+this.valueType=valueType;
 },"java.util.Iterator,Class");
 $_M(c$,"hasNext",
 function(){
@@ -2104,25 +2104,25 @@ this.ss=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedSortedSet",java.util.Collections.CheckedSet,java.util.SortedSet);
 $_K(c$,
-function(a,b){
-$_R(this,java.util.Collections.CheckedSortedSet,[a,b]);
-this.ss=a;
+function(s,type){
+$_R(this,java.util.Collections.CheckedSortedSet,[s,type]);
+this.ss=s;
 },"java.util.SortedSet,Class");
 $_M(c$,"comparator",
 function(){
 return this.ss.comparator();
 });
 $_M(c$,"subSet",
-function(a,b){
-return new java.util.Collections.CheckedSortedSet(this.ss.subSet(a,b),this.type);
+function(fromElement,toElement){
+return new java.util.Collections.CheckedSortedSet(this.ss.subSet(fromElement,toElement),this.type);
 },"~O,~O");
 $_M(c$,"headSet",
-function(a){
-return new java.util.Collections.CheckedSortedSet(this.ss.headSet(a),this.type);
+function(toElement){
+return new java.util.Collections.CheckedSortedSet(this.ss.headSet(toElement),this.type);
 },"~O");
 $_M(c$,"tailSet",
-function(a){
-return new java.util.Collections.CheckedSortedSet(this.ss.tailSet(a),this.type);
+function(fromElement){
+return new java.util.Collections.CheckedSortedSet(this.ss.tailSet(fromElement),this.type);
 },"~O");
 $_M(c$,"first",
 function(){
@@ -2139,25 +2139,25 @@ this.sm=null;
 $_Z(this,arguments);
 },java.util.Collections,"CheckedSortedMap",java.util.Collections.CheckedMap,java.util.SortedMap);
 $_K(c$,
-function(a,b,c){
-$_R(this,java.util.Collections.CheckedSortedMap,[a,b,c]);
-this.sm=a;
+function(m,keyType,valueType){
+$_R(this,java.util.Collections.CheckedSortedMap,[m,keyType,valueType]);
+this.sm=m;
 },"java.util.SortedMap,Class,Class");
 $_M(c$,"comparator",
 function(){
 return this.sm.comparator();
 });
 $_M(c$,"subMap",
-function(a,b){
-return new java.util.Collections.CheckedSortedMap(this.sm.subMap(a,b),this.keyType,this.valueType);
+function(fromKey,toKey){
+return new java.util.Collections.CheckedSortedMap(this.sm.subMap(fromKey,toKey),this.keyType,this.valueType);
 },"~O,~O");
 $_M(c$,"headMap",
-function(a){
-return new java.util.Collections.CheckedSortedMap(this.sm.headMap(a),this.keyType,this.valueType);
+function(toKey){
+return new java.util.Collections.CheckedSortedMap(this.sm.headMap(toKey),this.keyType,this.valueType);
 },"~O");
 $_M(c$,"tailMap",
-function(a){
-return new java.util.Collections.CheckedSortedMap(this.sm.tailMap(a),this.keyType,this.valueType);
+function(fromKey){
+return new java.util.Collections.CheckedSortedMap(this.sm.tailMap(fromKey),this.keyType,this.valueType);
 },"~O");
 $_M(c$,"firstKey",
 function(){

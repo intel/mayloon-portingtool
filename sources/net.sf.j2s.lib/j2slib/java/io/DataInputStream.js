@@ -1,4 +1,4 @@
-﻿$_L(["java.io.DataInput","$.FilterInputStream"],"java.io.DataInputStream",["java.io.EOFException","$.PushbackInputStream","java.lang.Double","$.Float","$.IndexOutOfBoundsException","$.NullPointerException","$.StringBuilder"],function(){
+﻿$_L(["java.io.DataInput","$.FilterInputStream"],"java.io.DataInputStream",["java.io.EOFException","$.PushbackInputStream","java.lang.IndexOutOfBoundsException","$.NullPointerException","$.StringBuilder"],function(){
 c$=$_C(function(){
 this.buff=null;
 $_Z(this,arguments);
@@ -48,11 +48,11 @@ return offset;
 },$fz.isPrivate=true,$fz),"~N");
 $_V(c$,"readDouble",
 function(){
-return Double.longBitsToDouble(this.readLong());
+return 0.0;
 });
 $_V(c$,"readFloat",
 function(){
-return Float.intBitsToFloat(this.readInt());
+return 0;
 });
 $_M(c$,"readFully",
 function(buffer){

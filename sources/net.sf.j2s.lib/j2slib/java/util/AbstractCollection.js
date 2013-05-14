@@ -1,4 +1,4 @@
-﻿$_L(["java.util.Collection"],"java.util.AbstractCollection",["java.lang.StringBuilder","$.UnsupportedOperationException","java.lang.reflect.Array"],function(){
+﻿$_L(["java.util.Collection"],"java.util.AbstractCollection",["java.lang.NullPointerException","$.StringBuilder","$.UnsupportedOperationException"],function(){
 c$=$_T(java.util,"AbstractCollection",null,java.util.Collection);
 $_K(c$,
 function(){
@@ -83,7 +83,9 @@ return result;
 },"java.util.Collection");
 $_V(c$,"retainAll",
 function(collection){
-var result=false;
+if(collection==null){
+throw new NullPointerException();
+}var result=false;
 var it=this.iterator();
 while(it.hasNext()){
 if(!collection.contains(it.next())){
@@ -105,12 +107,11 @@ return array;
 });
 $_M(c$,"toArray",
 function(contents){
-var size=this.size();
+if(contents==null){
+throw new NullPointerException();
+}var size=this.size();
 var index=0;
-if(size>contents.length){
-var ct=contents.getClass().getComponentType();
-contents=java.lang.reflect.Array.newInstance(ct,size);
-}for(var entry,$entry=this.iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
+for(var entry,$entry=this.iterator();$entry.hasNext()&&((entry=$entry.next())||true);){
 contents[index++]=entry;
 }
 if(index<contents.length){

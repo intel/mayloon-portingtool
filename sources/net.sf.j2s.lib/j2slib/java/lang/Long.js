@@ -1,215 +1,221 @@
-Clazz.load (["java.lang.Comparable", "$.Number"], "java.lang.Long", null, function () {
-java.lang.Long = Long = function () {
-Clazz.instantialize (this, arguments);
-};
-Clazz.decorateAsType (Long, "Long", Number, Comparable, null, true);
-Long.prototype.valueOf = function () { return 0; };
-Long.toString = Long.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Long) {
-		return "class java.lang.Long"; // Long.class.toString
-	}
-	return "" + this.valueOf ();
-};
-Clazz.makeConstructor (Long, 
-function () {
-this.valueOf = function () {
-	return 0;
-};
+﻿$_L(null,"java.lang.Long",["java.lang.Character","$.NumberFormatException"],function(){
+c$=$_C(function(){
+this.value=0;
+$_Z(this,arguments);
+},java.lang,"Long");
+$_K(c$,
+function(value){
+this.value=value;
+},"~N");
+$_K(c$,
+function(string){
+this.construct(Long.parseLong(string));
+},"~S");
+$_M(c$,"compareTo",
+function(object){
+var thisValue=this.value;
+var thatValue=object.value;
+return thisValue<thatValue?-1:(thisValue==thatValue?0:1);
+},"Long");
+c$.decode=$_M(c$,"decode",
+function(string){
+var length=string.length;
+var i=0;
+if(length==0){
+throw new NumberFormatException();
+}var firstDigit=string.charAt(i);
+var negative=(firstDigit).charCodeAt(0)==('-').charCodeAt(0);
+if(negative){
+if(length==1){
+throw new NumberFormatException(string);
+}firstDigit=string.charAt(++i);
+}var base=10;
+if((firstDigit).charCodeAt(0)==('0').charCodeAt(0)){
+if(++i==length){
+return Long.$valueOf(0);
+}if(((firstDigit=string.charAt(i))).charCodeAt(0)==('x').charCodeAt (0) || (firstDigit).charCodeAt (0) == ('X').charCodeAt(0)){
+if(i==length){
+throw new NumberFormatException(string);
+}i++;
+base=16;
+}else{
+base=8;
+}}else if((firstDigit).charCodeAt(0)==('#').charCodeAt(0)){
+if(i==length){
+throw new NumberFormatException(string);
+}i++;
+base=16;
+}var result=Long.parse(string,i,base,negative);
+return Long.$valueOf(result);
+},"~S");
+$_V(c$,"equals",
+function(o){
+return $_O(o,Long)&&(o).value==this.value;
+},"~O");
+c$.parseLong=$_M(c$,"parseLong",
+function(string){
+return Long.parseLong(string,10);
+},"~S");
+c$.parseLong=$_M(c$,"parseLong",
+function(string,radix){
+if(string==null||radix<2||radix>36){
+throw new NumberFormatException();
+}var length=string.length;
+var i=0;
+if(length==0){
+throw new NumberFormatException(string);
+}var negative=(string.charAt(i)).charCodeAt(0)==('-').charCodeAt(0);
+if(negative&&++i==length){
+throw new NumberFormatException(string);
+}return Long.parse(string,i,radix,negative);
+},"~S,~N");
+c$.parse=$_M(c$,"parse",
+($fz=function(string,offset,radix,negative){
+var max=Math.floor(-9223372036854775808/radix);
+var result=0;
+var length=string.length;
+while(offset<length){
+var digit=Character.digit(string.charAt(offset++),radix);
+if(digit==-1){
+throw new NumberFormatException(string);
+}if(max>result){
+throw new NumberFormatException(string);
+}var next=result*radix-digit;
+if(next>result){
+throw new NumberFormatException(string);
+}result=next;
+}
+if(!negative){
+result=-result;
+if(result<0){
+throw new NumberFormatException(string);
+}}return result;
+},$fz.isPrivate=true,$fz),"~S,~N,~N,~B");
+c$.toBinaryString=$_M(c$,"toBinaryString",
+function(v){
+return null;
+},"~N");
+c$.toHexString=$_M(c$,"toHexString",
+function(v){
+return null;
+},"~N");
+c$.toOctalString=$_M(c$,"toOctalString",
+function(v){
+return null;
+},"~N");
+$_M(c$,"toString",
+function(){
+return Long.toString(this.value);
 });
-Clazz.makeConstructor (Long, 
-function (value) {
-var v = Math.round (value);
-this.valueOf = function () {
-	return v;
-};
-}, "Number");
-Clazz.makeConstructor (Long, 
-function (s) {
-var value = Long.parseLong (s, 10);
-this.valueOf = function () {
-	return value;
-};
-}, "String");
-Long.serialVersionUID = Long.prototype.serialVersionUID = 4290774380558885855;
-Long.MIN_VALUE = Long.prototype.MIN_VALUE = -0x8000000000000000;
-Long.MAX_VALUE = Long.prototype.MAX_VALUE = 0x7fffffffffffffff;
-Long.TYPE = Long.prototype.TYPE = Long;
-
-Clazz.defineMethod (Long, "parseLong", 
-function (s, radix) {
-if (s == null) {
-throw  new NumberFormatException ("null");
-}if (radix < 2) {
-throw  new NumberFormatException ("radix " + radix + " less than Character.MIN_RADIX");
-}if (radix > 36) {
-throw  new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
-}
-var longVal = parseInt (s, radix);
-if(isNaN(longVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
-}
-return longVal;
-}, "String, Number");
-
-Clazz.defineMethod (Long, "parseLong", 
-function (s) {
-return Long.parseLong (s, 10);
-}, "String");
-
-Long.parseLong = Long.prototype.parseLong;
-
-Clazz.defineMethod (Long, "$valueOf", 
-function (s) {
-return new Long(Long.parseLong (s, 10));
-}, "String");
-
-Clazz.defineMethod (Long, "$valueOf", 
-function (s) {
-return new Long(s);
-}, "Number");
-
-Clazz.defineMethod (Long, "$valueOf", 
-function (s, r) {
-return new Long(Long.parseLong (s, r));
-}, "String, Number");
-
-Long.$valueOf = Long.prototype.$valueOf;
-Clazz.defineMethod (Long, "equals", 
-function (s) {
-if(s == null || !Clazz.instanceOf(s, Long) ){
-	return false;
-}
-return s.valueOf()  == this.valueOf();
-}, "Object");
-
-Clazz.defineMethod (Long, "toHexString", 
-function (d) {
-if(d.valueOf)d=d.valueOf();
-var r = d._numberToString(16);
-return r;
-}, "Number");
-Long.toHexString = Long.prototype.toHexString;
-
-Clazz.defineMethod (Long, "toOctalString", 
-function (d) {
-if(d.valueOf)d=d.valueOf();
-var r = d._numberToString(8);
-return r;
-}, "Number");
-Long.toOctalString = Long.prototype.toOctalString;
-
-Clazz.defineMethod (Long, "toBinaryString", 
-function (d) {
-if(d.valueOf)d=d.valueOf();
-var r = d._numberToString(2);
-return r;
-}, "Number");
-Long.toBinaryString = Long.prototype.toBinaryString;
-
-Long.decode = Clazz.defineMethod (Long, "decode", 
-function (nm) {
-var radix = 10;
-var index = 0;
-var negative = false;
-var result;
-if (nm.startsWith ("-")) {
-negative = true;
-index++;
-}if (nm.startsWith ("0x", index) || nm.startsWith ("0X", index)) {
-index += 2;
-radix = 16;
-} else if (nm.startsWith ("#", index)) {
-index++;
-radix = 16;
-} else if (nm.startsWith ("0", index) && nm.length > 1 + index) {
-index++;
-radix = 8;
-}if (nm.startsWith ("-", index)) throw  new NumberFormatException ("Negative sign in wrong position");
-try {
-result = Long.$valueOf (nm.substring (index), radix);
-result = negative ?  new Long (-result.longValue ()) : result;
-} catch (e) {
-if (Clazz.instanceOf (e, NumberFormatException)) {
-var constant = negative ?  String.instantialize ("-" + nm.substring (index)) : nm.substring (index);
-result = Long.$valueOf (constant, radix);
-} else {
-throw e;
-}
-}
-return result;
-}, "~S");
-//sgurin compare and compareTo. the same implementation as in Integer
-Long.compare = Clazz.defineMethod (Long, "compare", 
-function (f1, f2) {
-if (f1 < f2) return -1;
-if (f1 > f2) return 1;
+c$.toString=$_M(c$,"toString",
+function(n){
+return null;
+},"~N");
+c$.toString=$_M(c$,"toString",
+function(v,radix){
+return null;
+},"~N,~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string){
+return Long.$valueOf(Long.parseLong(string));
+},"~S");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string,radix){
+return Long.$valueOf(Long.parseLong(string,radix));
+},"~S,~N");
+c$.highestOneBit=$_M(c$,"highestOneBit",
+function(v){
+v|=(v>>1);
+v|=(v>>2);
+v|=(v>>4);
+v|=(v>>8);
+v|=(v>>16);
+v|=(v>>32);
+return v-(v>>>1);
+},"~N");
+c$.lowestOneBit=$_M(c$,"lowestOneBit",
+function(v){
+return v&-v;
+},"~N");
+c$.numberOfLeadingZeros=$_M(c$,"numberOfLeadingZeros",
+function(v){
+if(v<0){
 return 0;
-}, "~N,~N");
-Long.prototype.compareTo=function(anotherInt) {
-var otherValue = anotherInt;
-if(anotherInt.valueOf) otherValue=anotherInt.valueOf();	
-return java.lang.Long.compare(this.valueOf(), otherValue);
-};
-//sgurin bitwise related static methods 
-Long.bitCount = Clazz.defineMethod (Long, "bitCount", function (i) {
-i = i - ((i >>> 1) & 0x5555555555555555);
-i = (i & 0x3333333333333333) + ((i >>> 2) & 0x3333333333333333);
-i = (i + (i >>> 4)) & 0x0f0f0f0f0f0f0f0f;
-i = i + (i >>> 8);
-i = i + (i >>> 16);
-i = i + (i >>> 32);
-return i & 0x7f;
-}, "~N");
-Long.rotateLeft = Clazz.defineMethod (Long, "rotateLeft", function (i, distance) {
-return (i << distance) | (i >>> -distance);
-}, "~N,~N");
-Long.rotateRight = Clazz.defineMethod (Long, "rotateRight", function (i, distance) {
-return (i >>> distance) | (i << -distance);
-}, "~N,~N");
-Long.highestOneBit = Clazz.defineMethod (Long, "highestOneBit", function (i) {
-i |= (i >> 1);i |= (i >> 2);i |= (i >> 4);
-i |= (i >> 8);i |= (i >> 16);i |= (i >> 32);
-return i - (i >>> 1);
-}, "~N");
-Long.lowestOneBit = Clazz.defineMethod (Long, "lowestOneBit", function (i) {
-return i & -i;}, "~N");
-Long.numberOfLeadingZeros = Clazz.defineMethod (Long, "numberOfLeadingZeros", function (i) {
-if (i == 0) return 64;
-var n = 1;var x = (i >>> 32);
-if (x == 0) {n += 32;x = i;}
-if (x >>> 16 == 0) {n += 16;x <<= 16;}
-if (x >>> 24 == 0) {n += 8;x <<= 8;}
-if (x >>> 28 == 0) {n += 4;x <<= 4;}
-if (x >>> 30 == 0) {n += 2;x <<= 2;}
-n -= x >>> 31;return n;}, "~N");
-Long.numberOfTrailingZeros = Clazz.defineMethod (Long, "numberOfTrailingZeros", function (i) {
-var x;var y;
-if (i == 0) return 64;
-var n = 63;y = i;
-if (y != 0) {n = n - 32;x = y;} 
-else x = (i >>> 32);
-y = x << 16;
-if (y != 0) {n = n - 16;x = y;}
-y = x << 8;
-if (y != 0) {n = n - 8;x = y;
-}y = x << 4;
-if (y != 0) {n = n - 4;x = y;
-}y = x << 2;
-if (y != 0) {n = n - 2;x = y;
-}return n - ((x << 1) >>> 31);}, "~N");
-Long.signum = Clazz.defineMethod (Long, "signum", function (i) {
-return ((i >> 63) | (-i >>> 63));}, "~N");
-Long.reverseBytes = Clazz.defineMethod (Long, "reverseBytes", function (i) {
-i = (i & 0x00ff00ff00ff00ff) << 8 | (i >>> 8) & 0x00ff00ff00ff00ff;
-return (i << 48) | ((i & 0xffff0000) << 16) | ((i >>> 16) & 0xffff0000) | (i >>> 48);}, "~N");
-Long.reverse = Clazz.defineMethod (Long, "reverse", function (i) {
-i = (i & 0x5555555555555555) << 1 | (i >>> 1) & 0x5555555555555555;
-i = (i & 0x3333333333333333) << 2 | (i >>> 2) & 0x3333333333333333;
-i = (i & 0x0f0f0f0f0f0f0f0f) << 4 | (i >>> 4) & 0x0f0f0f0f0f0f0f0f;
-i = (i & 0x00ff00ff00ff00ff) << 8 | (i >>> 8) & 0x00ff00ff00ff00ff;
-i = (i << 48) | ((i & 0xffff0000) << 16) | ((i >>> 16) & 0xffff0000) | (i >>> 48);
-return i;}, "~N");
-});
-
+}if(v==0){
+return 64;
+}var n=1;
+var i=(v>>>32);
+if(i==0){
+n+=32;
+i=v;
+}if(i>>>16==0){
+n+=16;
+i<<=16;
+}if(i>>>24==0){
+n+=8;
+i<<=8;
+}if(i>>>28==0){
+n+=4;
+i<<=4;
+}if(i>>>30==0){
+n+=2;
+i<<=2;
+}return n-(i>>>31);
+},"~N");
+c$.numberOfTrailingZeros=$_M(c$,"numberOfTrailingZeros",
+function(v){
+var low=v;
+return low!=0?Integer.numberOfTrailingZeros(low):32+Integer.numberOfTrailingZeros((v>>>32));
+},"~N");
+c$.bitCount=$_M(c$,"bitCount",
+function(v){
+v-=(v>>>1)&0x5555555555555555;
+v=(v&0x3333333333333333)+((v>>>2)&0x3333333333333333);
+var i=((v>>>32))+v;
+i=(i&0x0F0F0F0F)+((i>>>4)&0x0F0F0F0F);
+i+=i>>>8;
+i+=i>>>16;
+return i&0x0000007F;
+},"~N");
+c$.rotateLeft=$_M(c$,"rotateLeft",
+function(v,distance){
+return(v<<distance)|(v>>>-distance);
+},"~N,~N");
+c$.rotateRight=$_M(c$,"rotateRight",
+function(v,distance){
+return(v>>>distance)|(v<<-distance);
+},"~N,~N");
+c$.reverseBytes=$_M(c$,"reverseBytes",
+function(v){
+v=((v>>>8)&0x00FF00FF00FF00FF)|((v&0x00FF00FF00FF00FF)<<8);
+v=((v>>>16)&0x0000FFFF0000FFFF)|((v&0x0000FFFF0000FFFF)<<16);
+return((v>>>32))|((v)<<32);
+},"~N");
+c$.reverse=$_M(c$,"reverse",
+function(v){
+v=((v>>>1)&0x5555555555555555)|((v&0x5555555555555555)<<1);
+v=((v>>>2)&0x3333333333333333)|((v&0x3333333333333333)<<2);
+v=((v>>>4)&0x0F0F0F0F0F0F0F0F)|((v&0x0F0F0F0F0F0F0F0F)<<4);
+v=((v>>>8)&0x00FF00FF00FF00FF)|((v&0x00FF00FF00FF00FF)<<8);
+v=((v>>>16)&0x0000FFFF0000FFFF)|((v&0x0000FFFF0000FFFF)<<16);
+return((v>>>32))|((v)<<32);
+},"~N");
+c$.signum=$_M(c$,"signum",
+function(v){
+return v<0?-1:(v==0?0:1);
+},"~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(v){
+return v>=128||v<-128?new Long(v):Long.SMALL_VALUES[(v)+128];
+},"~N");
+$_S(c$,
+"MAX_VALUE",0x7FFFFFFFFFFFFFFF,
+"MIN_VALUE",0x8000000000000000,
+"TYPE",null,
+"SIZE",64);
+c$.SMALL_VALUES=c$.prototype.SMALL_VALUES=new Array(256);
+{
+for(var i=-128;i<128;i++){
+Long.SMALL_VALUES[i+128]=new Long(i);
+}
+}});

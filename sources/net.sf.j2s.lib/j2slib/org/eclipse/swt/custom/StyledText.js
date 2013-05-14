@@ -3076,8 +3076,8 @@ $_Y(c$,function(){
 this.colorTable=new java.util.Vector();
 });
 $_K(c$,
-function(a,b){
-$_R(this,$wt.custom.StyledText.RTFWriter,[a,b]);
+function(start,length){
+$_R(this,$wt.custom.StyledText.RTFWriter,[start,length]);
 this.colorTable.addElement(this.b$["$wt.custom.StyledText"].getForeground());
 this.colorTable.addElement(this.b$["$wt.custom.StyledText"].getBackground());
 this.setUnicode();
@@ -3090,174 +3090,174 @@ this.write("\n}}\0");
 $_U(this,$wt.custom.StyledText.RTFWriter,"close",[]);
 }});
 $_M(c$,"getColorIndex",
-function(a,b){
-var c;
-if(a==null){
-c=b;
+function(color,defaultIndex){
+var index;
+if(color==null){
+index=defaultIndex;
 }else{
-c=this.colorTable.indexOf(a);
-if(c==-1){
-c=this.colorTable.size();
-this.colorTable.addElement(a);
-}}return c;
+index=this.colorTable.indexOf(color);
+if(index==-1){
+index=this.colorTable.size();
+this.colorTable.addElement(color);
+}}return index;
 },"$wt.graphics.Color,~N");
 $_M(c$,"setUnicode",
 function(){
-var a="windows 95";
-var b="windows 98";
-var c="windows me";
-var d="windows nt";
-var e=System.getProperty("os.name").toLowerCase();
-var f=System.getProperty("os.version");
-var g=0;
-if(e.startsWith("windows nt")&&f!=null){
-var h=f.indexOf('.');
-if(h!=-1){
-f=f.substring(0,h);
+var Win95="windows 95";
+var Win98="windows 98";
+var WinME="windows me";
+var WinNT="windows nt";
+var osName=System.getProperty("os.name").toLowerCase();
+var osVersion=System.getProperty("os.version");
+var majorVersion=0;
+if(osName.startsWith("windows nt")&&osVersion!=null){
+var majorIndex=osVersion.indexOf('.');
+if(majorIndex!=-1){
+osVersion=osVersion.substring(0,majorIndex);
 try{
-g=Integer.parseInt(f);
+majorVersion=Integer.parseInt(osVersion);
 }catch(exception){
 if($_O(exception,NumberFormatException)){
 }else{
 throw exception;
 }
 }
-}}if(e.startsWith("windows 95")==false&&e.startsWith("windows 98")==false&&e.startsWith("windows me")==false&&(e.startsWith("windows nt")==false||g>4)){
+}}if(osName.startsWith("windows 95")==false&&osName.startsWith("windows 98")==false&&osName.startsWith("windows me")==false&&(osName.startsWith("windows nt")==false||majorVersion>4)){
 this.WriteUnicode=true;
 }else{
 this.WriteUnicode=false;
 }});
 $_M(c$,"write",
-function(a,b,c){
-for(var d=b;d<c;d++){
-var e=a.charAt(d);
-if((e).charCodeAt(0)>0xFF&&this.WriteUnicode){
-if(d>b){
-this.write(a.substring(b,d));
+function(string,start,end){
+for(var index=start;index<end;index++){
+var ch=string.charAt(index);
+if((ch).charCodeAt(0)>0xFF&&this.WriteUnicode){
+if(index>start){
+this.write(string.substring(start,index));
 }this.write("\\u");
-this.write(Integer.toString((e).charCodeAt(0)));
+this.write(Integer.toString((ch).charCodeAt(0)));
 this.write(' ');
-b=d+1;
-}else if((e).charCodeAt(0)==('}').charCodeAt (0) || (e).charCodeAt (0) == ('{').charCodeAt (0) || (e).charCodeAt (0) == ('\\').charCodeAt(0)){
-if(d>b){
-this.write(a.substring(b,d));
+start=index+1;
+}else if((ch).charCodeAt(0)==('}').charCodeAt (0) || (ch).charCodeAt (0) == ('{').charCodeAt (0) || (ch).charCodeAt (0) == ('\\').charCodeAt(0)){
+if(index>start){
+this.write(string.substring(start,index));
 }this.write('\\');
-this.write(e);
-b=d+1;
+this.write(ch);
+start=index+1;
 }}
-if(b<c){
-this.write(a.substring(b,c));
+if(start<end){
+this.write(string.substring(start,end));
 }},"~S,~N,~N");
 $_M(c$,"writeHeader",
 function(){
-var a=new StringBuffer();
-var b=this.b$["$wt.custom.StyledText"].getFont().getFontData()[0];
-a.append("{\\rtf1\\ansi");
-var c=System.getProperty("file.encoding").toLowerCase();
-if(c.startsWith("cp")||c.startsWith("ms")){
-c=c.substring(2,c.length);
-a.append("\\ansicpg");
-a.append(c);
-}a.append("\\uc0\\deff0{\\fonttbl{\\f0\\fnil");
-a.append(b.getName());
-a.append(";}}\n{\\colortbl");
-for(var d=0;d<this.colorTable.size();d++){
-var e=this.colorTable.elementAt(d);
-a.append("\\red");
-a.append(e.getRed());
-a.append("\\green");
-a.append(e.getGreen());
-a.append("\\blue");
-a.append(e.getBlue());
-a.append(";");
+var header=new StringBuffer();
+var fontData=this.b$["$wt.custom.StyledText"].getFont().getFontData()[0];
+header.append("{\\rtf1\\ansi");
+var cpg=System.getProperty("file.encoding").toLowerCase();
+if(cpg.startsWith("cp")||cpg.startsWith("ms")){
+cpg=cpg.substring(2,cpg.length);
+header.append("\\ansicpg");
+header.append(cpg);
+}header.append("\\uc0\\deff0{\\fonttbl{\\f0\\fnil");
+header.append(fontData.getName());
+header.append(";}}\n{\\colortbl");
+for(var i=0;i<this.colorTable.size();i++){
+var color=this.colorTable.elementAt(i);
+header.append("\\red");
+header.append(color.getRed());
+header.append("\\green");
+header.append(color.getGreen());
+header.append("\\blue");
+header.append(color.getBlue());
+header.append(";");
 }
-a.append("}\n{\\f0\\fs");
-a.append(b.getHeight()*2);
-a.append(" ");
-this.write(a.toString(),0);
+header.append("}\n{\\f0\\fs");
+header.append(fontData.getHeight()*2);
+header.append(" ");
+this.write(header.toString(),0);
 });
 $_V(c$,"writeLine",
-function(a,b){
-var c=new Array(0);
-var d=null;
-var e;
-e=this.b$["$wt.custom.StyledText"].renderer.getLineStyleData(b,a);
-if(e!=null){
-c=e.styles;
-}e=this.b$["$wt.custom.StyledText"].renderer.getLineBackgroundData(b,a);
-if(e!=null){
-d=e.lineBackground;
-}if(d==null){
-d=this.b$["$wt.custom.StyledText"].getBackground();
-}this.writeStyledLine(a,b,c,d);
+function(line,lineOffset){
+var styles=new Array(0);
+var lineBackground=null;
+var event;
+event=this.b$["$wt.custom.StyledText"].renderer.getLineStyleData(lineOffset,line);
+if(event!=null){
+styles=event.styles;
+}event=this.b$["$wt.custom.StyledText"].renderer.getLineBackgroundData(lineOffset,line);
+if(event!=null){
+lineBackground=event.lineBackground;
+}if(lineBackground==null){
+lineBackground=this.b$["$wt.custom.StyledText"].getBackground();
+}this.writeStyledLine(line,lineOffset,styles,lineBackground);
 },"~S,~N");
 $_V(c$,"writeLineDelimiter",
-function(a){
-this.write(a,0,a.length);
+function(lineDelimiter){
+this.write(lineDelimiter,0,lineDelimiter.length);
 this.write("\\par");
 },"~S");
 $_M(c$,"writeStyledLine",
-function(a,b,c,d){
-var e=a.length;
-var f;
-var g;
-var h=this.getStart();
-var i=h+$_U(this,$wt.custom.StyledText.RTFWriter,"getCharCount",[]);
-var j=Math.min(e,i-b);
-var k=h-b;
-if(k>=a.length){
+function(line,lineOffset,styles,lineBackground){
+var lineLength=line.length;
+var lineIndex;
+var copyEnd;
+var startOffset=this.getStart();
+var endOffset=startOffset+$_U(this,$wt.custom.StyledText.RTFWriter,"getCharCount",[]);
+var lineEndOffset=Math.min(lineLength,endOffset-lineOffset);
+var writeOffset=startOffset-lineOffset;
+if(writeOffset>=line.length){
 return;
-}else if(k>0){
-f=k;
+}else if(writeOffset>0){
+lineIndex=writeOffset;
 }else{
-f=0;
-}if(d!=null){
+lineIndex=0;
+}if(lineBackground!=null){
 this.write("{\\highlight");
-this.write(this.getColorIndex(d,1));
+this.write(this.getColorIndex(lineBackground,1));
 this.write(" ");
-}for(var l=0;l<c.length;l++){
-var m=c[l];
-var n=m.start-b;
-var o=n+m.length;
-var p;
-if(o<k){
-continue;}if(n>=j){
+}for(var i=0;i<styles.length;i++){
+var style=styles[i];
+var start=style.start-lineOffset;
+var end=start+style.length;
+var colorIndex;
+if(end<writeOffset){
+continue;}if(start>=lineEndOffset){
 break;
-}if(f<n){
-this.write(a,f,n);
-f=n;
-}p=this.getColorIndex(m.background,1);
+}if(lineIndex<start){
+this.write(line,lineIndex,start);
+lineIndex=start;
+}colorIndex=this.getColorIndex(style.background,1);
 this.write("{\\cf");
-this.write(this.getColorIndex(m.foreground,0));
-if(p!=1){
+this.write(this.getColorIndex(style.foreground,0));
+if(colorIndex!=1){
 this.write("\\highlight");
-this.write(p);
-}if((m.fontStyle&1)!=0){
+this.write(colorIndex);
+}if((style.fontStyle&1)!=0){
 this.write("\\b");
-}if((m.fontStyle&2)!=0){
+}if((style.fontStyle&2)!=0){
 this.write("\\i");
-}if(m.underline){
+}if(style.underline){
 this.write("\\ul");
-}if(m.strikeout){
+}if(style.strikeout){
 this.write("\\strike");
 }this.write(" ");
-g=Math.min(o,j);
-g=Math.max(g,f);
-this.write(a,f,g);
-if((m.fontStyle&1)!=0){
+copyEnd=Math.min(end,lineEndOffset);
+copyEnd=Math.max(copyEnd,lineIndex);
+this.write(line,lineIndex,copyEnd);
+if((style.fontStyle&1)!=0){
 this.write("\\b0");
-}if((m.fontStyle&2)!=0){
+}if((style.fontStyle&2)!=0){
 this.write("\\i0");
-}if(m.underline){
+}if(style.underline){
 this.write("\\ul0");
-}if(m.strikeout){
+}if(style.strikeout){
 this.write("\\strike0");
 }this.write("}");
-f=g;
+lineIndex=copyEnd;
 }
-if(f<j){
-this.write(a,f,j);
-}if(d!=null){
+if(lineIndex<lineEndOffset){
+this.write(line,lineIndex,lineEndOffset);
+}if(lineBackground!=null){
 this.write("}");
 }},"~S,~N,~A,$wt.graphics.Color");
 $_S(c$,
@@ -3276,10 +3276,10 @@ this.$isClosed=false;
 $_Z(this,arguments);
 },$wt.custom.StyledText,"TextWriter");
 $_K(c$,
-function(a,b){
-this.buffer=new StringBuffer(b);
-this.startOffset=a;
-this.endOffset=a+b;
+function(start,length){
+this.buffer=new StringBuffer(length);
+this.startOffset=start;
+this.endOffset=start+length;
 },"~N,~N");
 $_M(c$,"close",
 function(){
@@ -3303,42 +3303,42 @@ function(){
 return this.buffer.toString();
 });
 $_M(c$,"write",
-function(a){
-this.buffer.append(a);
+function(string){
+this.buffer.append(string);
 },"~S");
 $_M(c$,"write",
-function(a,b){
-if(b<0||b>this.buffer.length()){
+function(string,offset){
+if(offset<0||offset>this.buffer.length()){
 return;
-}this.buffer.insert(b,a);
+}this.buffer.insert(offset,string);
 },"~S,~N");
 $_M(c$,"write",
-function(a){
-this.buffer.append(a);
+function(i){
+this.buffer.append(i);
 },"~N");
 $_M(c$,"write",
-function(a){
-this.buffer.append(a);
+function(i){
+this.buffer.append(i);
 },"~N");
 $_M(c$,"writeLine",
-function(a,b){
-var c=a.length;
-var d;
-var e;
-var f=this.startOffset-b;
-if(f>=c){
+function(line,lineOffset){
+var lineLength=line.length;
+var lineIndex;
+var copyEnd;
+var writeOffset=this.startOffset-lineOffset;
+if(writeOffset>=lineLength){
 return;
-}else if(f>0){
-d=f;
+}else if(writeOffset>0){
+lineIndex=writeOffset;
 }else{
-d=0;
-}e=Math.min(c,this.endOffset-b);
-if(d<e){
-this.write(a.substring(d,e));
+lineIndex=0;
+}copyEnd=Math.min(lineLength,this.endOffset-lineOffset);
+if(lineIndex<copyEnd){
+this.write(line.substring(lineIndex,copyEnd));
 }},"~S,~N");
 $_M(c$,"writeLineDelimiter",
-function(a){
-this.write(a);
+function(lineDelimiter){
+this.write(lineDelimiter);
 },"~S");
 c$=$_P();
 };
@@ -3355,126 +3355,126 @@ this.maxWidthLineIndex=0;
 $_Z(this,arguments);
 },$wt.custom.StyledText,"ContentWidthCache",null,$wt.custom.StyledText.LineCache);
 $_K(c$,
-function(a,b){
-this.parent=a;
-this.content=b;
-this.lineCount=b.getLineCount();
+function(parent,content){
+this.parent=parent;
+this.content=content;
+this.lineCount=content.getLineCount();
 this.lineWidth=$_A(this.lineCount,0);
 this.reset(0,this.lineCount,false);
 },"$wt.custom.StyledText,$wt.custom.StyledTextContent");
 $_V(c$,"calculate",
-function(a,b){
-var c=0;
-var d=a+b;
-if(a<0||d>this.lineWidth.length){
+function(startLine,lineCount){
+var caretWidth=0;
+var endLine=startLine+lineCount;
+if(startLine<0||endLine>this.lineWidth.length){
 return;
-}c=this.b$["$wt.custom.StyledText"].getCaretWidth();
-for(var e=a;e<d;e++){
-if(this.lineWidth[e]==-1){
-var f=this.content.getLine(e);
-var g=this.content.getOffsetAtLine(e);
-this.lineWidth[e]=this.contentWidth(f,g)+c;
-}if(this.lineWidth[e]>this.maxWidth){
-this.maxWidth=this.lineWidth[e];
-this.maxWidthLineIndex=e;
+}caretWidth=this.b$["$wt.custom.StyledText"].getCaretWidth();
+for(var i=startLine;i<endLine;i++){
+if(this.lineWidth[i]==-1){
+var line=this.content.getLine(i);
+var lineOffset=this.content.getOffsetAtLine(i);
+this.lineWidth[i]=this.contentWidth(line,lineOffset)+caretWidth;
+}if(this.lineWidth[i]>this.maxWidth){
+this.maxWidth=this.lineWidth[i];
+this.maxWidthLineIndex=i;
 }}
 },"~N,~N");
 $_M(c$,"calculateVisible",
-function(a,b){
-var c=this.parent.getTopIndex();
-var d=Math.min(this.b$["$wt.custom.StyledText"].getPartialBottomIndex(),a+b);
-a=Math.max(a,c);
-this.calculate(a,d-a+1);
+function(startLine,newLineCount){
+var topIndex=this.parent.getTopIndex();
+var bottomLine=Math.min(this.b$["$wt.custom.StyledText"].getPartialBottomIndex(),startLine+newLineCount);
+startLine=Math.max(startLine,topIndex);
+this.calculate(startLine,bottomLine-startLine+1);
 },"~N,~N");
 $_M(c$,"contentWidth",
-function(a,b){
-var c=this.b$["$wt.custom.StyledText"].renderer.getTextLayout(a,b);
-var d=c.getLineBounds(0);
-this.b$["$wt.custom.StyledText"].renderer.disposeTextLayout(c);
-return d.x+d.width+this.b$["$wt.custom.StyledText"].leftMargin+this.b$["$wt.custom.StyledText"].rightMargin;
+function(line,lineOffset){
+var layout=this.b$["$wt.custom.StyledText"].renderer.getTextLayout(line,lineOffset);
+var rect=layout.getLineBounds(0);
+this.b$["$wt.custom.StyledText"].renderer.disposeTextLayout(layout);
+return rect.x+rect.width+this.b$["$wt.custom.StyledText"].leftMargin+this.b$["$wt.custom.StyledText"].rightMargin;
 },"~S,~N");
 $_M(c$,"expandLines",
-function(a){
-var b=this.lineWidth.length;
-if(b-this.lineCount>=a){
+function(numLines){
+var size=this.lineWidth.length;
+if(size-this.lineCount>=numLines){
 return;
-}var c=$_A(Math.max(b*2,b+a),0);
-System.arraycopy(this.lineWidth,0,c,0,b);
-this.lineWidth=c;
-this.reset(b,this.lineWidth.length-b,false);
+}var newLines=$_A(Math.max(size*2,size+numLines),0);
+System.arraycopy(this.lineWidth,0,newLines,0,size);
+this.lineWidth=newLines;
+this.reset(size,this.lineWidth.length-size,false);
 },"~N");
 $_V(c$,"getWidth",
 function(){
 return this.maxWidth;
 });
 $_M(c$,"linesChanged",
-function(a,b){
-var c=b>0;
-if(b==0){
+function(startLine,delta){
+var inserting=delta>0;
+if(delta==0){
 return;
-}if(c){
-this.expandLines(b);
-for(var d=this.lineCount-1;d>=a;d--){
-this.lineWidth[d+b]=this.lineWidth[d];
+}if(inserting){
+this.expandLines(delta);
+for(var i=this.lineCount-1;i>=startLine;i--){
+this.lineWidth[i+delta]=this.lineWidth[i];
 }
-for(var e=a+1;e<=a+b&&e<this.lineWidth.length;e++){
-this.lineWidth[e]=-1;
+for(var i=startLine+1;i<=startLine+delta&&i<this.lineWidth.length;i++){
+this.lineWidth[i]=-1;
 }
-if(this.maxWidthLineIndex>=a){
-this.maxWidthLineIndex+=b;
+if(this.maxWidthLineIndex>=startLine){
+this.maxWidthLineIndex+=delta;
 }}else{
-for(var d=a-b;d<this.lineCount;d++){
-this.lineWidth[d+b]=this.lineWidth[d];
+for(var i=startLine-delta;i<this.lineCount;i++){
+this.lineWidth[i+delta]=this.lineWidth[i];
 }
-if(this.maxWidthLineIndex>a&&this.maxWidthLineIndex<=a-b){
+if(this.maxWidthLineIndex>startLine&&this.maxWidthLineIndex<=startLine-delta){
 this.maxWidth=0;
 this.maxWidthLineIndex=-1;
-}else if(this.maxWidthLineIndex>=a-b){
-this.maxWidthLineIndex+=b;
-}}this.lineCount+=b;
+}else if(this.maxWidthLineIndex>=startLine-delta){
+this.maxWidthLineIndex+=delta;
+}}this.lineCount+=delta;
 },"~N,~N");
 $_V(c$,"redrawReset",
-function(a,b,c){
-this.reset(a,b,c);
+function(startLine,lineCount,calculateMaxWidth){
+this.reset(startLine,lineCount,calculateMaxWidth);
 },"~N,~N,~B");
 $_V(c$,"reset",
-function(a,b,c){
-var d=a+b;
-if(a<0||d>this.lineWidth.length){
+function(startLine,lineCount,calculateMaxWidth){
+var endLine=startLine+lineCount;
+if(startLine<0||endLine>this.lineWidth.length){
 return;
-}for(var e=a;e<d;e++){
-this.lineWidth[e]=-1;
+}for(var i=startLine;i<endLine;i++){
+this.lineWidth[i]=-1;
 }
-if(this.maxWidthLineIndex>=a&&this.maxWidthLineIndex<d){
+if(this.maxWidthLineIndex>=startLine&&this.maxWidthLineIndex<endLine){
 this.maxWidth=0;
 this.maxWidthLineIndex=-1;
-if(c){
-for(var f=0;f<b;f++){
-if(this.lineWidth[f]>this.maxWidth){
-this.maxWidth=this.lineWidth[f];
-this.maxWidthLineIndex=f;
+if(calculateMaxWidth){
+for(var i=0;i<lineCount;i++){
+if(this.lineWidth[i]>this.maxWidth){
+this.maxWidth=this.lineWidth[i];
+this.maxWidthLineIndex=i;
 }}
 }}},"~N,~N,~B");
 $_V(c$,"textChanged",
-function(a,b,c,d,e){
-var f=this.parent.getLineAtOffset(a);
-var g=(this.maxWidthLineIndex>f&&this.maxWidthLineIndex<=f+c);
-if(f==0&&c==this.lineCount){
-this.lineCount=b;
+function(startOffset,newLineCount,replaceLineCount,newCharCount,replaceCharCount){
+var startLine=this.parent.getLineAtOffset(startOffset);
+var removedMaxLine=(this.maxWidthLineIndex>startLine&&this.maxWidthLineIndex<=startLine+replaceLineCount);
+if(startLine==0&&replaceLineCount==this.lineCount){
+this.lineCount=newLineCount;
 this.lineWidth=$_A(this.lineCount,0);
 this.reset(0,this.lineCount,false);
 this.maxWidth=0;
 }else{
-this.linesChanged(f,-c);
-this.linesChanged(f,b);
-this.lineWidth[f]=-1;
-}this.calculateVisible(f,b);
-if(g||(this.maxWidthLineIndex!=-1&&this.lineWidth[this.maxWidthLineIndex]<this.maxWidth)){
+this.linesChanged(startLine,-replaceLineCount);
+this.linesChanged(startLine,newLineCount);
+this.lineWidth[startLine]=-1;
+}this.calculateVisible(startLine,newLineCount);
+if(removedMaxLine||(this.maxWidthLineIndex!=-1&&this.lineWidth[this.maxWidthLineIndex]<this.maxWidth)){
 this.maxWidth=0;
-for(var h=0;h<this.lineCount;h++){
-if(this.lineWidth[h]>this.maxWidth){
-this.maxWidth=this.lineWidth[h];
-this.maxWidthLineIndex=h;
+for(var i=0;i<this.lineCount;i++){
+if(this.lineWidth[i]>this.maxWidth){
+this.maxWidth=this.lineWidth[i];
+this.maxWidthLineIndex=i;
 }}
 }},"~N,~N,~N,~N,~N");
 c$=$_P();
@@ -3488,50 +3488,50 @@ this.visualContent=null;
 $_Z(this,arguments);
 },$wt.custom.StyledText,"WordWrapCache",null,$wt.custom.StyledText.LineCache);
 $_K(c$,
-function(a,b){
-this.parent=a;
-this.visualContent=b;
+function(parent,content){
+this.parent=parent;
+this.visualContent=content;
 this.visualContent.wrapLines();
 },"$wt.custom.StyledText,$wt.custom.WrappedContent");
 $_V(c$,"calculate",
-function(a,b){
+function(startLine,lineCount){
 },"~N,~N");
 $_V(c$,"getWidth",
 function(){
 return this.parent.getClientArea().width;
 });
 $_V(c$,"redrawReset",
-function(a,b,c){
-if(b==this.visualContent.getLineCount()){
+function(startLine,lineCount,calculateMaxWidth){
+if(lineCount==this.visualContent.getLineCount()){
 this.visualContent.wrapLines();
 }else{
-this.visualContent.reset(a,b);
+this.visualContent.reset(startLine,lineCount);
 }},"~N,~N,~B");
 $_V(c$,"reset",
-function(a,b,c){
-var d=this.b$["$wt.custom.StyledText"].getPartialBottomIndex()-this.b$["$wt.custom.StyledText"].topIndex+1;
-var e=$_A(d,0);
-for(var f=0;f<d;f++){
-e[f]=this.visualContent.getOffsetAtLine(f+this.b$["$wt.custom.StyledText"].topIndex);
+function(startLine,lineCount,calculateMaxWidth){
+var itemCount=this.b$["$wt.custom.StyledText"].getPartialBottomIndex()-this.b$["$wt.custom.StyledText"].topIndex+1;
+var oldLineOffsets=$_A(itemCount,0);
+for(var i=0;i<itemCount;i++){
+oldLineOffsets[i]=this.visualContent.getOffsetAtLine(i+this.b$["$wt.custom.StyledText"].topIndex);
 }
-this.redrawReset(a,b,c);
-if(this.b$["$wt.custom.StyledText"].getPartialBottomIndex()-this.b$["$wt.custom.StyledText"].topIndex+1!=d){
+this.redrawReset(startLine,lineCount,calculateMaxWidth);
+if(this.b$["$wt.custom.StyledText"].getPartialBottomIndex()-this.b$["$wt.custom.StyledText"].topIndex+1!=itemCount){
 this.parent.internalRedraw();
 }else{
-for(var g=0;g<d;g++){
-if(this.visualContent.getOffsetAtLine(g+this.b$["$wt.custom.StyledText"].topIndex)!=e[g]){
+for(var i=0;i<itemCount;i++){
+if(this.visualContent.getOffsetAtLine(i+this.b$["$wt.custom.StyledText"].topIndex)!=oldLineOffsets[i]){
 this.parent.internalRedraw();
 break;
 }}
 }},"~N,~N,~B");
 $_V(c$,"textChanged",
-function(a,b,c,d,e){
-var f=this.visualContent.getLineAtOffset(a);
-this.visualContent.textChanged(a,b,c,d,e);
+function(startOffset,newLineCount,replaceLineCount,newCharCount,replaceCharCount){
+var startLine=this.visualContent.getLineAtOffset(startOffset);
+this.visualContent.textChanged(startOffset,newLineCount,replaceLineCount,newCharCount,replaceCharCount);
 if(this.b$["$wt.custom.StyledText"].wordWrap){
-var g=this.b$["$wt.custom.StyledText"].content.getLineCount();
-if(f>=g)f=g-1;
-}if(f<=this.b$["$wt.custom.StyledText"].getPartialBottomIndex()){
+var lineCount=this.b$["$wt.custom.StyledText"].content.getLineCount();
+if(startLine>=lineCount)startLine=lineCount-1;
+}if(startLine<=this.b$["$wt.custom.StyledText"].getPartialBottomIndex()){
 this.parent.internalRedraw();
 }},"~N,~N,~N,~N,~N");
 c$=$_P();
@@ -3748,120 +3748,120 @@ this.lineStyles=new java.util.Hashtable();
 this.bidiSegments=new java.util.Hashtable();
 });
 $_K(c$,
-function(a,b,c){
-var d=b.getPrinterData();
-this.parent=a;
-this.printer=b;
-this.printOptions=c;
-this.mirrored=(a.getStyle()&134217728)!=0;
-this.singleLine=a.isSingleLine();
+function(parent,printer,printOptions){
+var data=printer.getPrinterData();
+this.parent=parent;
+this.printer=printer;
+this.printOptions=printOptions;
+this.mirrored=(parent.getStyle()&134217728)!=0;
+this.singleLine=parent.isSingleLine();
 this.$startPage=1;
 this.$endPage=2147483647;
-if(d.scope==1){
-this.$startPage=d.startPage;
-this.$endPage=d.endPage;
+if(data.scope==1){
+this.$startPage=data.startPage;
+this.$endPage=data.endPage;
 if(this.$endPage<this.$startPage){
-var e=this.$endPage;
+var temp=this.$endPage;
 this.$endPage=this.$startPage;
-this.$startPage=e;
-}}else if(d.scope==2){
-this.selection=a.getSelectionRange();
-}this.displayFontData=a.getFont().getFontData()[0];
-this.copyContent(a.getContent());
+this.$startPage=temp;
+}}else if(data.scope==2){
+this.selection=parent.getSelectionRange();
+}this.displayFontData=parent.getFont().getFontData()[0];
+this.copyContent(parent.getContent());
 this.cacheLineData(this.printerContent);
 },"$wt.custom.StyledText,$wt.printing.Printer,$wt.custom.StyledTextPrintOptions");
 $_M(c$,"cacheBidiSegments",
-function(a,b){
-var c=this.parent.getBidiSegments(a,b);
-if(c!=null){
-this.bidiSegments.put(new Integer(a),c);
+function(lineOffset,line){
+var segments=this.parent.getBidiSegments(lineOffset,line);
+if(segments!=null){
+this.bidiSegments.put(new Integer(lineOffset),segments);
 }},"~N,~S");
 $_M(c$,"cacheLineBackground",
-function(a,b){
-var c=this.parent.getLineBackgroundData(a,b);
-if(c!=null){
-this.lineBackgrounds.put(new Integer(a),c);
+function(lineOffset,line){
+var event=this.parent.getLineBackgroundData(lineOffset,line);
+if(event!=null){
+this.lineBackgrounds.put(new Integer(lineOffset),event);
 }},"~N,~S");
 $_M(c$,"cacheLineData",
-function(a){
-for(var b=0;b<a.getLineCount();b++){
-var c=a.getOffsetAtLine(b);
-var d=a.getLine(b);
+function(printerContent){
+for(var i=0;i<printerContent.getLineCount();i++){
+var lineOffset=printerContent.getOffsetAtLine(i);
+var line=printerContent.getLine(i);
 if(this.printOptions.printLineBackground){
-this.cacheLineBackground(c,d);
+this.cacheLineBackground(lineOffset,line);
 }if(this.printOptions.printTextBackground||this.printOptions.printTextForeground||this.printOptions.printTextFontStyle){
-this.cacheLineStyle(c,d);
+this.cacheLineStyle(lineOffset,line);
 }if(this.parent.isBidi()){
-this.cacheBidiSegments(c,d);
+this.cacheBidiSegments(lineOffset,line);
 }}
 },"$wt.custom.StyledTextContent");
 $_M(c$,"cacheLineStyle",
-function(a,b){
-var c=this.parent.getLineStyleData(a,b);
-if(c!=null){
-var d=c.styles;
-for(var e=0;e<d.length;e++){
-var f=null;
-if(this.printOptions.printTextBackground==false&&d[e].background!=null){
-f=d[e].clone();
-f.background=null;
-}if(this.printOptions.printTextForeground==false&&d[e].foreground!=null){
-if(f==null){
-f=d[e].clone();
-}f.foreground=null;
-}if(this.printOptions.printTextFontStyle==false&&d[e].fontStyle!=0){
-if(f==null){
-f=d[e].clone();
-}f.fontStyle=0;
-}if(f!=null){
-d[e]=f;
+function(lineOffset,line){
+var event=this.parent.getLineStyleData(lineOffset,line);
+if(event!=null){
+var styles=event.styles;
+for(var i=0;i<styles.length;i++){
+var styleCopy=null;
+if(this.printOptions.printTextBackground==false&&styles[i].background!=null){
+styleCopy=styles[i].clone();
+styleCopy.background=null;
+}if(this.printOptions.printTextForeground==false&&styles[i].foreground!=null){
+if(styleCopy==null){
+styleCopy=styles[i].clone();
+}styleCopy.foreground=null;
+}if(this.printOptions.printTextFontStyle==false&&styles[i].fontStyle!=0){
+if(styleCopy==null){
+styleCopy=styles[i].clone();
+}styleCopy.fontStyle=0;
+}if(styleCopy!=null){
+styles[i]=styleCopy;
 }}
-this.lineStyles.put(new Integer(a),c);
+this.lineStyles.put(new Integer(lineOffset),event);
 }},"~N,~S");
 $_M(c$,"copyContent",
-function(a){
-var b=0;
+function(original){
+var insertOffset=0;
 this.printerContent=new $wt.custom.DefaultContent();
-for(var c=0;c<a.getLineCount();c++){
-var d;
-if(c<a.getLineCount()-1){
-d=a.getOffsetAtLine(c+1);
+for(var i=0;i<original.getLineCount();i++){
+var insertEndOffset;
+if(i<original.getLineCount()-1){
+insertEndOffset=original.getOffsetAtLine(i+1);
 }else{
-d=a.getCharCount();
-}this.printerContent.replaceTextRange(b,0,a.getTextRange(b,d-b));
-b=d;
+insertEndOffset=original.getCharCount();
+}this.printerContent.replaceTextRange(insertOffset,0,original.getTextRange(insertOffset,insertEndOffset-insertOffset));
+insertOffset=insertEndOffset;
 }
 },"$wt.custom.StyledTextContent");
 $_M(c$,"createPrinterColors",
 function(){
-var a=this.lineBackgrounds.elements();
+var values=this.lineBackgrounds.elements();
 this.printerColors=new java.util.Hashtable();
-while(a.hasMoreElements()){
-var b=a.nextElement();
-b.lineBackground=this.getPrinterColor(b.lineBackground);
+while(values.hasMoreElements()){
+var event=values.nextElement();
+event.lineBackground=this.getPrinterColor(event.lineBackground);
 }
-a=this.lineStyles.elements();
-while(a.hasMoreElements()){
-var b=a.nextElement();
-for(var c=0;c<b.styles.length;c++){
-var d=b.styles[c];
-var e=this.getPrinterColor(d.background);
-var f=this.getPrinterColor(d.foreground);
-if(e!==d.background||f!==d.foreground){
-d=d.clone();
-d.background=e;
-d.foreground=f;
-b.styles[c]=d;
+values=this.lineStyles.elements();
+while(values.hasMoreElements()){
+var event=values.nextElement();
+for(var i=0;i<event.styles.length;i++){
+var style=event.styles[i];
+var printerBackground=this.getPrinterColor(style.background);
+var printerForeground=this.getPrinterColor(style.foreground);
+if(printerBackground!==style.background||printerForeground!==style.foreground){
+style=style.clone();
+style.background=printerBackground;
+style.foreground=printerForeground;
+event.styles[i]=style;
 }}
 }
 });
 $_M(c$,"dispose",
 function(){
 if(this.printerColors!=null){
-var a=this.printerColors.elements();
-while(a.hasMoreElements()){
-var b=a.nextElement();
-b.dispose();
+var colors=this.printerColors.elements();
+while(colors.hasMoreElements()){
+var color=colors.nextElement();
+color.dispose();
 }
 this.printerColors=null;
 }if(this.gc!=null){
@@ -3875,139 +3875,139 @@ this.renderer.dispose();
 this.renderer=null;
 }});
 $_M(c$,"endPage",
-function(a){
-this.printDecoration(a,false);
+function(page){
+this.printDecoration(page,false);
 this.printer.endPage();
 },"~N");
 $_M(c$,"initializeRenderer",
 function(){
-var a=this.printer.computeTrim(0,0,0,0);
-var b=this.printer.getDPI();
+var trim=this.printer.computeTrim(0,0,0,0);
+var dpi=this.printer.getDPI();
 this.printerFont=new $wt.graphics.Font(this.printer,this.displayFontData.getName(),this.displayFontData.getHeight(),0);
 this.clientArea=this.printer.getClientArea();
 this.pageWidth=this.clientArea.width;
-this.clientArea.x=b.x+a.x;
-this.clientArea.y=b.y+a.y;
-this.clientArea.width-=(this.clientArea.x+a.width);
-this.clientArea.height-=(this.clientArea.y+a.height);
-var c=this.mirrored?67108864:33554432;
-this.gc=new $wt.graphics.GC(this.printer,c);
+this.clientArea.x=dpi.x+trim.x;
+this.clientArea.y=dpi.y+trim.y;
+this.clientArea.width-=(this.clientArea.x+trim.width);
+this.clientArea.height-=(this.clientArea.y+trim.height);
+var style=this.mirrored?67108864:33554432;
+this.gc=new $wt.graphics.GC(this.printer,style);
 this.gc.setFont(this.printerFont);
 this.renderer=new $wt.custom.PrintRenderer(this.printer,this.printerFont,this.gc,this.printerContent,this.lineBackgrounds,this.lineStyles,this.bidiSegments,this.parent.tabLength,this.clientArea);
 if(this.printOptions.header!=null){
-var d=this.renderer.getLineHeight();
-this.clientArea.y+=d*2;
-this.clientArea.height-=d*2;
+var lineHeight=this.renderer.getLineHeight();
+this.clientArea.y+=lineHeight*2;
+this.clientArea.height-=lineHeight*2;
 }if(this.printOptions.footer!=null){
 this.clientArea.height-=this.renderer.getLineHeight()*2;
 }this.pageSize=Math.floor(this.clientArea.height/this.renderer.getLineHeight());
-var d=this.renderer.getContent();
+var content=this.renderer.getContent();
 this.startLine=0;
 if(this.singleLine){
 this.endLine=0;
 }else{
-this.endLine=d.getLineCount()-1;
-}var e=this.printer.getPrinterData();
-if(e.scope==1){
+this.endLine=content.getLineCount()-1;
+}var data=this.printer.getPrinterData();
+if(data.scope==1){
 this.startLine=(this.$startPage-1)*this.pageSize;
-}else if(e.scope==2){
-this.startLine=d.getLineAtOffset(this.selection.x);
+}else if(data.scope==2){
+this.startLine=content.getLineAtOffset(this.selection.x);
 if(this.selection.y>0){
-this.endLine=d.getLineAtOffset(this.selection.x+this.selection.y-1);
+this.endLine=content.getLineAtOffset(this.selection.x+this.selection.y-1);
 }else{
 this.endLine=this.startLine-1;
 }}});
 $_M(c$,"getPrinterColor",
-function(a){
-var b=null;
-if(a!=null){
-b=this.printerColors.get(a);
-if(b==null){
-b=new $wt.graphics.Color(this.printer,a.getRGB());
-this.printerColors.put(a,b);
-}}return b;
+function(color){
+var printerColor=null;
+if(color!=null){
+printerColor=this.printerColors.get(color);
+if(printerColor==null){
+printerColor=new $wt.graphics.Color(this.printer,color.getRGB());
+this.printerColors.put(color,printerColor);
+}}return printerColor;
 },"$wt.graphics.Color");
 $_M(c$,"print",
 function(){
-var a=this.renderer.getContent();
-var b=this.gc.getBackground();
-var c=this.gc.getForeground();
-var d=this.renderer.getLineHeight();
-var e=this.clientArea.y;
-var f=this.$startPage;
-for(var g=this.startLine;g<=this.endLine&&f<=this.$endPage;g++,e+=d){
-var h=a.getLine(g);
-if(e==this.clientArea.y){
-this.startPage(f);
-}this.renderer.drawLine(h,g,e,this.gc,b,c,true);
-if(e+d*2>this.clientArea.y+this.clientArea.height){
-this.endPage(f);
-e=this.clientArea.y-d;
-f++;
+var content=this.renderer.getContent();
+var background=this.gc.getBackground();
+var foreground=this.gc.getForeground();
+var lineHeight=this.renderer.getLineHeight();
+var paintY=this.clientArea.y;
+var page=this.$startPage;
+for(var i=this.startLine;i<=this.endLine&&page<=this.$endPage;i++,paintY+=lineHeight){
+var line=content.getLine(i);
+if(paintY==this.clientArea.y){
+this.startPage(page);
+}this.renderer.drawLine(line,i,paintY,this.gc,background,foreground,true);
+if(paintY+lineHeight*2>this.clientArea.y+this.clientArea.height){
+this.endPage(page);
+paintY=this.clientArea.y-lineHeight;
+page++;
 }}
-if(e>this.clientArea.y){
-this.endPage(f);
+if(paintY>this.clientArea.y){
+this.endPage(page);
 }});
 $_M(c$,"printDecoration",
-function(a,b){
-var c=0;
-var d=3;
-var e;
-if(b){
-e=this.printOptions.header;
+function(page,header){
+var lastSegmentIndex=0;
+var SegmentCount=3;
+var text;
+if(header){
+text=this.printOptions.header;
 }else{
-e=this.printOptions.footer;
-}if(e==null){
+text=this.printOptions.footer;
+}if(text==null){
 return;
-}for(var f=0;f<3;f++){
-var g=e.indexOf("\t",c);
-var h;
-if(g==-1){
-h=e.substring(c);
-this.printDecorationSegment(h,f,a,b);
+}for(var i=0;i<3;i++){
+var segmentIndex=text.indexOf("\t",lastSegmentIndex);
+var segment;
+if(segmentIndex==-1){
+segment=text.substring(lastSegmentIndex);
+this.printDecorationSegment(segment,i,page,header);
 break;
 }else{
-h=e.substring(c,g);
-this.printDecorationSegment(h,f,a,b);
-c=g+"\t".length;
+segment=text.substring(lastSegmentIndex,segmentIndex);
+this.printDecorationSegment(segment,i,page,header);
+lastSegmentIndex=segmentIndex+"\t".length;
 }}
 },"~N,~B");
 $_M(c$,"printDecorationSegment",
-function(a,b,c,d){
-var e=a.indexOf("<page>");
-if(e!=-1){
-var f="<page>".length;
-var g=new StringBuffer(a.substring(0,e));
-g.append(c);
-g.append(a.substring(e+f));
-a=g.toString();
-}if(a.length>0){
-var f;
-var g=0;
-var h=0;
-var i=new $wt.graphics.TextLayout(this.printer);
-i.setText(a);
-i.setFont(this.printerFont);
-f=i.getLineBounds(0).width;
-if(d){
-h=this.clientArea.y-this.renderer.getLineHeight()*2;
+function(segment,alignment,page,header){
+var pageIndex=segment.indexOf("<page>");
+if(pageIndex!=-1){
+var PageTagLength="<page>".length;
+var buffer=new StringBuffer(segment.substring(0,pageIndex));
+buffer.append(page);
+buffer.append(segment.substring(pageIndex+PageTagLength));
+segment=buffer.toString();
+}if(segment.length>0){
+var segmentWidth;
+var drawX=0;
+var drawY=0;
+var layout=new $wt.graphics.TextLayout(this.printer);
+layout.setText(segment);
+layout.setFont(this.printerFont);
+segmentWidth=layout.getLineBounds(0).width;
+if(header){
+drawY=this.clientArea.y-this.renderer.getLineHeight()*2;
 }else{
-h=this.clientArea.y+this.clientArea.height+this.renderer.getLineHeight();
-}if(b==0){
-g=this.clientArea.x;
-}else if(b==1){
-g=Math.floor((this.pageWidth-f)/2);
-}else if(b==2){
-g=this.clientArea.x+this.clientArea.width-f;
-}i.draw(this.gc,g,h);
-i.dispose();
+drawY=this.clientArea.y+this.clientArea.height+this.renderer.getLineHeight();
+}if(alignment==0){
+drawX=this.clientArea.x;
+}else if(alignment==1){
+drawX=Math.floor((this.pageWidth-segmentWidth)/2);
+}else if(alignment==2){
+drawX=this.clientArea.x+this.clientArea.width-segmentWidth;
+}layout.draw(this.gc,drawX,drawY);
+layout.dispose();
 }},"~S,~N,~N,~B");
 $_V(c$,"run",
 function(){
-var a=this.printOptions.jobName;
-if(a==null){
-a="Printing";
-}if(this.printer.startJob(a)){
+var jobName=this.printOptions.jobName;
+if(jobName==null){
+jobName="Printing";
+}if(this.printer.startJob(jobName)){
 this.createPrinterColors();
 this.initializeRenderer();
 this.print();
@@ -4015,9 +4015,9 @@ this.dispose();
 this.printer.endJob();
 }});
 $_M(c$,"startPage",
-function(a){
+function(page){
 this.printer.startPage();
-this.printDecoration(a,true);
+this.printDecoration(page,true);
 },"~N");
 $_S(c$,
 "LEFT",0,

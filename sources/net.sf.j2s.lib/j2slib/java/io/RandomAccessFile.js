@@ -1,4 +1,4 @@
-﻿$_L(["java.io.Closeable","$.DataInput","$.DataOutput","$.JSFileSystem"],"java.io.RandomAccessFile",["java.io.EOFException","$.File","$.FileDescriptor","$.IOException","$.UTFDataFormatException","java.lang.Double","$.Float","$.IllegalArgumentException","$.IndexOutOfBoundsException","$.NullPointerException","$.StringBuilder"],function(){
+﻿$_L(["java.io.Closeable","$.DataInput","$.DataOutput","$.JSFileSystem"],"java.io.RandomAccessFile",["java.io.EOFException","$.File","$.FileDescriptor","$.IOException","$.UTFDataFormatException","java.lang.IllegalArgumentException","$.IndexOutOfBoundsException","$.NullPointerException","$.StringBuilder"],function(){
 c$=$_C(function(){
 this.fd=null;
 this.syncMetadata=false;
@@ -129,11 +129,11 @@ throw new java.io.EOFException();
 });
 $_V(c$,"readDouble",
 function(){
-return Double.longBitsToDouble(this.readLong());
+return 0.0;
 });
 $_V(c$,"readFloat",
 function(){
-return Float.intBitsToFloat(this.readInt());
+return 0;
 });
 $_M(c$,"readFully",
 function(buffer){
@@ -312,11 +312,9 @@ this.write(newBytes);
 },"~S");
 $_V(c$,"writeDouble",
 function(val){
-this.writeLong(Double.doubleToLongBits(val));
 },"~N");
 $_V(c$,"writeFloat",
 function(val){
-this.writeInt(Float.floatToIntBits(val));
 },"~N");
 $_V(c$,"writeInt",
 function(val){

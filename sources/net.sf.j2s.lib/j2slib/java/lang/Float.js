@@ -1,89 +1,78 @@
-Clazz.load (["java.lang.Comparable", "$.Number"], "java.lang.Float", null, function () {
-java.lang.Float = Float = function () {
-Clazz.instantialize (this, arguments);
-};
-Clazz.decorateAsType (Float, "Float", Number, Comparable, null, true);
-Float.prototype.valueOf = function () { return 0; };
-Float.toString = Float.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Float) {
-		return "class java.lang.Float"; // Float.class.toString
-	}
-	return "" + this.valueOf ();
-};
-Clazz.makeConstructor (Float, 
-function () {
-this.valueOf = function () {
-	return 0.0;
-};
+﻿c$=$_C(function(){
+this.value=0;
+$_Z(this,arguments);
+},java.lang,"Float");
+$_K(c$,
+function(value){
+this.value=value;
+},"~N");
+$_K(c$,
+function(value){
+this.value=value;
+},"~N");
+$_K(c$,
+function(string){
+this.construct(Float.parseFloat(string));
+},"~S");
+$_V(c$,"equals",
+function(object){
+return true;
+},"~O");
+$_M(c$,"floatValue",
+function(){
+return this.value;
 });
-Clazz.makeConstructor (Float, 
-function (value) {
-this.valueOf = function () {
-	return value;
-};
-}, "Number");
-Clazz.makeConstructor (Float, 
-function (s) {
-var value = null;
-if (s != null) {
-	value = Float.parseFloat (s);
-} else {
-	value = 0;
-}
-this.valueOf = function () {
-	return value;
-};
-}, "String");
-Float.serialVersionUID = Float.prototype.serialVersionUID = -2671257302660747028;
-Float.MIN_VALUE = Float.prototype.MIN_VALUE = 3.4028235e+38;
-Float.MAX_VALUE = Float.prototype.MAX_VALUE = 1.4e-45;
-Float.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
-Float.POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-Float.NaN = Number.NaN;
-Float.TYPE = Float.prototype.TYPE = Float;
-
-Clazz.defineMethod (Float, "parseFloat", 
-function (s) {
-if (s == null) {
-throw  new NumberFormatException ("null");
-}
-var floatVal =  parseFloat (s);
-if(isNaN(floatVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
-}
-return floatVal;
-}, "String");
-Float.parseFloat = Float.prototype.parseFloat;
-
-Clazz.defineMethod (Float, "$valueOf", 
-function (s) {
-return new Float(Float.parseFloat (s, 10));
-}, "String");
-
-Clazz.defineMethod (Float, "$valueOf", 
-function (s) {
-return new Float(s);
-}, "Number");
-
-Float.$valueOf = Float.prototype.$valueOf;
-Clazz.defineMethod (Float, "isNaN", 
-function (num) {
-return isNaN (num);
-}, "Number");
-Float.isNaN = Float.prototype.isNaN;
-Clazz.defineMethod (Float, "isInfinite", 
-function (num) {
-return !isFinite (num);
-}, "Number");
-Float.isInfinite = Float.prototype.isInfinite;
-
-Clazz.defineMethod (Float, "equals", 
-function (s) {
-if(s == null || ! Clazz.instanceOf(s, Float) ){
-	return false;
-}
-return s.valueOf()  == this.valueOf();
-}, "Object");
+$_M(c$,"isInfinite",
+function(){
+return Float.isInfinite(this.value);
 });
+c$.isInfinite=$_M(c$,"isInfinite",
+function(f){
+return(f==Infinity)||(f==-Infinity);
+},"~N");
+$_M(c$,"isNaN",
+function(){
+return Float.isNaN(this.value);
+});
+c$.isNaN=$_M(c$,"isNaN",
+function(f){
+return f!=f;
+},"~N");
+c$.parseFloat=$_M(c$,"parseFloat",
+function(string){
+return 1;
+},"~S");
+$_M(c$,"toString",
+function(){
+return Float.toString(this.value);
+});
+c$.toString=$_M(c$,"toString",
+function(f){
+return null;
+},"~N");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(string){
+return Float.parseFloat(string);
+},"~S");
+c$.$valueOf=$_M(c$,"$valueOf",
+function(f){
+return new Float(f);
+},"~N");
+$_S(c$,
+"EXPONENT_BIAS",127,
+"EXPONENT_BITS",9,
+"MANTISSA_BITS",23,
+"NON_MANTISSA_BITS",9,
+"SIGN_MASK",0x80000000,
+"EXPONENT_MASK",0x7f800000,
+"MANTISSA_MASK",0x007fffff,
+"MAX_VALUE",3.40282346638528860e+38,
+"MIN_VALUE",1.40129846432481707e-45,
+"NaN",NaN,
+"POSITIVE_INFINITY",Infinity,
+"NEGATIVE_INFINITY",-Infinity,
+"MIN_NORMAL",1.1754943508222875E-38,
+"MAX_EXPONENT",127,
+"MIN_EXPONENT",-126,
+"TYPE",null,
+"SIZE",32);

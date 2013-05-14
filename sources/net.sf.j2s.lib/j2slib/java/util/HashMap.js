@@ -324,16 +324,16 @@ this.next=null;
 $_Z(this,arguments);
 },java.util.HashMap,"Entry",java.util.MapEntry);
 $_K(c$,
-function(a,b){
-$_R(this,java.util.HashMap.Entry,[a,b]);
-this.origKeyHash=(a==null?0:a.hashCode());
+function(theKey,theValue){
+$_R(this,java.util.HashMap.Entry,[theKey,theValue]);
+this.origKeyHash=(theKey==null?0:theKey.hashCode());
 },"~O,~O");
 $_M(c$,"clone",
 function(){
-var a=$_U(this,java.util.HashMap.Entry,"clone",[]);
+var entry=$_U(this,java.util.HashMap.Entry,"clone",[]);
 if(this.next!=null){
-a.next=this.next.clone();
-}return a;
+entry.next=this.next.clone();
+}return entry;
 });
 c$=$_P();
 $_H();
@@ -348,10 +348,10 @@ this.associatedMap=null;
 $_Z(this,arguments);
 },java.util.HashMap,"HashMapIterator",null,java.util.Iterator);
 $_K(c$,
-function(a,b){
-this.associatedMap=b;
-this.type=a;
-this.expectedModCount=b.modCount;
+function(value,hm){
+this.associatedMap=hm;
+this.type=value;
+this.expectedModCount=hm.modCount;
 },"java.util.MapEntry.Type,java.util.HashMap");
 $_V(c$,"hasNext",
 function(){
@@ -375,17 +375,17 @@ function(){
 this.checkConcurrentMod();
 if(!this.hasNext()){
 throw new java.util.NoSuchElementException();
-}var a;
+}var result;
 if(this.entry==null){
-a=this.lastEntry=this.associatedMap.elementData[this.position++];
+result=this.lastEntry=this.associatedMap.elementData[this.position++];
 this.entry=this.lastEntry.next;
 }else{
 if(this.lastEntry.next!==this.entry){
 this.lastEntry=this.lastEntry.next;
-}a=this.entry;
+}result=this.entry;
 this.entry=this.entry.next;
 }this.canRemove=true;
-return this.type.get(a);
+return this.type.get(result);
 });
 $_V(c$,"remove",
 function(){
@@ -411,9 +411,9 @@ this.associatedMap=null;
 $_Z(this,arguments);
 },java.util.HashMap,"HashMapEntrySet",java.util.AbstractSet);
 $_K(c$,
-function(a){
+function(hm){
 $_R(this,java.util.HashMap.HashMapEntrySet,[]);
-this.associatedMap=a;
+this.associatedMap=hm;
 },"java.util.HashMap");
 $_M(c$,"hashMap",
 function(){
@@ -428,17 +428,17 @@ function(){
 this.associatedMap.clear();
 });
 $_V(c$,"remove",
-function(a){
-if(this.contains(a)){
-this.associatedMap.remove((a).getKey());
+function(object){
+if(this.contains(object)){
+this.associatedMap.remove((object).getKey());
 return true;
 }return false;
 },"~O");
 $_V(c$,"contains",
-function(a){
-if($_O(a,java.util.Map.Entry)){
-var b=this.associatedMap.getEntry((a).getKey());
-return a.equals(b);
+function(object){
+if($_O(object,java.util.Map.Entry)){
+var entry=this.associatedMap.getEntry((object).getKey());
+return object.equals(entry);
 }return false;
 },"~O");
 $_V(c$,"iterator",
@@ -449,8 +449,8 @@ c$.$HashMap$HashMapEntrySet$1$=function(){
 $_H();
 c$=$_W(java.util,"HashMap$HashMapEntrySet$1",null,java.util.MapEntry.Type);
 $_V(c$,"get",
-function(a){
-return a;
+function(entry){
+return entry;
 },"java.util.MapEntry");
 c$=$_P();
 };
