@@ -1,4 +1,4 @@
-﻿$_L(["java.util.HashMap"],"java.util.LinkedHashMap",["java.lang.IllegalStateException","java.util.AbstractCollection","$.AbstractSet","java.util.MapEntry.Type","java.util.NoSuchElementException"],function(){
+﻿$_L(["java.util.HashMap"],"java.util.LinkedHashMap",["java.lang.IllegalStateException","java.util.AbstractCollection","$.AbstractSet","$.MapEntry","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.accessOrder=false;
 this.head=null;

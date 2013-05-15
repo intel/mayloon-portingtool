@@ -15,7 +15,7 @@ var res=new Array(0);
 var mat=this.matcher(input);
 var index=0;
 var curPos=0;
-if(input.length()==0){
+if(input.toString().length==0){
 return[""];
 }else{
 while(mat.find()&&(index+1<limit||limit<=0)){
@@ -23,7 +23,7 @@ res[res.length]=input.subSequence(curPos,mat.start()).toString();
 curPos=mat.end();
 index++;
 }
-res[res.length]=input.subSequence(curPos,input.length()).toString();
+res[res.length]=input.subSequence(curPos,input.toString().length).toString();
 index++;
 if(limit==0){
 while(--index>=0&&res[index].toString().length==0){

@@ -113,7 +113,7 @@ this.count=newSize;
 $_M(c$,"append0",
 function(s,start,end){
 if(s==null)s="null";
-if(start<0||end<0||start>end||end>s.length())throw new IndexOutOfBoundsException();
+if(start<0||end<0||start>end||end>s.toString().length)throw new IndexOutOfBoundsException();
 this.append0(s.subSequence(start,end).toString());
 },"CharSequence,~N,~N");
 $_M(c$,"capacity",
@@ -217,7 +217,7 @@ throw new StringIndexOutOfBoundsException(index);
 $_M(c$,"insert0",
 function(index,s,start,end){
 if(s==null)s="null";
-if(index<0||index>this.count||start<0||end<0||start>end||end>s.length())throw new IndexOutOfBoundsException();
+if(index<0||index>this.count||start<0||end<0||start>end||end>s.toString().length)throw new IndexOutOfBoundsException();
 this.insert0(index,s.subSequence(start,end).toString());
 },"~N,CharSequence,~N,~N");
 $_M(c$,"length",

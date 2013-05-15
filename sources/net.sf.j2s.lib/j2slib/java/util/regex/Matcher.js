@@ -92,7 +92,7 @@ return this.reset();
 $_M(c$,"reset",
 function(){
 this.leftBound=0;
-this.rightBound=this.string.length();
+this.rightBound=this.string.toString().length;
 this.appendPos=0;
 this.replacement=null;
 var flags=""+(this.pat.regexp.ignoreCase?"i":"")
@@ -103,7 +103,7 @@ return this;
 });
 $_M(c$,"region",
 function(leftBound,rightBound){
-if(leftBound>rightBound||leftBound<0||rightBound<0||leftBound>this.string.length()||rightBound>this.string.length()){
+if(leftBound>rightBound||leftBound<0||rightBound<0||leftBound>this.string.toString().length||rightBound>this.string.toString().length){
 throw new IndexOutOfBoundsException(leftBound+"is out of bound of"+rightBound);
 }this.leftBound=leftBound;
 this.rightBound=rightBound;
@@ -114,7 +114,7 @@ return this;
 },"~N,~N");
 $_M(c$,"appendTail",
 function(sb){
-return sb.append(this.string.subSequence(this.appendPos,this.string.length()));
+return sb.append(this.string.subSequence(this.appendPos,this.string.toString().length));
 },"StringBuffer");
 $_M(c$,"replaceFirst",
 function(replacement){
@@ -150,7 +150,7 @@ return this.group(0);
 });
 $_M(c$,"find",
 function(startIndex){
-var stringLength=this.string.length();
+var stringLength=this.string.toString().length;
 if(startIndex<0||startIndex>stringLength)throw new IndexOutOfBoundsException("Out of bound"+startIndex);
 startIndex=this.findAt(startIndex);
 return false;

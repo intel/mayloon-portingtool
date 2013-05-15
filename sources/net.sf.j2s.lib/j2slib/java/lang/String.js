@@ -726,7 +726,7 @@ $_M(c$,"contentEquals",
 function(cs){
 if(cs==null){
 throw new NullPointerException();
-}var len=cs.length();
+}var len=cs.toString().length;
 if(len!=this.count){
 return false;
 }if(len==0&&this.count==0){

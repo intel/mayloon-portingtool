@@ -237,7 +237,7 @@ function(csq){
 if(null==csq){
 this.append("null",0,"null".length);
 }else{
-this.append(csq,0,csq.length());
+this.append(csq,0,csq.toString().length);
 }return this;
 },"CharSequence");
 $_M(c$,"append",

@@ -1,4 +1,4 @@
-﻿$_L(["java.util.AbstractMap","$.AbstractSet","$.Iterator","$.Map","$.MapEntry"],"java.util.IdentityHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","$.NullPointerException","java.util.AbstractCollection","$.ConcurrentModificationException","java.util.MapEntry.Type","java.util.NoSuchElementException"],function(){
+﻿$_L(["java.util.AbstractMap","$.AbstractSet","$.Iterator","$.Map","$.MapEntry"],"java.util.IdentityHashMap",["java.lang.IllegalArgumentException","$.IllegalStateException","$.NullPointerException","java.util.AbstractCollection","$.ConcurrentModificationException","$.NoSuchElementException"],function(){
 c$=$_C(function(){
 this.elementData=null;
 this.$size=0;
