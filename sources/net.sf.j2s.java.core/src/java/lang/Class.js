@@ -1528,7 +1528,7 @@ Clazz.instantialize = function (objThis, args) {
 						&& c.claxxOwner.con$truct != null) {
 				c.claxxOwner.con$truct.apply (objThis, []);
 			} else if (c.stacks != null && c.stacks.length == 1
-					&& c.stacks[0].superClazz == null) {
+					&& c.stacks[0].superClazz == null && c.stacks[0].con$truct != null) {
 				c.stacks[0].con$truct.apply (objThis, []);
 			}
 			c.apply (objThis, args);
