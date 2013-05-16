@@ -2576,31 +2576,36 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 //		buffer = new StringBuffer();
 //		laterBuffer = new StringBuffer();
 //		methodBuffer = new StringBuffer();
-		boolean needPreparation = false;
-		for (Iterator iter = bodyDeclarations.iterator(); iter.hasNext();) {
-			ASTNode element = (ASTNode) iter.next();
-			if (element instanceof FieldDeclaration) {
-				FieldDeclaration field = (FieldDeclaration) element;
-				if (getJ2STag(field, "@j2sIgnore") != null) {
-					continue;
-				}
-				if (node.isInterface() || !isFieldNeedPreparation(field)) {
-					continue;
-				}
-				needPreparation = true;
-				//element.accept(this);
-				break;
-			} else if (element instanceof Initializer) {
-				Initializer init = (Initializer) element;
-				if (getJ2STag(init, "@j2sIgnore") != null) {
-					continue;
-				}
-				if ((init.getModifiers() & Modifier.STATIC) == 0) {
-					needPreparation = true;
-					break;
-				}
-			}
-		}
+
+        //updated by intel, fixs j2s will initialize class members for several times
+        //so we can add method prepareField for each class except interface. 
+        boolean needPreparation = node.isInterface() ? false : true;
+
+        /*for (Iterator iter = bodyDeclarations.iterator(); iter.hasNext();) {
+            ASTNode element = (ASTNode) iter.next();
+            if (element instanceof FieldDeclaration) {
+                FieldDeclaration field = (FieldDeclaration) element;
+                if (getJ2STag(field, "@j2sIgnore") != null) {
+                    continue;
+                }
+                if (node.isInterface() || !isFieldNeedPreparation(field)) {
+                    continue;
+                }
+                needPreparation = true;
+                //element.accept(this);
+                break;
+            } else if (element instanceof Initializer) {
+                Initializer init = (Initializer) element;
+                if (getJ2STag(init, "@j2sIgnore") != null) {
+                    continue;
+                }
+                if ((init.getModifiers() & Modifier.STATIC) == 0) {
+                    needPreparation = true;
+                    break;
+                }
+            }
+        }*/
+
 //		if (methodBuffer.length() > 0) {
 //			tmpBuffer.append(methodBuffer.toString());
 //		}
