@@ -738,15 +738,15 @@ public class ProjectUtil {
 			if (j2sLib != null) {
 				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 					IPath destPath = null;
-					IFolder folder = null;
-					IPath srcPath = Path.fromPortableString(mayloonSDKPath
-							+ "/" + j2sLib);
+//					IPath srcPath = Path.fromPortableString(mayloonSDKPath
+//							+ "/" + j2sLib);
+					
+					IPath j2sLibPath = getJ2SLibPath(project); 
+					
 					destPath = getMayloonOutputFolder(project);
-					copyFilesFromPlugin2UserProject(srcPath,
+					
+					copyFilesFromPlugin2UserProject(j2sLibPath,
 							destPath.append(j2sLib));
-					if (folder != null) {
-						folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-					}
 				}
 			} else {
 				MptPluginConsole
@@ -2378,5 +2378,40 @@ public class ProjectUtil {
 			return false;
 		}
 		return true;
+	}
+	
+	public static IPath getJ2SLibPath(IProject project) {
+		
+		FileInputStream stream = null;
+		IPath j2sLib = null;
+
+		try {
+			Properties properties = new Properties();
+			properties.load(stream = new FileInputStream(project.getLocation()
+					.append(MptConstants.MAYLOON_PROJECT_SETTING).toFile()));
+			
+			String j2sResList = properties.getProperty(MptConstants.J2S_RESROUCE_LIST, null);
+			String[] j2sResSplit = j2sResList.split(",");
+			String temp = j2sResSplit[0];
+			j2sLib = project.getLocation().append(temp.substring(0, temp.lastIndexOf("/")));
+		} catch (FileNotFoundException e) {
+			MptPluginConsole.error(MptConstants.EXPORT_TAG,
+					MptMessages.Not_found_Mayloon_External_File_Message,
+					MptConstants.MAYLOON_PROJECT_SETTING);
+		} catch (IOException e) {
+			MptPluginConsole
+					.error(MptConstants.EXPORT_TAG,
+							"Could not export Mayloon external information due to cause {%1$s}",
+							e.getMessage());
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		
+		return j2sLib;
 	}
 }

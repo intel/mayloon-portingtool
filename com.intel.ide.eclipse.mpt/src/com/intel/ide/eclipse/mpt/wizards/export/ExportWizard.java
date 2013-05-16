@@ -105,7 +105,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 //			this.fProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
 //		} catch (CoreException e) {
 //		}
-		// TODO luqiang, work only deploy as tizen package
+		// work only deploy as tizen package
 		String deployMode = ProjectUtil.getDeployMode(fProject);
 				
 		if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
