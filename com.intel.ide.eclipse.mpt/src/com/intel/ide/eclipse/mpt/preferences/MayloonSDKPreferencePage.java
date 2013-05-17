@@ -15,8 +15,12 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import com.intel.ide.eclipse.mpt.MayloonVersion;
@@ -44,6 +48,7 @@ public class MayloonSDKPreferencePage
 	implements IWorkbenchPreferencePage {
 	
 	private MayloonSDKDirectoryFieldEditor mDiretoryField;
+	private BooleanFieldEditor partialConversionField;
 
 	public MayloonSDKPreferencePage() {
 		super(GRID);
@@ -60,6 +65,8 @@ public class MayloonSDKPreferencePage
 	public void createFieldEditors() {
 		mDiretoryField = new MayloonSDKDirectoryFieldEditor(PreferenceInitializer.PREFS_SDK_DIR, "SDK Location:", getFieldEditorParent()); //$NON-NLS-1$
 		addField(mDiretoryField);
+		partialConversionField = new BooleanFieldEditor(PreferenceInitializer.PARTIAL_CONVERSION_MODE, "Partial Conversion Mode", getFieldEditorParent());
+		addField(partialConversionField);
 	}
 
 	/* (non-Javadoc)

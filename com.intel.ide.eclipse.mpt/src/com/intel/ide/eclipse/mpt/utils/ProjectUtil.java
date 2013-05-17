@@ -83,6 +83,7 @@ import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.builder.AntPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
+import com.intel.ide.eclipse.mpt.preferences.PreferenceInitializer;
 import com.intel.ide.eclipse.mpt.project.AndroidXPathFactory;
 import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
 import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
@@ -2154,6 +2155,14 @@ public class ProjectUtil {
 			return j2sDeployMode;
 		}
 		return j2sDeployMode;
+	}
+	
+	public static boolean getPartialConversionMode(){
+		if(PreferenceInitializer.getPreference() == null){
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, "Preference seting wrong");
+			return false;
+		}
+		return PreferenceInitializer.getPreference().getPartialConversionMode();
 	}
 
 	public static void fileExtractor(String filePath, String fileName,

@@ -153,6 +153,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 										deployMode, packageName, false);
 								monitor.worked(1);
 
+								if(ProjectUtil.getPartialConversionMode()){
 								// Update the user interface asynchronously
 								Display.getDefault().asyncExec(new Runnable() {
 									public void run() {
@@ -219,6 +220,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 
 									}
 								});
+								}
 
 
 								// TODO luqiang, skip this release
