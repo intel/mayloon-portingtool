@@ -34,19 +34,19 @@ import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
  * Mayloon Export Wizard
  */
 public class ExportWizard extends Wizard implements IExportWizard {
-	
+
 	public static final String EXPORT_TAG = "Export";
-	
+
 	/**
-     * Project to export
-     */
+	 * Project to export
+	 */
 	private IProject fProject;
-	
+
 	/**
 	 * Wizard pages in this export wizard
 	 */
 	private IWizardPage fProjectSelectionPage;
-	
+
 	/**
 	 * Destination file
 	 */
@@ -60,164 +60,196 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
-		if(object instanceof IProject){
-			this.setProject((IProject)object);
-		}else if(object instanceof IAdaptable){
-			IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
-			if(resource != null){
+		if (object instanceof IProject) {
+			this.setProject((IProject) object);
+		} else if (object instanceof IAdaptable) {
+			IResource resource = (IResource) ((IAdaptable) object)
+					.getAdapter(IResource.class);
+			if (resource != null) {
 				this.setProject(resource.getProject());
 			}
 		}
 
 	}
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		this.addPage(fProjectSelectionPage = new ProjectSelectionPage(this));
 	}
-	
+
 	@Override
 	public boolean performFinish() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		try{
-			workbench.getProgressService().busyCursorWhile(new IRunnableWithProgress(){
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    try {
-                        export();
-                    } finally {
-                        monitor.done();
-                    }
-				}});
+		try {
+			workbench.getProgressService().busyCursorWhile(
+					new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException,
+								InterruptedException {
+							try {
+								export();
+							} finally {
+								monitor.done();
+							}
+						}
+					});
 		} catch (InvocationTargetException e) {
-        } catch (InterruptedException e) {
-        }
+		} catch (InterruptedException e) {
+		}
 		return true;
 	}
-	
+
 	/**
-	 * Export the mayloon application 
+	 * Export the mayloon application
 	 */
-	private boolean export(){
+	private boolean export() {
 		/*
-		 * schedule an incremental build to make sure up-to-date apk from Android builder
+		 * schedule an incremental build to make sure up-to-date apk from
+		 * Android builder
 		 */
-//		try {
-//			this.fProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
-//		} catch (CoreException e) {
-//		}
+		// try {
+		// this.fProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new
+		// NullProgressMonitor());
+		// } catch (CoreException e) {
+		// }
 		// work only deploy as tizen package
 		String deployMode = ProjectUtil.getDeployMode(fProject);
-				
+
 		if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		    MessageBox dialog = 
-		    		  new MessageBox(activeShell, SWT.ICON_QUESTION | SWT.OK);
-		    		dialog.setText("Deployment Mode Check");
-		    		dialog.setMessage("Please set your deployment mode as Tizen first(j2s.deploy.mode=Tizen)");
-		    		int returnCode = dialog.open();
-		    		if (SWT.OK == returnCode) {
-		    		}
-		    		return false;
+			Shell activeShell = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getShell();
+			MessageBox dialog = new MessageBox(activeShell, SWT.ICON_QUESTION
+					| SWT.OK);
+			dialog.setText("Deployment Mode Check");
+			dialog.setMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=Tizen)");
+			int returnCode = dialog.open();
+			if (SWT.OK == returnCode) {
+			}
+			return false;
 		}
-		
+
 		// check whether the android.core.Start.html is generated successful
-		// TODO luqiang, 
-		
+		// TODO luqiang,
+
 		performTizenPackage();
-		
+
 		return true;
 	}
-	
+
 	/**
-	 * Package mayloon application as tizen project 
+	 * Package mayloon application as tizen project
 	 */
 	private void performTizenPackage() {
 		try {
-			//set export destination
+			// set export destination
 			ProjectUtil.setMayloonOutputFolder(fProject, fDestinationFile);
 			// get package name from AndroidManifest.xml
-			// packageName is [packageName], not include the main activity name.(not compatible with android internal implementation)
-			String packageName = ProjectUtil.extractPackageFromManifest(fProject);
-			
-			// generate the .project, config.xml, Icon.png and project name.html file of tizen application
+			// packageName is [packageName], not include the main activity
+			// name.(not compatible with android internal implementation)
+			String packageName = ProjectUtil
+					.extractPackageFromManifest(fProject);
+
+			// generate the .project, config.xml, Icon.png and project name.html
+			// file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
-			MptPluginConsole.general(MptConstants.EXPORT_TAG, "%1$s has been copyed to %2$s", 
-					fProject.getName() + MptConstants.MAYLOON_START_ENTRY_FILE, fDestinationFile.toString());
+			MptPluginConsole.general(MptConstants.EXPORT_TAG,
+					"%1$s has been copyed to %2$s", fProject.getName()
+							+ MptConstants.MAYLOON_START_ENTRY_FILE,
+					fDestinationFile.toString());
 			// copy mayloon runtime resource to export destination
-			ProjectUtil.addMayloonFrameworkFolder(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
-			
+			ProjectUtil.addMayloonFrameworkFolder(fProject,
+					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
+
 			// copy mayloon Icon to mayloon_bin
 			// copy /bin/apps
-			ProjectUtil.addAndroidOutput2Mayloon(fProject, MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
-			
+			ProjectUtil.addAndroidOutput2Mayloon(fProject,
+					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
+
 			// copy /bin/classes
-			ProjectUtil.addMayloonCompiledJSFiles(fProject);	
-			
+			ProjectUtil.addMayloonCompiledJSFiles(fProject);
+
 			// TODO luqiang, add monitor for it.
 			fProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-			
-			MptPluginConsole.success(MptConstants.EXPORT_TAG, "Project '%1$s' has been exported successfully.", fProject.getName());
+
+			MptPluginConsole.success(MptConstants.EXPORT_TAG,
+					"Project '%1$s' has been exported successfully.",
+					fProject.getName());
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
-			MptPluginConsole.error(MptConstants.EXPORT_TAG, "Project '%1$s' could not be exported due to cause {%2$s}", fProject.getName(), e.getMessage());
+			MptPluginConsole.error(MptConstants.EXPORT_TAG,
+					"Project '%1$s' could not be exported due to cause {%2$s}",
+					fProject.getName(), e.getMessage());
 			e.printStackTrace();
-		}	
-	}
-	
-	/**
-	 * Fire update event to wizard pages
-	 * @param event
-	 */
-	public void fireUpdateEvent(int event){
-		for(IWizardPage page : getPages()){
-			((ExportWizardPage)page).onUpdateEvent(event);
 		}
 	}
 
-    @Override
-    public boolean canFinish() {
-    	if(this.getContainer().getCurrentPage() == this.fProjectSelectionPage){
-    		return true;
-    	}
-        return false;
-    }
-    
-    /**
-     * Set current project to export
-     * @param project
-     */
-    public void setProject(IProject project){
+	/**
+	 * Fire update event to wizard pages
+	 * 
+	 * @param event
+	 */
+	public void fireUpdateEvent(int event) {
+		for (IWizardPage page : getPages()) {
+			((ExportWizardPage) page).onUpdateEvent(event);
+		}
+	}
+
+	@Override
+	public boolean canFinish() {
+		if (this.getContainer().getCurrentPage() == this.fProjectSelectionPage) {
+			String deployMode = ProjectUtil.getDeployMode(fProject);
+			if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+				((ProjectSelectionPage) this.fProjectSelectionPage)
+						.setErrorMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=Tizen)");
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Set current project to export
+	 * 
+	 * @param project
+	 */
+	public void setProject(IProject project) {
 		this.fProject = project;
 	}
+
 	/**
 	 * Return current project to export
+	 * 
 	 * @return IProject
 	 */
-	public IProject getProject(){
+	public IProject getProject() {
 		return this.fProject;
 	}
-	
+
 	/**
 	 * Return project selection page
+	 * 
 	 * @return IWizardPage
 	 */
-	public IWizardPage getProjectSelectionPage(){
+	public IWizardPage getProjectSelectionPage() {
 		return this.fProjectSelectionPage;
 	}
-	
+
 	/**
-     * Set destination file to export
-     * @param destinationFile
-     */
+	 * Set destination file to export
+	 * 
+	 * @param destinationFile
+	 */
 	public void setDestinationFile(File destinationFile) {
 		this.fDestinationFile = destinationFile;
 	}
 
 	/**
 	 * Return destination file
+	 * 
 	 * @return File
 	 */
-	public File getDestinationFile(){
+	public File getDestinationFile() {
 		return this.fDestinationFile;
 	}
 
