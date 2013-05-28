@@ -37,12 +37,14 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import com.intel.ide.eclipse.mpt.MptConstants;
+import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
 import com.intel.ide.eclipse.mpt.ast.LocalImportDeclaration;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
+import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
@@ -50,6 +52,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 
 	private ISelection selection;
 	private IProject project;
+	private Boolean originalAutoBuild;
 
 	public MayloonConvertAction() {
 		// TODO Auto-generated constructor stub
@@ -83,36 +86,24 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 							.getAdapter(IProject.class);
 				}
 				if (project != null) {
-					try {
-						if (!ProjectUtil.checkAndroidApk(project)){
-							return;
-						}
-					} catch (CoreException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
-					if (!ProjectUtil.checkVersionMatch(project)) {
-						return;
-					}
-					
 					// do convert and use monitor to show convert progress
 					Job convertJob = new Job("Convert Project") {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
-
 							// 9 steps to convert project
 							monitor.beginTask("Project converting...", 8);
 							try {
-								// disable AutoBuild
-								IWorkspace workspace = ResourcesPlugin
-										.getWorkspace();
-								IWorkspaceDescription description = workspace
-										.getDescription();
-								if (description.isAutoBuilding()) {
-									description.setAutoBuilding(false);
-									workspace.setDescription(description);
+								if (!ProjectUtil.checkAndroidApk(project)){
+									throw new MptException(MptException.NO_APK);
 								}
+								
+								if (!ProjectUtil.checkVersionMatch(project)) {
+									throw new MptException(MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
+								}
+								
+								// disable AutoBuild
+								originalAutoBuild = ProjectUtil.getAutoBuild();
+								ProjectUtil.setAutoBuild(false);
 
 								// generate .j2s configuration file
 								MayloonPropertiesBuilder
@@ -122,6 +113,9 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 
 								String deployMode = ProjectUtil
 										.getDeployMode(project);
+								if(deployMode == null){
+									throw new MptException(MptException.DEPLOY_MODE_ERROR);
+								}
 
 								ProjectUtil.backupProject(project);
 								monitor.worked(1);
@@ -152,99 +146,25 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 								ProjectUtil.addAndroidOutput2Mayloon(project,
 										deployMode, packageName, false);
 								monitor.worked(1);
-
+								
 								if(ProjectUtil.getPartialConversionMode()){
-								// Update the user interface asynchronously
-								Display.getDefault().asyncExec(new Runnable() {
-									public void run() {
-										try {
-											// IProject project =
-											// selectedProject.getProject();
-
-											if (project
-													.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
-
-												IPackageFragment[] packages = JavaCore
-														.create(project)
-														.getPackageFragments();
-												// parse(JavaCore.create(project));
-												for (IPackageFragment mypackage : packages) {
-													if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
-														for (ICompilationUnit unit : mypackage
-																.getCompilationUnits()) {
-
-															// for local native
-															// method
-															ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
-															astParserAddNativeMethod
-																	.run(unit);
-															astParserAddNativeMethod.rewrite(
-																	astParserAddNativeMethod
-																			.getCompilationUnit(),
-																	astParserAddNativeMethod
-																			.getLocalStubMethodDetector()
-																			.getNativeMethodBindingManagers());
-															
-															HashSet<String> mayloonStubClassSet = new HashSet<String>();
-															ProjectUtil.getAndroidStubPackage(mayloonStubClassSet);
-															
-															LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
-															localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
-
-															//after partial conversion, refresh local
-															project.refreshLocal(IResource.DEPTH_INFINITE,
-																	null);
-															// for local method
-															// ASTParserAddStubMethodDeclaration
-															// astParserAddStubMethod
-															// = new
-															// ASTParserAddStubMethodDeclaration();
-															// astParserAddStubMethod.run(unit);
-															// astParserAddStubMethod.rewrite(astParserAddStubMethod.getCompilationUnit(),
-															// astParserAddStubMethod.getLocalStubMethodDetector().getStubMethodBindingManagers());
-
-														}
-													}
-												}
-											}
-										} catch (JavaModelException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										} catch (CoreException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										} catch (MalformedTreeException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-
-									}
-								});
+									// Update the user interface asynchronously
+									partialConversionAsync();
 								}
-
-
-								// TODO luqiang, skip this release
-								// ProjectUtil.addAntBuildSupport(project);
 								
 								// Add mayloon project builder to classpath
 								MayloonNature.addMaloonProjectBuilder(project);
-
-								// TODO luqiang, add monitor for it.
-								project.refreshLocal(IResource.DEPTH_INFINITE,
-										null);
 								monitor.worked(1);
-								MptPluginConsole
-										.success(
-												MptConstants.CONVERT_TAG,
-												"Project '%1$s' has been converted successfully.",
-												project.getName());
+
+								convertFinish();
+								// TODO luqiang, skip this release
+								// ProjectUtil.addAntBuildSupport(project);
+								
 							} catch (CoreException e) {
-								MptPluginLogger.throwable(e);
-								MptPluginConsole
-										.error(MptConstants.CONVERT_TAG,
-												"Project '%1$s' could not be converted due to cause {%2$s}",
-												project.getName(),
-												e.getMessage());
+								reportError(e);
+							} catch (MptException e) {
+								// TODO Auto-generated catch block
+								reportError(e);
 							}
 							monitor.done();
 							return Status.OK_STATUS;
@@ -282,5 +202,95 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	}
+	
+	private void partialConversionAsync(){
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					// IProject project =
+					// selectedProject.getProject();
+
+					if (project
+							.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+
+						IPackageFragment[] packages = JavaCore
+								.create(project)
+								.getPackageFragments();
+						// parse(JavaCore.create(project));
+						for (IPackageFragment mypackage : packages) {
+							if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+								for (ICompilationUnit unit : mypackage
+										.getCompilationUnits()) {
+
+									// for local native
+									// method
+									ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+									astParserAddNativeMethod
+											.run(unit);
+									astParserAddNativeMethod.rewrite(
+											astParserAddNativeMethod
+													.getCompilationUnit(),
+											astParserAddNativeMethod
+													.getLocalStubMethodDetector()
+													.getNativeMethodBindingManagers());
+									
+									HashSet<String> mayloonStubClassSet = new HashSet<String>();
+									ProjectUtil.getAndroidStubPackage(mayloonStubClassSet);
+									
+									LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
+									localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
+
+									//after partial conversion, refresh local
+									project.refreshLocal(IResource.DEPTH_INFINITE,
+											null);
+									// for local method
+									// ASTParserAddStubMethodDeclaration
+									// astParserAddStubMethod
+									// = new
+									// ASTParserAddStubMethodDeclaration();
+									// astParserAddStubMethod.run(unit);
+									// astParserAddStubMethod.rewrite(astParserAddStubMethod.getCompilationUnit(),
+									// astParserAddStubMethod.getLocalStubMethodDetector().getStubMethodBindingManagers());
+								}
+							}
+						}
+					}
+					
+				} catch (JavaModelException e) {
+					reportError(e);
+				} catch (CoreException e) {
+					reportError(e);
+				} catch (MalformedTreeException e) {
+					reportError(e);
+				}
+
+			}
+		});
+	}
+	
+	private void reportError(Exception e){
+		MptPluginLogger.throwable(e);
+		e.printStackTrace();
+		MptPluginConsole
+				.error(MptConstants.CONVERT_TAG,
+						"Project '%1$s' could not be converted due to cause {%2$s}",
+						project.getName(),
+						e.getMessage());
+	}
+	
+	private void convertFinish() throws CoreException{
+		// TODO luqiang, add monitor for it.
+		project.refreshLocal(IResource.DEPTH_INFINITE,
+				null);
+		
+		MptPluginConsole
+				.success(
+						MptConstants.CONVERT_TAG,
+						"Project '%1$s' has been converted successfully.",
+						project.getName());
+//		if (originalAutoBuild){
+//			ProjectUtil.setAutoBuild(true);
+//		}
 	}
 }

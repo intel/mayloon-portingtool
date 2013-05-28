@@ -60,8 +60,12 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 				prop.setProperty(J2S_OUTPUT_PATH,  resource.getLocation().toFile().getAbsolutePath().toString());
 			}
 		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			MptPluginConsole
+			.error(MptConstants.CONVERT_TAG,
+					"Project '%1$s' could not be converted due to cause {%2$s}",
+					project.getName(),
+					e.getMessage());
 		}
 		
 		prop.setProperty(J2S_COMPILER_STATUS, "enable");
@@ -94,6 +98,7 @@ public class MayloonPropertiesBuilder extends IncrementalProjectBuilder {
 				try {
 					stream.close();
 				} catch (IOException e) {
+					MptPluginConsole.warning(MptConstants.BUILD_TAG, "Mayloon build properties could not be generated due to cause {%1$s}", e.getMessage());
 				}
 			}
 		}

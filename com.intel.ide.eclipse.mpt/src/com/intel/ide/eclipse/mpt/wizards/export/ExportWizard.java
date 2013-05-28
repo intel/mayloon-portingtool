@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
+import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
@@ -175,6 +176,12 @@ public class ExportWizard extends Wizard implements IExportWizard {
 					"Project '%1$s' has been exported successfully.",
 					fProject.getName());
 		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			MptPluginConsole.error(MptConstants.EXPORT_TAG,
+					"Project '%1$s' could not be exported due to cause {%2$s}",
+					fProject.getName(), e.getMessage());
+			e.printStackTrace();
+		} catch (MptException e) {
 			// TODO Auto-generated catch block
 			MptPluginConsole.error(MptConstants.EXPORT_TAG,
 					"Project '%1$s' could not be exported due to cause {%2$s}",

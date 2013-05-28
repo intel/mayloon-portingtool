@@ -77,6 +77,7 @@ import org.xml.sax.SAXException;
 
 import com.intel.ide.eclipse.mpt.MayloonVersion;
 import com.intel.ide.eclipse.mpt.MptConstants;
+import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptMessages;
 import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
@@ -195,10 +196,11 @@ public class ProjectUtil {
 	 * @param isExport
 	 *            , whether call it from export logic
 	 * @throws CoreException
+	 * @throws MptException 
 	 */
 	public static void addAndroidOutput2Mayloon(IProject project,
 			String deployMode, String packageName, boolean isExport)
-			throws CoreException {
+			throws CoreException, MptException {
 
 		// Step 1
 		if (packageName != null && !packageName.equals("")) {
@@ -246,6 +248,7 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
+				throw new MptException(MptException.NO_APK);
 			}
 
 			copyFile(apkFile.toOSString(), tempZipFile.toOSString());
@@ -439,22 +442,17 @@ public class ProjectUtil {
 	 * 
 	 * @param srcPath
 	 * @param destPath
+	 * @throws CoreException 
 	 */
 	public static void copyFilesFromPlugin2UserProject(IPath srcPath,
-			IPath destPath) {
+			IPath destPath) throws CoreException {
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore destDir = fileSystem.getStore(destPath);
 		IFileStore srcDir = fileSystem.getStore(srcPath);
 
 		// Will recursively copy the home directory to the backup
 		// directory, overwriting any files in the backup directory in the way.
-		try {
-			srcDir.copy(destDir, EFS.OVERWRITE, null);
-		} catch (CoreException e) {
-			MptPluginConsole.error(MptConstants.CONVERT_TAG,
-					"Could not copy Mayloon resource due to cause {%1$s}",
-					e.getMessage());
-		}
+		srcDir.copy(destDir, EFS.OVERWRITE, null);
 	}
 
 	/**
@@ -646,14 +644,16 @@ public class ProjectUtil {
 	 * @param deployMode
 	 * @param packageName
 	 * @throws CoreException
+	 * @throws MptException 
 	 */
 	public static void addMayloonFrameworkFolder(IProject project,
-			String deployMode, String packageName) throws CoreException {
+			String deployMode, String packageName) throws CoreException, MptException {
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		IJavaProject javaProject = JavaCore.create(project);
 
 		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
-			return;
+//			return;
+			throw new MptException(MptException.MAYLOON_SDK_ERROR);
 		}
 
 		FileInputStream stream = null;
@@ -700,10 +700,7 @@ public class ProjectUtil {
 				}
 
 			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon external javascript library due to cause {%1$s}",
-								"Mayloon external javascript Library path is not seted correctly.");
+				throw new MptException(MptException.EXTERNAL_JS_LIB_PATH_ERROR);
 			}
 
 			if (njsLib != null) {
@@ -733,7 +730,7 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Could not load Mayloon njs javascript library due to cause {%1$s}",
-								"Mayloon njs Library path is not seted correctly.");
+								"Mayloon njs Library path is not set correctly.");
 			}
 
 			if (j2sLib != null) {
@@ -750,10 +747,7 @@ public class ProjectUtil {
 							destPath.append(j2sLib));
 				}
 			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon j2s javascript library due to cause {%1$s}",
-								"Mayloon njs Library path is not seted correctly.");
+				throw new MptException(MptException.J2S_LIB_PATH_ERROR);
 			}
 
 			if (frameworkRes != null) {
@@ -782,10 +776,7 @@ public class ProjectUtil {
 
 				// folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon framework resource due to cause {%1$s}",
-								"Mayloon framework resource path is not seted correctly.");
+				throw new MptException(MptException.FRAMEWORK_PATH_ERROR);
 			}
 
 			if (startFiles != null) {
@@ -809,10 +800,8 @@ public class ProjectUtil {
 
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon application entry to cause {%1$s}",
-								"Mayloon application entry is not seted correctly.");
+				throw new MptException(MptException.APP_ENTRY_ERROR);
+				
 			}
 
 		} catch (FileNotFoundException e) {
@@ -977,11 +966,6 @@ public class ProjectUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// MptPluginConsole
-		// .error(MptConstants.BUILD_TAG,
-		// "Could not load Mayloon framework javascript files due to cause {%1$s}",
-		// "Mayloon framework javascript path is not seted correctly.");
 	}
 
 	/**
@@ -1012,11 +996,6 @@ public class ProjectUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// MptPluginConsole
-		// .error(MptConstants.BUILD_TAG,
-		// "Could not load Mayloon framework javascript files due to cause {%1$s}",
-		// "Mayloon framework javascript path is not seted correctly.");
 	}
 
 	/**
@@ -1307,8 +1286,9 @@ public class ProjectUtil {
 	 *            names.
 	 * @return True if the package/activity was parsed and updated in the
 	 *         keyword dictionary.
+	 * @throws MptException 
 	 */
-	public static String extractPackageFromManifest(IProject project) {
+	public static String extractPackageFromManifest(IProject project) throws MptException {
 
 		String packageName = "";
 
@@ -1319,7 +1299,8 @@ public class ProjectUtil {
 			MptPluginConsole.warning(MptPlugin.PLUGIN_ID,
 					"Can't find Android file:%1$s",
 					MptConstants.ANDROID_MANIFEST_FILE);
-			return packageName;
+			throw new MptException("Can't find Android file:%1$s",
+					MptConstants.ANDROID_MANIFEST_FILE);
 		}
 
 		IPath location = project.getLocation();
@@ -1366,7 +1347,8 @@ public class ProjectUtil {
 				MptPluginConsole.error(MptPlugin.PLUGIN_ID,
 						"Fail to parse android manifest file:%1$s",
 						MptConstants.ANDROID_MANIFEST_FILE);
-				return packageName;
+				throw new MptException("Fail to parse android manifest file:%1$s",
+						MptConstants.ANDROID_MANIFEST_FILE);
 			}
 
 			/*
@@ -1874,12 +1856,6 @@ public class ProjectUtil {
 			}
 		}
 
-		// clean up project
-		// try {
-		// project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-		// } catch (CoreException e) {
-		// }
-
 		// do backup
 		ZipOutputStream stream = null;
 		File archive = null;
@@ -2198,7 +2174,7 @@ public class ProjectUtil {
 				bis.close();
 			}
 			zipFile.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -2422,5 +2398,31 @@ public class ProjectUtil {
 		}
 		
 		return j2sLib;
+	}
+	
+	/**
+	 * get current AutoBuild set
+	 * @return
+	 */
+	public static boolean getAutoBuild(){
+		IWorkspace workspace = ResourcesPlugin
+				.getWorkspace();
+		IWorkspaceDescription description = workspace
+				.getDescription();
+		return description.isAutoBuilding();
+	}
+	
+	/**
+	 * set AutoBuild
+	 * @param value
+	 * @throws CoreException
+	 */
+	public static void setAutoBuild(Boolean value) throws CoreException{
+		IWorkspace workspace = ResourcesPlugin
+				.getWorkspace();
+		IWorkspaceDescription description = workspace
+				.getDescription();
+		description.setAutoBuilding(value);
+		workspace.setDescription(description);
 	}
 }
