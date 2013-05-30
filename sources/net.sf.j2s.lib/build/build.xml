@@ -34,10 +34,27 @@
 	
 	<property name="j2s.core.src" value="${j2s.core.project}/src"/>
 
+    <!-- - - - - - - - - - - - - - - - - -
+             target: j2s.core.copy
+         - - - - - - - - - - - - - - - - - -->
+    <target name="j2s.core.copy">
+        <copy file="${j2s.core.src}/java/lang/String.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Short.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Number.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Long.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Integer.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Float.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Double.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/ClassLoader.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Class.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Byte.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/lang/Boolean.js" todir="${j2s.core.bin}/java/lang" overwrite="true"/>
+        <copy file="${j2s.core.src}/java/util/Date.js" todir="${j2s.core.bin}/java/util" overwrite="true"/>
+    </target>
 	<!-- - - - - - - - - - - - - - - - - - 
           target: j2s.pack.core                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="j2s.pack.core">
+    <target name="j2s.pack.core" depends="j2s.core.copy">
     	<!-- This SmartJSCompressor will pack Class.js and ClassExt.js together -->
         <java classname="net.sf.j2s.lib.build.SmartJSCompressor">
     		<arg value="${j2s.core.src}/java/lang/Class.js"/>

@@ -2,6 +2,14 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="externalResourceProvider" name="External Resource Provider" schema="schema/externalResourceProvider.exsd"/>
+   <extension
+         id="net.sf.j2s.innerjsresources"
+         name="Inner JS Resources"
+         point="net.sf.j2s.ui.externalResourceProvider">
+      <externalResourceProvider
+            class="net.sf.j2s.ui.resources.JavaRuntimeJSProvider"
+            id="net.sf.j2s.ui.providers.javaRuntimeJS"/>
+   </extension>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
