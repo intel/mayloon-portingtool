@@ -198,6 +198,7 @@
                	  <test property="org.eclipse.jdt.launching.hasMain"/>
                	  <and>
                	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.jdt.core.javanature"/>
+               	  	 <test property="org.eclipse.jdt.launching.hasProjectNature" args="com.intel.ide.eclipse.mpt.MayloonNature"/>
                	  	 <or>
                	     	<test property="org.eclipse.jdt.launching.isContainer"/>
                	     	<test property="org.eclipse.jdt.launching.isPackageFragment"/>
