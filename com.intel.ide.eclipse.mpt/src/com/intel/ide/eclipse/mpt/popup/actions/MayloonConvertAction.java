@@ -53,6 +53,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 	private ISelection selection;
 	private IProject project;
 	private Boolean originalAutoBuild;
+	private Boolean finishFlag;
 
 	public MayloonConvertAction() {
 		// TODO Auto-generated constructor stub
@@ -103,8 +104,9 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 								
 								// disable AutoBuild
 								originalAutoBuild = ProjectUtil.getAutoBuild();
-								ProjectUtil.setAutoBuild(false);
-
+								if(originalAutoBuild){
+									ProjectUtil.setAutoBuild(false);
+								}
 								// generate .j2s configuration file
 								MayloonPropertiesBuilder
 										.mayloonPropBuild(project);
@@ -147,8 +149,10 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 										deployMode, packageName, false);
 								monitor.worked(1);
 								
-								if(ProjectUtil.getPartialConversionMode()){
+								boolean partialConversionFlag = ProjectUtil.getPartialConversionMode();
+								if(partialConversionFlag){
 									// Update the user interface asynchronously
+									finishFlag = false;
 									partialConversionAsync();
 								}
 								
@@ -156,7 +160,11 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 								MayloonNature.addMaloonProjectBuilder(project);
 								monitor.worked(1);
 
-								convertFinish();
+								if(partialConversionFlag){
+									finishFlag = true;
+								}else{
+									convertFinish();
+								}
 								// TODO luqiang, skip this release
 								// ProjectUtil.addAntBuildSupport(project);
 								
@@ -241,9 +249,6 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 									LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
 									localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
 
-									//after partial conversion, refresh local
-									project.refreshLocal(IResource.DEPTH_INFINITE,
-											null);
 									// for local method
 									// ASTParserAddStubMethodDeclaration
 									// astParserAddStubMethod
@@ -256,12 +261,17 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 							}
 						}
 					}
-					
+					while (!finishFlag) {
+						this.wait(1);
+					}
+					convertFinish();
 				} catch (JavaModelException e) {
 					reportError(e);
 				} catch (CoreException e) {
 					reportError(e);
 				} catch (MalformedTreeException e) {
+					reportError(e);
+				} catch (InterruptedException e) {
 					reportError(e);
 				}
 
@@ -289,8 +299,8 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 						MptConstants.CONVERT_TAG,
 						"Project '%1$s' has been converted successfully.",
 						project.getName());
-//		if (originalAutoBuild){
-//			ProjectUtil.setAutoBuild(true);
-//		}
+		if (originalAutoBuild){
+			ProjectUtil.setAutoBuild(true);
+		}
 	}
 }
