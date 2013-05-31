@@ -248,7 +248,7 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
-				throw new MptException(MptException.NO_APK);
+				throw new MptException("can't get %1$s.apk file", project.getName());
 			}
 
 			copyFile(apkFile.toOSString(), tempZipFile.toOSString());

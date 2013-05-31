@@ -95,7 +95,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 							monitor.beginTask("Project converting...", 8);
 							try {
 								if (!ProjectUtil.checkAndroidApk(project)){
-									throw new MptException(MptException.NO_APK);
+									throw new MptException("can't get %1$s.apk file", project.getName());
 								}
 								
 								if (!ProjectUtil.checkVersionMatch(project)) {

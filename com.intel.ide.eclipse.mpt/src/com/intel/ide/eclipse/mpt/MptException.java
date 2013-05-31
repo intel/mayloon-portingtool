@@ -2,7 +2,6 @@ package com.intel.ide.eclipse.mpt;
 
 public class MptException extends Exception{
 	
-	public static final String NO_APK = "Can't get .apk file";
 	public static final String DEPLOY_MODE_ERROR  = "Can't get deploy mode successfully";
 	public static final String MAYLOON_SDK_ERROR = "Can't get Mayloon SDK successfully";
 	public static final String EXTERNAL_JS_LIB_PATH_ERROR = "Mayloon external javascript Library path is not set correctly.";
