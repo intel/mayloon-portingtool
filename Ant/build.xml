@@ -36,7 +36,7 @@
 	<property name="current.dir" location="." />
 	<property name="update.site.source.dir" location="./site"/>
 	<property name="mpt.source.dir" location="${current.dir}/plugins" />
-	<property name="mpt.json.source.dir" location="${current.dir}/plugins" />
+	<property name="json.source.dir" location="${current.dir}/plugins" />
 	<property name="j2s.core.source.dir" location="${current.dir}/plugins" />
 	<property name="j2s.lib.source.dir" location="${current.dir}/plugins" />
 	<property name="features.source.dir" location="${current.dir}/features" />
@@ -90,7 +90,7 @@
 	            Eclipse Home                    : ${eclipse.home}
 	            Eclipse launcher                : ${eclipse.home}/plugins/${launcher.jar}
                 MPT Source                      : ${mpt.source.dir}
-                MPT.json Source                 : ${mpt.json.source.dir}
+                Json Source                 : ${json.source.dir}
                 J2S.core Source                 : ${j2s.core.source.dir}
                 J2S.lib Source                  : ${j2s.lib.source.dir}
                 Mayloon Home                    : ${mayloon.dir}
@@ -105,8 +105,8 @@
 			<fileset dir="${mpt.source.dir}">
 				<include name="com.intel.ide.eclipse.mpt/**" />
 			</fileset>
-			<fileset dir="${mpt.json.source.dir}">
-				<include name="com.intel.ide.eclipse.mpt.json/**" />
+			<fileset dir="${json.source.dir}">
+				<include name="org.json.simple/**" />
 			</fileset>
 			<fileset dir="${j2s.core.source.dir}">
 				<include name="net.sf.j2s.core/**" />
