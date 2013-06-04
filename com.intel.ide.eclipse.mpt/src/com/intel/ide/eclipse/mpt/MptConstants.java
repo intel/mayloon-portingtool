@@ -37,6 +37,8 @@ public class MptConstants {
 	
 	public static final String ANDROID_APK_EXTENSION = ".apk";
 	public static final String ZIP_FILE_EXTENSION = ".zip";
+	public static final String CLASS_FILE_EXTENSION = ".class";
+	public static final String JAVA_FILE_EXTENSION = ".java";
 	
 	// The container id of the android develop tools
 	public static final String ADT_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.LIBRARIES"; //$NON-NLS-1$

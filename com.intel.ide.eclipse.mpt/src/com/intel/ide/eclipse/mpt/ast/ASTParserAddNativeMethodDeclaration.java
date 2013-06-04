@@ -28,7 +28,6 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 		localNativeMethod.process(unit);
 		astRewriteBasedManipulator = new ASTRewriteBasedManipulator(unit);
 //		rewrite(unit, localStubMethod.getStubMethodBindingManagers());
-		System.out.println("Add done");
 	}
 	
 	/*

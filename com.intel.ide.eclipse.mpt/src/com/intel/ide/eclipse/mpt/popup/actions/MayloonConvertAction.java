@@ -1,8 +1,13 @@
 package com.intel.ide.eclipse.mpt.popup.actions;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -242,12 +247,11 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 											astParserAddNativeMethod
 													.getLocalStubMethodDetector()
 													.getNativeMethodBindingManagers());
-									
-									HashSet<String> mayloonStubClassSet = new HashSet<String>();
-									ProjectUtil.getAndroidStubPackage(mayloonStubClassSet);
+																		
+									HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
 									
 									LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
-									localImportDeclaration.process(parse(unit), project, mayloonStubClassSet);
+									localImportDeclaration.process(parse(unit), project, mayloonJarClassSet);
 
 									// for local method
 									// ASTParserAddStubMethodDeclaration
@@ -273,6 +277,9 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 					reportError(e);
 				} catch (InterruptedException e) {
 					reportError(e);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 			}

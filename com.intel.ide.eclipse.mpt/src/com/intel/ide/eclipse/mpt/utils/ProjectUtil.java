@@ -18,9 +18,12 @@ import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -92,6 +95,10 @@ import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 
 /*
  * class to provide util functions to help Mayloon project
+ */
+/**
+ * @author mayloon
+ *
  */
 public class ProjectUtil {
 
@@ -2262,7 +2269,7 @@ public class ProjectUtil {
 
 		deleteFiles(new Path(tempOutPutFile));
 		MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG,
-				"Miss class '%1$s' has been added to project '%2$s'.",
+				"StubClass '%1$s' has been added to project '%2$s'.",
 				missClassName, project.getName());
 
 		return retVal;
@@ -2287,45 +2294,23 @@ public class ProjectUtil {
 							project.getName());
 		}
 	}
-
-	public static void getAndroidStubPackage(Set<String> stubClassSet) {
-
+	
+	
+	/**
+	 * get the class names from mayloon.jar
+	 * @return
+	 * @throws IOException
+	 */
+	public static HashSet<String> getMayloonJarClasses() throws IOException{
+		HashSet<String> mayloonJarClassSet = new HashSet<String>();
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
-
-		File packageNameFile = new File(mayloonSDKPath + MptConstants.WS_ROOT
-				+ MptConstants.ANDROID_RUNTIME_STUB_CLASS);
-		JSONParser parser = new JSONParser();
-
-		BufferedReader input;
-		try {
-			input = new BufferedReader(new FileReader(packageNameFile));
-			try {
-
-				Object obj = parser.parse(input);
-
-				JSONArray jsonArray = (JSONArray) obj;
-				Iterator<?> iterator = jsonArray.iterator();
-				while (iterator.hasNext()) {
-					stubClassSet.add(iterator.next().toString());
-				}
-
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-
-			} finally {
-				try {
-					input.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		File mayloonJarFile = new File(mayloonSDKPath + MptConstants.WS_ROOT + MptConstants.MAYLOON_JAR_LIB);
+		JarFile jar = new JarFile(mayloonJarFile, true);
+	    Enumeration<JarEntry> e = jar.entries();
+	    while (e.hasMoreElements()) {
+	    	mayloonJarClassSet.add(e.nextElement().getName().replace('/', '.'));
+	    }
+	    return mayloonJarClassSet;
 	}
 
 	/**

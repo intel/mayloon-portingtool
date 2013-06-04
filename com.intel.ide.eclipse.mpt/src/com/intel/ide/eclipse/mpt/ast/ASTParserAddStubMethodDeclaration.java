@@ -25,7 +25,6 @@ public class ASTParserAddStubMethodDeclaration extends AbstractASTParser {
 		unit = parse(lwUnit);
 		localStubMethod.process(unit);
 		astRewriteBasedManipulator = new ASTRewriteBasedManipulator(unit);
-		System.out.println("Add done");
 	}
 	
 	/*
