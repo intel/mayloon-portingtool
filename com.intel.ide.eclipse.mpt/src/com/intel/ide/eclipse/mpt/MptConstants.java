@@ -85,6 +85,8 @@ public class MptConstants {
 	public static final String ANDROID_VALUES_STRINGS = "res/values/strings.xml";//$NON-NLS-1$
     // Namespace for the android resource XML
     public static final String ANDROID_NS_RESOURCES = "http://schemas.android.com/apk/res/android"; //$NON-NLS-1$
+    // Android output directory
+    public static final String ANDROID_OUTPUT_DIR = "bin";
     
     public static final String MAYLOON_J2S_BUILDER = "net.sf.j2s.core.java2scriptbuilder";
     

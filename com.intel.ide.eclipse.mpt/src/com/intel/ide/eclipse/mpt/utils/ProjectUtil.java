@@ -242,7 +242,7 @@ public class ProjectUtil {
 //            }
 
 			IPath filePath = project.getLocation().append(
-					MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+					MptConstants.ANDROID_OUTPUT_DIR);
 
 			// copy .apk to .zip otherwise, java Zip api can't read .apk as zip
 			// file
@@ -2328,7 +2328,7 @@ public class ProjectUtil {
 		apkOutputFolder.refreshLocal(IResource.DEPTH_ONE, null);
 
 		IPath filePath = project.getLocation().append(
-				MptConstants.MAYLOON_FRAMEWORK_JS_DIR);
+				MptConstants.ANDROID_OUTPUT_DIR);
 
 		IPath apkFile = filePath.append(project.getName()
 				+ MptConstants.ANDROID_APK_EXTENSION);

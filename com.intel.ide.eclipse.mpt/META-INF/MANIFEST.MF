@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Mpt
 Bundle-SymbolicName: com.intel.ide.eclipse.mpt; singleton:=true
-Bundle-Version: 0.3.0.qualifier
+Bundle-Version: 0.3.1.qualifier
 Bundle-Activator: com.intel.ide.eclipse.mpt.MptPlugin
 Bundle-Vendor: INTEL
 Require-Bundle: org.eclipse.ui,

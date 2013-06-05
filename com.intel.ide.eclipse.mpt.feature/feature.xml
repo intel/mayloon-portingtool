@@ -2,7 +2,7 @@
 <feature
       id="com.intel.ide.eclipse.mpt.feature"
       label="MPT Feature"
-      version="0.3.0"
+      version="0.3.1"
       provider-name="INTEL">
 
    <description url="http://www.intel.com">
