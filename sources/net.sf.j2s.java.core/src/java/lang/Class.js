@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Zhou Renjian - initial API and implementation
+ *     Xun Sun - optimize method search scenario for efficiency
  *****************************************************************************/
 /*******
  * @author zhou renjian
@@ -865,41 +866,27 @@ Clazz.tryToSearchAndExecute = function (objThis, clazzFun, params, funParams/*,
 	var methods = new Array ();
 	//var xfparams = null;
 	var generic = true;
-	for (var fn in clazzFun) {
-		//if (fn.indexOf ('\\') == 0) {
-		if (fn.charCodeAt (0) == 92) { // 92 == '\\'.charCodeAt (0)
-			var ps = (Clazz.ie$plit ? fn : fn.substring (1)).split (/\\/);
-			if (ps.length == params.length) {
-				methods[methods.length] = ps;
-			}
-			generic = false;
-			continue;
-		}
-		/*
-		 * When there are only one method in the class, use the funParams
-		 * to identify the parameter type.
-		 *
-		 * AbstractCollection.remove (Object)
-		 * AbstractList.remove (int)
-		 * ArrayList.remove (int)
-		 *
-		 * Then calling #remove (Object) method on ArrayList instance will 
-		 * need to search up to the AbstractCollection.remove (Object),
-		 * which contains only one method.
-		 */
-		/*
-		 * See Clazz#defineMethod --Mar 10, 2006, josson
-		 */
-		if (generic && fn == "funParams" && clazzFun.funParams != null) {
-			//xfparams = clazzFun.funParams;
-			fn = clazzFun.funParams;
-			var ps = (Clazz.ie$plit ? fn : fn.substring (1)).split (/\\/);
-			if (ps.length == params.length) {
-				methods[0] = ps;
-			}
-			break;
-		}
-	}
+
+    var array = clazzFun.arrayOfParams;
+    if (array != null) {
+        for (var k = 0; k < array.length; k++) {
+            var fn = array[k];
+            var ps = (Clazz.ie$plit ? fn : fn.substring (1)).split (/\\/);
+            if (ps.length == params.length) {
+                methods[methods.length] = ps;
+            }
+            generic = false;
+        }
+    }
+    if (generic && clazzFun.funParams != null) {
+        //xfparams = clazzFun.funParams;
+        var fn = clazzFun.funParams;
+        var ps = (Clazz.ie$plit ? fn : fn.substring (1)).split (/\\/);
+        if (ps.length == params.length) {
+        methods[0] = ps;
+        }
+    }
+
 	if (methods.length == 0) {
 		//throw new Clazz.MethodException ();
 		return new Clazz.MethodException ();
@@ -1296,6 +1283,12 @@ Clazz.defineMethod = function (clazzThis, funName, funBody, funParams) {
 		if (oldFun.claxxOwner === clazzThis) {
 			f$[oldFun.funParams] = oldFun;
 			oldFun.claxxOwner = null;
+            if(f$.arrayOfParams == null)
+                f$.arrayOfParams = new Array();
+
+            var arr = f$.arrayOfParams;
+            arr[arr.length] = oldFun.funParams;
+
 			// property "funParams" will be used as a mark of only-one method
 			oldFun.funParams = null; // null ? safe ? // safe for " != null"
 		} else if (oldFun.claxxOwner == null) {
@@ -1310,6 +1303,13 @@ Clazz.defineMethod = function (clazzThis, funName, funBody, funParams) {
 	}
 	funBody.exClazz = clazzThis; // make it traceable
 	f$[fpName] = funBody;
+
+    if(f$.arrayOfParams == null)
+        f$.arrayOfParams = new Array();
+
+    var arr = f$.arrayOfParams;
+        arr[arr.length] = fpName;
+
 	return f$;
 };
 
