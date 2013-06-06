@@ -281,9 +281,7 @@ public final class Array {
 	 *                if the size if negative
      * 
      * @j2sNativeSrc
-     * return Clazz.newArray (length); 
-     * @j2sNative
-     * return Clazz.newArray (b); 
+     * return Clazz.newArray (size);
 	 */
 	public static Object newInstance(Class<?> componentType, int size)
 			throws NegativeArraySizeException {

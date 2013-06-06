@@ -294,7 +294,11 @@ Clazz.newArray  = function () {
 		}
 	}
 	if (args.length <= 1) {
-		return new Array ();
+        var size = args[0];
+        if (size && size >= 0) {
+            return new Array(size);
+        }
+        return new Array ();
 	} else if (args.length == 2) {
 		var dim = args[0];
 		if (typeof dim == "string") {
