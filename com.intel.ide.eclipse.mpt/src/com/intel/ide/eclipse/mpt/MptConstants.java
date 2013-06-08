@@ -62,8 +62,7 @@ public class MptConstants {
 	public static final String ANDROID_RUNTIME_STUB_CLASS = "mayloon_missed_class.json";
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
-	public static final String MAYLOON_NJS_LIBRARY_PATH = "Mayloon.Framework.Njs.Path";
-	public static final String MAYLOON_J2S_LIBRARY_PATH = "Mayloon.Framework.J2S.Path";
+	public static final String MAYLOON_J2S_LIBRARY = "j2slib";
 	public static final String MAYLOON_RUNTIME_ZIP = "mayloon.zip";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
 	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";
