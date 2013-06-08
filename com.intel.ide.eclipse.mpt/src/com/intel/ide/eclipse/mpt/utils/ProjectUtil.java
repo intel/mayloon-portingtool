@@ -672,14 +672,10 @@ public class ProjectUtil {
 
 			String externalJSLib = properties.getProperty(
 					MptConstants.MAYLOON_JS_LIBRARY_PATH, null);
-			String njsLib = properties.getProperty(
-					MptConstants.MAYLOON_NJS_LIBRARY_PATH, null);
 			String frameworkRes = properties.getProperty(
 					MptConstants.MAYLOON_FRAMEWORK_RES, null);
 			String startFiles = properties.getProperty(
 					MptConstants.MAYLOON_APPLICATION_ENTRY, null);
-			String j2sLib = properties.getProperty(
-					MptConstants.MAYLOON_J2S_LIBRARY_PATH, null);
 
 			if (externalJSLib != null) {
 				IFolder folder = null;
@@ -710,51 +706,16 @@ public class ProjectUtil {
 				throw new MptException(MptException.EXTERNAL_JS_LIB_PATH_ERROR);
 			}
 
-			if (njsLib != null) {
+			
+			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 				IPath destPath = null;
-				IFolder folder = null;
-				IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-						+ njsLib);
-				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-					folder = project.getFolder(MptConstants.WS_ROOT
-							+ MptConstants.MAYLOON_NJS_JS_DIR);
-					if (!folder.exists()) {
-						folder.create(true, true, null);
-					}
-					copyFilesFromPlugin2UserProject(srcPath,
-							folder.getRawLocation());
-				} else if (deployMode
-						.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-					destPath = getMayloonOutputFolder(project);
-					copyFilesFromPlugin2UserProject(srcPath,
-							destPath.append(MptConstants.MAYLOON_NJS_JS_DIR));
-				}
-				if (folder != null) {
-					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-				}
-
-			} else {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Could not load Mayloon njs javascript library due to cause {%1$s}",
-								"Mayloon njs Library path is not set correctly.");
-			}
-
-			if (j2sLib != null) {
-				if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-					IPath destPath = null;
-//					IPath srcPath = Path.fromPortableString(mayloonSDKPath
-//							+ "/" + j2sLib);
 					
-					IPath j2sLibPath = getJ2SLibPath(project); 
+				IPath j2sLibPath = getJ2SLibPath(project); 
 					
-					destPath = getMayloonOutputFolder(project);
+				destPath = getMayloonOutputFolder(project);
 					
-					copyFilesFromPlugin2UserProject(j2sLibPath,
-							destPath.append(j2sLib));
-				}
-			} else {
-				throw new MptException(MptException.J2S_LIB_PATH_ERROR);
+				copyFilesFromPlugin2UserProject(j2sLibPath,
+							destPath.append(MptConstants.MAYLOON_J2S_LIBRARY));
 			}
 
 			if (frameworkRes != null) {
@@ -810,6 +771,8 @@ public class ProjectUtil {
 				throw new MptException(MptException.APP_ENTRY_ERROR);
 				
 			}
+			
+			
 
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
@@ -2343,7 +2306,7 @@ public class ProjectUtil {
 		return true;
 	}
 	
-	public static IPath getJ2SLibPath(IProject project) {
+	public static IPath getJ2SLibPath(IProject project) throws MptException {
 		
 		FileInputStream stream = null;
 		IPath j2sLib = null;
@@ -2358,14 +2321,10 @@ public class ProjectUtil {
 			String temp = j2sResSplit[0];
 			j2sLib = project.getLocation().append(temp.substring(0, temp.lastIndexOf("/")));
 		} catch (FileNotFoundException e) {
-			MptPluginConsole.error(MptConstants.EXPORT_TAG,
-					MptMessages.Not_found_Mayloon_External_File_Message,
+			throw new MptException(MptMessages.Not_found_Mayloon_External_File_Message,
 					MptConstants.MAYLOON_PROJECT_SETTING);
 		} catch (IOException e) {
-			MptPluginConsole
-					.error(MptConstants.EXPORT_TAG,
-							"Could not export Mayloon external information due to cause {%1$s}",
-							e.getMessage());
+			throw new MptException(e.getMessage());
 		} finally {
 			if (stream != null) {
 				try {
