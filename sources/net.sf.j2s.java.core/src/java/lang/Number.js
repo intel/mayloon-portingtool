@@ -43,12 +43,16 @@ Clazz.defineMethod (Number, "doubleValue",
 function () {
 return this.valueOf();
 });
-
+/*
+* this method will be override the original toString of Number in javascript.
+* lead to method toString(radix) of Number in javascript doesn't work.
+* so need remove it keeps the method in javascript is ok.
+*/
 //sgurin : added this because if not, a native number in native code will print as [Object Number] instead printing the number value... 
-Clazz.defineMethod (Number, "toString", 
+/*Clazz.defineMethod (Number, "toString", 
 function () {
 return this.valueOf()+"";
-});
+});*/
 
 Clazz.defineMethod (Number, "hashCode", 
 function () {
