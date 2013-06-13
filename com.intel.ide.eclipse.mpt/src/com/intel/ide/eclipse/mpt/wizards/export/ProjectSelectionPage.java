@@ -3,12 +3,8 @@ package com.intel.ide.eclipse.mpt.wizards.export;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.plaf.ButtonUI;
-
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,8 +30,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import com.intel.ide.eclipse.mpt.MptConstants;
-import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
@@ -43,8 +37,6 @@ import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 /**
  * Project selection page. In this page, user can choose a project to export. 
  * A set of checks will be performed to make sure project can be exported.
- * User can also choose whether or not signature is required for the output
- * jar in this page.
  */
 public class ProjectSelectionPage extends ExportWizardPage {
 	/**
@@ -66,6 +58,8 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	 * Button for browsing export path
 	 */
 	private Button fDestinationButton;
+	
+	private static final int labelWidth = 98;
 	/**
 	 * Constructor
 	 * @param wizard
@@ -84,7 +78,6 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		
 		createProjectComponent(composite);
 		createDestinationComponent(composite);
-		//createSignatureComponent(composite);
 		
         this.setErrorMessage(null);
         this.setMessage(null);
@@ -103,7 +96,12 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		gl.marginHeight = gl.marginWidth = 0;
 		composite.setLayout(gl);
 		
-		new Label(composite, SWT.NONE).setText("Project:");
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd_label = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_label.widthHint = labelWidth;
+		label.setLayoutData(gd_label);
+		label.setText("Project:");
+		
 		fProjectText = new Text(composite, SWT.BORDER);
 		fProjectText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProjectText.addModifyListener(new ModifyListener(){
@@ -135,7 +133,12 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		gl.marginHeight = gl.marginWidth = 0;
 		composite.setLayout(gl);
 		
-		new Label(composite, SWT.NONE).setText("Export destination:");
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd_label = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_label.widthHint = labelWidth;
+		label.setLayoutData(gd_label);
+		label.setText("Export destination:");
+		
 		fDestinationText = new Text(composite, SWT.BORDER);
 		fDestinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDestinationText.addModifyListener(new ModifyListener(){
