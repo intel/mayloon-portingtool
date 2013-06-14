@@ -60,6 +60,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 /**
  * 
  * @author zhou renjian
+ * @author Xun Sun <xun.sun@intel.com>
  * 
  * 2006-5-2
  */
@@ -84,6 +85,8 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 	private ASTNode javadocRoot = null;
 
 	protected boolean toCompileVariableName = true;
+
+	private boolean inStaticInitializer = false;
 	
 	public String discardGenericType(String name) {
 		return ((ASTTypeVisitor) getAdaptable(ASTTypeVisitor.class)).discardGenericType(name);
@@ -431,11 +434,14 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		}
 		qualifiedName = discardGenericType(qualifiedName);
 		qn.qualifiedName = qualifiedName;
-		if (isQualifiedNameOK(qualifiedName, node) 
-				&& !musts.contains(qn)
-				&& !requires.contains(qn)) {
-			optionals.add(qn);
+		if (isQualifiedNameOK(qualifiedName, node)) {
+			if (inStaticInitializer) {
+				musts.add(qn);
+			} else if (!musts.contains(qn) && !requires.contains(qn)) {
+				optionals.add(qn);
+			}
 		}
+
 		return false;
 	}
 	/*
@@ -469,9 +475,19 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		if (getJ2STag(node, "@j2sIgnore") != null) {
 			return false;
 		}
+
+		if ((node.getModifiers() & Modifier.STATIC) != 0) {
+			inStaticInitializer = true;
+		}
 		return super.visit(node);
 	}
 
+	public void endVisit(Initializer node) {
+		if ((node.getModifiers() & Modifier.STATIC) != 0) {
+			inStaticInitializer = false;
+		}
+		super.endVisit(node);
+	}
 	private void readTags(AbstractTypeDeclaration node) {
 		Javadoc javadoc = node.getJavadoc();
 		if (javadoc != null) {
@@ -894,10 +910,12 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
         }
 		qualifiedName = discardGenericType(qualifiedName);
 		qn.qualifiedName = qualifiedName;
-		if (isQualifiedNameOK(qualifiedName, node) 
-				&& !musts.contains(qn)
-				&& !requires.contains(qn)) {
-			optionals.add(qn);
+		if (isQualifiedNameOK(qualifiedName, node)) {
+			if (inStaticInitializer) {
+				musts.add(qn);
+			} else if (!musts.contains(qn) && !requires.contains(qn)) {
+				optionals.add(qn);
+			}
 		}
 		return super.visit(node);
 	}
