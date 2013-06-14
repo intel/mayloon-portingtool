@@ -1205,6 +1205,45 @@ public class ProjectUtil {
 		}
 		return isLibraryProject;
 	}
+	
+	/**
+	 * check if one or more projects are referenced in android properties
+	 * @param project
+	 * @return true if referencing other projects
+	 */
+	public static boolean checkAndroidReferencedProjects(IProject project) {
+		IResource defaultProperties = project
+				.findMember(MptConstants.ANDROID_DEFAULT_PROPERTIES);
+		if (defaultProperties != null && defaultProperties.exists()) {
+			Properties prop = new Properties();
+			FileInputStream stream = null;
+			try {
+				prop.load(stream = new FileInputStream(defaultProperties.getLocation().toFile()));
+			} catch (IOException e) {
+				MptPluginLogger.throwable(e, "Could not load project.properties.");
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+			
+			String value = null;
+			String refProj = "";
+			int refer = 1;
+			for (; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
+				refProj += "\n\t" + value;
+			}
+			if (refer > 1){
+				MptPluginConsole.error(MptConstants.CONVERT_TAG,
+						"Mayloon builder aborts because of " + (refer - 1) +" other project(s) referenced in Android properties:" + refProj);
+				return true;
+			}
+		}
+		return false;
+	}	
 
 	/**
 	 * Copy from ADT, ProjectCreator.java Combine Package Activity name with
@@ -2305,6 +2344,27 @@ public class ProjectUtil {
 
 		return true;
 	}
+	
+	/**
+	 * check if one or more projects are referenced in build path
+	 * @param project
+	 * @return true if referencing other projects
+	 * @throws CoreException
+	 */
+	public static boolean checkReferencedProjects(IProject project) throws CoreException {
+		IProject[] ref_proj = project.getReferencedProjects();
+		String refProj = "";
+		int index = 0;
+		for (; ref_proj != null && index < ref_proj.length; index ++){
+			refProj += "\n\t" + ref_proj[index].getName();
+		}
+		if (index > 0){
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					"Mayloon builder aborts because of " + index + " other project(s) referenced in Java Buildpath:" + refProj);
+			return true;
+		}
+		return false;
+	}	
 	
 	public static IPath getJ2SLibPath(IProject project) throws MptException {
 		

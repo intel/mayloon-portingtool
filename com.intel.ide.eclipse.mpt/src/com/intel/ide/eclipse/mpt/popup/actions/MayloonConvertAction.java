@@ -103,6 +103,12 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 									throw new MptException("can't get %1$s.apk file", project.getName());
 								}
 								
+								//check if one or more projects are referenced
+								if (ProjectUtil.checkReferencedProjects(project)
+									|| ProjectUtil.checkAndroidReferencedProjects(project)){
+									throw new MptException("one or more projects are referenced");
+								}								
+								
 								if (!ProjectUtil.checkVersionMatch(project)) {
 									throw new MptException(MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
 								}
