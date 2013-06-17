@@ -26,6 +26,12 @@ Clazz.load(["java.lang.Comparable", "java.io.Serializable"], "java.lang.Boolean"
 			return Boolean.toBoolean(s);
 		};
 	}, "~S");
+    Clazz.makeConstructor(Boolean,
+        function (n) {
+        this.valueOf = function () {
+            return n ? true : false;
+        };
+    }, "~N");
 	Boolean.parseBoolean = Clazz.defineMethod(Boolean, "parseBoolean",
 			function (s) {
 			return Boolean.toBoolean(s);
