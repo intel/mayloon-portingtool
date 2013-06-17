@@ -12,7 +12,8 @@ public class MayloonProjectMessages extends NLS {
 	public static String Not_found_Mayloon_SDK_Message;
 	public static String Mayloon_Framework_Library_Title;
 	public static String Mayloon_Framework_Library_Description;
-	
+	public static String WARNING_EXISTED_MESSAGE;
+	public static String NO_ERROR_AND_WARNING_MESSAGE;
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, MayloonProjectMessages.class);
 	}

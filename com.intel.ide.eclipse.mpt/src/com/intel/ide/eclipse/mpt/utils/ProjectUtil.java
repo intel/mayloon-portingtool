@@ -19,7 +19,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -69,9 +68,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -98,7 +94,7 @@ import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
  */
 /**
  * @author mayloon
- *
+ * 
  */
 public class ProjectUtil {
 
@@ -203,7 +199,7 @@ public class ProjectUtil {
 	 * @param isExport
 	 *            , whether call it from export logic
 	 * @throws CoreException
-	 * @throws MptException 
+	 * @throws MptException
 	 */
 	public static void addAndroidOutput2Mayloon(IProject project,
 			String deployMode, String packageName, boolean isExport)
@@ -212,35 +208,6 @@ public class ProjectUtil {
 		// Step 1
 		if (packageName != null && !packageName.equals("")) {
 			// Step 2
-
-			// String genRPath = null;
-			// genRPath = packageName.substring(0,
-			// packageName.lastIndexOf("."));
-
-//            if (!isExport) {
-//                /**
-//                 * Move all Java files from gen/ to src/
-//                 */
-//                IPath srcFilePath = project.getLocation().append(
-//                        MptConstants.ANDROID_GEN_DIR).append(packageName.replaceAll("\\.", "/"));
-//
-//                IPath destFilePath = project.getLocation().append("src")
-//                        .append(packageName.replaceAll("\\.", "/"));
-//
-//                File srcDir = srcFilePath.toFile();
-//
-//                FilenameFilter javaFileFilter = new FilenameFilter() {
-//                    @Override
-//                    public boolean accept(File dir, String name) {
-//                        return name.endsWith(".java");
-//                    }
-//                };
-//
-//                for (File javaFile : srcDir.listFiles(javaFileFilter)) {
-//                    javaFile.renameTo(destFilePath.append(javaFile.getName()).toFile());
-//                }
-//            }
-
 			IPath filePath = project.getLocation().append(
 					MptConstants.ANDROID_OUTPUT_DIR);
 
@@ -255,7 +222,8 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
-				throw new MptException("can't get %1$s.apk file", project.getName());
+				throw new MptException("can't get %1$s.apk file",
+						project.getName());
 			}
 
 			copyFile(apkFile.toOSString(), tempZipFile.toOSString());
@@ -273,13 +241,6 @@ public class ProjectUtil {
 				ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName,
 						mayloonBinAppPath);
 
-				// srcFile = project.getLocation() + "/bin/" + packageName +
-				// "/";
-				//
-				// destFile = project.getLocation().append("bin/apps/") +
-				// genRPath + "/";
-				// copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-				// destFile));
 			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 				String mayloon4TizenBinAppPath = getMayloonOutputFolder(project)
 						.append("bin/apps/") + packageName + "/";
@@ -289,22 +250,6 @@ public class ProjectUtil {
 
 			// delete .zip otherwise
 			deleteFiles(tempZipFile);
-
-			// } else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN))
-			// {
-			// String srcFile = project.getLocation() + "/bin/" + packageName +
-			// "/";
-			// // see mayloon PackageManager, app.add should read
-			// // resource from package+activityName instead of package
-			// destFile = project.getLocation().append("bin/apps/") + genRPath +
-			// "/";
-			// copyFilesFromPlugin2UserProject(new Path(srcFile), new Path(
-			// destFile));
-			// IPath srcPath = project.getLocation().append("bin/apps");
-			// IFolder destFolder = getMayloonOutputFolder(project);
-			// copyFilesFromPlugin2UserProject(new Path(srcFile),
-			// destFolder.getRawLocation().append("bin/apps/"+packageName));
-			// }
 		}
 	}
 
@@ -449,7 +394,7 @@ public class ProjectUtil {
 	 * 
 	 * @param srcPath
 	 * @param destPath
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static void copyFilesFromPlugin2UserProject(IPath srcPath,
 			IPath destPath) throws CoreException {
@@ -651,15 +596,15 @@ public class ProjectUtil {
 	 * @param deployMode
 	 * @param packageName
 	 * @throws CoreException
-	 * @throws MptException 
+	 * @throws MptException
 	 */
 	public static void addMayloonFrameworkFolder(IProject project,
-			String deployMode, String packageName) throws CoreException, MptException {
+			String deployMode, String packageName) throws CoreException,
+			MptException {
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		IJavaProject javaProject = JavaCore.create(project);
 
 		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
-//			return;
 			throw new MptException(MptException.MAYLOON_SDK_ERROR);
 		}
 
@@ -706,16 +651,15 @@ public class ProjectUtil {
 				throw new MptException(MptException.EXTERNAL_JS_LIB_PATH_ERROR);
 			}
 
-			
 			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 				IPath destPath = null;
-					
-				IPath j2sLibPath = getJ2SLibPath(project); 
-					
+
+				IPath j2sLibPath = getJ2SLibPath(project);
+
 				destPath = getMayloonOutputFolder(project);
-					
+
 				copyFilesFromPlugin2UserProject(j2sLibPath,
-							destPath.append(MptConstants.MAYLOON_J2S_LIBRARY));
+						destPath.append(MptConstants.MAYLOON_J2S_LIBRARY));
 			}
 
 			if (frameworkRes != null) {
@@ -769,10 +713,8 @@ public class ProjectUtil {
 				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} else {
 				throw new MptException(MptException.APP_ENTRY_ERROR);
-				
+
 			}
-			
-			
 
 		} catch (FileNotFoundException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
@@ -1014,7 +956,6 @@ public class ProjectUtil {
 					"Remove ADT Class Container from classpath.");
 			entries = ProjectUtil.removeClassPathEntry(entries, adtIndex);
 		}
-
 
 		// add Mayloon framework classpath if not exist
 		int MayloonRuntimeIndex = ProjectUtil.findClassPathEntry(entries,
@@ -1295,9 +1236,10 @@ public class ProjectUtil {
 	 *            names.
 	 * @return True if the package/activity was parsed and updated in the
 	 *         keyword dictionary.
-	 * @throws MptException 
+	 * @throws MptException
 	 */
-	public static String extractPackageFromManifest(IProject project) throws MptException {
+	public static String extractPackageFromManifest(IProject project)
+			throws MptException {
 
 		String packageName = "";
 
@@ -1305,9 +1247,6 @@ public class ProjectUtil {
 				.findMember(MptConstants.ANDROID_MANIFEST_FILE);
 
 		if (manifestFile == null) {
-			MptPluginConsole.warning(MptPlugin.PLUGIN_ID,
-					"Can't find Android file:%1$s",
-					MptConstants.ANDROID_MANIFEST_FILE);
 			throw new MptException("Can't find Android file:%1$s",
 					MptConstants.ANDROID_MANIFEST_FILE);
 		}
@@ -1353,10 +1292,8 @@ public class ProjectUtil {
 						.warning(
 								MptPlugin.PLUGIN_ID,
 								"Missing <manifest package=\"...\"> in '%1$s'", MptConstants.ANDROID_MANIFEST_FILE); //$NON-NLS-1$
-				MptPluginConsole.error(MptPlugin.PLUGIN_ID,
+				throw new MptException(
 						"Fail to parse android manifest file:%1$s",
-						MptConstants.ANDROID_MANIFEST_FILE);
-				throw new MptException("Fail to parse android manifest file:%1$s",
 						MptConstants.ANDROID_MANIFEST_FILE);
 			}
 
@@ -1489,7 +1426,6 @@ public class ProjectUtil {
 					MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
 			return false;
 		}
-
 		int minSdkVersion = getAndroidProjectMinSdkVersion(project);
 		if (minSdkVersion > MayloonVersion.getAndroidApiLevel()) {
 			// The minSdkVersion is greater than MayloonSdkApiLevel, application
@@ -1669,26 +1605,52 @@ public class ProjectUtil {
 	}
 
 	/**
-	 * Return package name of this application
+	 * check package name of this application and get error information
+	 * 
+	 * @param project
+	 * @return error information set if can't get package name, or empty Set.
 	 */
-	public static String getPackageName(IProject project) {
+	public static Set<String> getPackageNameCheckInfo(IProject project) {
+		Set<String> errorInfo = new HashSet<String>();
+		FileInputStream stream = null;
 		IResource manifest = project
 				.findMember(MptConstants.ANDROID_MANIFEST_FILE);
+
 		if (manifest == null)
-			return null;
+			return errorInfo;
 
 		String packageName = null;
 		try {
 			XPath path = AndroidXPathFactory.newXPath(null);
 			packageName = path.evaluate("/manifest/@package", new InputSource(
-					new FileInputStream(manifest.getLocation().toFile())));
+					stream = new FileInputStream(manifest.getLocation().toFile())));
 		} catch (XPathExpressionException e) {
-			MptPluginLogger.throwable(e, "Unable to find package name.");
+			MptPluginLogger.throwable(e, "Unable to find package name");
+			errorInfo.add(e.getMessage() + "Unable to find package name");
 		} catch (FileNotFoundException e) {
-			MptPluginLogger.throwable(e, "Unable to find %1$s."
-					+ MptConstants.ANDROID_MANIFEST_FILE);
+			MptPluginLogger.throwable(e, "Unable to find %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE);
+			errorInfo.add(String.format(e.getMessage() + "Unable to find %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE));
+		}finally{
+			if(stream != null){
+				try {
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					errorInfo.add(e.getMessage());
+				}
+			}
 		}
-		return packageName;
+		if (packageName == null || packageName.isEmpty()) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, String.format(
+					"Can't get package name information from %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE));
+			errorInfo.add(String.format(
+					"Can't get package name information from %1$s",
+					MptConstants.ANDROID_MANIFEST_FILE));
+		}
+		return errorInfo;
 	}
 
 	/**
@@ -2141,10 +2103,11 @@ public class ProjectUtil {
 		}
 		return j2sDeployMode;
 	}
-	
-	public static boolean getPartialConversionMode(){
-		if(PreferenceInitializer.getPreference() == null){
-			MptPluginConsole.error(MptConstants.CONVERT_TAG, "Preference seting wrong");
+
+	public static boolean getPartialConversionMode() {
+		if (PreferenceInitializer.getPreference() == null) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					"Preference seting wrong");
 			return false;
 		}
 		return PreferenceInitializer.getPreference().getPartialConversionMode();
@@ -2296,27 +2259,29 @@ public class ProjectUtil {
 							project.getName());
 		}
 	}
-	
-	
+
 	/**
 	 * get the class names from mayloon.jar
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	public static HashSet<String> getMayloonJarClasses() throws IOException{
+	public static HashSet<String> getMayloonJarClasses() throws IOException {
 		HashSet<String> mayloonJarClassSet = new HashSet<String>();
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
-		File mayloonJarFile = new File(mayloonSDKPath + MptConstants.WS_ROOT + MptConstants.MAYLOON_JAR_LIB);
+		File mayloonJarFile = new File(mayloonSDKPath + MptConstants.WS_ROOT
+				+ MptConstants.MAYLOON_JAR_LIB);
 		JarFile jar = new JarFile(mayloonJarFile, true);
-	    Enumeration<JarEntry> e = jar.entries();
-	    while (e.hasMoreElements()) {
-	    	mayloonJarClassSet.add(e.nextElement().getName().replace('/', '.'));
-	    }
-	    return mayloonJarClassSet;
+		Enumeration<JarEntry> e = jar.entries();
+		while (e.hasMoreElements()) {
+			mayloonJarClassSet.add(e.nextElement().getName().replace('/', '.'));
+		}
+		return mayloonJarClassSet;
 	}
 
 	/**
-	 * check if apk is built successfully
+	 * check whether apk is built successfully
+	 * 
 	 * @param project
 	 * @return
 	 * @throws CoreException
@@ -2336,13 +2301,49 @@ public class ProjectUtil {
 				+ MptConstants.ANDROID_APK_EXTENSION);
 
 		if (!apkFile.toFile().exists()) {
-			MptPluginConsole
-					.error(MptConstants.CONVERT_TAG,
-							"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					getNoAndroidFileErrorInfo(project.getName()
+							+ MptConstants.ANDROID_APK_EXTENSION));
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * check necessary Android files and get error information
+	 * 
+	 * @param project
+	 * @return Necessary Android files error information Set. If no error, the
+	 *         return Set will be empty
+	 * @throws CoreException
+	 */
+	public static Set<String> getAndroidFilesCheckInfo(IProject project)
+			throws CoreException {
+		Set<String> errorInfo = new HashSet<String>();
+		//check AndroidManifest.xml
+		if (!checkAndroidFile(project, MptConstants.ANDROID_MANIFEST_FILE)) {
+			errorInfo.add(getNoAndroidFileErrorInfo(MptConstants.ANDROID_MANIFEST_FILE));
+		}
+		//check project.properties
+		if(!checkAndroidFile(project, MptConstants.ANDROID_DEFAULT_PROPERTIES)){
+			errorInfo.add(getNoAndroidFileErrorInfo(MptConstants.ANDROID_DEFAULT_PROPERTIES));
+		}
+		// check bin folder and bin/projectname.apk file
+		if(!checkAndroidFile(project, MptConstants.ANDROID_OUTPUT_DIR)){
+			errorInfo.add(getNoAndroidFileErrorInfo(MptConstants.ANDROID_OUTPUT_DIR));
+		}else{
+			if(!checkAndroidApk(project)){
+				errorInfo.add(getNoAndroidFileErrorInfo(project.getName()
+						+ MptConstants.ANDROID_APK_EXTENSION));
+			}
+		}
+		return errorInfo;
+	}
+
+	public static String getNoAndroidFileErrorInfo(String filePath){
+		String errorInfo = String.format("Can't find necessary Android file:%1$s", filePath);
+		return errorInfo;
 	}
 	
 	/**
@@ -2365,9 +2366,189 @@ public class ProjectUtil {
 		}
 		return false;
 	}	
-	
-	public static IPath getJ2SLibPath(IProject project) throws MptException {
 		
+	/**	
+	 * check Android file
+	 * 
+	 * @param project
+	 * @param filePath
+	 * @return 
+	 */
+	public static boolean checkAndroidFile(IProject project, String filePath) {
+		IResource androidFile = project.findMember(filePath);
+		if (androidFile == null) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					getNoAndroidFileErrorInfo(filePath));
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * check necessary SDK files and get error information
+	 * @param project
+	 * @return Mayloon SDK files error information Set. If no error, the return
+	 *         Set will be empty
+	 */
+	public static Set<String> getSdkFilesCheckInfo(IProject project) {
+		Set<String> errorInfo= new HashSet<String>();
+		// check Mayloon SDK folder
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, MptException.MAYLOON_SDK_ERROR);
+			errorInfo.add(MptException.MAYLOON_SDK_ERROR);
+			return errorInfo;
+		}
+		// check the mayloon.jar file
+		if(!checkSdkFile(mayloonSDKPath, MptConstants.MAYLOON_JAR_LIB)){
+			errorInfo.add(getNoSdkFileErrorInfo(mayloonSDKPath, MptConstants.MAYLOON_JAR_LIB));
+		}
+		// check sdk-info.properties
+		if(!checkSdkFile(mayloonSDKPath, MptConstants.MAYLOON_SDK_PROPERTY)){
+			errorInfo.add(getNoSdkFileErrorInfo(mayloonSDKPath, MptConstants.MAYLOON_SDK_PROPERTY));
+		}
+		//check Mayloon version
+		MayloonVersion MayloonVersion = MayloonSDK.getSdkVersion();
+		if (MayloonVersion == null) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
+			errorInfo.add(MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
+		}
+		// check external-info.properties file
+		File propertyFile = new File(mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY);
+		if (!propertyFile.exists()) {
+			String errorMessage = getNoSdkFileErrorInfo(mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY);
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, errorMessage);
+			errorInfo.add(errorMessage);
+			return errorInfo;
+		}
+		// check the external files set in external-info.properties
+		FileInputStream stream = null;
+		try {
+			Properties properties = new Properties();
+			properties.load(stream = new FileInputStream(propertyFile));
+
+			Enumeration<Object> keys = properties.keys();
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				String filePath = properties.getProperty(key, null);
+				if (filePath == null) {
+					String errorMessage = String.format("The %1$s is not set correctly.", key);
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, errorMessage);
+					errorInfo.add(errorMessage);
+				} else {
+					if(!checkSdkFile(mayloonSDKPath, filePath)){
+						errorInfo.add(getNoSdkFileErrorInfo(mayloonSDKPath, filePath));
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, e.getMessage());
+			e.printStackTrace();
+			errorInfo.add(e.getMessage());
+		} catch (IOException e) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, e.getMessage());
+			e.printStackTrace();
+			errorInfo.add(e.getMessage());
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, e.getMessage());
+					e.printStackTrace();
+					errorInfo.add(e.getMessage());
+				}
+			}
+		}
+		return errorInfo;
+	}
+	
+	public static String getNoSdkFileErrorInfo(String mayloonSDKPath, String filePath){
+		String errorInfo =  String.format(
+				"Can't find Mayloon SDK file: %1$s  from SDK Directory:\"%2$s\"", filePath,
+				mayloonSDKPath);
+		return errorInfo;
+	}
+
+	/**
+	 * check whether the file is under Mayloon SDK directory.
+	 * 
+	 * @param mayloonSDKPath
+	 * @param filePath
+	 * @return false if file doesn't exist, or true
+	 */
+	public static boolean checkSdkFile(String mayloonSDKPath, String filePath) {
+		File file = new File(mayloonSDKPath, filePath);
+		if (!file.exists()) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					getNoSdkFileErrorInfo(mayloonSDKPath, filePath));
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * check whether the project's target android level matches Mayloon
+	 * supportable version
+	 * 
+	 * @param project
+	 * @return Warning information if version doesn't match, or the return
+	 *         string will be empty <br/>
+	 *         If can't get Mayloon Version, return null
+	 */
+	public static Set<String> getVersionMatchCheckInfo(IProject project) {
+		Set<String> warningInfo = new HashSet<String>();
+		MayloonVersion MayloonVersion = MayloonSDK.getSdkVersion();
+		if (MayloonVersion == null) {
+			return warningInfo;
+		}
+		int mayloonApiLevel = MayloonVersion.getAndroidApiLevel();
+		int minSdkVersion = getAndroidProjectMinSdkVersion(project);
+		if (minSdkVersion > mayloonApiLevel) {
+			String warningMessage = String
+					.format("The minimal android target version %1$s is higher than the Mayloon supportable version %2$s",
+							minSdkVersion, mayloonApiLevel);
+			MptPluginConsole.warning(MptConstants.CONVERT_TAG, warningMessage);
+			warningInfo.add(warningMessage);
+		}
+
+		int targetApiLevel = getAndroidProjectApiLevel(project);
+		if (targetApiLevel < minSdkVersion) {
+			String warningMessage = String
+					.format("Target API level %1$s is smaller than minSdkVersion %2$s.",
+							targetApiLevel, minSdkVersion);
+			MptPluginConsole.warning(MptConstants.CONVERT_TAG, warningMessage);
+			warningInfo.add(warningMessage);
+		}
+		if (targetApiLevel > MayloonVersion.getAndroidApiLevel()) {
+			String warningMessage = String
+					.format("Target API level %1$s is greater than Mayloon SDK API level %2$s.",
+							targetApiLevel, mayloonApiLevel);
+			MptPluginConsole.warning(MptConstants.CONVERT_TAG, warningMessage);
+			warningInfo.add(warningMessage);
+		}
+
+		return warningInfo;
+	}
+
+	/**
+	 * check reference project and get error information
+	 * @param project
+	 * @return error information 
+	 * @throws CoreException
+	 */
+	public static Set<String> getReferencedCheckInfo(IProject project) throws CoreException{
+		Set<String> errorInfo = new HashSet<String>();
+		if (ProjectUtil.checkReferencedProjects(project)){
+			errorInfo.add("other project(s) referenced in Java Buildpath");
+		}
+		if(ProjectUtil.checkAndroidReferencedProjects(project)){
+			errorInfo.add("other project(s) referenced in Android properties");
+		}
+		return errorInfo;
+	}
+	public static IPath getJ2SLibPath(IProject project) throws MptException {
+
 		FileInputStream stream = null;
 		IPath j2sLib = null;
 
@@ -2375,13 +2556,16 @@ public class ProjectUtil {
 			Properties properties = new Properties();
 			properties.load(stream = new FileInputStream(project.getLocation()
 					.append(MptConstants.MAYLOON_PROJECT_SETTING).toFile()));
-			
-			String j2sResList = properties.getProperty(MptConstants.J2S_RESROUCE_LIST, null);
+
+			String j2sResList = properties.getProperty(
+					MptConstants.J2S_RESROUCE_LIST, null);
 			String[] j2sResSplit = j2sResList.split(",");
 			String temp = j2sResSplit[0];
-			j2sLib = project.getLocation().append(temp.substring(0, temp.lastIndexOf("/")));
+			j2sLib = project.getLocation().append(
+					temp.substring(0, temp.lastIndexOf("/")));
 		} catch (FileNotFoundException e) {
-			throw new MptException(MptMessages.Not_found_Mayloon_External_File_Message,
+			throw new MptException(
+					MptMessages.Not_found_Mayloon_External_File_Message,
 					MptConstants.MAYLOON_PROJECT_SETTING);
 		} catch (IOException e) {
 			throw new MptException(e.getMessage());
@@ -2393,32 +2577,30 @@ public class ProjectUtil {
 				}
 			}
 		}
-		
+
 		return j2sLib;
 	}
-	
+
 	/**
 	 * get current AutoBuild set
+	 * 
 	 * @return
 	 */
-	public static boolean getAutoBuild(){
-		IWorkspace workspace = ResourcesPlugin
-				.getWorkspace();
-		IWorkspaceDescription description = workspace
-				.getDescription();
+	public static boolean getAutoBuild() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceDescription description = workspace.getDescription();
 		return description.isAutoBuilding();
 	}
-	
+
 	/**
 	 * set AutoBuild
+	 * 
 	 * @param value
 	 * @throws CoreException
 	 */
-	public static void setAutoBuild(Boolean value) throws CoreException{
-		IWorkspace workspace = ResourcesPlugin
-				.getWorkspace();
-		IWorkspaceDescription description = workspace
-				.getDescription();
+	public static void setAutoBuild(Boolean value) throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceDescription description = workspace.getDescription();
 		description.setAutoBuilding(value);
 		workspace.setDescription(description);
 	}
