@@ -6,6 +6,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class StartConvertPage extends WizardPage {
 
@@ -27,6 +30,22 @@ public class StartConvertPage extends WizardPage {
 		this.setMessage(null);
 	    this.setPageComplete(true);
 	    this.setControl(composite);
+	    new Label(composite, SWT.NONE);
+
+		final Button btnEnablePartialConversion = new Button(composite,
+				SWT.CHECK);
+		btnEnablePartialConversion.setToolTipText("Enable partial conversion if you want to generate stubs for JNI method declarations and APIs not supported so far.");
+		final ConvertWizards host = (ConvertWizards) this.getWizard();
+
+		btnEnablePartialConversion.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				host.enablePartialConversion(btnEnablePartialConversion
+						.getSelection());
+			}
+		});
+
+		btnEnablePartialConversion.setText("Enable partial conversion");
+		host.enablePartialConversion(btnEnablePartialConversion.getSelection());
 	}
 	
 	@Override

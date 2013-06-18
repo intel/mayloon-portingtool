@@ -12,7 +12,6 @@ import com.intel.ide.eclipse.mpt.MptPluginConsole;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public final static String PREFS_SDK_DIR = MptPlugin.PLUGIN_ID + ".sdk"; //$NON-NLS-1$
-	public final static String PARTIAL_CONVERSION_MODE = MPTPreferenceMessages.Mayloon_Partial_Conversion_Mode;
 
 	// singleton instance
 	private final static PreferenceInitializer sPreference = new PreferenceInitializer();
@@ -40,9 +39,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		return sdkLocation;
 	}
 	
-	public Boolean getPartialConversionMode(){
-		return mPreferenceStore.getBoolean(PARTIAL_CONVERSION_MODE);
-	}
 	/*
 	 * (non-Javadoc)
 	 * 

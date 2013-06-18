@@ -232,8 +232,6 @@ public class ConvertWizards extends Wizard {
 					packageName, false);
 			monitor.worked(1);
 
-			boolean partialConversionFlag = ProjectUtil
-					.getPartialConversionMode();
 			if (partialConversionFlag) {
 				// Update the user interface asynchronously
 				finishFlag = false;
@@ -387,5 +385,9 @@ public class ConvertWizards extends Wizard {
 		this.checkPreConvertPage = checkPreConvertPage;
 	}
 
+	private boolean partialConversionFlag = false;
 	
+	void enablePartialConversion(boolean enabled){
+		partialConversionFlag = enabled;
+	}
 }
