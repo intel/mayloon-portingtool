@@ -49,7 +49,7 @@ public class StartConvertPage extends WizardPage {
 	}
 	
 	@Override
-	 public boolean canFlipToNextPage() {
+	public boolean canFlipToNextPage() {
 		return isPageComplete();
 	}
 

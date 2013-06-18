@@ -1,5 +1,6 @@
 package com.intel.ide.eclipse.mpt.ast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -79,5 +80,9 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 
 		astRewriteBasedManipulator.manipulateNativeMethod4Add(unit, managers);
 
+	}
+	
+	public ArrayList<String> getStubMethodInfo(){
+		return this.astRewriteBasedManipulator.getStubMethodInfo();
 	}
 }

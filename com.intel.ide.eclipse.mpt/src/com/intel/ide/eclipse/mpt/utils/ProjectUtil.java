@@ -2148,7 +2148,7 @@ public class ProjectUtil {
 	 * @param packageName
 	 */
 	public static boolean AddMissedClass2UserApp(IPath filePath,
-			String missClassName, IProject project) {
+			String missClassName, IProject project, ArrayList<String> info) {
 		boolean retVal = true;
 		BufferedReader br = null;
 		BufferedWriter bw = null;
@@ -2226,7 +2226,7 @@ public class ProjectUtil {
 		MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG,
 				"StubClass '%1$s' has been added to project '%2$s'.",
 				missClassName, project.getName());
-
+		info.add(missClassName);
 		return retVal;
 	}
 

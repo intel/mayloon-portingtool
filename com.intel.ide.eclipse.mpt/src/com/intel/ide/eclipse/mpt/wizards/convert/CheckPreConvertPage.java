@@ -52,7 +52,7 @@ public class CheckPreConvertPage extends WizardPage {
 		composite.setLayoutData(new FormData());
 		
 		createAllComponents(composite);
-        this.setPageComplete(false);
+        //this.setPageComplete(false);
         this.setControl(composite);
       }
 	
@@ -118,6 +118,10 @@ public class CheckPreConvertPage extends WizardPage {
 		}else if(infoType.equals(warningInfoType)){
 			infoListViewer.add(warningInfoSet.toArray());
 		}
+	}
+	
+	public boolean canFlipToNextPage() {
+		return isPageComplete();
 	}
 
 	/**

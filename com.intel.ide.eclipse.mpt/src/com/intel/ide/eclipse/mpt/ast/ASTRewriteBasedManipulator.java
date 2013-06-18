@@ -1,11 +1,12 @@
 package com.intel.ide.eclipse.mpt.ast;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
@@ -20,12 +21,14 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 	private ASTRewrite mRewrite;
 	private AST mAST;
 	private CompilationUnit mUnit;
+	private ArrayList<String> info;
 
 	public ASTRewriteBasedManipulator(CompilationUnit unit) {
 		// create the rewrite instance for "unit"
 		mAST = unit.getAST();
 		mRewrite = ASTRewrite.create(mAST);
 		mUnit = unit;
+		info = new ArrayList<String>();
 	}
 
 	/*
@@ -78,6 +81,14 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 						"Native method '%1$s' has been added to class '%2$s' at line '%3$s'",
 						methodDecl.getName(), this.mUnit.getTypeRoot().getElementName(),
 						this.mUnit.getLineNumber(methodDecl.getStartPosition()));
+		String param = "";
+		for (int i = 0;i < methodStub.parameters().size();i ++){
+			param += methodStub.parameters().get(i);
+			if (i != methodStub.parameters().size() - 1){
+				param += ",";
+			}
+		}
+		info.add("Method \"" + methodStub.getName() + "(" + param + ")\" in " + this.mUnit.getTypeRoot().getElementName());
 		// NormalAnnotation a = mAST.newNormalAnnotation();
 		// a.setTypeName(mAST.newName("MayloonAnnotation"));
 		// // a.values().add(createAnnotationMember(mAST, "infoAnnotation",
@@ -124,4 +135,7 @@ public class ASTRewriteBasedManipulator extends AbstractManipulator {
 
 	}
 
+	public ArrayList<String> getStubMethodInfo(){
+		return this.info;
+	}
 }

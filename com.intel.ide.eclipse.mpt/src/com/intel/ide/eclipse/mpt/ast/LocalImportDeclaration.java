@@ -1,6 +1,7 @@
 package com.intel.ide.eclipse.mpt.ast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
@@ -26,6 +27,7 @@ public class LocalImportDeclaration extends ASTVisitor {
 	IProject project;
 	HashSet<String> mayloonJarClassSet;
 	HashSet<String> visitedNodeNameSet;
+	ArrayList<String> parConversionInfo = new ArrayList<String>();
 
 	/**
 	 * Visits {@link ImportDeclaration} AST nodes.
@@ -50,7 +52,7 @@ public class LocalImportDeclaration extends ASTVisitor {
 
 		if(!isImportNodeExisted(importNodeName)){
 			ProjectUtil.AddMissedClass2UserApp(templateFilePath,
-					importNodeName, project);
+					importNodeName, project, this.parConversionInfo);
 			if(!AnnotationClassAddedFlag){
 				ProjectUtil.AddAnnotationClass2UserApp(project);
 				AnnotationClassAddedFlag = true;
@@ -99,4 +101,7 @@ public class LocalImportDeclaration extends ASTVisitor {
 		unit.accept(this);
 	}
 
+	public ArrayList<String> getParConversionInfo(){
+		return this.parConversionInfo;
+	}
 }

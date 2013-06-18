@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
@@ -39,14 +38,17 @@ import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class ConvertWizards extends Wizard {
 	private IProject project;
+	
 	private CheckPreConvertPage checkPreConvertPage;
+	private PartialConversionInfoPage parConversionInfoPage;
+	
 	private Boolean originalAutoBuild;
-	private Boolean finishFlag;
+	private Boolean convertFlag;	//see if already tried converting; check this before perform finishing
 	
 	public ConvertWizards(IProject project){
 		this.project = project;
 		this.originalAutoBuild = false;
-		this.finishFlag = false;
+		this.convertFlag = false;
 		this.setHelpAvailable(false);
 		this.setNeedsProgressMonitor(true);
 	}
@@ -55,6 +57,7 @@ public class ConvertWizards extends Wizard {
 	public void addPages(){
 		this.addPage(new StartConvertPage());
 		this.addPage(this.checkPreConvertPage = new CheckPreConvertPage(this));
+		this.addPage(this.parConversionInfoPage = new PartialConversionInfoPage());
 	}
 	
 	@Override
@@ -80,6 +83,7 @@ public class ConvertWizards extends Wizard {
 	    	return null;
 		}
 	    if(wizardPages[index + 1].getName().equals("CheckPreConvertPage")){
+	    	MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG, "CheckPreConverPage");
 	    	try {
 	    		if(wizardPages[index + 1].getControl() != null){
 	    			wizardPages[index + 1].dispose();
@@ -97,6 +101,28 @@ public class ConvertWizards extends Wizard {
 				reportError(e);
 			}
 	    }
+	    else if (wizardPages[index + 1].getName().equals("PartialConversionInfo")){
+	    	MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG, "PartialConversionInfo");
+	    	if(wizardPages[index + 1].getControl() != null){
+	    		wizardPages[index + 1].dispose();
+	    	}
+    		    		
+	    	//convert a project
+    		try {
+    			this.getContainer().run(true, true, new IRunnableWithProgress() {
+    				@Override
+    				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+    						InterruptedException{
+    					convert(monitor);
+    					monitor.done();
+    				}
+    			});
+    		} catch (InvocationTargetException e) {
+    			reportError(e);
+    		} catch (InterruptedException e) {
+    			reportError(e);
+    		}
+	    }
 	    return (IWizardPage) wizardPages[index+1];
 	}
 	
@@ -110,6 +136,10 @@ public class ConvertWizards extends Wizard {
 	
 	@Override
 	public boolean performFinish() {
+		if (this.convertFlag){
+			return true;	//already tried, skip converting
+		}
+		
 		try {
 			this.getContainer().run(true, true, new IRunnableWithProgress() {
 				@Override
@@ -171,6 +201,7 @@ public class ConvertWizards extends Wizard {
 		try {
 			// 9 steps to convert project
 			monitor.beginTask("Project converting...", 8);
+			this.convertFlag = true;
 			if (!ProjectUtil.checkAndroidApk(project)) {
 				throw new MptException("can't get %1$s.apk file",
 						project.getName());
@@ -233,20 +264,14 @@ public class ConvertWizards extends Wizard {
 			monitor.worked(1);
 
 			if (partialConversionFlag) {
-				// Update the user interface asynchronously
-				finishFlag = false;
-				partialConversionAsync();
+				partialConversionSync();
 			}
 
 			// Add mayloon project builder to classpath
 			MayloonNature.addMaloonProjectBuilder(project);
 			monitor.worked(1);
 
-			if (partialConversionFlag) {
-				finishFlag = true;
-			} else {
-				convertFinish();
-			}
+			convertFinish();
 		} catch (CoreException e) {
 			reportError(e);
 		} catch (MptException e) {
@@ -263,73 +288,53 @@ public class ConvertWizards extends Wizard {
 		return (CompilationUnit) parser.createAST(null); // parse
 	}
 	
-	private void partialConversionAsync(){
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				try {
-					// IProject project =
-					// selectedProject.getProject();
+	private void partialConversionSync(){
+		try {
+			LocalImportDeclaration localImportDeclaration = null;
+			
+			if (project
+					.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
 
-					if (project
-							.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+				IPackageFragment[] packages = JavaCore
+						.create(project)
+						.getPackageFragments();
 
-						IPackageFragment[] packages = JavaCore
-								.create(project)
-								.getPackageFragments();
-						// parse(JavaCore.create(project));
-						for (IPackageFragment mypackage : packages) {
-							if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
-								for (ICompilationUnit unit : mypackage
-										.getCompilationUnits()) {
-
-									// for local native
-									// method
-									ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+				for (IPackageFragment mypackage : packages) {
+					if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+						for (ICompilationUnit unit : mypackage
+								.getCompilationUnits()) {
+							ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
+							astParserAddNativeMethod
+									.run(unit);
+							astParserAddNativeMethod.rewrite(
 									astParserAddNativeMethod
-											.run(unit);
-									astParserAddNativeMethod.rewrite(
-											astParserAddNativeMethod
-													.getCompilationUnit(),
-											astParserAddNativeMethod
-													.getLocalStubMethodDetector()
-													.getNativeMethodBindingManagers());
-									
-									HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
-									
-									LocalImportDeclaration localImportDeclaration = new LocalImportDeclaration();
-									localImportDeclaration.process(parse(unit), project, mayloonJarClassSet);
-									
-									// for local method
-									// ASTParserAddStubMethodDeclaration
-									// astParserAddStubMethod
-									// = new
-									// ASTParserAddStubMethodDeclaration();
-									// astParserAddStubMethod.run(unit);
-									// astParserAddStubMethod.rewrite(astParserAddStubMethod.getCompilationUnit(),
-									// astParserAddStubMethod.getLocalStubMethodDetector().getStubMethodBindingManagers());
-								}
-							}
+											.getCompilationUnit(),
+									astParserAddNativeMethod
+											.getLocalStubMethodDetector()
+											.getNativeMethodBindingManagers());
+							
+							HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
+							
+							localImportDeclaration = new LocalImportDeclaration();
+							localImportDeclaration.process(parse(unit), project, mayloonJarClassSet);
+							this.parConversionInfoPage.addStubClassInfo(
+									localImportDeclaration.getParConversionInfo());
+							this.parConversionInfoPage.addStubMethodInfo(
+									astParserAddNativeMethod.getStubMethodInfo());
 						}
 					}
-					while (!finishFlag) {
-						this.wait(1);
-					}
-					convertFinish();
-				} catch (JavaModelException e) {
-					reportError(e);
-				} catch (CoreException e) {
-					reportError(e);
-				} catch (MalformedTreeException e) {
-					reportError(e);
-				} catch (InterruptedException e) {
-					reportError(e);
-				} catch (IOException e) {
-					reportError(e);
 				}
-
 			}
-		});
-	}
+		} catch (JavaModelException e) {
+			reportError(e);
+		} catch (CoreException e) {
+			reportError(e);
+		} catch (MalformedTreeException e) {
+			reportError(e);
+		} catch (IOException e) {
+			reportError(e);
+		}
+	}	
 	
 	private void reportError(Exception e){
 		MptPluginLogger.throwable(e);
