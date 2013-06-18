@@ -2,6 +2,8 @@ package com.intel.ide.eclipse.mpt.launching;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -32,5 +34,20 @@ public class MayloonLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 			}
 		}			
 	}
-	
+
+    @Override
+    protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode)
+            throws CoreException {
+        //Just build the current project when run as Mayloon Application
+        IProject[] buildProjects = super.getBuildOrder(configuration, mode);
+        if (buildProjects == null) {
+            IResource[] resources = configuration.getMappedResources();
+            if (resources != null && resources.length > 0) {
+                buildProjects = new IProject[1];
+                buildProjects[0] = resources[0].getProject();;
+                return buildProjects;
+            }
+        }
+        return buildProjects;
+    }
 }
