@@ -985,7 +985,7 @@ public class ProjectUtil {
 		if (entries != oldEntries) {
 			javaProject.setRawClasspath(entries, new NullProgressMonitor());
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Changes on classpath has been applied.");
+					"Changes to classpath have been applied.");
 		}
 	}
 
