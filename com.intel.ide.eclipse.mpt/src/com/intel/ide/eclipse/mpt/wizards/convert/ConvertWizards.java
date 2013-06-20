@@ -83,7 +83,6 @@ public class ConvertWizards extends Wizard {
 	    	return null;
 		}
 	    if(wizardPages[index + 1].getName().equals("CheckPreConvertPage")){
-	    	MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG, "CheckPreConverPage");
 	    	try {
 	    		if(wizardPages[index + 1].getControl() != null){
 	    			wizardPages[index + 1].dispose();
@@ -102,7 +101,6 @@ public class ConvertWizards extends Wizard {
 			}
 	    }
 	    else if (wizardPages[index + 1].getName().equals("PartialConversionInfo")){
-	    	MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG, "PartialConversionInfo");
 	    	if(wizardPages[index + 1].getControl() != null){
 	    		wizardPages[index + 1].dispose();
 	    	}
@@ -128,7 +126,10 @@ public class ConvertWizards extends Wizard {
 	
 	@Override
 	public boolean canFinish(){
-		if(!this.checkPreConvertPage.getErrorInfoSet().isEmpty()){
+		if (this.checkPreConvertPage != null && !this.checkPreConvertPage.getErrorInfoSet().isEmpty()){
+			return false;
+		}
+		if (partialConversionFlag && !convertFlag){
 			return false;
 		}
 		return true;
@@ -290,14 +291,11 @@ public class ConvertWizards extends Wizard {
 	
 	private void partialConversionSync(){
 		try {
+			HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
 			LocalImportDeclaration localImportDeclaration = null;
 			
-			if (project
-					.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
-
-				IPackageFragment[] packages = JavaCore
-						.create(project)
-						.getPackageFragments();
+			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+				IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
 
 				for (IPackageFragment mypackage : packages) {
 					if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -312,8 +310,6 @@ public class ConvertWizards extends Wizard {
 									astParserAddNativeMethod
 											.getLocalStubMethodDetector()
 											.getNativeMethodBindingManagers());
-							
-							HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
 							
 							localImportDeclaration = new LocalImportDeclaration();
 							localImportDeclaration.process(parse(unit), project, mayloonJarClassSet);

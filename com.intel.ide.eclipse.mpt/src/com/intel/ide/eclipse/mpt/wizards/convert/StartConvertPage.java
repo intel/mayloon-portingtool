@@ -24,8 +24,7 @@ public class StartConvertPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setLayout(new GridLayout(1, false));
 		Label infoLabel = new Label(composite, SWT.WRAP);
-		infoLabel.setText("If you want to check necessary files and information before converting, press \" Next \" \n" +
-				"or you can press \"Finish \" to convert directly \n");
+		infoLabel.setText("Press \"Next\" to check necessary files and information.");
 		this.setErrorMessage(null);
 		this.setMessage(null);
 	    this.setPageComplete(true);

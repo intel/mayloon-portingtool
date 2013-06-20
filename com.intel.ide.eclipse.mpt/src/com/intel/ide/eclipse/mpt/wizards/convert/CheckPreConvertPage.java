@@ -121,7 +121,7 @@ public class CheckPreConvertPage extends WizardPage {
 	}
 	
 	public boolean canFlipToNextPage() {
-		return isPageComplete();
+		return isPageComplete() && errorInfoSet.isEmpty();
 	}
 
 	/**
