@@ -16,15 +16,6 @@ public class MptConstants {
 	public static final String MAYLOON_DEPLOY_MODE = "mayloon.deploy.mode";
 	public static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 	public static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
-	public static final String TIZEN_PROJECT_FILE = ".project";
-	public static final String TIZEN_CONFIGURATION_FILE = "config.xml";
-	public static final String TIZEN_NAME_ELEMENT_NAME = "name";
-	public static final String TIZEN_ICON_ELEMENT_NAME = "icon";
-	public static final String TIZEN_CONTENT_ELEMENT_NAME = "content";
-	public static final String TIZEN_ID_ATTRIBUTE_NAMR = "id";
-	public static final String TIZEN_SRC_ATTRIBUTE_NAMR = "src";
-	public static final String TIZEN_APPLICATION_ELEMENT_NAME = "tizen:application";
-	public static final String TIZEN_WIDGET_ID_DOMAIN = "http://yourdomain/";
 	public static final String MAYLOON_J2SLIB = "j2slib";
 	
 	public static final String MAYLOON_START_ENTRY_FILE = ".html";

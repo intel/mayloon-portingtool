@@ -425,7 +425,7 @@ public class ProjectUtil {
 	}
 
 	/**
-	 * add .project and config.xml to Tizen deployment directory
+	 * Copy .html and icon.png to Tizen deployment directory
 	 * 
 	 * @param project
 	 * @throws CoreException
@@ -440,23 +440,8 @@ public class ProjectUtil {
 
 		try {
 			IPath destPath = null;
-			IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-					+ MptConstants.TIZEN_PROJECT_FILE);
+			IPath srcPath;
 			destPath = getMayloonOutputFolder(project);
-
-			ProjectUtil.copyFile(srcPath.toFile(),
-					destPath.append(MptConstants.TIZEN_PROJECT_FILE).toFile());
-			ProjectUtil.fixTizenProjectFile(project,
-					destPath.append(MptConstants.TIZEN_PROJECT_FILE));
-
-			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-					+ MptConstants.TIZEN_CONFIGURATION_FILE);
-
-			ProjectUtil.copyFile(srcPath.toFile(),
-					destPath.append(MptConstants.TIZEN_CONFIGURATION_FILE)
-							.toFile());
-			ProjectUtil.fixTizenConfigurationFile(project,
-					destPath.append(MptConstants.TIZEN_CONFIGURATION_FILE));
 
 			srcPath = project.getFolder(
 					MptConstants.WS_ROOT + project.getName()
@@ -465,8 +450,7 @@ public class ProjectUtil {
 			ProjectUtil.copyFile(
 					srcPath.toFile(),
 					destPath.append(
-							project.getName()
-									+ MptConstants.MAYLOON_START_ENTRY_FILE)
+							project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE)
 							.toFile());
 
 			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
@@ -482,84 +466,6 @@ public class ProjectUtil {
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * change tizen .project file according to user application
-	 * 
-	 * @param project
-	 * @throws CoreException
-	 */
-	public static void fixTizenProjectFile(IProject project, IPath filePath) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setIgnoringElementContentWhitespace(true);
-		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document projectDocument = builder.parse(filePath.toFile());
-
-			Element projectDescription = projectDocument.getDocumentElement();
-			projectDescription
-					.getElementsByTagName(MptConstants.TIZEN_NAME_ELEMENT_NAME)
-					.item(0).setTextContent(project.getName());
-
-			saveXml(filePath.toString(), projectDocument);
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * change tizen config.xml file according to user application
-	 * 
-	 * @param project
-	 */
-	public static void fixTizenConfigurationFile(IProject project,
-			IPath filePath) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setIgnoringElementContentWhitespace(true);
-		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document configDocument = builder.parse(filePath.toFile());
-
-			Element widget = configDocument.getDocumentElement();
-			widget.setAttribute(MptConstants.TIZEN_ID_ATTRIBUTE_NAMR,
-					MptConstants.TIZEN_WIDGET_ID_DOMAIN + project.getName());
-			widget.getElementsByTagName(MptConstants.TIZEN_NAME_ELEMENT_NAME)
-					.item(0).setTextContent(project.getName());
-
-			Element icon = (Element) widget.getElementsByTagName(
-					MptConstants.TIZEN_ICON_ELEMENT_NAME).item(0);
-			icon.setAttribute(MptConstants.TIZEN_SRC_ATTRIBUTE_NAMR,
-					MptConstants.MAYLOON_TIZEN_ICON);
-
-			Element content = (Element) widget.getElementsByTagName(
-					MptConstants.TIZEN_CONTENT_ELEMENT_NAME).item(0);
-			content.setAttribute(MptConstants.TIZEN_SRC_ATTRIBUTE_NAMR,
-					project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE);
-
-			Element tizenApp = (Element) widget.getElementsByTagName(
-					MptConstants.TIZEN_APPLICATION_ELEMENT_NAME).item(0);
-			tizenApp.setAttribute(MptConstants.TIZEN_ID_ATTRIBUTE_NAMR,
-					project.getName());
-
-			saveXml(filePath.toString(), configDocument);
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**

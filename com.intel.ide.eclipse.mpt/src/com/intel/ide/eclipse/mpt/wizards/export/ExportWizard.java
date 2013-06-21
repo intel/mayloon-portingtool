@@ -150,11 +150,11 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			String packageName = ProjectUtil
 					.extractPackageFromManifest(fProject);
 
-			// generate the .project, config.xml, Icon.png and project name.html
+			// generate the Icon.png and project name.html
 			// file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
 			MptPluginConsole.general(MptConstants.EXPORT_TAG,
-					"%1$s has been copyed to %2$s", fProject.getName()
+					"%1$s has been copied to %2$s", fProject.getName()
 							+ MptConstants.MAYLOON_START_ENTRY_FILE,
 					fDestinationFile.toString());
 			// copy mayloon runtime resource to export destination
