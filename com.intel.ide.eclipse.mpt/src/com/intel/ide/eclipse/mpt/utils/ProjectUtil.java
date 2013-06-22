@@ -2185,21 +2185,32 @@ public class ProjectUtil {
 		}
 	}
 
+	private static HashSet<String> mayloonJarClassSet = null;
 	/**
 	 * get the class names from mayloon.jar
 	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	public static HashSet<String> getMayloonJarClasses() throws IOException {
-		HashSet<String> mayloonJarClassSet = new HashSet<String>();
-		String mayloonSDKPath = MayloonSDK.getSdkLocation();
-		File mayloonJarFile = new File(mayloonSDKPath + MptConstants.WS_ROOT
-				+ MptConstants.MAYLOON_JAR_LIB);
-		JarFile jar = new JarFile(mayloonJarFile, true);
-		Enumeration<JarEntry> e = jar.entries();
-		while (e.hasMoreElements()) {
-			mayloonJarClassSet.add(e.nextElement().getName().replace('/', '.'));
+	public static HashSet<String> getMayloonJarClasses(){
+		if (mayloonJarClassSet == null) {
+			mayloonJarClassSet = new HashSet<String>();
+			String mayloonSDKPath = MayloonSDK.getSdkLocation();
+			File mayloonJarFile = new File(mayloonSDKPath
+					+ MptConstants.WS_ROOT + MptConstants.MAYLOON_JAR_LIB);
+			JarFile jar;
+			try {
+				jar = new JarFile(mayloonJarFile, true);
+				Enumeration<JarEntry> e = jar.entries();
+				while (e.hasMoreElements()) {
+					mayloonJarClassSet.add(e.nextElement().getName()
+							.replace('/', '.'));
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 		return mayloonJarClassSet;
 	}

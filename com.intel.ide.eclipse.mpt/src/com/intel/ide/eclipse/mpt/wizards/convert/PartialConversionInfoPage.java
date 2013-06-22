@@ -173,7 +173,7 @@ public class PartialConversionInfoPage extends WizardPage{
 		if (info == null || info.size() <= 0){
 			return;
 		}
-		this.stubClassInfo.addAll(info);
+		stubClassInfo = info;
 	}
 	
 	public void addStubMethodInfo(ArrayList<String> info){

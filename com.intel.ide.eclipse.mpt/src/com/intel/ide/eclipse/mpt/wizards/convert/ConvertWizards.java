@@ -2,24 +2,31 @@ package com.intel.ide.eclipse.mpt.wizards.convert;
 
 import org.eclipse.swt.widgets.Composite;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IImportDeclaration;
+import org.eclipse.jdt.core.IJavaModelMarker;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.compiler.IProblem;
+import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -30,10 +37,10 @@ import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
-import com.intel.ide.eclipse.mpt.ast.LocalImportDeclaration;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
+import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class ConvertWizards extends Wizard {
@@ -44,6 +51,7 @@ public class ConvertWizards extends Wizard {
 	
 	private Boolean originalAutoBuild;
 	private Boolean convertFlag;	//see if already tried converting; check this before perform finishing
+	ArrayList<String> parConversionInfo = new ArrayList<String>();
 	
 	public ConvertWizards(IProject project){
 		this.project = project;
@@ -265,7 +273,7 @@ public class ConvertWizards extends Wizard {
 			monitor.worked(1);
 
 			if (partialConversionFlag) {
-				partialConversionSync();
+				partialConversionSync(monitor);
 			}
 
 			// Add mayloon project builder to classpath
@@ -281,26 +289,72 @@ public class ConvertWizards extends Wizard {
 	}
 	
 
-	private static CompilationUnit parse(ICompilationUnit unit) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null); // parse
+	public IMarker[] findJavaProblemMarkers(ICompilationUnit cu)
+			throws CoreException {
+		IResource javaSourceFile = cu.getUnderlyingResource();
+		IMarker[] markers = javaSourceFile.findMarkers(
+				IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
+				IResource.DEPTH_INFINITE);
+		
+		return markers;
 	}
 	
-	private void partialConversionSync(){
+	private static String outerClassName(String className){
+		String[] split = className.split("\\.");
+		StringBuilder outerClassName = new StringBuilder();
+		boolean found = false;
+		outerClassName.append(split[0]);
+		
+		for(int i =1; i<split.length; i++){
+			char c = split[i].charAt(0);
+			if (c >= 'A' && c <= 'Z'){
+				if(found){
+					break;
+				}
+				found = true;
+			}
+			outerClassName.append(".").append(split[i]);
+		}
+		return outerClassName.toString();
+	}
+	
+	private static boolean needStub(String name, Set<String> unresolvedImports) {
+		for (String item : unresolvedImports) {
+			if (name.equals(item) || name.startsWith(item + "."))
+				if (!ProjectUtil.getMayloonJarClasses().contains(name))
+					return true;
+		}
+		return false;
+	}
+	
+	private void partialConversionSync(IProgressMonitor monitor){
 		try {
-			HashSet<String> mayloonJarClassSet = ProjectUtil.getMayloonJarClasses();
-			LocalImportDeclaration localImportDeclaration = null;
-			
 			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
-				IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
+				IJavaProject javaProject = JavaCore.create(project);
+				Map options = javaProject.getOptions(false);
+				options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, JavaCore.IGNORE);
+				options.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
+				javaProject.setOptions(options);
+				
+				/*
+				 * Perform a full build. Subsequent builds can be incremental.
+				 */
+				project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+
+				IPackageFragment[] packages = JavaCore
+						.create(project)
+						.getPackageFragments();
+				
+				Set <String> unresolvedImports = new HashSet <String>();
+				Set <String> allImports = new HashSet <String>();
+				int numJavaProblems = 0;
 
 				for (IPackageFragment mypackage : packages) {
 					if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
 						for (ICompilationUnit unit : mypackage
 								.getCompilationUnits()) {
+
+							// Turn JNI method declarations into stub methods
 							ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
 							astParserAddNativeMethod
 									.run(unit);
@@ -310,15 +364,62 @@ public class ConvertWizards extends Wizard {
 									astParserAddNativeMethod
 											.getLocalStubMethodDetector()
 											.getNativeMethodBindingManagers());
-							
-							localImportDeclaration = new LocalImportDeclaration();
-							localImportDeclaration.process(parse(unit), project, mayloonJarClassSet);
-							this.parConversionInfoPage.addStubClassInfo(
-									localImportDeclaration.getParConversionInfo());
 							this.parConversionInfoPage.addStubMethodInfo(
 									astParserAddNativeMethod.getStubMethodInfo());
+
+							// All imports
+							IImportDeclaration[] thisImports = unit.getImports();
+							for(IImportDeclaration node: thisImports){
+								String importNodeName = node.getElementName();
+								if(node.isOnDemand()){
+									MptPluginConsole.warning(MptConstants.PARTIAL_CONVERSION_TAG,
+											"The on demand import: '%1$s' is not supported in Partial Conversion mode",
+											importNodeName);
+									continue;
+								}
+								allImports.add(importNodeName);
+							}
+
+							// Unresolved imports
+							IMarker[] markers = findJavaProblemMarkers(unit);
+							numJavaProblems += markers.length;
+							for (IMarker marker : markers) {
+								int id = marker.getAttribute(IJavaModelMarker.ID,
+										-1);
+								
+								if (id == IProblem.ImportNotFound){
+									String[] args = Util
+											.getProblemArgumentsFromMarker(marker
+													.getAttribute(
+															IJavaModelMarker.ARGUMENTS,
+															""));
+									unresolvedImports.add(args[0]);
+								}
+							}
 						}
 					}
+				}
+
+				if (!unresolvedImports.isEmpty()) {
+					IPath templateFilePath = new Path(MayloonSDK.getSdkLocation()
+							+ IPath.SEPARATOR
+							+ MptConstants.MAYLOON_MISSCLASS_TEMPLATE_FILE);
+					boolean AnnotationClassAddedFlag = false;
+					for (String importName : allImports) {
+						String outerClassName = outerClassName(importName);
+						if (needStub(outerClassName, unresolvedImports)) {
+							ProjectUtil.AddMissedClass2UserApp(
+									templateFilePath, outerClassName, project,
+									this.parConversionInfo);
+							
+							if(!AnnotationClassAddedFlag){
+								ProjectUtil.AddAnnotationClass2UserApp(project);
+								AnnotationClassAddedFlag = true;
+							}
+						}
+					}
+					parConversionInfoPage.addStubClassInfo(parConversionInfo);
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 			}
 		} catch (JavaModelException e) {
@@ -327,9 +428,7 @@ public class ConvertWizards extends Wizard {
 			reportError(e);
 		} catch (MalformedTreeException e) {
 			reportError(e);
-		} catch (IOException e) {
-			reportError(e);
-		}
+		} 
 	}	
 	
 	private void reportError(Exception e){
@@ -370,20 +469,6 @@ public class ConvertWizards extends Wizard {
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
-	}
-
-	/**
-	 * @return the checkPreConvertPage
-	 */
-	public CheckPreConvertPage getCheckPreConvertPage() {
-		return checkPreConvertPage;
-	}
-
-	/**
-	 * @param checkPreConvertPage the checkPreConvertPage to set
-	 */
-	public void setCheckPreConvertPage(CheckPreConvertPage checkPreConvertPage) {
-		this.checkPreConvertPage = checkPreConvertPage;
 	}
 
 	private boolean partialConversionFlag = false;

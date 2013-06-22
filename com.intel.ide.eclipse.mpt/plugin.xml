@@ -318,14 +318,5 @@
       </wizard>
    </extension>
    
-   <extension
-		point="org.eclipse.jdt.core.compilationParticipant">
-		<compilationParticipant
-			class="com.intel.eclipse.mayloon.internal.MptCompilationParticipant"
-			createsProblems="true"
-			id="com.intel.eclipse.mayloon.internal.compilationParticipant"
-			modifiesEnvironment="false">
-		</compilationParticipant>
-	</extension>
 
 </plugin>
