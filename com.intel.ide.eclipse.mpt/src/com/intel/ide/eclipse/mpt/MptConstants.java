@@ -19,7 +19,7 @@ public class MptConstants {
 	public static final String MAYLOON_J2SLIB = "j2slib";
 	
 	public static final String MAYLOON_START_ENTRY_FILE = ".html";
-	public static final String MAYLOON_TIZEN_ICON = "Icon.png";
+	public static final String MAYLOON_TIZEN_ICON = "icon.png";
 	public static final String MAYLOON_START_ENTRY_JAVA_FILE = "android/core/Start.java";
 	public static final String MAYLOON_START_ENTRY_BASE = "pm.installPackage(\"/**/\");";
 	public static final String MAYLOON_START_ENTRY_MATCH = "/\\*\\*/";
