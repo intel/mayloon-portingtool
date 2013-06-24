@@ -2,7 +2,7 @@
 <feature
       id="com.intel.ide.eclipse.mpt.feature"
       label="MayLoon Porting Tool"
-      version="0.3.1"
+      version="0.4.0"
       provider-name="Intel">
 
    <description url="http://www.intel.com">
