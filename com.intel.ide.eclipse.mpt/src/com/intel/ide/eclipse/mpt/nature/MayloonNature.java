@@ -126,7 +126,7 @@ public class MayloonNature implements IProjectNature {
 
             description.setNatureIds(newNatures);
             project.setDescription(description, null);
-            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
+            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature.", project.getName());
             
 //            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
@@ -139,18 +139,7 @@ public class MayloonNature implements IProjectNature {
 	
 	public static void addMaloonProjectBuilder(IProject project) throws CoreException {
 		if (project == null || !project.isOpen()) return;
-		if (!project.hasNature(MayloonNature.NATURE_ID)) {
-            IProjectDescription description = project.getDescription();
-            String[] natures = description.getNatureIds();
-            String[] newNatures = new String[natures.length + 1];
 
-            System.arraycopy(natures, 0, newNatures, 0, natures.length);
-            newNatures[natures.length] = MayloonNature.NATURE_ID;
-
-            description.setNatureIds(newNatures);
-            project.setDescription(description, null);
-            MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature", project.getName());
-		}
         removeFromBuildSpec(project, JavaCore.BUILDER_ID);
 		addMayloonToBuildSpec(MptConstants.MAYLOON_J2S_BUILDER, project);
 	}

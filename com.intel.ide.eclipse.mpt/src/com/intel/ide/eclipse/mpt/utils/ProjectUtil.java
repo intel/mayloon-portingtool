@@ -221,7 +221,7 @@ public class ProjectUtil {
 				MptPluginConsole
 						.error(MptConstants.CONVERT_TAG,
 								"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
-				throw new MptException("can't get %1$s.apk file",
+				throw new MptException("Can't get file %1$s.",
 						project.getName());
 			}
 
@@ -331,37 +331,6 @@ public class ProjectUtil {
 	public static boolean AddMissedAndroidClass2UserApp(String missClassName,
 			IProject project) {
 		boolean retVal = false;
-
-		// IPath destFilePath =
-		// project.getLocation().append(MptConstants.MAYLOON_SRC_DIR);
-		String[] packageSplit = missClassName.split("\\.");
-		String className = missClassName.substring(missClassName
-				.lastIndexOf('.') + 1) + ".java";
-
-		// TODO luqiang, only for test
-		String mayloonSDK = "C:\\Dev\\mayloon\\mayloon_sdk";// MayloonSDK.getSdkLocation();
-
-		IPath mayloonSDKPath = new Path(mayloonSDK);
-		for (int i = 0; i < packageSplit.length - 1; i++) {
-			mayloonSDKPath = mayloonSDKPath.append(packageSplit[i]);
-		}
-
-		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
-
-		// create folder accroding to missClassName
-		if (CreateMissClassPackageFolder(packageFolderPath, project)) {
-
-			String srcFile = mayloonSDKPath.toOSString() + IPath.SEPARATOR
-					+ className;
-
-			String destFile = packageFolderPath.toOSString() + IPath.SEPARATOR
-					+ className;
-
-			copyFile(srcFile, destFile);
-
-			retVal = true;
-		}
-
 		return retVal;
 	}
 
@@ -383,7 +352,7 @@ public class ProjectUtil {
 		} catch (CoreException e) {
 			MptPluginConsole
 					.error(MptConstants.CONVERT_TAG,
-							"Could not move Android output resource due to cause {%1$s}",
+							"Could not move Android output resource due to cause {%1$s}.",
 							e.getMessage());
 		}
 	}
@@ -419,7 +388,7 @@ public class ProjectUtil {
 			srcDir.delete(EFS.NONE, null);
 		} catch (CoreException e) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
-					"Could not clear Android gen folder due to cause {%1$s}",
+					"Could not clear Android gen folder due to cause {%1$s}.",
 					e.getMessage());
 		}
 	}
@@ -628,7 +597,7 @@ public class ProjectUtil {
 		} catch (IOException e) {
 			MptPluginConsole
 					.error(MptConstants.CONVERT_TAG,
-							"Could not load Mayloon external information due to cause {%1$s}",
+							"Could not load Mayloon external information due to cause {%1$s}.",
 							e.getMessage());
 		} finally {
 			if (stream != null) {
@@ -856,9 +825,8 @@ public class ProjectUtil {
 				MptConstants.ADT_CLASSPATH_ENTRY_ID,
 				IClasspathEntry.CPE_CONTAINER);
 		if (adtIndex != -1) {
-			// no jre classpath entry, add a jre container to Mayloon class path
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Remove ADT Class Container from classpath.");
+					"Removing ADT Class Container from classpath.");
 			entries = ProjectUtil.removeClassPathEntry(entries, adtIndex);
 		}
 
@@ -1718,7 +1686,7 @@ public class ProjectUtil {
 	 */
 	public static void backupProject(IProject project) {
 		MptPluginConsole.general(MptConstants.GENERAL_TAG,
-				"Backup project '%1$s'", project.getName());
+				"Backup project '%1$s'.", project.getName());
 
 		// disable auto building mode if necessary
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -1775,7 +1743,7 @@ public class ProjectUtil {
 		} catch (Exception e) {
 			MptPluginLogger.throwable(e);
 			MptPluginConsole.warning(MptConstants.GENERAL_TAG,
-					"Could not complete backup due to cause {%1$s}",
+					"Could not complete backup due to cause {%1$s}.",
 					e.getMessage());
 			archive.deleteOnExit();
 			archive = null;
@@ -1792,7 +1760,7 @@ public class ProjectUtil {
 					MptPluginConsole
 							.general(
 									MptConstants.GENERAL_TAG,
-									"Backup archive.zip is generated under project '%1$s'",
+									"Backup archive.zip is generated under project '%1$s'.",
 									project.getName());
 				}
 			}
@@ -1851,23 +1819,6 @@ public class ProjectUtil {
 		} catch (Exception e) {
 		}
 		return new String(output.toByteArray());
-	}
-
-	public static void saveInputStreamAsFile(InputStream is, File file) {
-		byte[] buf = new byte[1024];
-		try {
-			FileOutputStream fos = new FileOutputStream(file);
-			int read = 0;
-			while ((read = is.read(buf)) != -1) {
-				fos.write(buf, 0, read);
-			}
-			fos.close();
-			is.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static String toRelativePath(String absPath, String basePath) {
@@ -2115,7 +2066,7 @@ public class ProjectUtil {
 
 		IPath packageFolderPath = GetPackageLocation(packageSplit, project);
 
-		// create folder accroding to missClassName
+		// create folder according to missClassName
 		if (CreateMissClassPackageFolder(packageFolderPath, project)) {
 
 			String srcFile = tempOutPutFile;
@@ -2238,7 +2189,7 @@ public class ProjectUtil {
 	}
 
 	public static String getNoAndroidFileErrorInfo(String filePath){
-		String errorInfo = String.format("Can't find necessary Android file:%1$s", filePath);
+		String errorInfo = String.format("Can't find necessary Android file: %1$s.", filePath);
 		return errorInfo;
 	}
 	
@@ -2361,7 +2312,7 @@ public class ProjectUtil {
 	
 	public static String getNoSdkFileErrorInfo(String mayloonSDKPath, String filePath){
 		String errorInfo =  String.format(
-				"Can't find Mayloon SDK file: %1$s  from SDK Directory:\"%2$s\"", filePath,
+				"Can't find Mayloon SDK file: %1$s  from SDK Directory:\"%2$s\".", filePath,
 				mayloonSDKPath);
 		return errorInfo;
 	}
