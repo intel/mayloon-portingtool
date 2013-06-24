@@ -36,6 +36,10 @@
                      value="org.eclipse.jdt.core.javanature">
                </objectState>
                <objectState
+                     name="projectNature"
+                     value="com.android.ide.eclipse.adt.AndroidNature">
+               </objectState>
+               <objectState
                      name="open"
                      value="true">
                </objectState>
