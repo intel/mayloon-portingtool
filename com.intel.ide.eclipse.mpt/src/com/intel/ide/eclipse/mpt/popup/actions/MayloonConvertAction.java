@@ -7,12 +7,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
+import com.intel.ide.eclipse.mpt.wizards.convert.ConvertWizardDialog;
 import com.intel.ide.eclipse.mpt.wizards.convert.ConvertWizards;
 
 public class MayloonConvertAction implements IObjectActionDelegate {
@@ -20,7 +20,7 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 	private ISelection selection;
 	private IProject project;
 	private ConvertWizards convertWizards;
-	private WizardDialog convertWizardDialog;
+	private ConvertWizardDialog convertWizardDialog;
 
 	public MayloonConvertAction() {
 		// TODO Auto-generated constructor stub
@@ -47,8 +47,9 @@ public class MayloonConvertAction implements IObjectActionDelegate {
 				}
 				if (project != null) {
 					this.convertWizards = new ConvertWizards(project);
-					this.convertWizardDialog = new WizardDialog(PlatformUI.getWorkbench(). 
+					this.convertWizardDialog = new ConvertWizardDialog(PlatformUI.getWorkbench(). 
 				              getActiveWorkbenchWindow().getShell(), this.convertWizards);
+					this.convertWizards.setWizardDialog(this.convertWizardDialog);
 					convertWizardDialog.create();
 					convertWizardDialog.open();
 				}

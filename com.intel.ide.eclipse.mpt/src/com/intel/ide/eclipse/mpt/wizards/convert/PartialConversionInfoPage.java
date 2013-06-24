@@ -65,6 +65,9 @@ public class PartialConversionInfoPage extends WizardPage{
 		this.createComponent(composite);
         this.setPageComplete(false);
         this.setControl(composite);
+        
+        ConvertWizardDialog dialog = ((ConvertWizards)this.getWizard()).getWizardDialog();
+        dialog.enableCancel(false);
 	}
 	
 	@Override

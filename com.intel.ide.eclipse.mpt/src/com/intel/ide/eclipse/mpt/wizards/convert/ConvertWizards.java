@@ -38,7 +38,7 @@ import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 public class ConvertWizards extends Wizard {
 	private IProject project;
-	
+	private ConvertWizardDialog wizardDialog;
 	private CheckPreConvertPage checkPreConvertPage;
 	private PartialConversionInfoPage parConversionInfoPage;
 	
@@ -47,6 +47,7 @@ public class ConvertWizards extends Wizard {
 	
 	public ConvertWizards(IProject project){
 		this.project = project;
+		this.wizardDialog = null;
 		this.originalAutoBuild = false;
 		this.convertFlag = false;
 		this.setHelpAvailable(false);
@@ -390,5 +391,13 @@ public class ConvertWizards extends Wizard {
 	
 	void enablePartialConversion(boolean enabled){
 		partialConversionFlag = enabled;
+	}
+	
+	public void setWizardDialog(ConvertWizardDialog dialog){
+		this.wizardDialog = dialog;
+	}
+	
+	public ConvertWizardDialog getWizardDialog(){
+		return this.wizardDialog;
 	}
 }
