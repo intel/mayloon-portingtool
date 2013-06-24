@@ -173,8 +173,8 @@ public class ConvertWizards extends Wizard {
 			errorInfoSet.addAll(ProjectUtil.getAndroidFilesCheckInfo(project));
 			monitor.worked(1);
 			
-			monitor.subTask("Reference project information");
-			errorInfoSet.addAll(ProjectUtil.getReferencedCheckInfo(project));
+			monitor.subTask("Libraries information");
+			ProjectUtil.checkLibraryDependency(project, errorInfoSet, warningInfoSet);
 			monitor.worked(1);
 			
 			monitor.subTask("Package name information");
@@ -187,7 +187,7 @@ public class ConvertWizards extends Wizard {
 			
 			monitor.subTask("Version match");
 			if(!errorInfoSet.contains(MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version)){
-				warningInfoSet = ProjectUtil.getVersionMatchCheckInfo(project);
+				warningInfoSet.addAll(ProjectUtil.getVersionMatchCheckInfo(project));
 			}
 			monitor.worked(1);
 			
@@ -215,10 +215,9 @@ public class ConvertWizards extends Wizard {
 			}
 			
 			//check if one or more projects are referenced
-			if (ProjectUtil.checkReferencedProjects(project)
-				|| ProjectUtil.checkAndroidReferencedProjects(project)){
-				throw new MptException("one or more projects are referenced");
-			}								
+			if (!ProjectUtil.checkLibraryDependency(project, null, null)){
+				throw new MptException("one or more libraries are referenced");
+			}
 
 			// disable AutoBuild
 			originalAutoBuild = ProjectUtil.getAutoBuild();

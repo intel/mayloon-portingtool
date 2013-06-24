@@ -29,9 +29,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -69,10 +66,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.intel.ide.eclipse.mpt.MayloonVersion;
 import com.intel.ide.eclipse.mpt.MptConstants;
@@ -783,6 +778,95 @@ public class ProjectUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	public static boolean checkLibraryDependency(IProject project, Set<String> errorInfo, Set<String> warningInfo)
+			throws JavaModelException {
+		IJavaProject javaProject = JavaCore.create(project);
+		IClasspathEntry[] entries = javaProject.getRawClasspath();
+		
+		if (errorInfo == null){
+			errorInfo = new HashSet<String>();
+		}
+		if (warningInfo == null){
+			warningInfo = new HashSet<String>();
+		}
+		
+		// find android classpath and remove it
+		int androidIndex = ProjectUtil.findClassPathEntry(entries,
+				MptConstants.ANDROID_CLASSPATH_ENTRY_ID,
+				IClasspathEntry.CPE_CONTAINER);
+		if (androidIndex != -1) {
+			entries = ProjectUtil.removeClassPathEntry(entries, androidIndex);
+		}
+
+		// check JRE classpath entry
+		int jreIndex = ProjectUtil.findClassPathEntry(entries,
+				JavaRuntime.JRE_CONTAINER, IClasspathEntry.CPE_CONTAINER);
+		if (jreIndex != -1) {
+			entries = ProjectUtil.removeClassPathEntry(entries, jreIndex);
+		}
+
+		// check ADT classpath entry
+		int adtIndex = ProjectUtil.findClassPathEntry(entries,
+				MptConstants.ADT_CLASSPATH_ENTRY_ID,
+				IClasspathEntry.CPE_CONTAINER);
+		if (adtIndex != -1) {
+			entries = ProjectUtil.removeClassPathEntry(entries, adtIndex);
+		}
+		
+		// check com.android.ide.eclipse.adt.DEPENDENCIES
+		int adtDepIndex = ProjectUtil.findClassPathEntry(entries,
+				MptConstants.ADT_DPD_CLASSPATH_ENTRY_ID,
+				IClasspathEntry.CPE_CONTAINER);
+		if (adtDepIndex != -1){
+			entries = ProjectUtil.removeClassPathEntry(entries, adtDepIndex);
+		}
+		
+		// check others
+		String path = project.getFullPath().toOSString();
+		for (int i = 0;i < entries.length;i ++){
+			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
+				if (!entries[i].getPath().toOSString().startsWith(path)){
+					String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
+					warningInfo.add(info);
+					MptPluginConsole.warning(MptConstants.CONVERT_TAG, info);
+				}				
+			}
+			else if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
+				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
+				errorInfo.add(info);
+				MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
+			}
+			else {
+				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
+				warningInfo.add(info);
+				MptPluginConsole.warning(MptConstants.CONVERT_TAG, info);
+			}
+		}
+		
+		//check Android referenced projects
+		errorInfo.addAll(ProjectUtil.checkAndroidReferencedProjects(project));
+		return errorInfo.isEmpty();
+	}
+	
+	public static String getKindName(int kind){
+		String kindName = "";
+		switch (kind){
+			case IClasspathEntry.CPE_CONTAINER:
+				kindName = "container";break;
+			case IClasspathEntry.CPE_LIBRARY:
+				kindName = "library";break;
+			case IClasspathEntry.CPE_PROJECT:
+				kindName = "project";break;
+			case IClasspathEntry.CPE_SOURCE:
+				kindName = "source";break;
+			case IClasspathEntry.CPE_VARIABLE:
+				kindName = "variable";break;
+			default:
+				kindName = "";
+		}
+		return kindName;
+	}
 
 	/**
 	 * remove the android class entry: android.jar
@@ -814,8 +898,6 @@ public class ProjectUtil {
 			// no jre classpath entry, add a jre container to Mayloon class path
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
 					"Remove JRE Class Container from classpath.");
-			IClasspathEntry jre_entry = JavaRuntime
-					.getDefaultJREContainerEntry();
 			entries = ProjectUtil.removeClassPathEntry(entries, jreIndex);
 			// entries = ProjectUtil.addClassPathEntry(entries, jre_entry);
 		}
@@ -1025,7 +1107,8 @@ public class ProjectUtil {
 	 * @param project
 	 * @return true if referencing other projects
 	 */
-	public static boolean checkAndroidReferencedProjects(IProject project) {
+	public static Set<String> checkAndroidReferencedProjects(IProject project) {
+		Set<String> errorInfo = new HashSet<String>();
 		IResource defaultProperties = project
 				.findMember(MptConstants.ANDROID_DEFAULT_PROPERTIES);
 		if (defaultProperties != null && defaultProperties.exists()) {
@@ -1044,19 +1127,14 @@ public class ProjectUtil {
 				}
 			}
 			
-			String value = null;
-			String refProj = "";
 			int refer = 1;
-			for (; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
-				refProj += "\n\t" + value;
-			}
-			if (refer > 1){
-				MptPluginConsole.error(MptConstants.CONVERT_TAG,
-						"Mayloon builder aborts because of " + (refer - 1) +" other project(s) referenced in Android properties:" + refProj);
-				return true;
+			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
+				String refProj = "Project depends on other Android project :" + value;
+				errorInfo.add(refProj);
+				MptPluginConsole.error(MptConstants.CONVERT_TAG, refProj);
 			}
 		}
-		return false;
+		return errorInfo;
 	}	
 
 	/**
@@ -2378,22 +2456,6 @@ public class ProjectUtil {
 		return warningInfo;
 	}
 
-	/**
-	 * check reference project and get error information
-	 * @param project
-	 * @return error information 
-	 * @throws CoreException
-	 */
-	public static Set<String> getReferencedCheckInfo(IProject project) throws CoreException{
-		Set<String> errorInfo = new HashSet<String>();
-		if (ProjectUtil.checkReferencedProjects(project)){
-			errorInfo.add("other project(s) referenced in Java Buildpath");
-		}
-		if(ProjectUtil.checkAndroidReferencedProjects(project)){
-			errorInfo.add("other project(s) referenced in Android properties");
-		}
-		return errorInfo;
-	}
 	public static IPath getJ2SLibPath(IProject project) throws MptException {
 
 		FileInputStream stream = null;

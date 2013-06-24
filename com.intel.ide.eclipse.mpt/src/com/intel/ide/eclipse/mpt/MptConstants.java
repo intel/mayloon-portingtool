@@ -33,6 +33,8 @@ public class MptConstants {
 	
 	// The container id of the android develop tools
 	public static final String ADT_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.LIBRARIES"; //$NON-NLS-1$
+	// id of the adt dependencies
+	public static final String ADT_DPD_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.DEPENDENCIES";
 	// The container id of the JRE
 	public static final String JRE_CLASSPATH_ENTRY_ID = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 	// The container id of the Mayloon Native JRE
