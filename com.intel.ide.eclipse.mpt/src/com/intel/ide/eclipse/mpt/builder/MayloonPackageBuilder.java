@@ -52,7 +52,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
 		
 		// check if apk is built successfully
-		if(!ProjectUtil.checkAndroidApk(project)){
+		if(!ProjectUtil.checkAndroidApk(project, null)){
 			return project.getReferencedProjects();
 		}
 		

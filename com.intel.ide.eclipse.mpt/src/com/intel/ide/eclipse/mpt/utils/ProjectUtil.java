@@ -2222,8 +2222,11 @@ public class ProjectUtil {
 	 * @return
 	 * @throws CoreException
 	 */
-	public static boolean checkAndroidApk(IProject project)
+	public static boolean checkAndroidApk(IProject project, Set<String> errorInfo)
 			throws CoreException {
+		if (errorInfo == null){
+			errorInfo = new HashSet<String>();
+		}
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject javaProject = JavaCore.create(project);
 		IFolder apkOutputFolder = (IFolder) root.findMember(javaProject
@@ -2237,12 +2240,11 @@ public class ProjectUtil {
 				+ MptConstants.ANDROID_APK_EXTENSION);
 
 		if (!apkFile.toFile().exists()) {
-			MptPluginConsole.error(MptConstants.CONVERT_TAG,
-					getNoAndroidFileErrorInfo(project.getName()
-							+ MptConstants.ANDROID_APK_EXTENSION));
+			String info = getNoAndroidFileErrorInfo(apkFile.toOSString());
+			MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
+			errorInfo.add(info);
 			return false;
 		}
-
 		return true;
 	}
 
@@ -2269,10 +2271,7 @@ public class ProjectUtil {
 		if(!checkAndroidFile(project, MptConstants.ANDROID_OUTPUT_DIR)){
 			errorInfo.add(getNoAndroidFileErrorInfo(MptConstants.ANDROID_OUTPUT_DIR));
 		}else{
-			if(!checkAndroidApk(project)){
-				errorInfo.add(getNoAndroidFileErrorInfo(project.getName()
-						+ MptConstants.ANDROID_APK_EXTENSION));
-			}
+			checkAndroidApk(project, errorInfo);
 		}
 		return errorInfo;
 	}

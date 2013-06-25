@@ -212,7 +212,7 @@ public class ConvertWizards extends Wizard {
 			// 9 steps to convert project
 			monitor.beginTask("Project converting...", 8);
 			this.convertFlag = true;
-			if (!ProjectUtil.checkAndroidApk(project)) {
+			if (!ProjectUtil.checkAndroidApk(project, null)) {
 				throw new MptException("can't get %1$s.apk file",
 						project.getName());
 			}
