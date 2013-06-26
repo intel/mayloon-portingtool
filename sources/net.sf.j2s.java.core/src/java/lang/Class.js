@@ -604,6 +604,13 @@ Clazz.superCall = function (objThis, clazzThis, funName, funParams) {
 			} // end of for loop
 		} // end of normal wrapped method
 	} // end of clazzFun != null
+
+    //make sure the method prepareField init before construct
+    if(funName == "construct") {
+        if(clazzThis.con$truct != null){
+            clazzThis.con$truct.apply(objThis, []);
+        }
+    }
 	if (fx != null) {
 		/* there are members which are initialized out of the constructor */
 		/*if (i == -1) {
@@ -661,11 +668,12 @@ Clazz.superCall = function (objThis, clazzThis, funName, funParams) {
  */
 /* public */
 Clazz.superConstructor = function (objThis, clazzThis, funParams) {
-	Clazz.superCall (objThis, clazzThis, "construct", funParams);
-	/* If there are members which are initialized out of the constructor */
-	if (clazzThis.con$truct != null) {
-		clazzThis.con$truct.apply (objThis, []);
-	}
+    Clazz.superCall (objThis, clazzThis, "construct", funParams);
+    //don't need the workaround
+    /* If there are members which are initialized out of the constructor */
+    //if (clazzThis.con$truct != null) {
+    //    clazzThis.con$truct.apply (objThis, []);
+    //}
 };
 
 /**
