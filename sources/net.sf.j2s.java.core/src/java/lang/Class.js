@@ -1333,7 +1333,14 @@ Clazz.defineMethod = function (clazzThis, funName, funBody, funParams) {
 Clazz.makeConstructor = function (clazzThis, funBody, funParams) {
 	var funName = "construct";
 	Clazz.defineMethod (clazzThis, funName, funBody, funParams);
-	if (clazzThis.con$truct != null) {
+    if (clazzThis.con$truct != null) {
+        //when this class has prepareFields method then can change the index of con$truct.
+        //if not will change super class index of con$truct lead to other class some member init error.
+        if (clazzThis.superClazz != null && clazzThis.superClazz.con$truct != null) {
+            if (clazzThis.con$truct === clazzThis.superClazz.con$truct) {
+                return;
+            }
+        }
 		clazzThis.con$truct.index = clazzThis.con$truct.stacks.length;
 	}
 	//clazzThis.con$truct = clazzThis.prototype.con$truct = null;
