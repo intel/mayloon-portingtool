@@ -2577,11 +2577,8 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 //		laterBuffer = new StringBuffer();
 //		methodBuffer = new StringBuffer();
 
-        //updated by intel, fixs j2s will initialize class members for several times
-        //so we can add method prepareField for each class except interface. 
-        boolean needPreparation = node.isInterface() ? false : true;
-
-        /*for (Iterator iter = bodyDeclarations.iterator(); iter.hasNext();) {
+        boolean needPreparation = false;
+        for (Iterator iter = bodyDeclarations.iterator(); iter.hasNext();) {
             ASTNode element = (ASTNode) iter.next();
             if (element instanceof FieldDeclaration) {
                 FieldDeclaration field = (FieldDeclaration) element;
@@ -2604,7 +2601,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
                     break;
                 }
             }
-        }*/
+        }
 
 //		if (methodBuffer.length() > 0) {
 //			tmpBuffer.append(methodBuffer.toString());
