@@ -122,7 +122,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			MessageBox dialog = new MessageBox(activeShell, SWT.ICON_QUESTION
 					| SWT.OK);
 			dialog.setText("Deployment Mode Check");
-			dialog.setMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=Tizen)");
+			dialog.setMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=tizen).");
 			int returnCode = dialog.open();
 			if (SWT.OK == returnCode) {
 			}
@@ -207,7 +207,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			String deployMode = ProjectUtil.getDeployMode(fProject);
 			if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 				((ProjectSelectionPage) this.fProjectSelectionPage)
-						.setErrorMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=Tizen)");
+						.setErrorMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=tizen).");
 				return false;
 			}
 			return true;
