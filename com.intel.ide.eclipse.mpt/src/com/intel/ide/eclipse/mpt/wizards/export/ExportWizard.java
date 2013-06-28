@@ -56,6 +56,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	public ExportWizard() {
 		this.setHelpAvailable(false);
 		this.setWindowTitle("Export Mayloon Application");
+		this.setNeedsProgressMonitor(true);
 	}
 
 	@Override
@@ -80,20 +81,15 @@ public class ExportWizard extends Wizard implements IExportWizard {
 
 	@Override
 	public boolean performFinish() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
 		try {
-			workbench.getProgressService().busyCursorWhile(
-					new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
-							try {
-								export();
-							} finally {
-								monitor.done();
-							}
-						}
-					});
+			this.getContainer().run(true, true, new IRunnableWithProgress() {
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException{
+					export(monitor);
+					monitor.done();
+				}
+			});
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}
@@ -103,7 +99,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	/**
 	 * Export the mayloon application
 	 */
-	private boolean export() {
+	private boolean export(IProgressMonitor monitor) {
 		/*
 		 * schedule an incremental build to make sure up-to-date apk from
 		 * Android builder
@@ -132,7 +128,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 		// check whether the android.core.Start.html is generated successful
 		// TODO luqiang,
 
-		performTizenPackage();
+		performTizenPackage(monitor);
 
 		return true;
 	}
@@ -140,8 +136,9 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	/**
 	 * Package mayloon application as tizen project
 	 */
-	private void performTizenPackage() {
+	private void performTizenPackage(IProgressMonitor monitor) {
 		try {
+			monitor.beginTask("Exporting MayLoon application...", 4);
 			// set export destination
 			ProjectUtil.setMayloonOutputFolder(fProject, fDestinationFile);
 			// get package name from AndroidManifest.xml
@@ -157,17 +154,22 @@ public class ExportWizard extends Wizard implements IExportWizard {
 					"%1$s has been copied to %2$s", fProject.getName()
 							+ MptConstants.MAYLOON_START_ENTRY_FILE,
 					fDestinationFile.toString());
+			monitor.worked(1);
+
 			// copy mayloon runtime resource to export destination
 			ProjectUtil.addMayloonFrameworkFolder(fProject,
 					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
+			monitor.worked(1);
 
 			// copy mayloon Icon to mayloon_bin
 			// copy /bin/apps
 			ProjectUtil.addAndroidOutput2Mayloon(fProject,
 					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
+			monitor.worked(1);
 
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);
+			monitor.worked(1);
 
 			// TODO luqiang, add monitor for it.
 			fProject.refreshLocal(IResource.DEPTH_INFINITE, null);
