@@ -234,7 +234,11 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		this.setMessage(null);
 		this.setErrorMessage(null);
 		this.setPageComplete(false);
-		
+
+
+        boolean bPNameCorrect = false;
+        boolean bPDestDireCorrect = false;
+
 		String projectText = this.fProjectText.getText().trim();
 		if(projectText.length() == 0){
 			this.setErrorMessage("Please select a project to export.");
@@ -249,7 +253,8 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			}else{
 				try {
 					if(project.hasNature(MayloonNature.NATURE_ID)){
-						IMarker marker = findFirstMarker(project, IMarker.PROBLEM, true,
+                        //don't needs these error information
+/*						IMarker marker = findFirstMarker(project, IMarker.PROBLEM, true,
 								             IMarker.SEVERITY_ERROR, IResource.DEPTH_INFINITE, true);
 						if(marker != null) {
 							IProject markProject = marker.getResource().getProject();
@@ -260,10 +265,11 @@ public class ProjectSelectionPage extends ExportWizardPage {
 								this.setErrorMessage(String.format("Referenced project '%1$s' has severe problem, please fix first.",
 										             markProject.getName()));
 							}
-						}
+                        }*/
 						if(!project.equals(this.fWizard.getProject())){
 							this.fWizard.setProject(project);
 						}
+                        bPNameCorrect = true;
 						this.setPageComplete(true);
 					}else{
 						this.setErrorMessage(String.format("%1$s is not a Kona project",projectText));
@@ -286,11 +292,19 @@ public class ProjectSelectionPage extends ExportWizardPage {
 					this.setErrorMessage("The destination directory doesn't exist.");
 				}
 				else{
+                    bPDestDireCorrect = true;
 					this.fWizard.setDestinationFile(destinationDir);
 					this.setPageComplete(true);
 				}
 			}
 		}
+        //If the project name and destination directory is correct then the finish button available
+        if (bPNameCorrect && bPDestDireCorrect) {
+            this.setEnalbeFinishButton(true);
+        } else {
+            this.setEnalbeFinishButton(false);
+        }
+
 	}
 	/**
 	 * Find the first marker of specified type and properties from project. 
@@ -324,5 +338,12 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			MptPluginLogger.throwable(e);
 		}
 		return null;
+	}
+
+    public void setEnalbeFinishButton(boolean enabled) {
+        Button btn = this.getContainer().getShell().getDefaultButton();
+        if (this.fWizard.canFinish()) {
+            btn.setEnabled(enabled);
+        }
 	}
 }
