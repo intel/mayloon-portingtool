@@ -8,7 +8,6 @@ public class MayloonProjectMessages extends NLS {
 	public static String Android_MinSdkVersion_Higher_Than_ApiLevel_Message;
 	public static String Version_Check_Title;
 	public static String Android_MinSdkVersion_Higher_Message;
-	public static String Android_Target_ApiLevel_Mismatch_Message;
 	public static String Not_found_Mayloon_SDK_Message;
 	public static String Mayloon_Framework_Library_Title;
 	public static String Mayloon_Framework_Library_Description;

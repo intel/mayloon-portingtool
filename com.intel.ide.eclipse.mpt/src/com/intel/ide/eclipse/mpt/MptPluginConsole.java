@@ -35,6 +35,10 @@ public class MptPluginConsole {
 	 */
 	private static MessageConsoleStream sNormalStream;
 	/**
+	 * Warning console stream (text in orange)
+	 */
+	private static MessageConsoleStream sWarningStream;
+	/**
 	 * Error console stream (text in red)
 	 */
     private static MessageConsoleStream sErrorStream; 
@@ -46,6 +50,10 @@ public class MptPluginConsole {
      * Color green
      */
     private static Color sColorGreen;
+    /**
+     * Color orange
+     */
+    private static Color sColorOrange;
     /**
      * Message formatter
      */
@@ -60,13 +68,16 @@ public class MptPluginConsole {
 		consoleManager.addConsoles(new IConsole[]{sConsole});
 		sNormalStream = sConsole.newMessageStream();
 		sErrorStream = sConsole.newMessageStream();
+		sWarningStream = sConsole.newMessageStream();
 		sSuccessStream = sConsole.newMessageStream();
 		Display display = MptPlugin.getDisplay();
 		sColorRed = new Color(display, 0xFF, 0x00, 0x00);
 		sColorGreen = new Color(display, 0x00, 0xFF, 0x00);
+		sColorOrange = new Color(display, 0xFF, 0xA5, 0x00);
         display.asyncExec(new Runnable() {
             public void run() {
             	sErrorStream.setColor(sColorRed);
+            	sWarningStream.setColor(sColorOrange);
             	sSuccessStream.setColor(sColorGreen);
             }
         });
@@ -144,7 +155,7 @@ public class MptPluginConsole {
 	public static void warning(String tag, String format, Object ...args){
 		LogRecord record = new LogRecord(Level.WARNING, String.format(format, args));
 		record.setLoggerName(tag);
-		sErrorStream.print(sFormatter.format(record));
+		sWarningStream.print(sFormatter.format(record));
 		showConsoleView();
 	}
 	
@@ -227,15 +238,11 @@ public class MptPluginConsole {
 	public static void destroy(){
 		sColorRed.dispose();
 		sColorGreen.dispose();
+		sColorOrange.dispose();
 		try {
 			sNormalStream.close();
-		} catch (IOException e) {
-		}
-		try {
 			sErrorStream.close();
-		} catch (IOException e) {
-		}
-		try {
+			sWarningStream.close();
 			sSuccessStream.close();
 		} catch (IOException e) {
 		}
