@@ -374,12 +374,12 @@ String.prototype.contentEquals = function (sb) {
 	if (this.length != sbLength) {
 		return false;
 	}
-	var v = sb.getValue ();
+	var v = sb.toString ();
 	var i = 0;
 	var j = 0;
 	var n = this.length;
 	while (n-- != 0) {
-		if (this.charCodeAt (i++) != v[j++]) {
+		if (this.charCodeAt (i++) != v.charCodeAt (j++)) {
 			return false;
 		}
 	}
