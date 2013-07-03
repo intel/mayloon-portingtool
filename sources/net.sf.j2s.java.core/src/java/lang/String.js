@@ -88,6 +88,62 @@ String.prototype.$generateExpFunction = function (str) {
 	return f;
 };
 
+/* 
+* Copyright (c) 2007-2013 Alexandru Marasteanu <hello at alexei dot ro> | 3 clause BSD license
+* The methods strRepeat and format is implemented based on that link as bellow:
+* https://github.com/alexei/sprintf.js/blob/master/src/sprintf.js
+*/
+String.strRepeat = String.prototype.strRepeat = function(input, multiplier) {
+    for (var output = []; multiplier > 0; output[--multiplier] = input) {}
+    return output.join('');
+};
+
+String.format = String.prototype.format = function(){
+    var i = 0, arg, fmt = arguments[i++], output = [], match, pad, c, x, s = '';
+    var args = arguments[i];
+    args.unshift(fmt);
+    while (fmt) {
+        if (match = /^[^\x25]+/.exec(fmt)) {
+            output.push(match[0]);
+        } else if (match = /^\x25{2}/.exec(fmt)) {
+            output.push('%');
+        } else if (match = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(fmt)) {
+            if (((arg = args[match[1] || i++]) == null) || (arg == undefined)) {
+                throw('Too few arguments.');
+            }
+            //needs get the number if the type of object arg is java.lang.Integer or java.lang.Float and so on.
+            if (typeof(arg.valueOf()) == 'number') {
+                arg = arg.valueOf();
+            }
+            if (/[^s]/.test(match[7]) && (typeof(arg) != 'number')) {
+                throw('Expecting number but found ' + typeof(arg));
+            }
+            switch (match[7]) {
+                case 'b': arg = arg.toString(2); break;
+                case 'c': arg = String.fromCharCode(arg); break;
+                case 'd': arg = parseInt(arg); break;
+                case 'e': arg = match[6] ? arg.toExponential(match[6]) : arg.toExponential(); break;
+                case 'f': arg = match[6] ? parseFloat(arg).toFixed(match[6]) : parseFloat(arg); break;
+                case 'o': arg = arg.toString(8); break;
+                case 's': arg = ((arg = String(arg)) && match[6] ? arg.substring(0, match[6]) : arg); break;
+                case 'u': arg = Math.abs(arg); break;
+                case 'x': arg = arg.toString(16); break;
+                case 'X': arg = arg.toString(16).toUpperCase(); break;
+            }
+            arg = (/[def]/.test(match[7]) && match[2] && arg>= 0 ? '+'+ arg : arg);
+            c = match[3] ? match[3] == '0' ? '0' : match[3].charAt(1) : ' ';
+            x = match[5] - String(arg).length - s.length;
+            pad = match[5] ? this.strRepeat(c, x) : '';
+            output.push(s + (match[4] ? arg + pad : pad + arg));
+        }
+        else {
+            throw('Error!');
+        }
+        fmt = fmt.substring(match[0].length);
+    }
+    return output.join('');
+};
+
 String.prototype.replaceAll = function (exp, str) {
 	var regExp = new RegExp (exp, "gm");
 	return this.replace (regExp, this.$generateExpFunction (str));
