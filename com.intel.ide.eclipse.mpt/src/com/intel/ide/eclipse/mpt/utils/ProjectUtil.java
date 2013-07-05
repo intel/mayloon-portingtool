@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -779,14 +780,56 @@ public class ProjectUtil {
 		}
 	}
 	
-	public static boolean checkLibraryDependency(IProject project, Set<String> errorInfo, Set<String> warningInfo)
+	/**
+	 * add source folder of referenced project to local src
+	 * @param project
+	 * @param ref_proj
+	 * @return if succeed
+	 */
+	public static boolean addReferencedProjectSource(IProject project, IProject ref_proj){
+		String dstFolderPath = project.getLocation().toOSString() + "/src";
+		String srcProjectFolder = ref_proj.getLocation().toOSString();
+		srcProjectFolder = srcProjectFolder.substring(0, srcProjectFolder.lastIndexOf('/'));
+
+		IJavaProject javaProject = JavaCore.create(ref_proj);
+		try {
+			IClasspathEntry[] entries = javaProject.getRawClasspath();
+			for (int i = 0;i < entries.length;i ++){
+				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
+					String path = entries[i].getPath().toOSString();
+					if (path.substring(path.lastIndexOf('/') + 1).equals("gen")){
+						continue; //generated files won't be copied //is this a kind of resource referencing?
+					}
+					String srcFolderPath = srcProjectFolder + path;
+					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath)){
+						try {
+							project.refreshLocal(IResource.DEPTH_INFINITE, null);
+						} catch (CoreException e) {
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e1) {
+			e1.printStackTrace(); return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private static IProject[] getProjectList(){
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		return projects;
+	}
+	
+	public static void checkLibraryDependency(IProject project, Set<String> warningInfo)
 			throws JavaModelException {
 		IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		
-		if (errorInfo == null){
-			errorInfo = new HashSet<String>();
-		}
+
 		if (warningInfo == null){
 			warningInfo = new HashSet<String>();
 		}
@@ -834,8 +877,7 @@ public class ProjectUtil {
 			}
 			else if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
 				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
-				errorInfo.add(info);
-				MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
+				MptPluginConsole.general(MptConstants.CONVERT_TAG, info);
 			}
 			else {
 				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
@@ -845,8 +887,7 @@ public class ProjectUtil {
 		}
 		
 		//check Android referenced projects
-		errorInfo.addAll(ProjectUtil.checkAndroidReferencedProjects(project));
-		return errorInfo.isEmpty();
+		ProjectUtil.checkAndroidReferencedProjects(project);
 	}
 	
 	public static String getKindName(int kind){
@@ -866,6 +907,103 @@ public class ProjectUtil {
 				kindName = "";
 		}
 		return kindName;
+	}
+	
+	/**
+	 * fix project dependency in java build path
+	 * @param project
+	 * @throws JavaModelException
+	 */
+	public static void fixProjectDependency(IProject project)
+			throws JavaModelException {
+		IJavaProject javaProject = JavaCore.create(project);
+		IClasspathEntry[] entries = javaProject.getRawClasspath();
+		Vector<Integer> fixed_refs = new Vector<Integer>();
+		
+		for (int i = 0;i < entries.length;i ++){
+			if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
+				String fullname = entries[i].getPath().toOSString();
+				String name = fullname.substring(fullname.lastIndexOf('/') + 1);
+				IProject[] projects = ProjectUtil.getProjectList();
+				boolean foundFlag = false;
+				for (int j = 0;j < projects.length;j ++){
+					if (projects[j].getName().equals(name)){
+						//TODO:could be checked right here before merging code
+						//TODO:resources referencing or recursive project dependency shall be checked or solved here
+						
+						if (ProjectUtil.addReferencedProjectSource(project, projects[j])){
+							fixed_refs.add(i);
+							MptPluginConsole.general(MptConstants.CONVERT_TAG, 
+									"Source code of referenced project [" + projects[j].getName() + "] is merged into project [" + project.getName() + "].");
+						}
+						foundFlag = true; break;
+					}
+				}
+				if (!foundFlag){
+					MptPluginConsole.warning(MptConstants.CONVERT_TAG, 
+							"Referenced project [" + name + "] not found.");
+				}
+			}
+		}
+
+		for (int i = fixed_refs.size() - 1;i >= 0;i --){
+			entries = ProjectUtil.removeClassPathEntry(entries, fixed_refs.get(i));
+		}
+		if (fixed_refs.size() > 0){
+			javaProject.setRawClasspath(entries, new NullProgressMonitor());
+		}
+	}
+	
+	/**
+	 * fix project dependency in android property
+	 * @param project
+	 */
+	public static void fixAndroidDependency(IProject project){
+		IResource defaultProperties = project
+				.findMember(MptConstants.ANDROID_DEFAULT_PROPERTIES);
+		if (defaultProperties != null && defaultProperties.exists()) {
+			Properties prop = new Properties();
+			FileInputStream stream = null;
+			try {
+				prop.load(stream = new FileInputStream(defaultProperties.getLocation().toFile()));
+			} catch (IOException e) {
+				MptPluginLogger.throwable(e, "Could not load project.properties.");
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+			
+			int refer = 1;
+			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
+				String name = value.substring(value.lastIndexOf('/') + 1);
+				if (name.length() <= 0 && value.length() > 0){
+					value = value.substring(0, value.lastIndexOf('/'));
+					name = value.substring(value.lastIndexOf('/') + 1);
+				}
+				IProject[] projects = ProjectUtil.getProjectList();
+				boolean foundFlag = false;
+				for (int j = 0;j < projects.length;j ++){
+					if (projects[j].getName().equals(name)){
+						//TODO:should check if code merge could solve the problem
+						//TODO:resources referencing or recursive project dependency shall be checked or solved here
+						
+						if (ProjectUtil.addReferencedProjectSource(project, projects[j])){
+							MptPluginConsole.general(MptConstants.CONVERT_TAG, 
+									"Source code of referenced project [" + projects[j].getName() + "] is merged into project [" + project.getName() + "].");
+						}
+						foundFlag = true; break;
+					}
+				}
+				if (!foundFlag){
+					MptPluginConsole.warning(MptConstants.CONVERT_TAG, 
+							"Referenced project [" + name + "] not found.");
+				}
+			}
+		}
 	}
 
 	/**
@@ -1108,7 +1246,7 @@ public class ProjectUtil {
 	 * @return true if referencing other projects
 	 */
 	public static Set<String> checkAndroidReferencedProjects(IProject project) {
-		Set<String> errorInfo = new HashSet<String>();
+		Set<String> refInfo = new HashSet<String>();
 		IResource defaultProperties = project
 				.findMember(MptConstants.ANDROID_DEFAULT_PROPERTIES);
 		if (defaultProperties != null && defaultProperties.exists()) {
@@ -1130,11 +1268,11 @@ public class ProjectUtil {
 			int refer = 1;
 			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
 				String refProj = "Project depends on other Android project :" + value;
-				errorInfo.add(refProj);
-				MptPluginConsole.error(MptConstants.CONVERT_TAG, refProj);
+				refInfo.add(refProj);
+				MptPluginConsole.general(MptConstants.CONVERT_TAG, refProj);
 			}
 		}
-		return errorInfo;
+		return refInfo;
 	}	
 
 	/**
@@ -1943,6 +2081,67 @@ public class ProjectUtil {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	/**
+	 * merge files and sub folders of src_folder into dst_folder
+	 * @param srcFolderPath
+	 * @param dstFolderPath
+	 * @return true if succeed
+	 */
+	public static boolean mergeFolder(String srcFolderPath, String dstFolderPath){
+		File srcFolder = new File(srcFolderPath);
+		File dstFolder = new File(dstFolderPath);
+		
+		if (!srcFolder.exists() || !srcFolder.isDirectory()) {
+			return false;
+		}
+		if (dstFolder.exists()){
+			if (!dstFolder.isDirectory()){
+				return false;
+			}
+		}
+		else {
+			try {
+				if (!dstFolder.mkdirs()){
+					return false;
+				}
+			} catch (Exception e) {
+			}
+		}
+		
+		File[] files = srcFolder.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			File file = new File(dstFolder, files[i].getName());
+			if (files[i].isDirectory()) {
+				if (!file.exists()){
+					try {
+						if (!file.mkdirs()){
+							return false;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}	
+				}
+				if (!mergeFolder(files[i].getAbsolutePath(), file.getAbsolutePath())){
+					return false;
+				}
+			} else {
+				if (!file.exists()) {
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					streamCopyFile(files[i], file);
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	public static void copyFolder(String srcPath, String destPath,

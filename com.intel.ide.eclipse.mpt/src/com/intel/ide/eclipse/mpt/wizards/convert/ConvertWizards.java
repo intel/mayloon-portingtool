@@ -182,7 +182,7 @@ public class ConvertWizards extends Wizard {
 			monitor.worked(1);
 			
 			monitor.subTask("Libraries information");
-			ProjectUtil.checkLibraryDependency(project, errorInfoSet, warningInfoSet);
+			ProjectUtil.checkLibraryDependency(project, warningInfoSet);
 			monitor.worked(1);
 			
 			monitor.subTask("Package name information");
@@ -223,20 +223,23 @@ public class ConvertWizards extends Wizard {
 			}
 			
 			//check if one or more projects are referenced
-			if (!ProjectUtil.checkLibraryDependency(project, null, null)){
-				throw new MptException("one or more libraries are referenced");
-			}
+			ProjectUtil.checkLibraryDependency(project, null);
 
 			// disable AutoBuild
 			originalAutoBuild = ProjectUtil.getAutoBuild();
 			if (originalAutoBuild) {
 				ProjectUtil.setAutoBuild(false);
 			}
+			
+			//fix project dependencies
+			ProjectUtil.fixProjectDependency(project);
+			ProjectUtil.fixAndroidDependency(project);
+			
 			// generate .j2s configuration file
 			MayloonPropertiesBuilder.mayloonPropBuild(project);
 			MayloonPropertiesBuilder.j2sPropBuild(project);
 			monitor.worked(1);
-
+			
 			String deployMode = ProjectUtil.getDeployMode(project);
 			if (deployMode == null) {
 				throw new MptException(MptException.DEPLOY_MODE_ERROR);
@@ -250,8 +253,8 @@ public class ConvertWizards extends Wizard {
 			// main activity name.(not compatible with
 			// android internal implementation)
 			String packageName = ProjectUtil
-					.extractPackageFromManifest(project);
-
+					.extractPackageFromManifest(project);		
+			
 			// merge j2s class path modify logic to it.
 			ProjectUtil.fixMayloonClassEntry(project);
 			monitor.worked(1);
