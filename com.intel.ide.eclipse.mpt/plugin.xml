@@ -14,6 +14,15 @@
       </builder>
    </extension>
 
+    <extension
+         id="com.intel.ide.eclipse.mpt.innerjsresources4mpt"
+         name="Inner JS Resources MPT"
+         point="com.intel.ide.eclipse.mpt.externalResourceProvider">
+      <externalResourceProvider
+            class="com.intel.ide.eclipse.mpt.extensionpoint.JavaRuntimeJSProvider4MPT"
+            id="com.intel.ide.eclipse.mpt.extensioonpoint.javaRuntimeJS4MPT"/>
+    </extension>
+
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution

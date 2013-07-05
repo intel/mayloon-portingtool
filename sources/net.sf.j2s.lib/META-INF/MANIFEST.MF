@@ -5,10 +5,8 @@ Bundle-SymbolicName: net.sf.j2s.lib; singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: net.sf.j2s.lib.LibPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
- com.intel.ide.eclipse.mpt
+Require-Bundle: org.eclipse.core.runtime
 Eclipse-AutoStart: true
 Bundle-Vendor: j2s.sourceforge.net
 Bundle-ClassPath: library.jar
-Import-Package: com.intel.ide.eclipse.mpt.extensionpoint,
- com.intel.ide.eclipse.mpt.utils
+
