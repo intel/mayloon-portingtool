@@ -452,7 +452,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 						buffer.append (").charCodeAt (0)");
 						return false;
 					} else if ("float".equals(name) || "double".equals(name)) {
-						buffer.append("Math.round (");
+                        buffer.append("parseInt (");
 						node.getExpression().accept(this);
 						buffer.append (")");
 						return false;
@@ -467,7 +467,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 					} else if ("float".equals(name) || "double".equals(name)) {
 						// TODO:
 						buffer.append("String.fromCharCode (");
-						buffer.append("Math.round (");
+                        buffer.append("parseInt (");
 						node.getExpression().accept(this);
 						buffer.append (")");
 						buffer.append (")");
