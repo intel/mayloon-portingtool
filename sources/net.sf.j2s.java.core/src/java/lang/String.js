@@ -99,7 +99,7 @@ String.strRepeat = String.prototype.strRepeat = function(input, multiplier) {
 };
 
 String.format = String.prototype.format = function(){
-    var i = 0, arg, fmt = arguments[i++], output = [], match, pad, c, x, s = '';
+    var i = 0, arg, fmt = arguments[i++], output = [], match, pad, padded, c, x, s = '';
     var args = arguments[i];
     args.unshift(fmt);
     while (fmt) {
@@ -134,7 +134,12 @@ String.format = String.prototype.format = function(){
             c = match[3] ? match[3] == '0' ? '0' : match[3].charAt(1) : ' ';
             x = match[5] - String(arg).length - s.length;
             pad = match[5] ? this.strRepeat(c, x) : '';
-            output.push(s + (match[4] ? arg + pad : pad + arg));
+            //needs to put the '-' to first position when the arg is negative.
+            padded = pad + arg;
+            if (typeof(arg) == "number" && arg < 0) {
+                padded = '-'+(pad + Math.abs(arg));
+            }
+            output.push(s + (match[4] ? arg + pad : padded));
         }
         else {
             throw('Error!');
