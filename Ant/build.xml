@@ -90,7 +90,7 @@
 	            Eclipse Home                    : ${eclipse.home}
 	            Eclipse launcher                : ${eclipse.home}/plugins/${launcher.jar}
                 MPT Source                      : ${mpt.source.dir}
-                Json Source                 : ${json.source.dir}
+                Json Source                     : ${json.source.dir}
                 J2S.core Source                 : ${j2s.core.source.dir}
                 J2S.lib Source                  : ${j2s.lib.source.dir}
                 Mayloon Home                    : ${mayloon.dir}
