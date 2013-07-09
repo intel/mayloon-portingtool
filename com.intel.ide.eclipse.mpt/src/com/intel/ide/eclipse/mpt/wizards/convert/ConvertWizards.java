@@ -135,13 +135,7 @@ public class ConvertWizards extends Wizard {
 	
 	@Override
 	public boolean canFinish(){
-		if (this.checkPreConvertPage != null && !this.checkPreConvertPage.getErrorInfoSet().isEmpty()){
-			return false;
-		}
-		if (partialConversionFlag && !convertFlag){
-			return false;
-		}
-		return true;
+		return convertFlag;
 	}
 	
 	@Override
@@ -209,21 +203,9 @@ public class ConvertWizards extends Wizard {
 	
 	private void convert(IProgressMonitor monitor){
 		try {
-			// 9 steps to convert project
+			// 8 steps to convert project
 			monitor.beginTask("Project converting...", 8);
 			this.convertFlag = true;
-			if (!ProjectUtil.checkAndroidApk(project, null)) {
-				throw new MptException("can't get %1$s.apk file",
-						project.getName());
-			}
-
-			if (!ProjectUtil.checkVersionMatch(project)) {
-				throw new MptException(
-						MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
-			}
-			
-			//check if one or more projects are referenced
-			ProjectUtil.checkLibraryDependency(project, null);
 
 			// disable AutoBuild
 			originalAutoBuild = ProjectUtil.getAutoBuild();
@@ -234,6 +216,7 @@ public class ConvertWizards extends Wizard {
 			//fix project dependencies
 			ProjectUtil.fixProjectDependency(project);
 			ProjectUtil.fixAndroidDependency(project);
+			monitor.worked(1);
 			
 			// generate .j2s configuration file
 			MayloonPropertiesBuilder.mayloonPropBuild(project);
