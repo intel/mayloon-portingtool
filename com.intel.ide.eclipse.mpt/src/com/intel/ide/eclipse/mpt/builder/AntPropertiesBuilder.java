@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -33,15 +32,9 @@ public class AntPropertiesBuilder {
 	public static final String PROPERTY_ANDROID_SDK_DIR = "android.sdk.dir";
 	public static final String PROPERTY_ANDROID_SDK_PLATFORM_TARGET_DIR = "android.sdk.platform.target.dir";
 	public static final String PROPERTY_CURRENT_PROJECT = "current.project";
-	public static final String PROPERTY_CURRENT_PROJECT_SOURCE_DIRS = "current.project.source.dirs";
-	public static final String PROPERTY_CURRENT_PROJECT_CLASSPATH_DIRS = "current.project.classpath.dirs";
-	public static final String PROPERTY_CURRENT_PROJECT_CLASSPATH_JARS = "current.project.classpath.jars";
 	public static final String PROPERTY_CURRENT_PROJECT_REFERENCE_PROJECTS = "current.project.reference.projects";
 	public static final String FORMAT_REFERENCE_PROJECT_DIR = "reference.project.%1$s.dir";
 	public static final String FORMAT_REFERENCE_PROJECT_OUTPUT_DIR = "reference.project.%1$s.output.dir";
-	public static final String FORMAT_REFERENCE_PROJECT_SOURCE_DIRS = "reference.project.%1$s.source.dirs";
-	public static final String FORMAT_REFERENCE_PROJECT_CLASSPATH_JARS = "reference.project.%1$s.classpath.jars";
-	public static final String FORMAT_REFERENCE_PROJECT_CLASSPATH_DIRS = "reference.project.%1$s.classpath.dirs";
 	public static final String FORMAT_REFERENCE_PROJECT_REFERENCE_PROJECTS = "reference.project.%1$s.reference.projects";
 	public static final String DELIMETER = ";";
 	
@@ -106,34 +99,14 @@ public class AntPropertiesBuilder {
 		}
 		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		ArrayList<File> sources = new ArrayList<File>();
-		ArrayList<File> destinations = new ArrayList<File>();
 		ArrayList<IJavaProject> projects = new ArrayList<IJavaProject>();
-		ArrayList<File> libraries = new ArrayList<File>();
 		for(IClasspathEntry entry : fProject.getRawClasspath()) {
 			IPath path = entry.getPath();
 			IResource resource = root.findMember(path);
 			switch(entry.getEntryKind()){
-			case IClasspathEntry.CPE_SOURCE: 
-				if(resource != null) {
-					sources.add(resource.getLocation().toFile().getAbsoluteFile());
-				}else if(path.toFile().exists()){
-					sources.add(path.toFile().getAbsoluteFile());
-				}else{
-					IFolder folder = root.getFolder(path);
-					sources.add(folder.getLocation().toFile().getAbsoluteFile());
-				}
-				break;
 			case IClasspathEntry.CPE_PROJECT: 
 				if(resource != null) {
 					projects.add(JavaCore.create(resource.getProject()));
-				}
-				break;
-			case IClasspathEntry.CPE_LIBRARY: 
-				if(resource != null) {
-					libraries.add(resource.getLocation().toFile().getAbsoluteFile());
-				}else{
-					libraries.add(path.toFile().getAbsoluteFile());
 				}
 				break;
 			case IClasspathEntry.CPE_VARIABLE: 
@@ -150,20 +123,8 @@ public class AntPropertiesBuilder {
 			}
 		}
 		
-		// get source folders, classpath folders, classpath jars, and referenced projects
-		String sourceDirs = asList(sources, DELIMETER, null);
-		String classpathDirs = asList(libraries, DELIMETER, new Filter(){
-			public boolean accept(Object o) {
-				File directory = new File(o.toString());
-				return directory.isDirectory();
-			}
-		});
-		String classpathJars = asList(libraries, DELIMETER, new Filter(){
-			public boolean accept(Object o) {
-				File jar = new File(o.toString());
-				return jar.isFile() && jar.getName().toLowerCase().endsWith(".jar");
-			}
-		});
+		// get classpath folders, and referenced projects
+
 		String referenceProjects = asList(projects, DELIMETER, null);
 		
 		if(this.fInitProject) {
@@ -174,9 +135,6 @@ public class AntPropertiesBuilder {
 			//   current.project.classpath.jars
 			//   current.project.reference.projects
 			prop.setProperty(PROPERTY_CURRENT_PROJECT, projectName);
-			prop.setProperty(PROPERTY_CURRENT_PROJECT_SOURCE_DIRS, sourceDirs);
-			prop.setProperty(PROPERTY_CURRENT_PROJECT_CLASSPATH_DIRS, classpathDirs);
-			prop.setProperty(PROPERTY_CURRENT_PROJECT_CLASSPATH_JARS, classpathJars);
 			prop.setProperty(PROPERTY_CURRENT_PROJECT_REFERENCE_PROJECTS, referenceProjects);
 			prop.setProperty(MptConstants.MAYLOON_DEPLOY_MODE, "browser");
 			// set up following properties:
@@ -227,9 +185,6 @@ public class AntPropertiesBuilder {
 				                 path.toFile().getAbsolutePath().toString());
 			}
 			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_DIR, projectName), fProject.getProject().getLocation().toOSString());
-			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_SOURCE_DIRS, projectName), sourceDirs);
-			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_CLASSPATH_DIRS, projectName), classpathDirs);
-			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_CLASSPATH_JARS, projectName), classpathJars);
 			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_REFERENCE_PROJECTS, projectName), referenceProjects);
 		}
 		
