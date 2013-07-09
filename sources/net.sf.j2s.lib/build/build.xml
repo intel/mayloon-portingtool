@@ -349,9 +349,9 @@
 
     		<arg value="java/net/URLEncoder.js"/>
     		<arg value="java/net/URLDecoder.js"/>
-<!--        	
-    		<arg value="net/sf/j2s/ajax/HttpRequest.js"/>
-    		<arg value="net/sf/j2s/ajax/ARunnable.js"/>
+
+                <arg value="net/sf/j2s/ajax/HttpRequest.js"/>
+        <!--<arg value="net/sf/j2s/ajax/ARunnable.js"/>
     		<arg value="net/sf/j2s/ajax/AClass.js"/>
     		<arg value="net/sf/j2s/ajax/ASWTClass.js"/>
         	
