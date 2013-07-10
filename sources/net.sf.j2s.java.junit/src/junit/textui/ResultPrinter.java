@@ -30,6 +30,10 @@ public class ResultPrinter implements TestListener {
 	    printFooter(result);
 	}
 
+    /**
+     * @j2sNative
+     * console.log("\n<RETURN> to continue");
+     **/
 	void printWaitPrompt() {
 		getWriter().println();
 		getWriter().println("<RETURN> to continue");
@@ -37,7 +41,10 @@ public class ResultPrinter implements TestListener {
 	
 	/* Internal methods 
 	 */
-
+    /**
+     * @j2sNative
+     * console.log("\nTime: " + this.elapsedTimeAsString(runTime));
+     **/
 	protected void printHeader(long runTime) {
 		getWriter().println();
 		getWriter().println("Time: "+elapsedTimeAsString(runTime));
@@ -53,10 +60,23 @@ public class ResultPrinter implements TestListener {
 	
 	protected void printDefects(Enumeration booBoos, int count, String type) {
 		if (count == 0) return;
-		if (count == 1)
-			getWriter().println("There was " + count + " " + type + ":");
-		else
-			getWriter().println("There were " + count + " " + type + "s:");
+		if (count == 1) {
+            /**
+             * @j2sNative
+             * console.log("There was " + count + " " + type + ":");
+             **/
+            {
+                getWriter().println("There was " + count + " " + type + ":");
+            }
+        } else {
+            /**
+             * @j2sNative
+             * console.log("There were " + count + " " + type + "s:");
+             **/
+            {
+                getWriter().println("There were " + count + " " + type + "s:");
+            }
+        }
 		for (int i= 1; booBoos.hasMoreElements(); i++) {
 			printDefect((TestFailure) booBoos.nextElement(), i);
 		}
@@ -67,31 +87,52 @@ public class ResultPrinter implements TestListener {
 		printDefectTrace(booBoo);
 	}
 
+    /**
+     * @j2sNative
+     * console.log(count + ") " + booBoo.failedTest());
+     **/
 	protected void printDefectHeader(TestFailure booBoo, int count) {
 		// I feel like making this a println, then adding a line giving the throwable a chance to print something
 		// before we get to the stack trace.
 		getWriter().print(count + ") " + booBoo.failedTest());
 	}
 
+    /**
+     * @j2sNative
+     * console.log(booBoo.trace());
+     **/
 	protected void printDefectTrace(TestFailure booBoo) {
 		//getWriter().print(BaseTestRunner.getFilteredTrace(booBoo.trace()));
 		getWriter().println(booBoo.trace());
 	}
 
 	protected void printFooter(TestResult result) {
-		if (result.wasSuccessful()) {
-			getWriter().println();
-			getWriter().print("OK");
-			getWriter().println (" (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
-
-		} else {
-			getWriter().println();
-			getWriter().println("FAILURES!!!");
-			getWriter().println("Tests run: "+result.runCount()+ 
-				         ",  Failures: "+result.failureCount()+
-				         ",  Errors: "+result.errorCount());
-		}
-	    getWriter().println();
+        if (result.wasSuccessful()) {
+             /**
+             * @j2sNative
+             * console.log("\nOK" + " (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
+             **/
+            {
+                getWriter().println();
+                getWriter().print("OK");
+                getWriter().println (" (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
+            }
+        } else {
+            /**
+             * @j2sNative
+             * console.log("\nFAILURES!!!");
+             * console.log("Tests run: " + result.runCount() + ",  Failures: "+result.failureCount() +
+                           ",  Errors: "+result.errorCount());
+             **/
+            {
+                getWriter().println();
+                getWriter().println("FAILURES!!!");
+                getWriter().println("Tests run: "+result.runCount()+ 
+                         ",  Failures: "+result.failureCount()+
+                         ",  Errors: "+result.errorCount());
+            }
+        }
+        getWriter().println();
 	}
 
 
@@ -109,6 +150,8 @@ public class ResultPrinter implements TestListener {
 	}
 	/**
 	 * @see junit.framework.TestListener#addError(Test, Throwable)
+     * @j2sNative
+     * console.log("E");
 	 */
 	public void addError(Test test, Throwable t) {
 		getWriter().print("E");
@@ -116,9 +159,11 @@ public class ResultPrinter implements TestListener {
 
 	/**
 	 * @see junit.framework.TestListener#addFailure(Test, AssertionFailedError)
+	 * @j2sNative
+	 * console.log("F");
 	 */
 	public void addFailure(Test test, AssertionFailedError t) {
-		getWriter().print("F");
+	    getWriter().print("F");
 	}
 
 	/**
@@ -131,7 +176,13 @@ public class ResultPrinter implements TestListener {
 	 * @see junit.framework.TestListener#startTest(Test)
 	 */
 	public void startTest(Test test) {
-		getWriter().print(".");
+        /**
+         * @j2sNative
+         * console.log(".");
+         **/
+        {
+            getWriter().print(".");
+        }
 		if (fColumn++ >= 40) {
 			getWriter().println();
 			fColumn= 0;

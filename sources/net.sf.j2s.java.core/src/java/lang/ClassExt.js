@@ -926,7 +926,7 @@ Clazz.forName = function (clazzName) {
 		ClazzLoader.loadClass (clazzName);
 		return Clazz.evalType (clazzName);
 	} else {
-		alert ("[Java2Script] Error: No ClassLoader!");
+		console.error ("[Java2Script] Error: No ClassLoader!");
 	}
 };
 

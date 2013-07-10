@@ -449,13 +449,14 @@
     			<exclude name="**/*.swp"/>
     			<exclude name="**/*.swo"/>
     		</fileset>
+
+            <fileset dir="${j2s.junit.bin}">
+                <exclude name="**/*.clazz"/>
+                <exclude name="**/*.class"/>
+                <exclude name="**/*.swp"/>
+                <exclude name="**/*.swo"/>
+            </fileset>
     		<!--
-    		<fileset dir="${j2s.junit.bin}">
-    			<exclude name="**/*.clazz"/>
-    			<exclude name="**/*.class"/>
-    			<exclude name="**/*.swp"/>
-    			<exclude name="**/*.swo"/>
-    		</fileset>
     		<fileset dir="${j2s.jface.project}/bin">
     			<exclude name="**/*.clazz"/>
     			<exclude name="**/*.class"/>

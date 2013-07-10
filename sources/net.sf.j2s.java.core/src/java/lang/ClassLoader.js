@@ -786,7 +786,7 @@ ClazzLoader.xhrOnload = function (transport, file) {
 			ClazzLoader.loadScript (file);
 			return;
 		} else {
-			alert ("[Java2Script] Error in loading " + file + "!");
+			console.error ("[Java2Script] Error in loading " + file + "!");
 		}
 		ClazzLoader.tryToLoadNext (file);
 	} else {
@@ -803,7 +803,7 @@ ClazzLoader.xhrOnload = function (transport, file) {
 			//	fileCount += transport.responseText.length;
 			eval (transport.responseText);
 		} catch (e) {
-			alert ("[Java2Script] Script error: " + e.message);
+			console.error ("[Java2Script] Script error: " + e.message);
 			throw e;
 		}
 		ClazzLoader.scriptLoaded (file);
@@ -993,7 +993,7 @@ ClazzLoader.generatingW3CScriptOnCallback = function (path, forError) {
 				ClazzLoader.removeScriptNode (this);
 				return;
 			} else {
-				alert ("[Java2Script] Error in loading " + path + "!");
+				console.error ("[Java2Script] Error in loading " + path + "!");
 			}
 			if (forError) {
 				ClazzLoader.scriptLoaded (path);
@@ -1063,7 +1063,7 @@ ClazzLoader.generatingIEScriptOnCallback = function (path) {
 				ClazzLoader.removeScriptNode (this);
 				return;
 			} else {
-				alert ("[Java2Script] Error in loading " + path + "!");
+				console.error ("[Java2Script] Error in loading " + path + "!");
 			}
 		}
 		if (ClazzLoader.inLoadingThreads > 0) {
@@ -1147,7 +1147,7 @@ ClazzLoader.loadScript = function (file) {
 			}
 		}
 		if (transport == null) { // should never happen in modern browsers.
-			alert ("[Java2Script] XMLHttpRequest not supported!");
+			console.error ("[Java2Script] XMLHttpRequest not supported!");
 			return;
 		}
 
@@ -1161,7 +1161,7 @@ ClazzLoader.loadScript = function (file) {
 			try {
 				transport.send (null);
 			} catch (e) {
-				alert ("[Java2Script] Loading file error: " + e.message);
+				console.error ("[Java2Script] Loading file error: " + e.message);
 				ClazzLoader.xhrOnload (transport, file);
 				//throw e;
 			}
@@ -1169,7 +1169,7 @@ ClazzLoader.loadScript = function (file) {
 			try {
 				transport.send (null);
 			} catch (e) {
-				alert ("[Java2Script] Loading file error: " + e.message);
+				console.error ("[Java2Script] Loading file error: " + e.message);
 				//throw e;
 			}
 			ClazzLoader.xhrOnload (transport, file);
