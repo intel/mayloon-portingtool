@@ -363,7 +363,7 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 					buffer.append(".valueOf ()");
 					return false;
 				}
-			} else if (typeBinding != null &&  "char".equals(typeBinding.getName())) {
+			} else if ("char".equals(typeBinding.getName())) {
 				boolean isMixedOp = op.trim().length() > 1;
 				if (!isMixedOp) {
 					if (right instanceof Name || right instanceof CharacterLiteral
@@ -413,6 +413,23 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 				buffer.append(')');
 				return false;
 			}
+
+            /**
+             * Mayloon fix Bug 1615 Operation between integer and float or double
+             * can't be converted to integer.
+             **/
+            String leftTypeName = typeBinding.getName();
+            if ("byte".equals(leftTypeName) || "short".equals(leftTypeName)
+                    || "int".equals(leftTypeName) || "long".equals(leftTypeName)) {
+                left.accept(this);
+                buffer.append(' ');
+                buffer.append(op);
+                buffer.append(' ');
+                buffer.append("parseInt (");
+                boxingNode(right);
+                buffer.append(")");
+                return false;
+            }
 		}
 		left.accept(this);
 		buffer.append(' ');
