@@ -417,20 +417,101 @@ public class ProjectUtil {
 					destPath.append(
 							project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE)
 							.toFile());
-
-			srcPath = Path.fromPortableString(mayloonSDKPath + "/"
-					+ MptConstants.MAYLOON_TIZEN_ICON);
-			ProjectUtil.copyFile(srcPath.toFile(),
-					destPath.append(MptConstants.MAYLOON_TIZEN_ICON).toFile());
-
-			// if (folder != null) {
-			// folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-			// }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Add icon for tizen project
+	 */
+	public static void addProjectIcon(IProject project, String packageName){
+		File srcIconFile = null;
+		IPath dstPath = null;
+		try {
+			dstPath = getMayloonOutputFolder(project);
+		} catch (CoreException e1) {
+			return;
+		}
 
+		IResource manifest = project.findMember(MptConstants.ANDROID_MANIFEST_FILE);
+		FileInputStream stream = null;
+		String iconPath = null;
+		XPath path = AndroidXPathFactory.newXPath(null);
+		try {
+			iconPath = path.evaluate("/manifest/application/@android:icon", new InputSource(
+								stream = new FileInputStream(manifest.getLocation().toFile())));
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e){
+			e.printStackTrace();
+		} finally {
+			if (stream != null){
+				try {
+					stream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (iconPath != null && !iconPath.isEmpty()){
+			String tmpPath = iconPath.substring(iconPath.indexOf('@') + 1, iconPath.lastIndexOf('/'));
+			final String folderName = tmpPath.substring(tmpPath.lastIndexOf('/') + 1);
+			final String iconName = iconPath.substring(iconPath.lastIndexOf('/') + 1) + ".png";
+			
+			FileFilter filter = new FileFilter() {
+				public boolean accept(File file) {
+					if (!file.isDirectory()){
+						if (!file.getName().equals(iconName)){
+							return false;
+						}
+						
+						String fullPath = file.getAbsolutePath();
+						if (fullPath.indexOf(folderName) < 0){
+							return false;
+						}
+					}
+					return true;
+				}
+			};
+			
+			Vector<File> icons = new Vector<File>();
+			String folderPath = project.getLocation().append("bin/apps/") + packageName + "/";
+			ProjectUtil.searchFiles(folderPath, filter, icons);
+			
+			int maxByte = -1;
+			for (int i = 0;i < icons.size();i ++){
+				try {
+					FileInputStream fis = new FileInputStream(icons.get(i));
+					int tempSize = fis.available();
+					if (tempSize > maxByte){
+						maxByte = tempSize;
+						srcIconFile = icons.get(i);
+					}
+					fis.close();
+				} catch (FileNotFoundException e) {
+				} catch (IOException e){
+				}
+			}
+		}
+		
+		if (srcIconFile == null){ // if not exist, use default icon
+			String mayloonSDKPath = MayloonSDK.getSdkLocation();
+			if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
+				return;
+			}
+			IPath srcPath = Path.fromPortableString(mayloonSDKPath + "/"
+					+ MptConstants.MAYLOON_TIZEN_ICON);
+			srcIconFile = srcPath.toFile();
+		}
+	
+		try {
+			ProjectUtil.copyFile(srcIconFile,
+					dstPath.append(MptConstants.MAYLOON_TIZEN_ICON).toFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	/**
@@ -2205,6 +2286,33 @@ public class ProjectUtil {
 			fo.close();
 			fi.close();
 		} catch (Exception e) {
+		}
+	}
+	
+	/**
+	 * Search for files within specific folder
+	 * @param folder
+	 * @param filter		FileFilter for filtering files
+	 * @param filelist		results of searching
+	 */
+	public static void searchFiles(String folder, FileFilter filter, Vector<File> filelist){
+		File srcFolder = new File(folder);
+		if (!srcFolder.exists() || !srcFolder.isDirectory()){
+			return;
+		}
+		
+		File[] files;
+		if (filter == null){
+			files = srcFolder.listFiles();
+		}
+		else files = srcFolder.listFiles(filter);
+		
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				searchFiles(files[i].getAbsolutePath(), filter, filelist);
+			} else {
+				filelist.add(files[i]);
+			}
 		}
 	}
 

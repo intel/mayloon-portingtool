@@ -138,7 +138,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	 */
 	private void performTizenPackage(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask("Exporting MayLoon application...", 4);
+			monitor.beginTask("Exporting MayLoon application...", 5);
 			// set export destination
 			ProjectUtil.setMayloonOutputFolder(fProject, fDestinationFile);
 			// get package name from AndroidManifest.xml
@@ -147,7 +147,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			String packageName = ProjectUtil
 					.extractPackageFromManifest(fProject);
 
-			// generate the Icon.png and project name.html
+			// generate project name.html
 			// file of tizen application
 			ProjectUtil.addTizenProjectFile(fProject);
 			MptPluginConsole.general(MptConstants.EXPORT_TAG,
@@ -166,7 +166,11 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			ProjectUtil.addAndroidOutput2Mayloon(fProject,
 					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, true);
 			monitor.worked(1);
-
+			
+			// add an icon
+			ProjectUtil.addProjectIcon(fProject, packageName);
+			monitor.worked(1);
+			
 			// copy /bin/classes
 			ProjectUtil.addMayloonCompiledJSFiles(fProject);
 			monitor.worked(1);
