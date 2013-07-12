@@ -484,8 +484,6 @@ public class J2SLaunchingUtil {
 		buf.append(gj2sLibPath);
 		buf.append("j2slib.z.js';(typeof x[t]=='undefined')?x.onload=f:x[t]=f;" +
 				"d.getElementsByTagName('HEAD')[0].appendChild(x);void(0);}\">");
-		buf.append("<span class=\"alaa-icon\"></span>");
-		buf.append(mainType);
 		buf.append("</a>\r\n\r\n");
 		
 		/*
@@ -588,12 +586,6 @@ public class J2SLaunchingUtil {
 		buf.append("<body>\r\n");
 		buf.append(configuration.getAttribute(
 				IJ2SLauchingConfiguration.HEAD_BODY_HTML, ""));
-		
-		// The following is a link for developers to load application for 
-		// any times. And this link may be used as "A Link An Application"
-		// if relative part
-		buf.append("<!-- A Link An Application (ALAA) -->\r\n");
-		buf.append("<div class=\"powered\">Powered by <a href=\"http://java2script.org/\">Java2Script</a></div>\r\n");
 	}
 
 	public static void writeMainHTML(File file, String html) {
