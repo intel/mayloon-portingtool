@@ -879,7 +879,7 @@ public class ProjectUtil {
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
 					String path = entries[i].getPath().toOSString();
 					if (path.substring(path.lastIndexOf('/') + 1).equals("gen")){
-						continue; //generated files won't be copied //is this a kind of resource referencing?
+						continue; //generated files won't be copied
 					}
 					String srcFolderPath = srcProjectFolder + path;
 					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath)){
@@ -991,15 +991,63 @@ public class ProjectUtil {
 	}
 	
 	/**
-	 * fix project dependency in java build path
+	 * fix dependencies
 	 * @param project
+	 */
+	public static void fixDependencies(IProject project){
+		Vector<IProject> proj_list = new Vector<IProject>();
+		
+		proj_list.add(project);
+		try {
+			ProjectUtil.getProjectDependency(project, proj_list);
+			ProjectUtil.getAndroidDependency(project, proj_list);
+			
+			//fix dependencies
+			for (int i = 1;i < proj_list.size();i ++){
+				if (ProjectUtil.addReferencedProjectSource(project, proj_list.get(i))){
+					MptPluginConsole.general(MptConstants.CONVERT_TAG, 
+							"Source code of referenced project [" + proj_list.get(i).getName() + "] is merged into project [" + project.getName() + "].");
+				}
+			}
+			
+			//clean class path
+			IJavaProject javaProject = JavaCore.create(project);
+			IClasspathEntry[] entries = javaProject.getRawClasspath();
+			Vector<Integer> fixed_refs = new Vector<Integer>();	//items need to be removed
+			
+			for (int i = 0;i < entries.length;i ++){
+				if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
+					String fullname = entries[i].getPath().toOSString();
+					String name = fullname.substring(fullname.lastIndexOf('/') + 1);
+					
+					for (int j = 1;j < proj_list.size();j ++){
+						if (proj_list.get(j).getName().equals(name)){
+							fixed_refs.add(i); break;
+						}
+					}
+				}
+			}
+			
+			for (int i = fixed_refs.size() - 1;i >= 0;i --){
+				entries = ProjectUtil.removeClassPathEntry(entries, fixed_refs.get(i));
+			}
+			if (fixed_refs.size() > 0){
+				javaProject.setRawClasspath(entries, new NullProgressMonitor());
+			}
+		} catch (JavaModelException e) {
+		}
+	}
+	
+	/**
+	 * get a list of referenced projects
+	 * @param project
+	 * @param proj_list
 	 * @throws JavaModelException
 	 */
-	public static void fixProjectDependency(IProject project)
-			throws JavaModelException {
+	private static void getProjectDependency(IProject project,
+			Vector<IProject> proj_list) throws JavaModelException{
 		IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		Vector<Integer> fixed_refs = new Vector<Integer>();
 		
 		for (int i = 0;i < entries.length;i ++){
 			if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
@@ -1009,13 +1057,10 @@ public class ProjectUtil {
 				boolean foundFlag = false;
 				for (int j = 0;j < projects.length;j ++){
 					if (projects[j].getName().equals(name)){
-						//TODO:could be checked right here before merging code
-						//TODO:resources referencing or recursive project dependency shall be checked or solved here
-						
-						if (ProjectUtil.addReferencedProjectSource(project, projects[j])){
-							fixed_refs.add(i);
-							MptPluginConsole.general(MptConstants.CONVERT_TAG, 
-									"Source code of referenced project [" + projects[j].getName() + "] is merged into project [" + project.getName() + "].");
+						if (!proj_list.contains(projects[j])){
+							proj_list.add(projects[j]);
+							ProjectUtil.getProjectDependency(projects[j], proj_list);
+							ProjectUtil.getAndroidDependency(projects[j], proj_list);
 						}
 						foundFlag = true; break;
 					}
@@ -1026,20 +1071,16 @@ public class ProjectUtil {
 				}
 			}
 		}
-
-		for (int i = fixed_refs.size() - 1;i >= 0;i --){
-			entries = ProjectUtil.removeClassPathEntry(entries, fixed_refs.get(i));
-		}
-		if (fixed_refs.size() > 0){
-			javaProject.setRawClasspath(entries, new NullProgressMonitor());
-		}
 	}
 	
 	/**
-	 * fix project dependency in android property
+	 * get a list of referenced projects
 	 * @param project
+	 * @param proj_list
+	 * @throws JavaModelException
 	 */
-	public static void fixAndroidDependency(IProject project){
+	private static void getAndroidDependency(IProject project,
+			Vector<IProject> proj_list) throws JavaModelException {
 		IResource defaultProperties = project
 				.findMember(MptConstants.ANDROID_DEFAULT_PROPERTIES);
 		if (defaultProperties != null && defaultProperties.exists()) {
@@ -1069,12 +1110,10 @@ public class ProjectUtil {
 				boolean foundFlag = false;
 				for (int j = 0;j < projects.length;j ++){
 					if (projects[j].getName().equals(name)){
-						//TODO:should check if code merge could solve the problem
-						//TODO:resources referencing or recursive project dependency shall be checked or solved here
-						
-						if (ProjectUtil.addReferencedProjectSource(project, projects[j])){
-							MptPluginConsole.general(MptConstants.CONVERT_TAG, 
-									"Source code of referenced project [" + projects[j].getName() + "] is merged into project [" + project.getName() + "].");
+						if (!proj_list.contains(projects[j])){
+							proj_list.add(projects[j]);
+							ProjectUtil.getProjectDependency(projects[j], proj_list);
+							ProjectUtil.getAndroidDependency(projects[j], proj_list);
 						}
 						foundFlag = true; break;
 					}
@@ -1086,7 +1125,7 @@ public class ProjectUtil {
 			}
 		}
 	}
-
+	
 	/**
 	 * remove the android class entry: android.jar
 	 * 

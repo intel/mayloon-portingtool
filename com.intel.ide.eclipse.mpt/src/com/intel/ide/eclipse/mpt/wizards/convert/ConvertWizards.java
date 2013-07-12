@@ -214,8 +214,7 @@ public class ConvertWizards extends Wizard {
 			}
 			
 			//fix project dependencies
-			ProjectUtil.fixProjectDependency(project);
-			ProjectUtil.fixAndroidDependency(project);
+			ProjectUtil.fixDependencies(project);
 			monitor.worked(1);
 			
 			// generate .j2s configuration file
