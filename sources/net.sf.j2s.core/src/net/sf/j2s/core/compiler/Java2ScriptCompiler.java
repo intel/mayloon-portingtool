@@ -415,6 +415,9 @@ public class Java2ScriptCompiler implements IExtendedCompiler {
 		
 		String jsExtension = ".js";
 		File jsFile = new File(folderPath, elementName + jsExtension); //$NON-NLS-1$
+		
+		// Add the source URL for browser debugger to show the dynamic loaded js through eval.
+		js += "\r\n" + "//@ sourceURL=" + elementName +jsExtension;
 		try {
 			FileOutputStream fos = new FileOutputStream(jsFile);
 			fos.write(new byte[] {(byte) 0xef, (byte) 0xbb, (byte) 0xbf}); // UTF-8 header!
