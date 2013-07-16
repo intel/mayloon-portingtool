@@ -868,9 +868,9 @@ public class ProjectUtil {
 	 * @return if succeed
 	 */
 	public static boolean addReferencedProjectSource(IProject project, IProject ref_proj){
-		String dstFolderPath = project.getLocation().toOSString() + "/src";
+		String dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "src";
 		String srcProjectFolder = ref_proj.getLocation().toOSString();
-		srcProjectFolder = srcProjectFolder.substring(0, srcProjectFolder.lastIndexOf('/'));
+		srcProjectFolder = srcProjectFolder.substring(0, srcProjectFolder.lastIndexOf(MptConstants.FILE_SEPARATOR));
 
 		IJavaProject javaProject = JavaCore.create(ref_proj);
 		try {

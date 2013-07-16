@@ -1,7 +1,10 @@
 package com.intel.ide.eclipse.mpt;
 
+import java.io.File;
+
 public class MptConstants {
 	public static final String WS_ROOT = "/"; //$NON-NLS-1$
+	public static final String FILE_SEPARATOR = File.separator; //
 	public static final String MAYLOON_OUTPUT_DIR = "mayloon_bin"; //$NON-NLS-1$
 	public static final String MAYLOON_APP_RES_DIR = "/apps/"; //$NON-NLS-1$
 	public static final String MAYLOON_EXTERNAL_JS_DIR = "external"; //$NON-NLS-1$
