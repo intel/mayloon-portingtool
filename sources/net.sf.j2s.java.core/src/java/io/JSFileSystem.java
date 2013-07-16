@@ -135,13 +135,7 @@ class JSFileSystem{
     	}
     	String cnt = new String(data);
     	String path = fds[fd].getPath();
-    	/**
-    	 * @j2sNative
-    	 * var file = new W3CFile(path);
-    	 * file.open(true, false);
-	     * file.write(cnt,true);
-    	 */{}
-    	return 0;
+        return 0;
     }
 
     /*
@@ -157,17 +151,8 @@ class JSFileSystem{
 
     public FileDescriptor open(String path, int mode) throws FileNotFoundException
     {
-    	byte[] bts = null;
-    	/**
-		 @j2sNative 
-		 var file = new W3CFile(path);
-		 if (file.exist()){
-		     bts = file.read();
-		 }else{
-	       file.open(true, false);
-	       bts = "";
-	     }
-		 */ {}
+        byte[] bts = null;
+        bts = new byte[0];
 		int i=-1;
 		if(mode==O_RDONLY||mode==O_CREAT||mode==O_TRUNC){
 			i=0;			

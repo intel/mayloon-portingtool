@@ -585,7 +585,6 @@ public class J2SLaunchingUtil {
 		buf.append("}\r\n");
 		buf.append("</style>\r\n");
 		buf.append("<script src=\"external/jsthread.js\"></script>");
-		buf.append("<script src=\"external/fileapi.js\"></script>");
 		buf.append("</head>\r\n");
 		buf.append("<body>\r\n");
 		buf.append(configuration.getAttribute(

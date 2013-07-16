@@ -291,7 +291,7 @@ public class File implements Serializable, Comparable<File> {
     }
     
     private static boolean canExecuteImpl(String path) {
-    	return false;
+        return false;
     }
 
     /**
@@ -379,14 +379,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean deleteImpl(String path) {
-    	/**
-    	 * @j2sNative
-    	   var file = new W3CFile(path);
-    	   if (file.exist()) return file.remove();
-    	   var folder = new W3CFolder(path);
-    	   if (folder.exist()) return folder.remove(true);
-    	 */{}
-    	 return true;
+        return false;
     }
 
     /**
@@ -446,18 +439,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean existsImpl(String path) {
-    	//the path could be either a dir or a file name  -wenhao
-    	/**
-    	  @j2sNative
-           var file = new W3CFile(path);
-    	   if (file.exist()) return true;
-    	   else{
-    	      var folder = new W3CFolder(path);
-    	      if (folder.exist()) return true;
-    	   }
-    	  
-    	 */{}
-    	return false;
+        return false;
     }
 
     /**
@@ -780,12 +762,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean isDirectoryImpl(String path) {
-    	/**
-    	 * @j2sNative
-           var folder = new W3CFolder(path);
-           if (folder.exist()) return true;
-    	 */{}
-    	return false;
+        return false;
     }
 
     /**
@@ -809,12 +786,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean isFileImpl(String path) {
-    	/**
-    	 * @j2sNative
-           var file = new W3CFile(path);
-           if (file.exist()) return true;
-    	 */{}
-    	return false;
+        return false;
     }
 
     /**
@@ -862,14 +834,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static long lastModifiedImpl(String path) {
-    	/**
-    	  @j2sNative
-    	  var file = new W3CFile(path);
-    	  if (file.exist()) return file.lastModified();
-    	  var folder = new W3CFolder(path);
-    	  if (folder.exist()) return folder.lastModified();
-    	 */{}
-    	return -1;
+        return -1;
     }
 
     /**
@@ -963,7 +928,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean setExecutableImpl(String path, boolean executable, boolean ownerOnly) {
-    	return false;
+        return false;
     }
 
     /**
@@ -1076,12 +1041,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static long lengthImpl(String path) {
-    	/**
-    	  @j2sNative
-    	  var file = new W3CFile(path);
-    	  if (file.exist()) return file.length();
-    	 */{}
-    	return 0;
+        return 0;
     }
 
     /**
@@ -1111,19 +1071,9 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static String[] listImpl(String path) {
-    	if (isDirectoryImpl(path)) {
-        /**
-      	  @j2sNative
-      	  var folder = new W3CFolder(path);
-      	  var list = folder.list();
-      	  var result = new Array();
-      	  for (var i=0; i<list.length; i++) {
-      	    result[i] = new String(list[i]);
-      	  }
-      	  return result;
-      	 */{}
-    	}
-    	return new String[0];
+        if (isDirectoryImpl(path)) {
+        }
+        return new String[0];
     }
 
     /**
@@ -1276,14 +1226,9 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean mkdirImpl(String path) {
-    	if (!path.isEmpty()) {
-        /**
-     	   @j2sNative
-     	   var folder = new W3CFolder(path);
-     	   return folder.open(true);
-     	 */{}
-    	}
-    	return false;
+        if (!path.isEmpty()) {
+        }
+        return false;
     }
 
     /**
@@ -1348,13 +1293,7 @@ public class File implements Serializable, Comparable<File> {
     }
 
     private static boolean createNewFileImpl(String path) {
-    	boolean result = false;
-    	/**
-    	  @j2sNative
-    	  var file = new W3CFile(path);
-    	  result = file.open(true, false);
-    	 */{}
-    	return result;
+        return false;
     }
 
     /**
@@ -1463,16 +1402,7 @@ public class File implements Serializable, Comparable<File> {
     		folder = newPath.substring(0, index);
     		name = newPath.substring(index);
     	}
-    	boolean result = false;
-    	/**
-    	  @j2sNative
-    	  var file = new W3CFile(oldPath);
-    	  if (!folder) {
-    	    folder = file.getParent();
-    	  }
-    	  result = file.moveTo(folder, name);
-    	 */{}
-    	return result;
+        return false;
     }
 
     /**
