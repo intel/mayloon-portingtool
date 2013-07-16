@@ -421,16 +421,24 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
             String leftTypeName = typeBinding.getName();
             if ("byte".equals(leftTypeName) || "short".equals(leftTypeName)
                     || "int".equals(leftTypeName) || "long".equals(leftTypeName)) {
-                left.accept(this);
-                buffer.append(' ');
-                buffer.append(op);
-                buffer.append(' ');
-                buffer.append("parseInt (");
+                if ("=".equals(op)) {
+                    left.accept(this);
+                    buffer.append(op);
+                    buffer.append("parseInt (");;
+                } else {
+                    //fix like: int n = 8; n *= 0.9;
+                    left.accept(this);
+                    buffer.append(" = ");
+                    buffer.append("parseInt (");
+                    left.accept(this);
+                    buffer.append(op);;
+                }
                 boxingNode(right);
                 buffer.append(")");
                 return false;
             }
-		}
+        }
+
 		left.accept(this);
 		buffer.append(' ');
 		buffer.append(op);
