@@ -1176,20 +1176,20 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 					&& checkSameName(typeBinding, fieldName)) {
 				ext += "$";
 			}
-			//fieldName = ext + fieldName;
-			//buffer.append(fieldName);
-			buffer.append("this.");
-			if (isInheritedFieldName(typeBinding, fieldName)) {
-				fieldName = getFieldName(typeBinding, fieldName);
-				buffer.append(ext + fieldName);
-			} else {
-				buffer.append(ext + fieldName);
-			}
-			//buffer.append(element.getName());
-			buffer.append(" = ");
-				if (!ignoreInitializer && element.getInitializer() != null) {
-					element.getInitializer().accept(this);
-				} else {
+            //fieldName = ext + fieldName;
+            //buffer.append(fieldName);
+            buffer.append("this.");
+            if (isInheritedFieldName(typeBinding, fieldName)) {
+                fieldName = getFieldName(typeBinding, fieldName);
+                buffer.append(ext + fieldName);
+            } else {
+                buffer.append(ext + fieldName);
+            }
+            //buffer.append(element.getName());
+            buffer.append(" = ");
+                if (!ignoreInitializer && element.getInitializer() != null) {
+                    boxingNode(element.getInitializer());
+                } else {
 					boolean isArray = false;
 					List frags = node.fragments();
 					if (frags.size() > 0) {
