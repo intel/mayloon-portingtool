@@ -171,6 +171,38 @@ public class ASTVariableVisitor extends AbstractPluginVisitor {
 		return buf.toString();
 	}
 
+    /**
+     * handle the special symbol for char and string.
+     * @param char
+     * @return String
+     **/
+    protected String checkCharValue(char c) {
+        StringBuffer buffer = new StringBuffer();
+        if (c == '\\' || c == '\'' || c == '\"') {
+            buffer.append('\\');
+            buffer.append(c);
+        } else if (c == '\r') {
+            buffer.append("\\r");
+        } else if (c == '\n') {
+            buffer.append("\\n");
+        } else if (c == '\t') {
+            buffer.append("\\t");
+        } else if (c == '\f') {
+            buffer.append("\\f");
+        } else if (c < 32 || c > 127) {
+            buffer.append("\\u");
+            String hexStr = Integer.toHexString(c);
+            int zeroLen = 4 - hexStr.length();
+            for (int i = 0; i < zeroLen; i++) {
+                buffer.append('0');
+            }
+            buffer.append(hexStr);
+        } else {
+            buffer.append(c);
+        }
+        return buffer.toString();
+    }
+
 	/**
 	 * If given expression is constant value expression, return its value 
 	 * string; or return null.
@@ -186,18 +218,8 @@ public class ASTVariableVisitor extends AbstractPluginVisitor {
 			StringBuffer buffer = new StringBuffer();
 			if (constValue instanceof Character) {
 				buffer.append('\'');
-				char charValue = ((Character)constValue).charValue();
-				if (charValue < 32 || charValue > 127) {
-					buffer.append("\\u");
-					String hexStr = Integer.toHexString(charValue);
-					int zeroLen = 4 - hexStr.length();
-					for (int i = 0; i < zeroLen; i++) {
-						buffer.append('0');
-					}
-					buffer.append(hexStr);
-				} else {
-					buffer.append(constValue);
-				}
+                char charValue = ((Character)constValue).charValue();
+                buffer.append(checkCharValue(charValue));
 				buffer.append('\'');
 			} else {
 				buffer.append(constValue);
@@ -214,29 +236,8 @@ public class ASTVariableVisitor extends AbstractPluginVisitor {
 			}*/
 			buffer.append("\"");
 			for (int i = 0; i < length; i++) {
-				char c = str.charAt(i);
-				if (c == '\\' || c == '\'' || c == '\"') {
-					buffer.append('\\');
-					buffer.append(c);
-				} else if (c == '\r') {
-					buffer.append("\\r");
-				} else if (c == '\n') {
-					buffer.append("\\n");
-				} else if (c == '\t') {
-					buffer.append("\\t");
-				} else if (c == '\f') {
-					buffer.append("\\f");
-				} else if (c < 32 || c > 127) {
-					buffer.append("\\u");
-					String hexStr = Integer.toHexString(c);
-					int zeroLen = 4 - hexStr.length();
-					for (int k = 0; k < zeroLen; k++) {
-						buffer.append('0');
-					}
-					buffer.append(hexStr);
-				} else {
-					buffer.append(c);
-				}
+                char c = str.charAt(i);
+                buffer.append(checkCharValue(c));
 			}
 			buffer.append("\"");
 			return buffer.toString();
