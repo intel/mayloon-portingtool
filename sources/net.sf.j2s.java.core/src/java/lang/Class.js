@@ -938,55 +938,6 @@ Clazz.tryToSearchAndExecute = function (objThis, clazzFun, params, funParams/*,
 				methodParams = funParams;
 			}
 			/*# {$no.debug.support} >>x #*/
-			if (Clazz.tracingCalling) {
-				var caller = arguments.callee.caller; // SAEM
-				caller = caller.arguments.callee.caller; // Delegating
-				caller = caller.arguments.callee.caller; 
-				var xpushed = f.exName == "construct" 
-						&& Clazz.getInheritedLevel (f.exClazz, Throwable) >= 0
-						&& !Clazz.initializingException;
-				if (xpushed) {
-					Clazz.initializingException = true;
-					// constructor is wrapped
-					var xcaller = caller.arguments.callee.caller // Delegate
-							.arguments.callee.caller; // last method
-					var fun = xcaller.arguments.callee;
-					var owner = fun.claxxReference;
-					if (owner == null) {
-						owner = fun.exClazz;
-					}
-					if (owner == null) {
-						owner = fun.claxxOwner;
-					}
-					/*
-					 * Keep the environment that Throwable instance is created
-					 */
-					Clazz.pu$hCalling (new Clazz.callingStack (xcaller, owner));
-				}
-				
-				var noInnerWrapper = caller !== Clazz.instantialize 
-						&& caller !== Clazz.superCall;
-				if (noInnerWrapper) {
-					var fun = caller.arguments.callee;
-					var owner = fun.claxxReference;
-					if (owner == null) {
-						owner = fun.exClazz;
-					}
-					if (owner == null) {
-						owner = fun.claxxOwner;
-					}
-					Clazz.pu$hCalling (new Clazz.callingStack (caller, owner));
-				}
-				fx.lastMethod = f;
-				var ret = f.apply (objThis, methodParams);
-				if (noInnerWrapper) {
-					Clazz.p0pCalling ();
-				}
-				if (xpushed) {
-					Clazz.p0pCalling ();
-				}
-				return ret;
-			}
 			/*# x<< #*/
 			fx.lastMethod = f;
 			return f.apply (objThis, methodParams);
