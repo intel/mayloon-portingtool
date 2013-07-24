@@ -78,6 +78,8 @@ import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.builder.AntPropertiesBuilder;
+import com.intel.ide.eclipse.mpt.compressor.CompressException;
+import com.intel.ide.eclipse.mpt.compressor.Compressor;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.project.AndroidXPathFactory;
 import com.intel.ide.eclipse.mpt.project.MayloonClasspathContainerInitializer;
@@ -360,8 +362,13 @@ public class ProjectUtil {
 	 * @param destPath
 	 * @throws CoreException
 	 */
-	public static void copyFilesFromPlugin2UserProject(IPath srcPath,
-			IPath destPath) throws CoreException {
+	public static void copyFilesFromPlugin2UserProject(IPath srcPath, IPath destPath,
+			boolean bCompress){
+		ProjectUtil.mergeFolder(srcPath.toOSString(), destPath.toOSString(), true, bCompress);
+	}
+	
+	public static void copyFilesFromPlugin2UserProject(IPath srcPath, IPath destPath)
+			throws CoreException{
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
 		IFileStore destDir = fileSystem.getStore(destPath);
 		IFileStore srcDir = fileSystem.getStore(srcPath);
@@ -550,7 +557,7 @@ public class ProjectUtil {
 	 * @throws MptException
 	 */
 	public static void addMayloonFrameworkFolder(IProject project,
-			String deployMode, String packageName) throws CoreException,
+			String deployMode, String packageName, boolean bCompress) throws CoreException,
 			MptException {
 		String mayloonSDKPath = MayloonSDK.getSdkLocation();
 		IJavaProject javaProject = JavaCore.create(project);
@@ -585,14 +592,14 @@ public class ProjectUtil {
 					if (!folder.exists()) {
 						folder.create(true, true, null);
 					}
-					copyFilesFromPlugin2UserProject(srcPath,
-							folder.getRawLocation());
+					copyFilesFromPlugin2UserProject(srcPath, folder.getRawLocation(), bCompress);
 				} else if (deployMode
 						.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 					destPath = getMayloonOutputFolder(project);
 					copyFilesFromPlugin2UserProject(
 							srcPath,
-							destPath.append(MptConstants.MAYLOON_EXTERNAL_JS_DIR));
+							destPath.append(MptConstants.MAYLOON_EXTERNAL_JS_DIR),
+							bCompress);
 				}
 				if (folder != null) {
 					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -610,7 +617,8 @@ public class ProjectUtil {
 				destPath = getMayloonOutputFolder(project);
 
 				copyFilesFromPlugin2UserProject(j2sLibPath,
-						destPath.append(MptConstants.MAYLOON_J2S_LIBRARY));
+						destPath.append(MptConstants.MAYLOON_J2S_LIBRARY),
+						bCompress);
 			}
 
 			if (frameworkRes != null) {
@@ -625,13 +633,14 @@ public class ProjectUtil {
 						folder.create(true, true, null);
 					}
 					copyFilesFromPlugin2UserProject(srcPath,
-							folder.getRawLocation());
+							folder.getRawLocation(), bCompress);
 				} else if (deployMode
 						.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
 					destPath = getMayloonOutputFolder(project);
 					copyFilesFromPlugin2UserProject(
 							srcPath,
-							destPath.append(MptConstants.MAYLOON_FRAMEWORK_RES_DIR));
+							destPath.append(MptConstants.MAYLOON_FRAMEWORK_RES_DIR),
+							bCompress);
 				}
 				if (folder != null) {
 					folder.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -651,7 +660,7 @@ public class ProjectUtil {
 				IPath destPath = project.getLocation().append(
 						MptConstants.MAYLOON_SRC_DIR);
 
-				copyFilesFromPlugin2UserProject(srcPath, destPath);
+				copyFilesFromPlugin2UserProject(srcPath, destPath, bCompress);
 
 				// change pm.installPackage(/**/); to
 				// pm.installPackage("convert android application's package name");
@@ -806,7 +815,7 @@ public class ProjectUtil {
 	 * @param project
 	 * @throws CoreException
 	 */
-	public static void addMayloonCompiledJSFiles(IProject project) {
+	public static void addMayloonCompiledJSFiles(IProject project, boolean bCompress) {
 
 		IJavaProject javaProject = JavaCore.create(project);
 
@@ -818,9 +827,8 @@ public class ProjectUtil {
 
 			IPath srcPath = project.getLocation().append(outputPath);
 			IPath destPath = getMayloonOutputFolder(project);
-
 			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath,
-					destPath.append(outputPath));
+					destPath.append(outputPath), bCompress);
 
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
@@ -837,7 +845,7 @@ public class ProjectUtil {
 	 * @param project
 	 * @throws CoreException
 	 */
-	public static void addJ2SLibFiles2Tizen(IProject project) {
+	public static void addJ2SLibFiles2Tizen(IProject project, boolean bCompress) {
 
 		IJavaProject javaProject = JavaCore.create(project);
 
@@ -850,7 +858,7 @@ public class ProjectUtil {
 			IPath srcPath = project.getLocation().append(outputPath);
 			IPath destPath = getMayloonOutputFolder(project);
 
-			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
+			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath, bCompress);
 
 		} catch (JavaModelException e) {
 			// TODO Auto-generated catch block
@@ -882,7 +890,7 @@ public class ProjectUtil {
 						continue; //generated files won't be copied
 					}
 					String srcFolderPath = srcProjectFolder + path;
-					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath)){
+					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath, false, false)){
 						try {
 							project.refreshLocal(IResource.DEPTH_INFINITE, null);
 						} catch (CoreException e) {
@@ -2209,7 +2217,8 @@ public class ProjectUtil {
 	 * @param dstFolderPath
 	 * @return true if succeed
 	 */
-	public static boolean mergeFolder(String srcFolderPath, String dstFolderPath){
+	public static boolean mergeFolder(String srcFolderPath, String dstFolderPath,
+			boolean bOverwrite, boolean bCompress){
 		File srcFolder = new File(srcFolderPath);
 		File dstFolder = new File(dstFolderPath);
 		
@@ -2243,27 +2252,26 @@ public class ProjectUtil {
 						e.printStackTrace();
 					}	
 				}
-				if (!mergeFolder(files[i].getAbsolutePath(), file.getAbsolutePath())){
+				if (!mergeFolder(files[i].getAbsolutePath(), file.getAbsolutePath(), bOverwrite, bCompress)){
 					return false;
 				}
 			} else {
-				if (!file.exists()) {
-					try {
-						file.createNewFile();
-					} catch (IOException e) {
-						e.printStackTrace();
+				if (!file.exists() || bOverwrite) {
+					if (bCompress && files[i].getAbsoluteFile().toString().endsWith(".js")){
+						try {
+							Compressor.compress(files[i].getAbsolutePath(), file.getAbsolutePath());
+						} catch (CompressException e) {		// could not compress this file
+							streamCopyFile(files[i], file);
+						}
 					}
-					streamCopyFile(files[i], file);
-				}
-				else {
-					return false;
+					else streamCopyFile(files[i], file);
 				}
 			}
 		}
 		
 		return true;
 	}
-
+	
 	public static void copyFolder(String srcPath, String destPath,
 			boolean overwrite) {
 		File srcFolder = new File(srcPath);

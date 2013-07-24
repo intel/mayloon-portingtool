@@ -31,3 +31,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
+Bundle-ClassPath: lib/yuicompressor-2.4.7.jar,
+ .

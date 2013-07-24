@@ -52,6 +52,8 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	 * Destination file
 	 */
 	private File fDestinationFile;
+	
+	private boolean bEnableCompress;
 
 	public ExportWizard() {
 		this.setHelpAvailable(false);
@@ -158,7 +160,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 
 			// copy mayloon runtime resource to export destination
 			ProjectUtil.addMayloonFrameworkFolder(fProject,
-					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName);
+					MptConstants.J2S_DEPLOY_MODE_TIZEN, packageName, this.bEnableCompress);
 			monitor.worked(1);
 
 			// copy mayloon Icon to mayloon_bin
@@ -172,7 +174,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			monitor.worked(1);
 			
 			// copy /bin/classes
-			ProjectUtil.addMayloonCompiledJSFiles(fProject);
+			ProjectUtil.addMayloonCompiledJSFiles(fProject, this.bEnableCompress);
 			monitor.worked(1);
 
 			// TODO luqiang, add monitor for it.
@@ -266,4 +268,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 		return this.fDestinationFile;
 	}
 
+	public void enableCompressAction(boolean bEnable){
+		this.bEnableCompress = bEnable;
+	}
 }

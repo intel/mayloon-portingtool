@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -78,11 +77,29 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		
 		createProjectComponent(composite);
 		createDestinationComponent(composite);
+		createCompressComponent(composite);
 		
         this.setErrorMessage(null);
         this.setMessage(null);
         this.setPageComplete(false);
         this.setControl(composite);
+	}
+	
+	private void createCompressComponent(Composite parent){
+		final Button btnEnableCompressAction = new Button(parent,
+				SWT.CHECK);
+		btnEnableCompressAction.setToolTipText("Enable compress action to reduce sizes of js files.");
+		final ExportWizard host = (ExportWizard) this.getWizard();
+
+		btnEnableCompressAction.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				host.enableCompressAction(btnEnableCompressAction
+						.getSelection());
+			}
+		});
+
+		btnEnableCompressAction.setText("Enable JavaScript compression");
+		host.enableCompressAction(btnEnableCompressAction.getSelection());
 	}
 
 	/**

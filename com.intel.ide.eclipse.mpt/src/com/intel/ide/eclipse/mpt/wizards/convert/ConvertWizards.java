@@ -248,7 +248,7 @@ public class ConvertWizards extends Wizard {
 			// copy mayloon framework resource and js
 			// library
 			ProjectUtil.addMayloonFrameworkFolder(project, deployMode,
-					packageName);
+					packageName, false);
 			monitor.worked(1);
 
 			// copy android build output resource to
