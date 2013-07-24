@@ -1858,45 +1858,28 @@ Clazz.decorateAsType = function (clazzFun, qClazzName, clazzParent,
 };
 
 /* sgurin: native exception detection mechanism. Only NullPointerException detected and wrapped to java excepions */
-/** private utility method for creating a general regexp that can be used later  
- * for detecting a certain kind of native exceptions. use with error messages like "blabla IDENTIFIER blabla"
- * @param msg String - the error message
- * @param spliterName String, must be contained once in msg
- * spliterRegex String, a string with the regexp literal for identifying the spitter in exception further error messages.
- */
-Clazz._ex_reg=function (msg, spliterName, spliterRegex) {
-	if(!spliterRegex) 
-		spliterRegex="[^\\s]+";	
-	var idx = msg.indexOf (spliterName), 
-		str = msg.substring (0, idx) + spliterRegex + msg.substring(idx + spliterName.length), 
-		regexp = new RegExp("^"+str+"$");
-	return regexp;
-};
 // reproduce NullPointerException for knowing how to detect them, and create detector function Clazz._isNPEExceptionPredicate
-var $$o$$ = null;
-try {
-	$$o$$.hello ();
-} catch (e) {
-	if(/Opera[\/\s](\d+\.\d+)/.test(navigator.userAgent)) {// opera throws an exception with fixed messages like "Statement on line 23: Cannot convert undefined or null to Object Backtrace: Line....long text... " 
+var userAgent = navigator.userAgent.toLowerCase ();
+Clazz.isOpera = (userAgent.indexOf ("opera") != -1);
+
+if(Clazz.isOpera) {// opera throws an exception with fixed messages like
+	// "Statement on line 23: Cannot convert undefined or null
+	// to Object Backtrace: Line....long text... "
+	try {
+		var $$o$$ = null;
+		$$o$$.hello ();
+	} catch (e) {
 		var idx1 = e.message.indexOf(":"), idx2 = e.message.indexOf(":", idx1+2);
 		Clazz._NPEMsgFragment = e.message.substr(idx1+1, idx2-idx1-20);
 		Clazz._isNPEExceptionPredicate = function(e) {
 			return e.message.indexOf(Clazz._NPEMsgFragment)!=-1;
 		};
-	}	
-	else if(navigator.userAgent.toLowerCase().indexOf("webkit")!=-1) { //webkit, google chrome prints the property name accessed. 
-		Clazz._exceptionNPERegExp = Clazz._ex_reg(e.message, "hello");
-		Clazz._isNPEExceptionPredicate = function(e) {
-			return Clazz._exceptionNPERegExp.test(e.message);
-		};
 	}
-	else {// ie, firefox and others print the name of the object accessed: 
-		Clazz._exceptionNPERegExp = Clazz._ex_reg(e.message, "$$o$$");
-		Clazz._isNPEExceptionPredicate = function(e) {
-			return Clazz._exceptionNPERegExp.test(e.message);
-		};
-	}		
-};
+} else {
+	Clazz._isNPEExceptionPredicate = function(e) {
+		return (e.message.indexOf("null") > -1);
+	};
+}
 /**sgurin
  * Implements Java's keyword "instanceof" in JavaScript's way **for exception objects**.
  * 

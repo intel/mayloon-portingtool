@@ -1164,7 +1164,7 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 						buffer.append("{\r\n");
 						scopeAdded = true;
 					}
-					buffer.append("if (Clazz.instanceOf (" + catchEName + ", ");//sgurin : isExceptionOf compiler support.
+					buffer.append("if (Clazz.exceptionOf (" + catchEName + ", ");//sgurin : isExceptionOf compiler support.
 					//old code was: buffer.append("if (Clazz.instanceOf (" + catchEName + ", ");
 					type.accept(this);
 					buffer.append(")) ");
