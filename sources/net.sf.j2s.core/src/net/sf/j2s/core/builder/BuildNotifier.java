@@ -11,7 +11,7 @@
 package net.sf.j2s.core.builder;
 
 import net.sf.j2s.core.utils.CorePluginConsole;
-import net.sf.j2s.core.utils.ProjectUtil;
+import net.sf.j2s.core.utils.MptConstants;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,16 +20,6 @@ import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.AbortCompilation;
 import org.eclipse.jdt.internal.core.util.Messages;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 public class BuildNotifier {
 
@@ -44,11 +34,6 @@ protected int fixedWarningCount;
 protected int workDone;
 protected int totalWork;
 protected String previousSubtask;
-private static final String J2S_DEPLOY_MODE_BROWSER = "browser";
-private static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
-public static final String BUILD_TAG = "Build";
-public static final String CLEAN_TAG = "Clean";
-private String j2sDeployMode;
 private String builderMode;
 private IProject currentProject;
 
@@ -64,10 +49,8 @@ public static void resetProblemCounters() {
 	FixedWarningCount = 0;
 }
 
-public BuildNotifier(IProgressMonitor monitor, IProject project, String deployMode, String builderMode) {
-	this.j2sDeployMode = deployMode;
+public BuildNotifier(IProgressMonitor monitor, IProject project) {
 	this.currentProject = project;
-	this.builderMode = builderMode;
 	
 	this.monitor = monitor;
 	this.cancelling = false;
@@ -77,6 +60,11 @@ public BuildNotifier(IProgressMonitor monitor, IProject project, String deployMo
 	this.fixedWarningCount = FixedWarningCount;
 	this.workDone = 0;
 	this.totalWork = 1000000;
+}
+
+public BuildNotifier(IProgressMonitor monitor, IProject project, String builderMode) {
+	this(monitor, project);
+	this.builderMode = builderMode;
 }
 
 /**
@@ -136,49 +124,23 @@ public void done() {
 	if (this.monitor != null)
 		this.monitor.done();
 	this.previousSubtask = null;
-	
-	if (J2S_DEPLOY_MODE_TIZEN.equals(j2sDeployMode)){
-		// Message with ok and cancel button and info icon
-		if (NewErrorCount != 0) {
-			CorePluginConsole.warning(BUILD_TAG, "There is problem in project '%1$s'.(build type: '%2$s')", currentProject.getName(),j2sDeployMode);
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			    public void run() {
-				    Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				    MessageBox dialog = 
-				    		  new MessageBox(activeShell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
-				    		dialog.setText("Detect some compilation errors");
-				    		dialog.setMessage("Do you really want to ignore these compile errors?");
-				    		int returnCode = dialog.open();
-				    		if (SWT.OK == returnCode) {
-				    			// TODO luqiang, Package for Tizen Project
-//				    			performTizenPackage();
-				    		}
-				}
-			});
-		}else{
-			if(BUILD_TAG.equals(builderMode)){
-//				ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
-				CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
-			}
+	try {
+	if(builderMode != null && builderMode.equals(MptConstants.BUILD_TAG)){
+		if(!CorePluginConsole.isInit()){
+			CorePluginConsole.initConsoleView();
 		}
-	}else if(J2S_DEPLOY_MODE_BROWSER.equals(j2sDeployMode) && BUILD_TAG.equals(builderMode)){
-		if (NewErrorCount != 0) {
-			CorePluginConsole.warning(BUILD_TAG, "There is problem in project '%1$s'.(build type: '%2$s')", currentProject.getName(),j2sDeployMode);
+		if(NewErrorCount != 0){
+			CorePluginConsole.warning(MptConstants.BUILD_TAG, "There is problem in project '%1$s'", currentProject.getName());
 		}else{
-//			ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
-			CorePluginConsole.success(BUILD_TAG, "Project '%1$s' has been built for '%2$s' successfully.", currentProject.getName(),j2sDeployMode);
+			CorePluginConsole.success(MptConstants.BUILD_TAG, "Project '%1$s' has been built successfully.", currentProject.getName());
 		}
 	}
-	
-	ProjectUtil.addMayloonRuntimeJSFiles(currentProject);
-	
-	try {
 		currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-	} catch (CoreException e) {
-		// TODO Auto-generated catch block
+	} catch (CoreException e) {	
+		e.printStackTrace();
+	} catch (NullPointerException e){
 		e.printStackTrace();
 	}
-	
 }
 
 

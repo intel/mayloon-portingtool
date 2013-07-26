@@ -68,6 +68,8 @@ public class MptConstants {
 	public static final String MAYLOON_BUILD_PROPERTIES = "mayloon.build.properties"; //$NON-NLS-1$
 	public static final String MAYLOON_BUILD_PROPERTIES_TEMPLATE = "mayloon.build.properties.template"; //$NON-NLS-1$
 	public static final String MAYLOON_BUILD_XML = "build.xml"; //$NON-NLS-1$
+	//MAYLOON SDK directory
+	public static final String PROPERTY_MAYLOON_SDK_DIR = "mayloon.sdk.dir";
 	public static final String PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION = "current.project.export.destination";
 	// default property file in an Android project, we will get target api level from here
 	public static final String ANDROID_DEFAULT_PROPERTIES = "project.properties"; //$NON-NLS-1$

@@ -2869,4 +2869,80 @@ public class ProjectUtil {
 		description.setAutoBuilding(value);
 		workspace.setDescription(description);
 	}
+	
+	/**
+	 * after compile complete, add mayloon runtime js files
+	 * 
+	 * @param javaProject
+	 * @param projectName
+	 */
+	public static void addMayloonRuntimeJSFiles(IProject project) {
+		FileInputStream stream = null;
+		String mayloonSDKPath = getMayloonSDKLocation(project);
+		
+		Properties properties = new Properties();
+		try {
+			properties.load(stream = new FileInputStream(new File(
+					mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY)));
+		} catch (FileNotFoundException e1) {
+			MptPluginConsole.error(MptConstants.CONVERT_TAG,
+					"Could not find Mayloon SDK files at %1$s", mayloonSDKPath);
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		String frameworkJs = properties.getProperty(
+				MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
+		
+		if (frameworkJs != null) {
+			IPath srcPath = Path.fromPortableString(mayloonSDKPath
+					+ MptConstants.WS_ROOT + frameworkJs);
+			IPath outputPath;
+			IPath projectPath = new Path(project.getName());
+			try {
+				outputPath = JavaCore.create(project).getOutputLocation().makeRelativeTo(projectPath);
+				
+				IPath destPath = JavaCore.create(project).getProject().getLocation().append(outputPath);
+				
+				ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
+				IFolder folder = JavaCore.create(project).getProject().getFolder(outputPath);
+				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (JavaModelException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			MptPluginConsole
+					.error(MptConstants.BUILD_TAG,
+							"Could not load Mayloon framework javascript files due to cause {%1$s}",
+							"Mayloon framework javascript path is not seted correctly.");
+		}
+	}
+	
+	/**
+	 * Get the Mayloon SDK folder.
+	 * 
+	 * @param project
+	 * @throws CoreException
+	 */
+	public static String getMayloonSDKLocation(IProject project){
+		Properties prop = new Properties();
+		try {
+			FileInputStream fiStream = new FileInputStream(project.getProject().getLocation().append(MptConstants.MAYLOON_BUILD_PROPERTIES).toFile());
+			prop.load(fiStream);
+			fiStream.close();
+		} catch (IOException e) {
+			MptPluginConsole.warning(MptConstants.GENERAL_TAG,
+					"Could not open %1$s for project %2$s",
+					MptConstants.MAYLOON_BUILD_PROPERTIES, project.getName() );
+			e.printStackTrace();
+		}
+		String destnation = prop.getProperty(MptConstants.PROPERTY_MAYLOON_SDK_DIR);
+		return destnation;
+	}
 }

@@ -26,7 +26,6 @@ public class CorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		CorePluginConsole.initConsoleView();
 		if (!InnerHotspotServer.isServerStarted()) {
 			InnerHotspotServer.getSingletonServer().startServer();
 		}

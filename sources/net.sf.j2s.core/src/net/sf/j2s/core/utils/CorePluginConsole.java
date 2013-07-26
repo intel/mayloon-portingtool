@@ -17,12 +17,11 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-
 public class CorePluginConsole {
 	/**
 	 * Message console for displaying J2sCorePlugin runtime message
 	 */
-	private static MessageConsole sConsole;
+	private static MessageConsole sConsole = null;
 	/**
 	 * Successful console stream (text in green)
 	 */
@@ -56,9 +55,12 @@ public class CorePluginConsole {
 		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		IConsole[] IConsole = consoleManager.getConsoles();
 		for(int i = 0; i != IConsole.length;i++){
-			if(IConsole[i].getName().equals(MptMessages.Mayloon_Console_Name)){
+			if(IConsole[i].getName().equals(MptConstants.Mayloon_Console_Name)){
 				sConsole = (MessageConsole) IConsole[i];
 			}
+		}
+		if(sConsole == null){
+			sConsole = new MessageConsole(MptConstants.Mayloon_Console_Name, null);
 		}
 		sSuccessStream = sConsole.newMessageStream();
 		sNormalStream = sConsole.newMessageStream();
@@ -89,6 +91,7 @@ public class CorePluginConsole {
 			}
 		};
 	}
+
 
 /**
  * Print general message to normal console stream
@@ -192,4 +195,7 @@ public static void destroy(){
 	}
 }
 
+public static boolean isInit(){
+	return sConsole==null ? false : true;
+} 
 }

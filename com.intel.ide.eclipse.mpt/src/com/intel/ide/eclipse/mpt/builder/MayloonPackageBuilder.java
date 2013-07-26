@@ -51,29 +51,15 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		// remove build problem marker
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
 		
-		// check if apk is built successfully
-		if(!ProjectUtil.checkAndroidApk(project, null)){
-			return project.getReferencedProjects();
-		}
-		
 		// create Mayloon output folder if it's not present
 		IFolder MayloonOutputFolder = project.getFolder(MptConstants.MAYLOON_OUTPUT_DIR);
 		if(MayloonOutputFolder==null || !MayloonOutputFolder.exists()){
 			MayloonOutputFolder.create(true, true, new SubProgressMonitor(monitor, 1));
 		}
 		saveProperty(project, PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION, MayloonOutputFolder.getRawLocation().toString());
-		// get Mayloon output jar file object (it doesn't need to exist)
-		IFile MayloonOutputJar = MayloonOutputFolder.getFile(project.getName()+ ".jar");
 		
-		// build output jar which package apk and referenced libraries and reference 
-		// project compiled code, and signed with a debug signature
-		//build(javaProject, apk.getLocation().toFile(), MayloonOutputJar.getLocation().toFile(), MayloonSDK.getDebugSignatureInfo());
-		
-		// refresh Mayloon output folder, and mark output jar as derived as appropriate
-		MayloonOutputFolder.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 1));
-		if(MayloonOutputJar.exists()){
-			MayloonOutputJar.setDerived(true, new SubProgressMonitor(monitor, 1));
-		}
+		ProjectUtil.addMayloonRuntimeJSFiles(project);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		monitor.done();
 		return project.getReferencedProjects();
 	}
