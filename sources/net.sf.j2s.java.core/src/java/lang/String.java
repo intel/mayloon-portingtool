@@ -2159,9 +2159,15 @@ outer:
      *             if the format is invalid.
      * @since 1.5
      */
-    /*public static String format(String format, Object... args) {
-        return format(Locale.getDefault(), format, args);
-    }*/
+    public static String format(String format, Object... args) {
+        if (format == null) {
+            throw new NullPointerException("null format argument");
+        }
+        Locale locale = Locale.getDefault();
+        int bufferSize = format.length() + (args == null ? 0 : args.length * 10);
+        Formatter f = new Formatter(new StringBuilder(bufferSize), locale);
+        return f.format(format, args).toString();
+    }
 
     /**
      * Returns a formatted string, using the supplied format and arguments,

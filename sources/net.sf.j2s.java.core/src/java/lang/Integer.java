@@ -33,7 +33,7 @@ package java.lang;
  * @see java.lang.Long
  * @since 1.0
  */
-public final class Integer  {
+public final class Integer extends Number{
 
     private static final long serialVersionUID = 1360826667806852920L;
 
@@ -105,10 +105,10 @@ public final class Integer  {
         this(parseInt(string));
     }
 
-    /*@Override
+    @Override
     public byte byteValue() {
         return (byte) value;
-    }*/
+    }
 
     /**
      * Compares this object to the specified integer object to determine their
@@ -188,10 +188,10 @@ public final class Integer  {
         return valueOf(result);
     }
 
-    /*@Override
+    @Override
     public double doubleValue() {
         return value;
-    }*/
+    }
 
     /**
      * Compares this instance with the specified object and indicates if they
@@ -208,10 +208,10 @@ public final class Integer  {
         return o instanceof Integer && ((Integer) o).value == value;
     }
 
-    /*@Override
+    @Override
     public float floatValue() {
         return value;
-    }*/
+    }
 
     /**
      * Returns the {@code Integer} value of the system property identified by
@@ -308,14 +308,14 @@ public final class Integer  {
      * @return this object's primitive value.
      */
 //    @Override
-//    public int intValue() {
-//        return value;
-//    }
+    public int intValue() {
+        return value;
+    }
 
-   /* @Override
+    @Override
     public long longValue() {
         return value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a signed decimal integer value. The ASCII
@@ -407,10 +407,10 @@ public final class Integer  {
         return result;
     }
 
-   /* @Override
+    @Override
     public short shortValue() {
         return (short) value;
-    }*/
+    }
 
     /**
      * Converts the specified integer into its binary string representation. The

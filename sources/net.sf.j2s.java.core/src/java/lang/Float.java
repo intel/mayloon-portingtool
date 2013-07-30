@@ -23,7 +23,7 @@ package java.lang;
  * @see java.lang.Number
  * @since 1.0
  */
-public final class Float   {
+public final class Float extends Number{
     static final int EXPONENT_BIAS = 127;
 
     static final int EXPONENT_BITS = 9;
@@ -165,15 +165,15 @@ public final class Float   {
         return compare(value, object.value);
     }*/
 
-   /* @Override
+    @Override
     public byte byteValue() {
         return (byte) value;
-    }*/
+    }
 
-    /*@Override
+    @Override
     public double doubleValue() {
         return value;
-    }*/
+    }
 
     /**
      * Tests this double for equality with {@code object}.
@@ -253,10 +253,10 @@ public final class Float   {
      */
 //    public static native float intBitsToFloat(int bits);
 
-    /*@Override
+    @Override
     public int intValue() {
         return (int) value;
-    }*/
+    }
 
     /**
      * Indicates whether this object represents an infinite value.
@@ -303,10 +303,10 @@ public final class Float   {
         return f != f;
     }
 
-   /* @Override
+    @Override
     public long longValue() {
         return (long) value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a float value.
@@ -325,10 +325,10 @@ public final class Float   {
     	return (float) 1;
     }
 
-   /* @Override
+    @Override
     public short shortValue() {
         return (short) value;
-    }*/
+    }
 
     @Override
     public String toString() {

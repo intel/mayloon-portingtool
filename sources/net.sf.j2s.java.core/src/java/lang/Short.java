@@ -23,7 +23,7 @@ package java.lang;
  * @see java.lang.Number
  * @since 1.1
  */
-public final class Short  {
+public final class Short extends Number{
 
     private static final long serialVersionUID = 7515723908773894738L;
 
@@ -83,10 +83,10 @@ public final class Short  {
         this.value = value;
     }
 
-    /*@Override
+    @Override
     public byte byteValue() {
         return (byte) value;
-    }*/
+    }
 
     /**
      * Compares this object to the specified short object to determine their
@@ -130,10 +130,10 @@ public final class Short  {
     	return null;
     }
 
-    /*@Override
+    @Override
     public double doubleValue() {
         return value;
-    }*/
+    }
 
     /**
      * Compares this instance with the specified object and indicates if they
@@ -151,25 +151,25 @@ public final class Short  {
                 && (value == ((Short) object).value);
     }
 
-    /*@Override
+    @Override
     public float floatValue() {
         return value;
-    }*/
+    }
 
     /*@Override
     public int hashCode() {
         return value;
     }*/
 
-    /*@Override
+    @Override
     public int intValue() {
         return value;
-    }*/
+    }
 
-    /*@Override
+    @Override
     public long longValue() {
         return value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a signed decimal short value. The ASCII
@@ -217,10 +217,10 @@ public final class Short  {
      *
      * @return this object's primitive value.
      */
-    /*@Override
+    @Override
     public short shortValue() {
         return value;
-    }*/
+    }
 
     @Override
     public String toString() {

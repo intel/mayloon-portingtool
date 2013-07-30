@@ -23,7 +23,7 @@ package java.lang;
  * @see java.lang.Number
  * @since 1.0
  */
-public final class Double {
+public final class Double extends Number{
     static final int EXPONENT_BIAS = 1023;
 
     static final int EXPONENT_BITS = 12;
@@ -161,10 +161,10 @@ public final class Double {
         return compare(value, object.value);
     }*/
 
-    /*@Override
+    @Override
     public byte byteValue() {
         return (byte) value;
-    }*/
+    }
 
     /**
      * Converts the specified double value to a binary representation conforming
@@ -226,10 +226,10 @@ public final class Double {
     	return true;
     }
 
-   /* @Override
+    @Override
     public float floatValue() {
         return (float) value;
-    }*/
+    }
 
     /*@Override
     public int hashCode() {
@@ -237,10 +237,10 @@ public final class Double {
         return (int) (v ^ (v >>> 32));
     }*/
 
-    /*@Override
+    @Override
     public int intValue() {
         return (int) value;
-    }*/
+    }
 
     /**
      * Indicates whether this object represents an infinite value.
@@ -300,10 +300,10 @@ public final class Double {
      */
 //    public static native double longBitsToDouble(long bits);
 
-   /* @Override
+    @Override
     public long longValue() {
         return (long) value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a double value.
@@ -320,10 +320,10 @@ public final class Double {
     	return new Double("");
     }
 
-   /* @Override
+    @Override
     public short shortValue() {
         return (short) value;
-    }*/
+    }
 
     @Override
     public String toString() {

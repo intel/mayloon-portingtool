@@ -1339,7 +1339,7 @@ public final class Class<T> implements Serializable,  Type {
      *         represented by this {@code Class}; {@code false} if {@code
      *         object} is {@code null} or cannot be cast.
      */
-//    public native boolean isInstance(Object object);
+    public native boolean isInstance(Object object);
 
     /**
      * Indicates whether this {@code Class} represents an interface.

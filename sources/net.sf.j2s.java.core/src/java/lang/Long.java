@@ -33,7 +33,7 @@ package java.lang;
  * @see java.lang.Integer
  * @since 1.0
  */
-public final class Long  {
+public final class Long extends Number{
 
     private static final long serialVersionUID = 4290774380558885855L;
 
@@ -92,10 +92,10 @@ public final class Long  {
         this(parseLong(string));
     }
 
-//    @Override
-//    public byte byteValue() {
-//        return (byte) value;
-//    }
+    @Override
+    public byte byteValue() {
+        return (byte) value;
+    }
 
     /**
      * Compares this object to the specified long object to determine their
@@ -168,10 +168,10 @@ public final class Long  {
         return valueOf(result);
     }
 
-    /*@Override
+    @Override
     public double doubleValue() {
         return value;
-    }*/
+    }
 
     /**
      * Compares this instance with the specified object and indicates if they
@@ -188,10 +188,10 @@ public final class Long  {
         return o instanceof Long && ((Long) o).value == value;
     }
 
-    /*@Override
+    @Override
     public float floatValue() {
         return value;
-    }*/
+    }
 
     /**
      * Returns the {@code Long} value of the system property identified by
@@ -281,20 +281,19 @@ public final class Long  {
         return (int) (value ^ (value >>> 32));
     }*/
 
-    /*@Override
+    @Override
     public int intValue() {
         return (int) value;
-    }*/
+    }
 
     /**
      * Gets the primitive value of this long.
      *
      * @return this object's primitive value.
      */
-    /*@Override
     public long longValue() {
         return value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a signed decimal long value. The ASCII
@@ -370,10 +369,10 @@ public final class Long  {
         return result;
     }
 
-    /*@Override
+    @Override
     public short shortValue() {
         return (short) value;
-    }*/
+    }
 
     /**
      * Converts the specified long value into its binary string representation.

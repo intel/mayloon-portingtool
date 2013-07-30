@@ -22,7 +22,7 @@ package java.lang;
  *
  * @since 1.1
  */
-public final class Byte {
+public final class Byte extends Number{
 
     private static final long serialVersionUID = -7183698231559129828L;
 
@@ -86,7 +86,7 @@ public final class Byte {
      *
      * @return this object's primitive value.
      */
-//    @Override
+    @Override
     public byte byteValue() {
         return value;
     }
@@ -130,10 +130,10 @@ public final class Byte {
     	return null;
     }
 
-    /*@Override
+    @Override
     public double doubleValue() {
         return value;
-    }*/
+    }
 
     /**
      * Compares this object with the specified object and indicates if they are
@@ -151,25 +151,25 @@ public final class Byte {
                 && (value == ((Byte) object).value);
     }
 
-    /*@Override
+    @Override
     public float floatValue() {
         return value;
-    }*/
+    }
 
-   /* @Override
+    @Override
     public int hashCode() {
         return value;
-    }*/
+    }
 
-    /*@Override
+    @Override
     public int intValue() {
         return value;
-    }*/
+    }
 
-    /*@Override
+    @Override
     public long longValue() {
         return value;
-    }*/
+    }
 
     /**
      * Parses the specified string as a signed decimal byte value. The ASCII
@@ -217,10 +217,10 @@ public final class Byte {
         throw new NumberFormatException();
     }
 
-    /*@Override
+    @Override
     public short shortValue() {
         return value;
-    }*/
+    }
 
     @Override
     public String toString() {
