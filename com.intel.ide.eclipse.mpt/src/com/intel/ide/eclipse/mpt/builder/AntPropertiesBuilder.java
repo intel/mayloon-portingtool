@@ -136,10 +136,9 @@ public class AntPropertiesBuilder {
 			//   current.project.reference.projects
 			prop.setProperty(PROPERTY_CURRENT_PROJECT, projectName);
 			prop.setProperty(PROPERTY_CURRENT_PROJECT_REFERENCE_PROJECTS, referenceProjects);
-			prop.setProperty(MptConstants.MAYLOON_DEPLOY_MODE, "browser");
 			// set up following properties:
 			//   mayloon.sdk.dir
-			//   android.sdk.dir
+			//   android.sdk.dir 
 			//   android.sdk.platform.target.dir
 			IClasspathContainer container = JavaCore.getClasspathContainer(new Path(MAYLOON_CONTAINER_ID), fProject);
 			if(container != null) {

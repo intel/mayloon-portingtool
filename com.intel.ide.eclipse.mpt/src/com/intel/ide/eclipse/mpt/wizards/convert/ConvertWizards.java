@@ -222,10 +222,7 @@ public class ConvertWizards extends Wizard {
 			MayloonPropertiesBuilder.j2sPropBuild(project);
 			monitor.worked(1);
 			
-			String deployMode = ProjectUtil.getDeployMode(project);
-			if (deployMode == null) {
-				throw new MptException(MptException.DEPLOY_MODE_ERROR);
-			}
+			String deployMode = MptConstants.J2S_DEPLOY_MODE_BROWSER;
 
 			ProjectUtil.backupProject(project);
 			monitor.worked(1);

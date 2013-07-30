@@ -401,31 +401,43 @@ public class ProjectUtil {
 	 * 
 	 * @param project
 	 * @throws CoreException
+	 * @throws MptException 
 	 */
 	public static void addTizenProjectFile(IProject project)
-			throws CoreException {
-		String mayloonSDKPath = MayloonSDK.getSdkLocation();
-
-		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
-			return;
-		}
-
+			throws CoreException, MptException {
 		try {
 			IPath destPath = null;
 			IPath srcPath;
-			destPath = getMayloonOutputFolder(project);
+			IFile srcFile = project.getFile(MptConstants.WS_ROOT + project.getName()
+					+ MptConstants.MAYLOON_START_ENTRY_FILE);
+			if(!srcFile.exists()){
+				throw new MptException("Can't get %1$s.html", project.getName());
+			}
+			destPath = getMayloonOutputFolder(project).append(
+					project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE);
 
-			srcPath = project.getFolder(
-					MptConstants.WS_ROOT + project.getName()
-							+ MptConstants.MAYLOON_START_ENTRY_FILE)
-					.getRawLocation();
-			ProjectUtil.copyFile(
-					srcPath.toFile(),
-					destPath.append(
-							project.getName() + MptConstants.MAYLOON_START_ENTRY_FILE)
-							.toFile());
+			srcPath = srcFile.getRawLocation();
+			
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(srcPath.toOSString()));
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(destPath.toOSString()));
+			String read = null;
+			String write = null;
+			String j2sLibTag = "var j2slibPath";
+			while ((read = bufferedReader.readLine()) != null)
+			{
+				int beginIndex, endIndex;
+				if(read.indexOf(j2sLibTag) != -1){
+					write = "var j2slibPath=\"./j2slib/\"\r\n";
+				}else{
+					write = read;
+				}
+				bufferedWriter.write(write);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+		    }
+			bufferedWriter.close();
+			bufferedReader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -2361,35 +2373,6 @@ public class ProjectUtil {
 				filelist.add(files[i]);
 			}
 		}
-	}
-
-	/*
-	 * Get the deployment mode from .j2s
-	 */
-	public static String getDeployMode(IProject project) {
-		String j2sDeployMode = null;
-		File file = new File(project.getLocation().toFile(),
-				MptConstants.MAYLOON_BUILD_PROPERTIES);//new File(project.getLocation().toOSString(), ".j2s"); //$NON-NLS-1$
-		if (!file.exists()) {
-			/*
-			 * The file .j2s is a marker for Java2Script to compile JavaScript
-			 */
-			return j2sDeployMode;
-		}
-		Properties props = new Properties();
-		try {
-			props.load(new FileInputStream(file));
-			j2sDeployMode = props.getProperty(MptConstants.MAYLOON_DEPLOY_MODE,
-					null);
-
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-			return j2sDeployMode;
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return j2sDeployMode;
-		}
-		return j2sDeployMode;
 	}
 
 	public static void fileExtractor(String filePath, String fileName,
