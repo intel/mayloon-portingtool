@@ -58,7 +58,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -77,7 +76,6 @@ import com.intel.ide.eclipse.mpt.MptMessages;
 import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
-import com.intel.ide.eclipse.mpt.builder.AntPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.compressor.CompressException;
 import com.intel.ide.eclipse.mpt.compressor.Compressor;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
@@ -318,17 +316,6 @@ public class ProjectUtil {
 			}
 		}
 
-		return retVal;
-	}
-
-	/**
-	 * Copy missed android framework class to user's application src folder
-	 * 
-	 * @param missClassName
-	 */
-	public static boolean AddMissedAndroidClass2UserApp(String missClassName,
-			IProject project) {
-		boolean retVal = false;
 		return retVal;
 	}
 
@@ -851,36 +838,6 @@ public class ProjectUtil {
 		}
 	}
 
-	/**
-	 * add Mayloon J2s Lib to Tizen package directory
-	 * 
-	 * @param project
-	 * @throws CoreException
-	 */
-	public static void addJ2SLibFiles2Tizen(IProject project, boolean bCompress) {
-
-		IJavaProject javaProject = JavaCore.create(project);
-
-		IPath outputPath;
-		IPath projectPath = new Path(project.getName());
-		try {
-			outputPath = javaProject.getOutputLocation().makeRelativeTo(
-					projectPath);
-
-			IPath srcPath = project.getLocation().append(outputPath);
-			IPath destPath = getMayloonOutputFolder(project);
-
-			ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath, bCompress);
-
-		} catch (JavaModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	/**
 	 * add source folder of referenced project to local src
 	 * @param project
@@ -1416,39 +1373,6 @@ public class ProjectUtil {
 	}	
 
 	/**
-	 * Copy from ADT, ProjectCreator.java Combine Package Activity name with
-	 * Package
-	 * 
-	 * @param packageName
-	 * @param activityName
-	 * @return
-	 */
-	private static String combinePackageActivityNames(String packageName,
-			String activityName) {
-		// Activity Name can have 3 forms:
-		// - ".Name" means this is a class name in the given package name.
-		// The full FQCN is thus packageName + ".Name"
-		// - "Name" is an older variant of the former. Full FQCN is packageName
-		// + "." + "Name"
-		// - "com.blah.Name" is a full FQCN. Ignore packageName and use
-		// activityName as-is.
-		// To be valid, the package name should have at least two components.
-		// This is checked
-		// later during the creation of the build.xml file, so we just need to
-		// detect there's
-		// a dot but not at pos==0.
-
-		int pos = activityName.indexOf('.');
-		if (pos == 0) {
-			return packageName + activityName;
-		} else if (pos > 0) {
-			return activityName;
-		} else {
-			return packageName + "." + activityName;
-		}
-	}
-
-	/**
 	 * Not compatibility with Android internal implementation Copy from ADT,
 	 * ProjectCreator.java Extracts a "full" package & activity name from an
 	 * AndroidManifest.xml.
@@ -1639,66 +1563,6 @@ public class ProjectUtil {
 		}
 
 		return -1;
-	}
-
-	/**
-	 * check the project's target android level, if it's higher than our
-	 * Mayloon, we will give the user warning about this mismatch.
-	 * 
-	 * @param project
-	 * @return true if match or pass
-	 */
-	public static boolean checkVersionMatch(IProject project) {
-		MayloonVersion MayloonVersion = MayloonSDK.getSdkVersion();
-		if (MayloonVersion == null) {
-			MptPluginConsole.error(MptPlugin.PLUGIN_ID,
-					MayloonProjectMessages.Can_Not_Get_Mayloon_SDK_Version);
-			return false;
-		}
-		int minSdkVersion = getAndroidProjectMinSdkVersion(project);
-		if (minSdkVersion > MayloonVersion.getAndroidApiLevel()) {
-			// The minSdkVersion is greater than MayloonSdkApiLevel, application
-			// may not be able to
-			// get installed. Prompt for developer's decision on whether or not
-			// to continue convert
-			boolean proceed = MptPlugin
-					.displayPrompt(
-							MayloonProjectMessages.Version_Check_Title,
-							String.format(
-									MayloonProjectMessages.Android_MinSdkVersion_Higher_Message,
-									minSdkVersion,
-									MayloonVersion.getAndroidApiLevel()));
-			if (!proceed) {
-				return false;
-			}
-		}
-
-		int targetApiLevel = getAndroidProjectApiLevel(project);
-		if (targetApiLevel < minSdkVersion) {
-			// Call attention:
-			// Developer seems to build application with lower target API level
-			// but
-			// ask for a higher API level device to run it.
-			MptPluginConsole
-					.warning(
-							MptConstants.GENERAL_TAG,
-							"Target API level is smaller than minSdkVersion. \n"
-									+ "Do you intend to build application on lower target API level but run it on device of higher \n"
-									+ "API level ? If this is not your original intention, please correct later.");
-		}
-		if (targetApiLevel > MayloonVersion.getAndroidApiLevel()) {
-			// Call attention:
-			// Application build target API level is greater than
-			// MayloonSdkApiLevel.
-			// Application may not run properly on Mayloon device.
-			MptPluginConsole
-					.warning(
-							MptConstants.GENERAL_TAG,
-							"Target API level is greater than Mayloon SDK API level. \n"
-									+ "Application may not run properly on Mayloon device.");
-		}
-
-		return true;
 	}
 
 	public static IMarker markResource(IResource resource, String markerId,
@@ -1911,93 +1775,6 @@ public class ProjectUtil {
 			return launcherActivity;
 		} else {
 			return "." + launcherActivity;
-		}
-	}
-
-	/**
-	 * Load a named string property from resource's persistent property table
-	 * 
-	 * @param resource
-	 * @param propertyName
-	 * @return String
-	 */
-	public static String loadStringProperty(IResource resource,
-			String propertyName) {
-		QualifiedName qname = new QualifiedName(MptPlugin.PLUGIN_ID,
-				propertyName);
-		try {
-			return resource.getPersistentProperty(qname);
-		} catch (CoreException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Save a named string property to resource's persistent property table
-	 * 
-	 * @param resource
-	 * @param propertyName
-	 * @param value
-	 * @return boolean
-	 */
-	public static boolean saveStringProperty(IResource resource,
-			String propertyName, String value) {
-		QualifiedName qname = new QualifiedName(MptPlugin.PLUGIN_ID,
-				propertyName);
-		try {
-			resource.setPersistentProperty(qname, value);
-		} catch (CoreException e) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Add and build support for project. Copy ant script and ant properties
-	 * template to project directory.
-	 * 
-	 * @param project
-	 *            IProject
-	 */
-	public static void addAntBuildSupport(IProject project) {
-		String MayloonSdkLocation = MayloonSDK.getSdkLocation();
-		if (MayloonSdkLocation == null || MayloonSdkLocation.isEmpty()) {
-			return;
-		}
-		File projectLocation = project.getLocation().toFile();
-		// copy Mayloon.custom.properties to project directory
-		try {
-			copyFile(new File(MayloonSdkLocation,
-					MptConstants.MAYLOON_CUSTOM_PROPERTIES_TEMPLATE), new File(
-					projectLocation, MptConstants.MAYLOON_CUSTOM_PROPERTIES));
-		} catch (IOException e) {
-			MptPluginLogger.warning("Could not copy %1$s to project %2$s",
-					MptConstants.MAYLOON_CUSTOM_PROPERTIES, project.getName());
-		}
-		// copy build.xml to project directory
-		try {
-			copyFile(new File(MayloonSdkLocation,
-					MptConstants.MAYLOON_BUILD_XML), new File(projectLocation,
-					MptConstants.MAYLOON_BUILD_XML));
-		} catch (IOException e) {
-			MptPluginLogger.warning("Could not copy %1$s to project %2$s",
-					MptConstants.MAYLOON_BUILD_XML, project.getName());
-		}
-		// create Mayloon.build.properties for project
-		// TODO luqiang
-		try {
-			new AntPropertiesBuilder(JavaCore.create(project)).build();
-		} catch (CoreException e) {
-			MptPluginLogger.throwable(e);
-			MptPluginConsole.error(MptConstants.GENERAL_TAG, e.getMessage());
-			MptPluginConsole.warning(MptConstants.GENERAL_TAG,
-					"Could not create %1$s for project %2$s",
-					MptConstants.MAYLOON_BUILD_PROPERTIES, project.getName());
-		}
-		// refresh project
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (CoreException e) {
 		}
 	}
 
@@ -2618,27 +2395,6 @@ public class ProjectUtil {
 		return errorInfo;
 	}
 	
-	/**
-	 * check if one or more projects are referenced in build path
-	 * @param project
-	 * @return true if referencing other projects
-	 * @throws CoreException
-	 */
-	public static boolean checkReferencedProjects(IProject project) throws CoreException {
-		IProject[] ref_proj = project.getReferencedProjects();
-		String refProj = "";
-		int index = 0;
-		for (; ref_proj != null && index < ref_proj.length; index ++){
-			refProj += "\n\t" + ref_proj[index].getName();
-		}
-		if (index > 0){
-			MptPluginConsole.error(MptConstants.CONVERT_TAG,
-					"Mayloon builder aborts because of " + index + " other project(s) referenced in Java Buildpath:" + refProj);
-			return true;
-		}
-		return false;
-	}	
-		
 	/**	
 	 * check Android file
 	 * 

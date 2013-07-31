@@ -8,7 +8,6 @@ public class MptConstants {
 	public static final String MAYLOON_OUTPUT_DIR = "mayloon_bin"; //$NON-NLS-1$
 	public static final String MAYLOON_APP_RES_DIR = "/apps/"; //$NON-NLS-1$
 	public static final String MAYLOON_EXTERNAL_JS_DIR = "external"; //$NON-NLS-1$
-	public static final String MAYLOON_NJS_JS_DIR = "njs"; //$NON-NLS-1$
 	public static final String MAYLOON_SRC_DIR = "src"; //$NON-NLS-1$
 	public static final String MAYLOON_FRAMEWORK_JS_DIR = "bin"; //$NON-NLS-1$
 	public static final String MAYLOON_FRAMEWORK_RES_DIR = "res_sys"; //$NON-NLS-1$	
@@ -16,10 +15,8 @@ public class MptConstants {
 	public static final String MAYLOON_JRE_LIB = "mayloon_jre.jar"; //$NON-NLS-1$
 	public static final String MAYLOON_JAR_LIB_NAME = "Mayloon"; //$NON-NLS-1$
 	public static final String MAYLOON_JRE_LIB_NAME = "MayloonJRE"; //$NON-NLS-1$
-	public static final String MAYLOON_DEPLOY_MODE = "mayloon.deploy.mode";
 	public static final String J2S_DEPLOY_MODE_BROWSER = "browser";
 	public static final String J2S_DEPLOY_MODE_TIZEN = "tizen";
-	public static final String MAYLOON_J2SLIB = "j2slib";
 	
 	public static final String MAYLOON_START_ENTRY_FILE = ".html";
 	public static final String MAYLOON_TIZEN_ICON = "icon.png";
@@ -31,8 +28,6 @@ public class MptConstants {
 	
 	public static final String ANDROID_APK_EXTENSION = ".apk";
 	public static final String ZIP_FILE_EXTENSION = ".zip";
-	public static final String CLASS_FILE_EXTENSION = ".class";
-	public static final String JAVA_FILE_EXTENSION = ".java";
 	
 	// The container id of the android develop tools
 	public static final String ADT_CLASSPATH_ENTRY_ID = "com.android.ide.eclipse.adt.LIBRARIES"; //$NON-NLS-1$
@@ -59,15 +54,10 @@ public class MptConstants {
 	public static final String MAYLOON_JS_FRAMEWORK_PATH = "Mayloon.Framework.Path";
 	public static final String MAYLOON_JS_LIBRARY_PATH = "Mayloon.Framework.External.Path";
 	public static final String MAYLOON_J2S_LIBRARY = "j2slib";
-	public static final String MAYLOON_RUNTIME_ZIP = "mayloon.zip";
 	public static final String MAYLOON_FRAMEWORK_RES = "Mayloon.Framework.RES.Path";
 	public static final String MAYLOON_APPLICATION_ENTRY = "Mayloon.Application.Entry";
 	// MAYLOON ant build properties and ant script xml
-	public static final String MAYLOON_CUSTOM_PROPERTIES = "mayloon.custom.properties"; //$NON-NLS-1$
-	public static final String MAYLOON_CUSTOM_PROPERTIES_TEMPLATE = "mayloon.custom.properties.template"; //$NON-NLS-1$
 	public static final String MAYLOON_BUILD_PROPERTIES = "mayloon.build.properties"; //$NON-NLS-1$
-	public static final String MAYLOON_BUILD_PROPERTIES_TEMPLATE = "mayloon.build.properties.template"; //$NON-NLS-1$
-	public static final String MAYLOON_BUILD_XML = "build.xml"; //$NON-NLS-1$
 	//MAYLOON SDK directory
 	public static final String PROPERTY_MAYLOON_SDK_DIR = "mayloon.sdk.dir";
 	public static final String PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION = "current.project.export.destination";
