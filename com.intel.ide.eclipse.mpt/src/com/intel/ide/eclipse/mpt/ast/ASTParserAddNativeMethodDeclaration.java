@@ -30,30 +30,6 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 		astRewriteBasedManipulator = new ASTRewriteBasedManipulator(unit);
 //		rewrite(unit, localStubMethod.getStubMethodBindingManagers());
 	}
-	
-	/*
-	 * Return LocalStubMethodDetector
-	 *
-	 */
-	public LocalNativeMethodDetector getLocalStubMethodDetector() {
-		return localNativeMethod;
-	}
-	
-	/*
-	 * Return CompilationUnit
-	 *
-	 */
-	public CompilationUnit getCompilationUnit() {
-		return unit;
-	}
-	
-	/*
-	 * Return ASTRewriteBasedManipulator
-	 *
-	 */
-	public ASTRewriteBasedManipulator getASTRewriteBasedManipulator() {
-		return astRewriteBasedManipulator;
-	}
 
 	/**
 	 * After all information about the native method has been collected, the
@@ -73,9 +49,8 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 	 * @param localNativeMethodManagers
 	 *            collected information about the native method
 	 */
-	public void rewrite(CompilationUnit unit,
-			Map<IMethodBinding, NativeMethodBindingManager> localNativeMethodManagers) {
-		Collection<NativeMethodBindingManager> managers = localNativeMethodManagers
+	public void rewrite() {
+		Collection<NativeMethodBindingManager> managers = localNativeMethod.getNativeMethodBindingManagers()
 				.values();
 
 		astRewriteBasedManipulator.manipulateNativeMethod4Add(unit, managers);

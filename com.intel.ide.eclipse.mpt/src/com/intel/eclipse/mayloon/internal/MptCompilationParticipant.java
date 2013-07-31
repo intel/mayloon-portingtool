@@ -60,11 +60,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
-import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
-import com.intel.ide.eclipse.mpt.ast.ASTParserAddStubMethodDeclaration;
-import com.intel.ide.eclipse.mpt.ast.ASTParserRemoveNativeMethodDeclaration;
-import com.intel.ide.eclipse.mpt.ast.ASTParserRemoveStubMethodDeclaration;
-import com.intel.ide.eclipse.mpt.ast.LocalNativeMethodDetector;
 import com.intel.ide.eclipse.mpt.sdk.MayloonSDK;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
@@ -128,16 +123,6 @@ public class MptCompilationParticipant extends CompilationParticipant {
 									// astParserAddNativeMethod
 									// .getLocalStubMethodDetector()
 									// .getNativeMethodBindingManagers());
-
-									// for local method
-									ASTParserAddStubMethodDeclaration astParserAddStubMethod = new ASTParserAddStubMethodDeclaration();
-									astParserAddStubMethod.run(unit);
-									astParserAddStubMethod.rewrite(
-											astParserAddStubMethod
-													.getCompilationUnit(),
-											astParserAddStubMethod
-													.getLocalStubMethodDetector()
-													.getStubMethodBindingManagers());
 
 								}
 							}

@@ -340,12 +340,7 @@ public class ConvertWizards extends Wizard {
 							ASTParserAddNativeMethodDeclaration astParserAddNativeMethod = new ASTParserAddNativeMethodDeclaration();
 							astParserAddNativeMethod
 									.run(unit);
-							astParserAddNativeMethod.rewrite(
-									astParserAddNativeMethod
-											.getCompilationUnit(),
-									astParserAddNativeMethod
-											.getLocalStubMethodDetector()
-											.getNativeMethodBindingManagers());
+							astParserAddNativeMethod.rewrite();
 							this.parConversionInfoPage.addStubMethodInfo(
 									astParserAddNativeMethod.getStubMethodInfo());
 

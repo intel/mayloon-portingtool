@@ -1,7 +1,6 @@
 package com.intel.ide.eclipse.mpt.ast;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -9,12 +8,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeParameter;
 
 /**
- * This class looks for local declarations of local variables, their assignmetns
- * and the references to them. <i>It is an example for how to extend
+ * This class looks for local declarations of native methods. <i>It is an example for how to extend
  * {@link ASTVisitor}.</i>
  *
  */
@@ -28,13 +24,9 @@ public class LocalNativeMethodDetector extends ASTVisitor {
 	 *            the node to visit
 	 */
 	public boolean visit(MethodDeclaration node) {
-		List<TypeParameter> listTypeParameters = node.typeParameters();
-		
-		Type returnType = node.getReturnType2();
-		
 		int iModifier = node.getModifiers();
 		
-		if (isMethodNativeIgnored(iModifier)) {
+		if (Modifier.isNative(iModifier)) {
 			// save to localNativeMethodManagers
 			
 			IMethodBinding methodBinding = node.resolveBinding();
@@ -64,18 +56,4 @@ public class LocalNativeMethodDetector extends ASTVisitor {
 	public void process(CompilationUnit unit) {
 		unit.accept(this);
 	}
-	
-	/**
-	 * Check the Method whether is native method
-	 * 
-	 * @param modifiers
-	 * @return
-	 */
-	protected boolean isMethodNativeIgnored(int modifiers) {
-		if ((modifiers & Modifier.NATIVE) == Modifier.NATIVE) {
-			return true;
-		}
-		return false;
-	}
-
 }
