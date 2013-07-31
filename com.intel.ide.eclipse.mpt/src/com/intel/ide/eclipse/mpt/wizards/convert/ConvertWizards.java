@@ -60,6 +60,7 @@ public class ConvertWizards extends Wizard {
 		this.convertFlag = false;
 		this.setHelpAvailable(false);
 		this.setNeedsProgressMonitor(true);
+		this.setWindowTitle("Convert to MayLoon Application");
 	}
 
 	@Override
@@ -167,7 +168,7 @@ public class ConvertWizards extends Wizard {
 			Set<String> errorInfoSet= new HashSet<String>();
 			Set<String> warningInfoSet= new HashSet<String>();
 			
-			monitor.subTask("Mayloon SDK files");
+			monitor.subTask("MayLoon SDK files");
 			errorInfoSet.addAll(ProjectUtil.getSdkFilesCheckInfo(project));
 			monitor.worked(1);
 			

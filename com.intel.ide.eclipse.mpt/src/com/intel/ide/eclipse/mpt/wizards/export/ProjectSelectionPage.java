@@ -202,7 +202,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	protected void onBrowseProject(){
 		ILabelProvider labelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(this.getShell(), labelProvider);
-		dialog.setTitle("Choose Mayloon Project");
+		dialog.setTitle("Choose MayLoon Project");
 		dialog.setMessage("Please choose a Kona project to open.");
 		ArrayList<IJavaProject> projects = new ArrayList<IJavaProject>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

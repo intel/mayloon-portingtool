@@ -51,7 +51,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 
 	public ExportWizard() {
 		this.setHelpAvailable(false);
-		this.setWindowTitle("Export Mayloon Application");
+		this.setWindowTitle("Export MayLoon Application");
 		this.setNeedsProgressMonitor(true);
 	}
 

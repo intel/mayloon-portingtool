@@ -311,11 +311,11 @@ public class ProjectUtil {
 		if (!files.exists()) {
 			if (files.mkdirs()) {
 				System.out
-						.println("Mayloon Stub Annotation Class directories are created!");
+						.println("MayLoon Stub Annotation Class directories are created!");
 				retVal = true;
 			} else {
 				System.out
-						.println("Failed to create Mayloon Stub Annotation Class directories!");
+						.println("Failed to create MayLoon Stub Annotation Class directories!");
 
 			}
 		}
@@ -686,7 +686,7 @@ public class ProjectUtil {
 		} catch (IOException e) {
 			MptPluginConsole
 					.error(MptConstants.CONVERT_TAG,
-							"Could not load Mayloon external information due to cause {%1$s}.",
+							"Could not load MayLoon external information due to cause {%1$s}.",
 							e.getMessage());
 		} finally {
 			if (stream != null) {
@@ -1157,7 +1157,7 @@ public class ProjectUtil {
 				IClasspathEntry.CPE_CONTAINER);
 		if (MayloonRuntimeIndex == -1) {
 			MptPluginConsole.general(MptConstants.CONVERT_TAG,
-					"Adding Mayloon Runtime Class Container to classpath.");
+					"Adding MayLoon Runtime Class Container to classpath.");
 			IClasspathEntry mayloon_runtime_entry = MayloonClasspathContainerInitializer
 					.getContainerEntry();
 			entries = ProjectUtil.addClassPathEntry(entries,
@@ -2497,7 +2497,7 @@ public class ProjectUtil {
 	
 	public static String getNoSdkFileErrorInfo(String mayloonSDKPath, String filePath){
 		String errorInfo =  String.format(
-				"Can't find Mayloon SDK file: %1$s  from SDK Directory:\"%2$s\".", filePath,
+				"Can't find MayLoon SDK file: %1$s  from SDK Directory:\"%2$s\".", filePath,
 				mayloonSDKPath);
 		return errorInfo;
 	}
@@ -2538,7 +2538,7 @@ public class ProjectUtil {
 		int minSdkVersion = getAndroidProjectMinSdkVersion(project);
 		if (minSdkVersion > mayloonApiLevel) {
 			String warningMessage = String
-					.format("The minimal android target version %1$s is higher than the Mayloon supportable version %2$s",
+					.format("The minimal android target version %1$s is higher than the MayLoon supportable version %2$s",
 							minSdkVersion, mayloonApiLevel);
 			MptPluginConsole.warning(MptConstants.CONVERT_TAG, warningMessage);
 			warningInfo.add(warningMessage);
@@ -2637,7 +2637,7 @@ public class ProjectUtil {
 					mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY)));
 		} catch (FileNotFoundException e1) {
 			MptPluginConsole.error(MptConstants.CONVERT_TAG,
-					"Could not find Mayloon SDK files at %1$s", mayloonSDKPath);
+					"Could not find MayLoon SDK files at %1$s", mayloonSDKPath);
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -2670,8 +2670,8 @@ public class ProjectUtil {
 		} else {
 			MptPluginConsole
 					.error(MptConstants.BUILD_TAG,
-							"Could not load Mayloon framework javascript files due to cause {%1$s}",
-							"Mayloon framework javascript path is not seted correctly.");
+							"Could not load MayLoon framework javascript files due to cause {%1$s}",
+							"MayLoon framework javascript path is not set correctly.");
 		}
 	}
 	

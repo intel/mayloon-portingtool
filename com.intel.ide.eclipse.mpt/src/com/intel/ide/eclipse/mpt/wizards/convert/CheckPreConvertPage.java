@@ -37,7 +37,7 @@ public class CheckPreConvertPage extends WizardPage {
 		this.setWizard(convertWizards);
 		this.convertWizards = convertWizards;
 		this.setTitle("Check Before Convert");
-		this.setDescription("Check necessary files and information before converting to Mayloon Application");
+		this.setDescription("Check necessary files and information before converting to MayLoon Application");
 		this.errorInfoSet = new HashSet<String>();
 		this.warningInfoSet = new HashSet<String>();
 	}

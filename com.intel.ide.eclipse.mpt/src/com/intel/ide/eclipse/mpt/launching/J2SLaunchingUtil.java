@@ -200,7 +200,7 @@ public class J2SLaunchingUtil {
 //			Display.getDefault().asyncExec(
 //					new J2SApplicationRunnable(configuration, url));
 		} else {
-			MessageDialog.openError(null, "Project Error", "The selected Mayloon's working folder is not found.");
+			MessageDialog.openError(null, "Project Error", "The selected MayLoon's working folder is not found.");
 		}
 	}
 
@@ -256,12 +256,12 @@ public class J2SLaunchingUtil {
 			IJavaModel javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 			String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if ((projectName == null) || (projectName.trim().length() < 1)) {
-				MessageDialog.openError(null, "Project Error", "No Mayloon project is selected.");
+				MessageDialog.openError(null, "Project Error", "No MayLoon project is selected.");
 				return;
 			}			
 			IJavaProject javaProject = javaModel.getJavaProject(projectName);
 			if ((javaProject == null) || !javaProject.exists()) {
-				MessageDialog.openError(null, "Project Error", "The selected project is not a Mayloon project.");
+				MessageDialog.openError(null, "Project Error", "The selected project is not a MayLoon project.");
 				return;
 			}
 			String path = javaProject.getOutputLocation().toString();
@@ -383,8 +383,8 @@ public class J2SLaunchingUtil {
 		} else {
 			MptPluginConsole
 					.error(MptConstants.BUILD_TAG,
-							"Could not load Mayloon framework javascript files due to cause {%1$s}",
-							"Mayloon framework javascript path is not seted correctly.");
+							"Could not load MayLoon framework javascript files due to cause {%1$s}",
+							"MayLoon framework javascript path is not set correctly.");
 		}
 	}
 

@@ -92,7 +92,7 @@ public static IMarker[] getTasksFor(IResource resource) {
  */
 public static void buildStarting() {
 	// build is about to start
-	System.out.println("Starting to build Mayloon project!");
+	System.out.println("Starting to build MayLoon project!");
 }
 
 /**

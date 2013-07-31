@@ -91,7 +91,7 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
 		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_MIGRATE, IResource.DEPTH_INFINITE);
 		try{
-			monitor.beginTask("Clean up Mayloon Project", 1);
+			monitor.beginTask("Clean up MayLoon Project", 1);
 			IFolder outputFolder = project.getFolder(MptConstants.MAYLOON_OUTPUT_DIR);
 			if(outputFolder!=null && outputFolder.exists()){
 				IFile outputJar = outputFolder.getFile(project.getName()+".jar");

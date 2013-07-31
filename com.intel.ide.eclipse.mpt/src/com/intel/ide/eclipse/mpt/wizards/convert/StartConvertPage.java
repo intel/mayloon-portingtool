@@ -15,7 +15,7 @@ public class StartConvertPage extends WizardPage {
 	protected StartConvertPage() {
 		super("StartConvert");
 		this.setTitle("Convert");
-		this.setDescription("Convert to Mayloon Application");
+		this.setDescription("Convert to MayLoon Application");
 	}
 
 	@Override

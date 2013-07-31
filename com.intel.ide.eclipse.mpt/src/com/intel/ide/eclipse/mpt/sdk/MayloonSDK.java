@@ -63,7 +63,7 @@ public class MayloonSDK {
     	} catch (FileNotFoundException e) {
     		MptPluginConsole.error(LOG_TAG, MptMessages.Not_found_Mayloon_SDK_Version_File_Message, MptConstants.MAYLOON_SDK_PROPERTY);
     	} catch (IOException e) {
-    		MptPluginConsole.error(LOG_TAG, "Could not load Mayloon SDK version due to cause {%1$s}", e.getMessage());
+    		MptPluginConsole.error(LOG_TAG, "Could not load MayLoon SDK version due to cause {%1$s}", e.getMessage());
     	} finally {
     		if(stream != null) {
     			try {
