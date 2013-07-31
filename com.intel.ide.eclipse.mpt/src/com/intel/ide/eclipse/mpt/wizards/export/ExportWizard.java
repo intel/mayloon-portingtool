@@ -3,18 +3,12 @@ package com.intel.ide.eclipse.mpt.wizards.export;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -112,15 +106,15 @@ public class ExportWizard extends Wizard implements IExportWizard {
 		// } catch (CoreException e) {
 		// }
 		// work only deploy as tizen package
-		String deployMode = ProjectUtil.getDeployMode(fProject);
 
-		if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+		if (!checkEntryFile()) {
 			Shell activeShell = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell();
 			MessageBox dialog = new MessageBox(activeShell, SWT.ICON_QUESTION
 					| SWT.OK);
-			dialog.setText("Deployment Mode Check");
-			dialog.setMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=tizen).");
+			dialog.setText("Entry File Check");
+			dialog.setMessage(String
+					.format("Could not find %1$s.html. Please run your project as MayLoon Application first.", fProject.getName()));
 			int returnCode = dialog.open();
 			if (SWT.OK == returnCode) {
 			}
@@ -189,7 +183,8 @@ public class ExportWizard extends Wizard implements IExportWizard {
 					"Project '%1$s' could not be exported due to cause {%2$s}",
 					fProject.getName(), e.getMessage());
 			e.printStackTrace();
-		} catch (MptException e) {
+		} 
+		catch (MptException e) {
 			// TODO Auto-generated catch block
 			MptPluginConsole.error(MptConstants.EXPORT_TAG,
 					"Project '%1$s' could not be exported due to cause {%2$s}",
@@ -212,15 +207,21 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	@Override
 	public boolean canFinish() {
 		if (this.getContainer().getCurrentPage() == this.fProjectSelectionPage) {
-			String deployMode = ProjectUtil.getDeployMode(fProject);
-			if (!deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+			if (!checkEntryFile()) {
 				((ProjectSelectionPage) this.fProjectSelectionPage)
-						.setErrorMessage("Please set your deployment mode as Tizen first(mayloon.deploy.mode=tizen).");
+						.setErrorMessage(String
+								.format("Could not find %1$s.html. Please run your project as MayLoon Application first.", fProject.getName()));
 				return false;
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean checkEntryFile(){
+		IFile srcFile = fProject.getFile(MptConstants.WS_ROOT + fProject.getName()
+				+ MptConstants.MAYLOON_START_ENTRY_FILE);
+		return srcFile.exists();
 	}
 
 	/**

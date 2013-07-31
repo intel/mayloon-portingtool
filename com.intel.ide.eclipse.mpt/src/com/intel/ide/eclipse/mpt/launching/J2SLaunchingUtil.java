@@ -147,28 +147,24 @@ public class J2SLaunchingUtil {
 			
 			File location = new File(javaProject.getProject().getLocation().toFile(), MptConstants.MAYLOON_PROJECT_SETTING);
 			Properties prop = new Properties();
-			String deployMode = null;
-	    	try {
+			try {
 	               //load a properties file
 	    		prop.load(new FileInputStream(location));
-	    		
-	    		deployMode = prop.getProperty(MptConstants.MAYLOON_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
 	    		
 	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, gj2sLibPath + "java.runtime.j2x");
 	    		MayloonPropertiesBuilder.saveProperty(prop, javaProject);
 	 
 	    	} catch (IOException ex) {
 	    		ex.printStackTrace();
-	        }    	
-
+	        }  
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
 			generateJ2SHeaderHTML(buf, useXHTMLHeader, addonCompatiable,
-					gj2sLibPath, mainType, workingDir, configuration, deployMode);
+					gj2sLibPath, mainType, workingDir, configuration);
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
-					configuration, deployMode);
+					configuration);
 			
 			generatePreLoadingJavaScript(buf, j2xStr, mainType, gj2sLibPath,
 					isJUnit, grelativePath, workingDir, configuration, javaProject);
@@ -290,13 +286,11 @@ public class J2SLaunchingUtil {
 			Properties propMayloon = new Properties();
 			File locationPropMayloon = new File(javaProject.getProject().getLocation().toFile(), MptConstants.MAYLOON_BUILD_PROPERTIES);
 			
-			String deployMode = null;
 	    	try {
 	               //load a properties file
 	    		prop.load(new FileInputStream(location));
 	    		propMayloon.load(new FileInputStream(locationPropMayloon));
 	    		
-	    		deployMode = propMayloon.getProperty(MptConstants.MAYLOON_DEPLOY_MODE, MptConstants.J2S_DEPLOY_MODE_BROWSER);
 	    		String javaRuntimeJ2x = gj2sLibPath + "java.runtime.j2x";
 	    		String j2sResourceList = prop.getProperty(MptConstants.J2S_RESROUCE_LIST, null);
 	    		prop.setProperty(MptConstants.J2S_RESROUCE_LIST, javaRuntimeJ2x + ", " + j2sResourceList);
@@ -309,11 +303,11 @@ public class J2SLaunchingUtil {
 			String args = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 
 			generateJ2SHeaderHTML(buf, useXHTMLHeader, addonCompatiable,
-					gj2sLibPath, mainType, workingDir, configuration, deployMode);
+					gj2sLibPath, mainType, workingDir, configuration);
 
 			String j2xStr = generatePreJavaScript(buf, args, 
 					grelativePath, gj2sLibPath, isJUnit, mode, mainType, workingDir,
-					configuration, deployMode);
+					configuration);
 			
 			
 			generatePreLoadingJavaScript(buf, j2xStr, mainType, gj2sLibPath,
@@ -423,25 +417,11 @@ public class J2SLaunchingUtil {
 			String j2xStr, String mainType, String gj2sLibPath, boolean isJUnit,
 			String grelativePath, File workingDir,
 			ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
-		
-		String deployMode = ProjectUtil.getDeployMode(javaProject.getProject());
-		
 		if (j2xStr.indexOf("\"java\"") == -1) {
-			buf.append("ClazzLoader.packageClasspath (\"java\", \"");
-			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-				buf.append(gj2sLibPath);
-			// for tizen package, the j2s lib should not located in eclipse plugin directory
-			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-				String j2sLibPath = "./j2slib/";
-				buf.append(j2sLibPath);
-			}
-			
-			buf.append("\", true);\r\n");
+			buf.append("ClazzLoader.packageClasspath (\"java\", j2sLibPath, true);\r\n");
 		}
 		if (isJUnit && j2xStr.indexOf("\"junit\"") == -1) {
-			buf.append("ClazzLoader.packageClasspath (\"junit\", \"");
-			buf.append(gj2sLibPath);
-			buf.append("\", true);\r\n");
+			buf.append("ClazzLoader.packageClasspath (\"junit\", j2sLibPath, true);\r\n");;
 		}
 		buf.append(j2xStr);
 		
@@ -458,7 +438,7 @@ public class J2SLaunchingUtil {
 
 	private static String generatePreJavaScript(StringBuffer buf, String args, 
 			String grelativePath, String gj2sLibPath, boolean isJUnit, String mode,
-			String mainType, File workingDir, ILaunchConfiguration configuration, String deployMode)
+			String mainType, File workingDir, ILaunchConfiguration configuration)
 			throws CoreException {
 		buf.append("<a class=\"alaa\" title=\"Launch ");
 		buf.append(mainType);
@@ -494,13 +474,7 @@ public class J2SLaunchingUtil {
 		J2SCyclicProjectUtils.emptyTracks();
 		
 		String j2xStr = null;
-		
-		if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-			j2xStr = J2SLaunchingUtil.generateClasspathJ2X(configuration, null, workingDir);
-		} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-			j2xStr = "ClazzLoader.packageClasspath (\"java\", \"./j2slib/\", true);";
-		}
-		
+		j2xStr = J2SLaunchingUtil.generateClasspathJ2X(configuration, null, workingDir);
 		if ("debug".equals(mode)) {
 			buf.append("window[\"j2s.script.debugging\"] = true;\r\n");
 			if (j2xStr.indexOf("swt") != -1) {
@@ -516,7 +490,7 @@ public class J2SLaunchingUtil {
 	private static void generateJ2SHeaderHTML(StringBuffer buf,
 			boolean useXHTMLHeader, boolean addonCompatiable,
 			String gj2sLibPath, String mainType, File workingDir,
-			ILaunchConfiguration configuration, String deployMode) throws CoreException {
+			ILaunchConfiguration configuration) throws CoreException {
 		if (useXHTMLHeader) {
 			buf.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\r\n");
 			buf.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n");
@@ -533,13 +507,10 @@ public class J2SLaunchingUtil {
 				IJ2SLauchingConfiguration.HEAD_HEADER_HTML, ""));
 
 		if (!addonCompatiable) {
-
-			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
-				buf.append("<script type=\"text/javascript\" src=\"" + gj2sLibPath + "j2slib.z.js\"></script>\r\n");
-			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
-				buf.append("<script type=\"text/javascript\" src=\"" + "./j2slib/" + "j2slib.z.js\"></script>\r\n");
-			}
-			
+			buf.append("<script type=\"text/javascript\">\r\n");
+			buf.append("var j2slibPath=\""+gj2sLibPath+"\"\r\n");
+			buf.append("document.write(\"<script type=\\\"text/javascript\\\" src=\\\"\"+j2slibPath+\"j2slib.z.js\\\"\\></script\\>\");\r\n");
+			buf.append("</script>\r\n");
 		}
 		
 		J2SCyclicProjectUtils.emptyTracks();
@@ -813,13 +784,7 @@ public class J2SLaunchingUtil {
 							gj2sLibPath += "/";
 						}
 					}
-					if (varName == null) {
-						buf.append("\"");
-						buf.append(gj2sLibPath);
-						buf.append("\"");
-					} else {
-						buf.append(varName);
-					}
+					buf.append("j2slibPath");
 					File pkgFile = new File(f.getParentFile(), pkg.replace('.', '/') + "/package.js");
 					if (pkgFile.exists()) {
 						buf.append(", true");
