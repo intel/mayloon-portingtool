@@ -172,6 +172,9 @@ public class InputStreamReader extends Reader {
     public int read(char[] buffer, int offset, int length) throws IOException {
     	byte[] data = new byte[length];
     	int res = in.read(data, offset, length);
+        if (res <= 0) {
+            return res;
+        }
     	System.arraycopy(data,0, buffer, 0, res);
     	return res;
     }

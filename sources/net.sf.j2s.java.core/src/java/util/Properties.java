@@ -548,7 +548,7 @@ public class Properties extends Hashtable<Object,Object> {
                 throw new Error(e);
             }
             
-            builder.setErrorHandler(new ErrorHandler() {
+/*            builder.setErrorHandler(new ErrorHandler() {
                 public void warning(SAXParseException e) throws SAXException {
                     throw e;
                 }
@@ -574,7 +574,7 @@ public class Properties extends Hashtable<Object,Object> {
                     throw new SAXException(
                             "Invalid DOCTYPE declaration: " + systemId);
                 }
-            });
+            });*/
         }
         
         try {
@@ -598,7 +598,7 @@ public class Properties extends Hashtable<Object,Object> {
             }
         } catch (IOException e) {
             throw e;
-        } catch (SAXException e) {
+        } catch (Exception e) {
             throw new InvalidPropertiesFormatException(e);
         }
     }

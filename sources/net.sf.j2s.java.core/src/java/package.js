@@ -126,6 +126,17 @@ window["java.package.callback"] = function () {
 			+ "org/apache/harmony/luni/util/Msg.z.js", 
 		["org.apache.harmony.luni.util.Msg", "$.MsgHelp"]);
 
+	ClazzLoader.jarClasspath (base.substring (0, base.lastIndexOf ("java/"))
+			+ "javax/xml/parsers/DocumentBuilder.js", 
+		["javax.xml.parsers.DocumentBuilder"]);
+
+	ClazzLoader.jarClasspath (base.substring (0, base.lastIndexOf ("java/"))
+			+ "javax/xml/parsers/DocumentBuilderFactory.js", 
+		["javax.xml.parsers.DocumentBuilderFactory"]);
+
+	ClazzLoader.jarClasspath (base.substring (0, base.lastIndexOf ("java/"))
+			+ "javax/xml/parsers/ParserConfigurationException.js", 
+		["javax.xml.parsers.ParserConfigurationException"]);
 
 	ClazzLoader.loadZJar (base + "core.z.js", ClazzLoader.runtimeKeyClass); //"java.lang.String"
 };

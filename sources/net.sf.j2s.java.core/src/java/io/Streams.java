@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class Streams {
-    private static AtomicReference<byte[]> skipBuffer = new AtomicReference<byte[]>();
-
+    //private static AtomicReference<byte[]> skipBuffer = new AtomicReference<byte[]>();
+    private static byte[] skipBuffer;
     private Streams() {}
 
     public static void skipAll(InputStream in) throws IOException {
@@ -44,7 +44,7 @@ public final class Streams {
      */
     public static long skipByReading(InputStream in, long byteCount) throws IOException {
         // acquire the shared skip buffer.
-        byte[] buffer = skipBuffer.getAndSet(null);
+        byte[] buffer = skipBuffer;//skipBuffer.getAndSet(null);
         if (buffer == null) {
             buffer = new byte[4096];
         }
@@ -63,7 +63,7 @@ public final class Streams {
         }
 
         // release the shared skip buffer.
-        skipBuffer.set(buffer);
+        skipBuffer = buffer;
 
         return skipped;
     }

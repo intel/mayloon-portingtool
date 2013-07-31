@@ -359,6 +359,10 @@ public class BufferedReader extends Reader {
             }
             for (int charPos = pos; charPos < end; charPos++) {
                 char ch = buf[charPos];
+                /**
+                 * @j2sNative
+                 * ch = String.fromCharCode (ch);
+                 * */{}
                 // BEGIN android-note
                 // a switch statement may be more efficient
                 // END android-note
@@ -372,8 +376,13 @@ public class BufferedReader extends Reader {
                 } else if (ch == '\r') {
                     String res = new String(buf, pos, charPos - pos);
                     pos = charPos + 1;
+                    char lineEnd = buf[pos];
+                    /**
+                     * @j2sNative
+                     * lineEnd = String.fromCharCode (lineEnd);
+                     **/{}
                     if (((pos < end) || (fillBuf() != -1))
-                            && (buf[pos] == '\n')) {
+                            && (lineEnd == '\n')) {
                         pos++;
                     }
                     return res;
@@ -401,6 +410,10 @@ public class BufferedReader extends Reader {
                 }
                 for (int charPos = pos; charPos < end; charPos++) {
                     char c = buf[charPos];
+                    /**
+                     * @j2sNative
+                     * c = String.fromCharCode (c);
+                     * */{}
                     if (eol == '\0') {
                         if ((c == '\n' || c == '\r')) {
                             eol = c;
