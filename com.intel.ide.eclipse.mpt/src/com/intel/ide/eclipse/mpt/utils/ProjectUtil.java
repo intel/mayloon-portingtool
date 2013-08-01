@@ -203,32 +203,32 @@ public class ProjectUtil {
 		// Step 1
 		if (packageName != null && !packageName.equals("")) {
 			// Step 2
-			IPath filePath = project.getLocation().append(
-					MptConstants.ANDROID_OUTPUT_DIR);
-
-			// copy .apk to .zip otherwise, java Zip api can't read .apk as zip
-			// file
-			IPath tempZipFile = filePath.append(project.getName()
-					+ MptConstants.ZIP_FILE_EXTENSION);
-			IPath apkFile = filePath.append(project.getName()
-					+ MptConstants.ANDROID_APK_EXTENSION);
-
-			if (!apkFile.toFile().exists()) {
-				MptPluginConsole
-						.error(MptConstants.CONVERT_TAG,
-								"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
-				throw new MptException("Can't get file %1$s.",
-						project.getName());
-			}
-
-			copyFile(apkFile.toOSString(), tempZipFile.toOSString());
-
-			// unzip android appliction .zip to bin/apps/pckageName/
-
-			String apkFileName = project.getName()
-					+ MptConstants.ZIP_FILE_EXTENSION;
-
 			if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_BROWSER)) {
+				IPath filePath = project.getLocation().append(
+						MptConstants.ANDROID_OUTPUT_DIR);
+
+				// copy .apk to .zip otherwise, java Zip api can't read .apk as zip
+				// file
+				IPath tempZipFile = filePath.append(project.getName()
+						+ MptConstants.ZIP_FILE_EXTENSION);
+				IPath apkFile = filePath.append(project.getName()
+						+ MptConstants.ANDROID_APK_EXTENSION);
+
+				if (!apkFile.toFile().exists()) {
+					MptPluginConsole
+							.error(MptConstants.CONVERT_TAG,
+									"Mayloon Convert aborts because Android builder doesn't build Apk successfully. Please try full build by clean & build.");
+					throw new MptException("Can't get file %1$s.",
+							project.getName());
+				}
+
+				copyFile(apkFile.toOSString(), tempZipFile.toOSString());
+
+				// unzip android appliction .zip to bin/apps/pckageName/
+
+				String apkFileName = project.getName()
+						+ MptConstants.ZIP_FILE_EXTENSION;
+
 
 				String mayloonBinAppPath = project.getLocation().append(
 						"bin/apps/")
@@ -236,15 +236,19 @@ public class ProjectUtil {
 				ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName,
 						mayloonBinAppPath);
 
+				// delete .zip otherwise
+				deleteFiles(tempZipFile);
+				
 			} else if (deployMode.equals(MptConstants.J2S_DEPLOY_MODE_TIZEN)) {
+				String mayloonBinAppPath = project.getLocation().append(
+						"bin/apps/")
+						+ packageName + "/";
 				String mayloon4TizenBinAppPath = getMayloonOutputFolder(project)
 						.append("bin/apps/") + packageName + "/";
-				ProjectUtil.fileExtractor(filePath.toOSString(), apkFileName,
-						mayloon4TizenBinAppPath);
+				copyFolder(mayloonBinAppPath, mayloon4TizenBinAppPath, true);
 			}
 
-			// delete .zip otherwise
-			deleteFiles(tempZipFile);
+			
 		}
 	}
 
