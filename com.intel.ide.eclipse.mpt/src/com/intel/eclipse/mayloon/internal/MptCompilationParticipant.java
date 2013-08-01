@@ -282,12 +282,6 @@ public class MptCompilationParticipant extends CompilationParticipant {
 						System.out.println("Miss pcakge name is : "
 								+ packageName);
 
-						// miss import class copy from mayloon SDK
-						// generateMissedClassFile(packageName);
-						boolean retVal = ProjectUtil
-								.AddMissedAndroidClass2UserApp(packageName,
-										selectedProject.getProject());
-
 					}
 				}
 				try {
