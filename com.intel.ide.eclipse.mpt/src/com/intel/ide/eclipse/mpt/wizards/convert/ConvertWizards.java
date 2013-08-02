@@ -1,9 +1,9 @@
 package com.intel.ide.eclipse.mpt.wizards.convert;
 
-import org.eclipse.swt.widgets.Composite;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,17 +26,36 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.IProblem;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.internal.core.util.Util;
+import org.eclipse.jdt.internal.ui.text.correction.ProblemLocation;
+import org.eclipse.jdt.internal.ui.text.correction.proposals.ASTRewriteCorrectionProposal;
+import org.eclipse.jdt.internal.ui.text.correction.proposals.CUCorrectionProposal;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
+import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ltk.core.refactoring.TextChange;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.UnresolvedElementsSubProcessor;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.project.MayloonProjectMessages;
@@ -52,7 +71,11 @@ public class ConvertWizards extends Wizard {
 	private Boolean originalAutoBuild;
 	private Boolean convertFlag;	//see if already tried converting; check this before perform finishing
 	ArrayList<String> parConversionInfo = new ArrayList<String>();
-	
+    Map<String, Map> missingMethodsMap; // Map of the stub class' fully
+                                        // qualified name to its missing
+                                        // methods
+    Map<String, Map> missingFieldsMap;
+    
 	public ConvertWizards(IProject project){
 		this.project = project;
 		this.wizardDialog = null;
@@ -161,7 +184,7 @@ public class ConvertWizards extends Wizard {
 		}		
 		return true;
 	}
-	
+
 	private void check(IProgressMonitor monitor){
 		try {
 			monitor.beginTask("Checking necessary files and information", 5);
@@ -239,10 +262,6 @@ public class ConvertWizards extends Wizard {
 			ProjectUtil.fixMayloonClassEntry(project);
 			monitor.worked(1);
 
-			// merge j2s nature to it.
-			MayloonNature.addProjectNature(project);
-			monitor.worked(1);
-
 			// copy mayloon framework resource and js
 			// library
 			ProjectUtil.addMayloonFrameworkFolder(project, deployMode,
@@ -258,6 +277,10 @@ public class ConvertWizards extends Wizard {
 			if (partialConversionFlag) {
 				partialConversionSync(monitor);
 			}
+
+            // merge j2s nature to it.
+            MayloonNature.addProjectNature(project);
+            monitor.worked(1);
 
 			// Add mayloon project builder to classpath
 			MayloonNature.addMaloonProjectBuilder(project);
@@ -310,11 +333,11 @@ public class ConvertWizards extends Wizard {
 		return false;
 	}
 	
-	private void partialConversionSync(IProgressMonitor monitor){
+	private void partialConversionSync(final IProgressMonitor monitor){
 		try {
 			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
 				IJavaProject javaProject = JavaCore.create(project);
-				Map options = javaProject.getOptions(false);
+				Map<String, String> options = javaProject.getOptions(false);
 				options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, JavaCore.IGNORE);
 				options.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
 				javaProject.setOptions(options);
@@ -399,6 +422,149 @@ public class ConvertWizards extends Wizard {
 					parConversionInfoPage.addStubClassInfo(parConversionInfo);
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
+
+
+                /*
+                 * Perform an incremental build and retrieve the missing methods
+                 * and fields information from the build errors.
+                 */
+                project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+
+                initMaps();
+
+                for (IPackageFragment mypackage : packages) {
+                    if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                        for (final ICompilationUnit unit : mypackage
+                                .getCompilationUnits()) {
+                            ASTParser parser = ASTParser.newParser(AST.JLS3);
+                            parser.setKind(ASTParser.K_COMPILATION_UNIT);
+                            parser.setSource(unit);
+                            parser.setResolveBindings(true); //Need bindings later on
+                            final CompilationUnit astRoot = (CompilationUnit) parser
+                                    .createAST(null);
+                            
+                            IProblem[] problems = astRoot.getProblems();
+                            IInvocationContext context = new IInvocationContext(){
+
+                                @Override
+                                public CompilationUnit getASTRoot() {
+                                    return astRoot;
+                                }
+
+                                @Override
+                                public ICompilationUnit getCompilationUnit() {
+                                    return unit;
+                                }
+
+                                @Override
+                                public ASTNode getCoveredNode() {
+                                    return null;
+                                }
+
+                                @Override
+                                public ASTNode getCoveringNode() {
+                                    return null;
+                                }
+
+                                @Override
+                                public int getSelectionLength() {
+                                    return 0;
+                                }
+
+                                @Override
+                                public int getSelectionOffset() {
+                                    return 0;
+                                }
+                            };
+                            for(IProblem problem: problems){
+                                IProblemLocation pl = new ProblemLocation(problem);
+                                Collection<ASTRewriteCorrectionProposal> proposals = new ArrayList<ASTRewriteCorrectionProposal>();
+                                switch(pl.getProblemId()){
+                                    case IProblem.UndefinedMethod:
+                                    case IProblem.ParameterMismatch:
+                                        UnresolvedElementsSubProcessor.getMethodProposals(context, pl, false, this.missingMethodsMap);
+                                        break;
+                                    case IProblem.UndefinedConstructor:
+                                        UnresolvedElementsSubProcessor.getConstructorProposals(context, pl, proposals);
+                                        break;
+                                    case IProblem.UndefinedField:
+                                    case IProblem.UndefinedName:
+                                    case IProblem.UnresolvedVariable:
+                                        UnresolvedElementsSubProcessor.getVariableProposals(context, pl, null, this.missingFieldsMap);
+                                        break;
+                                    case IProblem.UndefinedType:
+                                    case IProblem.JavadocUndefinedType:
+                                        UnresolvedElementsSubProcessor.getTypeProposals(context, pl, proposals);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                /**
+                 * Generate stubs for the missing methods and fields.
+                 */
+                for (Map.Entry<String, Map> entry : this.missingFieldsMap.entrySet()) {
+                    String fqName = entry.getKey();
+                    final Map<String, CUCorrectionProposal> fieldProposalsMap = entry.getValue();
+                    final Map<String, CUCorrectionProposal> methodProposalsMap = missingMethodsMap.get(fqName);
+                    
+                    if (!fieldProposalsMap.isEmpty() || !methodProposalsMap.isEmpty()) {
+                        MptPluginConsole
+                                .general(
+                                        MptConstants.PARTIAL_CONVERSION_TAG,
+                                        "Adding fields / methods to " + fqName);
+                    }
+
+                    /**
+                     * Perform changes on the UI thread. 
+                     */
+                    Display.getDefault().syncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            IEditorPart javaEditor = null;
+                            for (CUCorrectionProposal p : fieldProposalsMap.values()) {
+                                try {
+                                    TextChange change = p.getTextChange();
+                                    if (javaEditor == null) {
+                                        ICompilationUnit targetCU = p
+                                                .getCompilationUnit();
+                                        javaEditor = JavaUI.openInEditor(targetCU);
+                                        JavaUI.revealInEditor(javaEditor,
+                                                targetCU.getPrimaryElement());
+                                    }
+                                    change.perform(monitor);
+                                    javaEditor.doSave(monitor);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            for (CUCorrectionProposal p : methodProposalsMap.values()) {
+                                try {
+                                    TextChange change = p.getTextChange();
+                                    if (javaEditor == null) {
+                                        ICompilationUnit targetCU = p
+                                                .getCompilationUnit();
+                                        javaEditor = JavaUI.openInEditor(targetCU);
+                                        JavaUI.revealInEditor(javaEditor,
+                                                targetCU.getPrimaryElement());
+                                    }
+                                    change.perform(monitor);
+                                    javaEditor.doSave(monitor);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (javaEditor != null) {
+                                IWorkbenchPage page = PlatformUI.getWorkbench()
+                                        .getActiveWorkbenchWindow().getActivePage();
+                                page.closeEditor(javaEditor, false);
+                            }
+                        }
+                    });
+                }
 			}
 		} catch (JavaModelException e) {
 			reportError(e);
@@ -406,10 +572,22 @@ public class ConvertWizards extends Wizard {
 			reportError(e);
 		} catch (MalformedTreeException e) {
 			reportError(e);
-		} 
+		}
+		
+		missingFieldsMap = null;
+		missingMethodsMap = null;
 	}	
 	
-	private void reportError(Exception e){
+	private void initMaps() {
+	    missingMethodsMap = new HashMap<String, Map>();
+	    missingFieldsMap = new HashMap<String, Map>();
+	    for(String type: this.parConversionInfo){
+	        missingMethodsMap.put(type, new HashMap<String, CUCorrectionProposal>());
+	        missingFieldsMap.put(type, new HashMap<String, CUCorrectionProposal>());
+	    }
+    }
+
+    private void reportError(Exception e){
 		MptPluginLogger.throwable(e);
 		e.printStackTrace();
 		MptPluginConsole

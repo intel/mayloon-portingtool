@@ -44,10 +44,6 @@ public class ASTParserAddNativeMethodDeclaration extends AbstractASTParser {
 	 * {@link ASTDirectManipulator}</li>
 	 * </ol>
 	 *
-	 * @param unit
-	 *            AST root node that has to be modified
-	 * @param localNativeMethodManagers
-	 *            collected information about the native method
 	 */
 	public void rewrite() {
 		Collection<NativeMethodBindingManager> managers = localNativeMethod.getNativeMethodBindingManagers()

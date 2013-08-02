@@ -128,12 +128,10 @@ public class MayloonNature implements IProjectNature {
             project.setDescription(description, null);
             MptPluginConsole.general(MptConstants.CONVERT_TAG, "Project '%1$s' has been configured with MayloonNature.", project.getName());
             
-//            removeFromBuildSpec(project, JavaCore.BUILDER_ID);
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.PreCompilerBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ApkBuilder");
     		removeFromBuildSpec(project, "com.android.ide.eclipse.adt.ResourceManagerBuilder");
     		removeFromNatures(project, "com.android.ide.eclipse.adt.AndroidNature");
-            
 		}
 	}
 	
