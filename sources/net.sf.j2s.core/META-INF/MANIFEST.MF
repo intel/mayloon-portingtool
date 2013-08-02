@@ -9,8 +9,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.core.resources,
- org.eclipse.ui.console;bundle-version="3.5.100",
- org.eclipse.ui.workbench;bundle-version="3.7.1"
+ org.eclipse.ui.console,
+ org.eclipse.ui.workbench
 Eclipse-AutoStart: true
 Export-Package: net.sf.j2s.core.astvisitors,
  net.sf.j2s.core.compiler,
