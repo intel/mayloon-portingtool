@@ -1287,7 +1287,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 						StringBuffer tmpBuffer = buffer;
 						buffer = new StringBuffer();
 						
-						buffer.append("Math.floor (");
+						buffer.append("parseInt (");
 						charVisit(left, beCare);
 						buffer.append(' ');
 						buffer.append(operator);
@@ -1303,7 +1303,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 									Expression exp = (Expression) element;
 									ITypeBinding expBinding = exp.resolveTypeBinding();
 									if (isIntegerType(expBinding.getName())) {
-										buffer.insert(0, "Math.floor (");
+										buffer.insert(0, "parseInt (");
 										is2Floor = true;
 									}
 								}
