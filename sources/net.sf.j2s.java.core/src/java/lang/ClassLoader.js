@@ -1119,6 +1119,11 @@ ClazzLoader.loadScript = function (file) {
 		ClazzLoader.tryToLoadNext (file);
 		return;
 	}
+	
+	if (ClazzLoader.bEnableDebug) {	//for debugging
+		console.log( "Loading " + file );	
+	}
+		
 	ClazzLoader.loadedScripts[file] = true;
 	/* also remove from those queue */
 	var cq = ClazzLoader.classQueue;
@@ -2040,6 +2045,10 @@ ClazzLoader.load = function (musts, clazz, optionals, declaration) {
 	if (clazz.charAt (0) == '$') {
 		clazz = "org.eclipse.s" + clazz.substring (1);
 	}
+	
+	if (ClazzLoader.bEnableDebug) {
+		console.log( clazz + " is declared.");	
+	}	
 	
 	var node = ClazzLoader.mapPath2ClassNode["#" + clazz];
 	if (node == null) { // ClazzLoader.load called inside *.z.js?
@@ -3023,6 +3032,14 @@ window.setTimeout (function () {
 		window.setTimeout (ClazzLoader.hotspotMonitoring, 10000); // 10s, initializing 
 	}
 }, 324); // 0.324 seconds is considered as enough before refresh action
+
+/* protected */
+ClazzLoader.bEnableDebug = false;
+
+/* public */
+ClazzLoader.enableDebug = function ( bFlag ) {
+	ClazzLoader.bEnableDebug = bFlag;
+};
 
 ClassLoader = ClazzLoader;
 }

@@ -258,6 +258,11 @@ Clazz.getClass = function (clazzHost) {
 	}
 };
 
+/* public */
+Clazz.enableDebug = function ( bFlag ) {
+	ClazzLoader.enableDebug(bFlag);
+};
+
 /*
  * Be used to copy members of class
  */

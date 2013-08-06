@@ -1566,4 +1566,10 @@ public final class Class<T> implements Serializable,  Type {
     	return null;
     }
 
+    /**
+     * Enable console output to assist debug
+     * @param bEnable
+     */
+    public static void enableDebug(boolean bEnable){
+    }
 }
