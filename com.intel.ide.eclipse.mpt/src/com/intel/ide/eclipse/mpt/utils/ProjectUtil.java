@@ -131,7 +131,6 @@ public class ProjectUtil {
 			MptPluginConsole.warning(MptConstants.GENERAL_TAG,
 					"Could not open %1$s for project %2$s",
 					MptConstants.MAYLOON_BUILD_PROPERTIES, project.getName());
-			e.printStackTrace();
 		}
 		String destnation = prop
 				.getProperty(MptConstants.PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION);
@@ -2333,6 +2332,17 @@ public class ProjectUtil {
 		return mayloonJarClassSet;
 	}
 
+	public static boolean checkIsMayloonProject(IProject project){
+		try {
+			if (project == null || !project.hasNature(MayloonNature.NATURE_ID)){
+				return false;
+			}
+		} catch (CoreException e) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * check whether apk is built successfully
 	 * 

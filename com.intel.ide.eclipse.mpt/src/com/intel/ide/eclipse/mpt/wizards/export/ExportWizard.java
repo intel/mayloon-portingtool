@@ -3,7 +3,6 @@ package com.intel.ide.eclipse.mpt.wizards.export;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -13,17 +12,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
-import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 /**
@@ -96,38 +90,8 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	/**
 	 * Export the mayloon application
 	 */
-	private boolean export(IProgressMonitor monitor) {
-		/*
-		 * schedule an incremental build to make sure up-to-date apk from
-		 * Android builder
-		 */
-		// try {
-		// this.fProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new
-		// NullProgressMonitor());
-		// } catch (CoreException e) {
-		// }
-		// work only deploy as tizen package
-
-		if (!checkEntryFile()) {
-			Shell activeShell = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell();
-			MessageBox dialog = new MessageBox(activeShell, SWT.ICON_QUESTION
-					| SWT.OK);
-			dialog.setText("Entry File Check");
-			dialog.setMessage(String
-					.format("Could not find %1$s.html. Please run your project as MayLoon Application first.", fProject.getName()));
-			int returnCode = dialog.open();
-			if (SWT.OK == returnCode) {
-			}
-			return false;
-		}
-
-		// check whether the android.core.Start.html is generated successful
-		// TODO luqiang,
-
+	private void export(IProgressMonitor monitor) {
 		performTizenPackage(monitor);
-
-		return true;
 	}
 
 	/**
@@ -204,35 +168,16 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			((ExportWizardPage) page).onUpdateEvent(event);
 		}
 	}
+	
 
 	@Override
 	public boolean canFinish() {
 		if (this.getContainer().getCurrentPage() == this.fProjectSelectionPage) {
-			try {
-				if (!fProject.hasNature(MayloonNature.NATURE_ID)){
-					((ProjectSelectionPage) this.fProjectSelectionPage)
-						.setErrorMessage(String
-							.format("Project \"%1$s\" is not a Mayloon project.", fProject.getName()));
-					return false;
-				}
-			} catch (CoreException e) {
-				e.printStackTrace();
+			if (this.fProject != null && this.fDestinationFile != null){
+				return true;
 			}
-			if (!checkEntryFile()) {
-				((ProjectSelectionPage) this.fProjectSelectionPage)
-						.setErrorMessage(String
-								.format("Could not find %1$s.html. Please run your project as MayLoon Application first.", fProject.getName()));
-				return false;
-			}
-			return true;
 		}
 		return false;
-	}
-	
-	private boolean checkEntryFile(){
-		IFile srcFile = fProject.getFile(MptConstants.WS_ROOT + fProject.getName()
-				+ MptConstants.MAYLOON_START_ENTRY_FILE);
-		return srcFile.exists();
 	}
 
 	/**

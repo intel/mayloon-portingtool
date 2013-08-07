@@ -3,6 +3,7 @@ package com.intel.ide.eclipse.mpt.wizards.export;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
@@ -58,6 +60,10 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	 */
 	private Button fDestinationButton;
 	
+	private IProject fProject;
+	
+	private File fDestinationFile;
+	
 	private static final int labelWidth = 98;
 	/**
 	 * Constructor
@@ -66,7 +72,7 @@ public class ProjectSelectionPage extends ExportWizardPage {
 	protected ProjectSelectionPage(ExportWizard wizard) {
 		super(wizard, "ProjectSelectionPage");
 		this.setTitle("Select Project to Export");
-		this.setDescription("Will perform checks on selected project to make sure it can be exported");
+		this.setDescription("Will export the selected project to the destination directory.");
 	}
 
 	@Override
@@ -83,6 +89,8 @@ public class ProjectSelectionPage extends ExportWizardPage {
         this.setMessage(null);
         this.setPageComplete(false);
         this.setControl(composite);
+        
+        this.onChange();
 	}
 	
 	private void createCompressComponent(Composite parent){
@@ -174,7 +182,6 @@ public class ProjectSelectionPage extends ExportWizardPage {
 					fDestinationText.setText(destPath.toString());
 				} catch (CoreException e1) {
 					this.setErrorMessage("Can not get project default output folder");
-					e1.printStackTrace();
 				} 
 			}
 		}
@@ -244,6 +251,25 @@ public class ProjectSelectionPage extends ExportWizardPage {
 			this.fDestinationText.setText(selecteddir);
 		}
 	}
+	
+	private boolean checkProject(){
+		if (!this.checkSelectedProject() || !this.checkEntryFile()){
+			this.fWizard.setProject(null);
+			return false;
+		}
+		this.fWizard.setProject(this.fProject);
+		return true;
+	}
+	
+	private boolean checkDestDir(){
+		if (!this.checkDestDirectory()){
+			this.fWizard.setDestinationFile(null);
+			return false;
+		}
+		this.fWizard.setDestinationFile(this.fDestinationFile);
+		return true;
+	}
+	
 	/**
 	 * Perform a variety of checks.
 	 */
@@ -252,76 +278,12 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		this.setErrorMessage(null);
 		this.setPageComplete(false);
 
-
-        boolean bPNameCorrect = false;
-        boolean bPDestDireCorrect = false;
-
-		String projectText = this.fProjectText.getText().trim();
-		if(projectText.length() == 0){
-			this.setErrorMessage("Please select a project to export.");
-		}else{
-			// TODO luqiang, add check whether the xxxx.html is generated
-			
-			
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject project = root.getProject(projectText);
-			if(project==null || !project.exists()){
-				this.setErrorMessage(String.format("%1$s is not a valid project name", projectText));
-			}else{
-				try {
-					if(project.hasNature(MayloonNature.NATURE_ID)){
-                        //don't needs these error information
-/*						IMarker marker = findFirstMarker(project, IMarker.PROBLEM, true,
-								             IMarker.SEVERITY_ERROR, IResource.DEPTH_INFINITE, true);
-						if(marker != null) {
-							IProject markProject = marker.getResource().getProject();
-							if(markProject.equals(project)) {
-								this.setErrorMessage(String.format("Project '%1$s' has severe problem, please fix first.",
-										             markProject.getName()));
-							}else{
-								this.setErrorMessage(String.format("Referenced project '%1$s' has severe problem, please fix first.",
-										             markProject.getName()));
-							}
-                        }*/
-						if(!project.equals(this.fWizard.getProject())){
-							this.fWizard.setProject(project);
-						}
-                        bPNameCorrect = true;
-						this.setPageComplete(true);
-					}else{
-						this.setErrorMessage(String.format("%1$s is not a Kona project",projectText));
-					}
-				} catch (CoreException e) {
-					this.setErrorMessage("Can not get project nature");
-				}
-			}
+		if (this.checkProject()){
+			this.checkDestDir();
 		}
 		
-		if(fDestinationText != null){
-			this.setPageComplete(false);
-			String destinationText = this.fDestinationText.getText().trim();
-			if(destinationText.length() == 0){
-				this.setErrorMessage("Please select a destination directory to export.");
-			}
-			else{
-				File destinationDir = new File(destinationText);
-				if(!destinationDir.isDirectory()){
-					this.setErrorMessage("The destination directory doesn't exist.");
-				}
-				else{
-                    bPDestDireCorrect = true;
-					this.fWizard.setDestinationFile(destinationDir);
-					this.setPageComplete(true);
-				}
-			}
-		}
-        //If the project name and destination directory is correct then the finish button available
-        if (bPNameCorrect && bPDestDireCorrect) {
-            this.setEnalbeFinishButton(true);
-        } else {
-            this.setEnalbeFinishButton(false);
-        }
-
+		fWizard.getContainer().updateButtons();
+		this.setPageComplete(true);
 	}
 	/**
 	 * Find the first marker of specified type and properties from project. 
@@ -357,10 +319,74 @@ public class ProjectSelectionPage extends ExportWizardPage {
 		return null;
 	}
 
-    public void setEnalbeFinishButton(boolean enabled) {
-        Button btn = this.getContainer().getShell().getDefaultButton();
-        if (this.fWizard.canFinish()) {
-            btn.setEnabled(enabled);
-        }
+    private String getProjectName(){
+    	if (this.fProjectText == null){
+    		return null;
+    	}
+    	return this.fProjectText.getText().trim();
+    }
+    
+    private String getDestinationDir(){
+    	if (this.fDestinationText == null){
+    		return null;
+    	}
+    	return this.fDestinationText.getText().trim();
+    }
+    
+	private boolean checkSelectedProject(){
+		String projectName = this.getProjectName();
+		if (projectName == null || projectName.length() == 0){
+			this.setErrorMessage("Please select a project to export.");
+			return false;
+		}
+		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		fProject = root.getProject(projectName);
+		
+		if (fProject == null || !fProject.exists()){
+			this.setErrorMessage(String.format("%1$s is not a valid project name", projectName));
+			return false;
+		}
+		
+		if (!ProjectUtil.checkIsMayloonProject(fProject)){
+			this.setErrorMessage(String.format("Project \"%1$s\" is not a Mayloon project.", fProject.getName()));
+			return false;
+		}
+		return true;
 	}
+	
+	private boolean checkDestDirectory(){
+		String destinationDir = this.getDestinationDir();
+		
+		if (destinationDir == null || destinationDir.length() == 0){
+			this.setErrorMessage("Please select a destination directory to export.");
+			return false;
+		}
+		
+		this.fDestinationFile = new File(destinationDir);
+		
+		if (this.fDestinationFile == null){
+			this.setErrorMessage("Not a valid destination directory.");
+			return false;
+		}
+		if (!this.fDestinationFile.isDirectory()){
+			this.setErrorMessage("The destination directory doesn't exist.");
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean checkEntryFile(){
+		if (fProject == null || !fProject.exists()){
+			return false;
+		}
+		IFile srcFile = fProject.getFile(MptConstants.WS_ROOT + fProject.getName()
+				+ MptConstants.MAYLOON_START_ENTRY_FILE);
+		if (!srcFile.exists()){
+			this.setErrorMessage(String.format("Could not find %1$s.html. Please run your project as MayLoon Application first.", fProject.getName()));
+			return false;
+		}
+		return true;
+	}	
+   
 }
