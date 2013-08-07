@@ -25,8 +25,6 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
-import net.sf.j2s.ajax.HttpRequest;
-import net.sf.j2s.ajax.IXHRCallback;
 
 /**
  * An {@link URLConnection} for HTTP (<a
@@ -254,10 +252,12 @@ public class HttpURLConnection extends URLConnection {
      */
     protected String method = "GET";
 
+
+    //the xmlHttpRequest request object
     /**
-     * the xmlHttpRequest request object
-     **/
-    private HttpRequest request;
+     * @j2sNative
+     * this.request = null;
+     * */{}
 
     /**
      * The status code of the response obtained from the HTTP request. The
@@ -578,10 +578,13 @@ public class HttpURLConnection extends URLConnection {
         // exceptions
         getInputStream();
 
-        if(request != null) {
-            responseCode = request.getStatus();
-            return responseCode;
-        }
+        /**
+         * @j2sNative
+         * if (this.request != null) {
+         *     this.responseCode = parseInt (this.request.getStatus ());
+         *     return this.responseCode;
+         * }
+         * */{}
 
         String response = getHeaderField(0);
         if (response == null) {
@@ -833,24 +836,26 @@ public class HttpURLConnection extends URLConnection {
         if (!connected) {
             connect();
         }
-        if (request == null) {
-            request = new HttpRequest();
-        }
-
-        request.open(this.method, url.getSpec(), false);
-
-        request.send();
-
-        String resText = request.getResponseText();
-        if (resText != "" | resText != null) {
-            return resText;
-        }
-
-        Document doc = request.getResponseXML();
-        if (doc != null) {
-            return doc;
-        }
-
-        return request.getResponse();
+        /**
+         * @j2sNative
+         * if (this.request == null) {
+         *     this.request =  new net.sf.j2s.ajax.HttpRequest ();
+         * }
+         *
+         * this.request.open (this.method, this.url.getSpec (), false);
+         * this.request.send ();
+         * var resText = this.request.getResponseText ();
+         *
+         * if ( new Boolean (resText !== "" | resText != null).valueOf ()) {
+         *     return resText;
+         * }
+         *
+         * var doc = this.request.getResponseXML ();
+         * if (doc != null) {
+         *     return doc;
+         * }
+         * return this.request.getResponse ();
+         */{}
+        return null;
     }
 }
