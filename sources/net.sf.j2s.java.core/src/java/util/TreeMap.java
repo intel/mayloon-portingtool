@@ -17,9 +17,6 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -1463,38 +1460,5 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements SortedMap<K, V>,
 			};
 		}
 		return valuesCollection;
-	}
-
-	private void writeObject(ObjectOutputStream stream) throws IOException {
-		stream.defaultWriteObject();
-		stream.writeInt(size);
-		if (size > 0) {
-			Entry<K, V> node = minimum(root);
-			while (node != null) {
-				stream.writeObject(node.key);
-				stream.writeObject(node.value);
-				node = successor(node);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-			ClassNotFoundException {
-		stream.defaultReadObject();
-		size = stream.readInt();
-		Entry<K, V> last = null;
-		for (int i = size; --i >= 0;) {
-			Entry<K, V> node = new Entry<K, V>((K)stream.readObject());
-			node.value = (V)stream.readObject();
-			if (last == null) {
-                root = node;
-            } else {
-				node.parent = last;
-				last.right = node;
-				balance(node);
-			}
-			last = node;
-		}
 	}
 }

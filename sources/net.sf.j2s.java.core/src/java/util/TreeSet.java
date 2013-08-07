@@ -18,9 +18,6 @@
 package java.util;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -365,42 +362,5 @@ public class TreeSet<E> extends AbstractSet<E> implements SortedSet<E>, Cloneabl
             c.compare(start, start);
         }
 		return new TreeSet<E>(backingMap.tailMap(start));
-	}
-
-	private void writeObject(ObjectOutputStream stream) throws IOException {
-	    stream.defaultWriteObject();
-	    stream.writeObject(backingMap.comparator());
-	    int size = backingMap.size();
-	    stream.writeInt(size);
-	    if (size > 0) {
-	        Iterator<E> it = backingMap.keySet().iterator();
-	        while (it.hasNext()) {
-	            stream.writeObject(it.next());
-	        }
-	    }
-	}
-
-	@SuppressWarnings("unchecked")
-	private void readObject(ObjectInputStream stream) throws IOException,
-	ClassNotFoundException {
-	    stream.defaultReadObject();
-	    TreeMap<E, E> map = new TreeMap<E, E>((Comparator<? super E>) stream.readObject());
-	    int size = stream.readInt();
-	    if (size > 0) {
-	        E key = (E)stream.readObject();
-	        TreeMap.Entry<E,E> last = new TreeMap.Entry<E,E>(key,key);
-	        map.root = last;
-	        map.size = 1;
-	        for (int i=1; i<size; i++) {
-	            key = (E)stream.readObject();
-	            TreeMap.Entry<E,E> x = new TreeMap.Entry<E,E>(key,key);
-	            x.parent = last;
-	            last.right = x;
-	            map.size++;
-	            map.balance(x);
-	            last = x;
-	        }
-	    }
-	    backingMap = map;
 	}
 }

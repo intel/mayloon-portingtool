@@ -17,10 +17,7 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 
 /**
  * Collections contains static methods which operate on Collection classes.
@@ -496,12 +493,6 @@ public class Collections {
 				return c.toArray(array);
 			}
 		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
-			}
-		}
 	}
 
 	static class SynchronizedRandomAccessList<E> extends SynchronizedList<E>
@@ -626,12 +617,6 @@ public class Collections {
 		public List<E> subList(int start, int end) {
 			synchronized (mutex) {
 				return new SynchronizedList<E>(list.subList(start, end), mutex);
-			}
-		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
 			}
 		}
 
@@ -765,12 +750,6 @@ public class Collections {
 				return m.toString();
 			}
 		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
-			}
-		}
 	}
 
 	static class SynchronizedSet<E> extends SynchronizedCollection<E> implements Set<E> {
@@ -795,12 +774,6 @@ public class Collections {
         public int hashCode() {
 			synchronized (mutex) {
 				return c.hashCode();
-			}
-		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
 			}
 		}
 	}
@@ -857,12 +830,6 @@ public class Collections {
 				return new SynchronizedSortedMap<K, V>(sm.tailMap(startKey), mutex);
 			}
 		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
-			}
-		}
 	}
 
 	static class SynchronizedSortedSet<E> extends SynchronizedSet<E> implements
@@ -914,12 +881,6 @@ public class Collections {
 		public SortedSet<E> tailSet(E start) {
 			synchronized (mutex) {
 				return new SynchronizedSortedSet<E>(ss.tailSet(start), mutex);
-			}
-		}
-
-		private void writeObject(ObjectOutputStream stream) throws IOException {
-			synchronized (mutex) {
-				stream.defaultWriteObject();
 			}
 		}
 	}

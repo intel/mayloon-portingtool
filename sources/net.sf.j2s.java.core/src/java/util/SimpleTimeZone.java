@@ -23,9 +23,6 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.ObjectStreamField;
 
 /**
@@ -938,98 +935,4 @@ public class SimpleTimeZone extends TimeZone {
             new ObjectStreamField("startTime", Integer.TYPE),
             new ObjectStreamField("startYear", Integer.TYPE),
             new ObjectStreamField("useDaylight", Boolean.TYPE), };
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        int sEndDay = endDay, sEndDayOfWeek = endDayOfWeek + 1, sStartDay = startDay, sStartDayOfWeek = startDayOfWeek + 1;
-        if (useDaylight
-                && (startMode != DOW_IN_MONTH_MODE || endMode != DOW_IN_MONTH_MODE)) {
-            Calendar cal = new GregorianCalendar(this);
-            if (endMode != DOW_IN_MONTH_MODE) {
-                cal.set(Calendar.MONTH, endMonth);
-                cal.set(Calendar.DATE, endDay);
-                sEndDay = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH);
-                if (endMode == DOM_MODE) {
-                    sEndDayOfWeek = cal.getFirstDayOfWeek();
-                }
-            }
-            if (startMode != DOW_IN_MONTH_MODE) {
-                cal.set(Calendar.MONTH, startMonth);
-                cal.set(Calendar.DATE, startDay);
-                sStartDay = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH);
-                if (startMode == DOM_MODE) {
-                    sStartDayOfWeek = cal.getFirstDayOfWeek();
-                }
-            }
-        }
-        ObjectOutputStream.PutField fields = stream.putFields();
-        fields.put("dstSavings", dstSavings);
-        fields.put("endDay", sEndDay);
-        fields.put("endDayOfWeek", sEndDayOfWeek);
-        fields.put("endMode", endMode);
-        fields.put("endMonth", endMonth);
-        fields.put("endTime", endTime);
-        fields.put("monthLength", GregorianCalendar.DaysInMonth);
-        fields.put("rawOffset", rawOffset);
-        fields.put("serialVersionOnStream", 1);
-        fields.put("startDay", sStartDay);
-        fields.put("startDayOfWeek", sStartDayOfWeek);
-        fields.put("startMode", startMode);
-        fields.put("startMonth", startMonth);
-        fields.put("startTime", startTime);
-        fields.put("startYear", startYear);
-        fields.put("useDaylight", useDaylight);
-        stream.writeFields();
-        stream.writeInt(4);
-        byte[] values = new byte[4];
-        values[0] = (byte) startDay;
-        values[1] = (byte) (startMode == DOM_MODE ? 0 : startDayOfWeek + 1);
-        values[2] = (byte) endDay;
-        values[3] = (byte) (endMode == DOM_MODE ? 0 : endDayOfWeek + 1);
-        stream.write(values);
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException,
-            ClassNotFoundException {
-        ObjectInputStream.GetField fields = stream.readFields();
-        rawOffset = fields.get("rawOffset", 0);
-        useDaylight = fields.get("useDaylight", false);
-        if (useDaylight) {
-            endMonth = fields.get("endMonth", 0);
-            endTime = fields.get("endTime", 0);
-            startMonth = fields.get("startMonth", 0);
-            startTime = fields.get("startTime", 0);
-            startYear = fields.get("startYear", 0);
-        }
-        if (fields.get("serialVersionOnStream", 0) == 0) {
-            if (useDaylight) {
-                startMode = endMode = DOW_IN_MONTH_MODE;
-                endDay = fields.get("endDay", 0);
-                endDayOfWeek = fields.get("endDayOfWeek", 0) - 1;
-                startDay = fields.get("startDay", 0);
-                startDayOfWeek = fields.get("startDayOfWeek", 0) - 1;
-            }
-        } else {
-            dstSavings = fields.get("dstSavings", 0);
-            if (useDaylight) {
-                endMode = fields.get("endMode", 0);
-                startMode = fields.get("startMode", 0);
-                int length = stream.readInt();
-                byte[] values = new byte[length];
-                stream.readFully(values);
-                if (length >= 4) {
-                    startDay = values[0];
-                    startDayOfWeek = values[1];
-                    if (startMode != DOM_MODE) {
-                        startDayOfWeek--;
-                    }
-                    endDay = values[2];
-                    endDayOfWeek = values[3];
-                    if (endMode != DOM_MODE) {
-                        endDayOfWeek--;
-                    }
-                }
-            }
-        }
-    }
-
 }

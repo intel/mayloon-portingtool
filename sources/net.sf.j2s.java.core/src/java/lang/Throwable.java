@@ -787,16 +787,4 @@ return this;
      *         index &gt;= getStackTraceDepth() </tt>
      */
     private native StackTraceElement getStackTraceElement(int index);
-
-    /**
-     * @param s
-     * @throws IOException
-     * @j2sIgnore
-     */
-    private synchronized void writeObject(java.io.ObjectOutputStream s)
-        throws IOException
-    {
-        getOurStackTrace();  // Ensure that stackTrace field is initialized.
-        s.defaultWriteObject();
-    }
 }

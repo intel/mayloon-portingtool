@@ -19,7 +19,6 @@ package java.util;
 
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 
@@ -1066,10 +1065,5 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 		if (elementData.length != elementCount) {
             grow(elementCount);
         }
-	}
-
-	private synchronized void writeObject(ObjectOutputStream stream)
-			throws IOException {
-		stream.defaultWriteObject();
 	}
 }

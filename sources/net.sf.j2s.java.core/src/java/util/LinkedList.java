@@ -18,11 +18,7 @@
 package java.util;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 
 /**
  * LinkedList is an implementation of List, backed by a linked list. All
@@ -771,30 +767,5 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
             contents[index] = null;
         }
 		return contents;
-	}
-
-	private void writeObject(ObjectOutputStream stream) throws IOException {
-		stream.defaultWriteObject();
-		stream.writeInt(size);
-		Iterator<E> it = iterator();
-		while (it.hasNext()) {
-            stream.writeObject(it.next());
-        }
-	}
-
-	@SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-			ClassNotFoundException {
-		stream.defaultReadObject();
-		size = stream.readInt();
-		voidLink = new Link<E>(null, null, null);
-		Link<E> link = voidLink;
-		for (int i = size; --i >= 0;) {
-			Link<E> nextLink = new Link<E>((E)stream.readObject(), link, null);
-			link.next = nextLink;
-			link = nextLink;
-		}
-		link.next = voidLink;
-		voidLink.previous = link;
 	}
 }

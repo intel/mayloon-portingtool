@@ -18,9 +18,6 @@
 package java.util;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -182,34 +179,6 @@ public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable,
 	@Override
     public int size() {
 		return backingMap.size();
-	}
-
-	private void writeObject(ObjectOutputStream stream) throws IOException {
-		stream.defaultWriteObject();
-		stream.writeInt(backingMap.elementData.length);
-		stream.writeFloat(backingMap.loadFactor);
-		stream.writeInt(backingMap.elementCount);
-		for (int i = backingMap.elementData.length; --i >= 0;) {
-			HashMap.Entry<E, HashSet<E>> entry = backingMap.elementData[i];
-			while (entry != null) {
-				stream.writeObject(entry.key);
-				entry = entry.next;
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-			ClassNotFoundException {
-		stream.defaultReadObject();
-		int length = stream.readInt();
-		float loadFactor = stream.readFloat();
-		backingMap = createBackingMap(length, loadFactor);
-		int elementCount = stream.readInt();
-		for (int i = elementCount; --i >= 0;) {
-			E key = (E)stream.readObject();
-			backingMap.put(key, this);
-		}
 	}
 
 	HashMap<E, HashSet<E>> createBackingMap(int capacity, float loadFactor) {

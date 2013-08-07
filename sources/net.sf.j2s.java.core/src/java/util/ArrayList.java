@@ -18,11 +18,7 @@
 package java.util;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 
 /**
  * ArrayList is an implementation of List, backed by an array. All optional
@@ -669,28 +665,6 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	private static final ObjectStreamField[] serialPersistentFields = { new ObjectStreamField(
 			"size", Integer.TYPE) }; //$NON-NLS-1$
 	*/
-
-	private void writeObject(ObjectOutputStream stream) throws IOException {
-		ObjectOutputStream.PutField fields = stream.putFields();
-		fields.put("size", size()); //$NON-NLS-1$
-		stream.writeFields();
-		stream.writeInt(array.length);
-		Iterator<?> it = iterator();
-		while (it.hasNext()) {
-            stream.writeObject(it.next());
-        }
-	}
-
-	@SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-			ClassNotFoundException {
-		ObjectInputStream.GetField fields = stream.readFields();
-		lastIndex = fields.get("size", 0); //$NON-NLS-1$
-		array = newElementArray(stream.readInt());
-		for (int i = 0; i < lastIndex; i++) {
-            array[i] = (E)stream.readObject();
-        }
-	}
 
     /**
      * Override the hashCode method

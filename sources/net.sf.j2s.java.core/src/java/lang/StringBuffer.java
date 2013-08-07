@@ -17,9 +17,6 @@
 
 package java.lang;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -834,22 +831,5 @@ public final class StringBuffer extends AbstractStringBuilder implements
     @Override
     public synchronized void trimToSize() {
         super.trimToSize();
-    }
-
-    private synchronized void writeObject(ObjectOutputStream out)
-            throws IOException {
-        ObjectOutputStream.PutField fields = out.putFields();
-        fields.put("count", length());
-        fields.put("shared", false);
-        fields.put("value", getValue());
-        out.writeFields();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        ObjectInputStream.GetField fields = in.readFields();
-        int count = fields.get("count", 0);
-        char[] value = (char[]) fields.get("value", null);
-        set(value, count);
     }
 }
