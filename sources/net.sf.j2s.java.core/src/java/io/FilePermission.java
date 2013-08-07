@@ -365,14 +365,4 @@ public final class FilePermission extends Permission implements Serializable {
         return (canonPath == null ? getName().hashCode() : canonPath.hashCode())
                 + mask;
     }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException,
-            ClassNotFoundException {
-        stream.defaultReadObject();
-        init(getName(), actions);
-    }
 }

@@ -17,9 +17,6 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
 
@@ -2241,37 +2238,4 @@ public  class Calendar implements Serializable, Cloneable, Comparable<Calendar> 
             new ObjectStreamField("serialVersionOnStream", Integer.TYPE),
             new ObjectStreamField("time", Long.TYPE),
             new ObjectStreamField("zone", TimeZone.class), };
-
-    @SuppressWarnings("nls")
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        complete();
-        ObjectOutputStream.PutField putFields = stream.putFields();
-        putFields.put("areFieldsSet", areFieldsSet);
-        putFields.put("fields", this.fields);
-        putFields.put("firstDayOfWeek", firstDayOfWeek);
-        putFields.put("isSet", isSet);
-        putFields.put("isTimeSet", isTimeSet);
-        putFields.put("lenient", lenient);
-        putFields.put("minimalDaysInFirstWeek", minimalDaysInFirstWeek);
-        putFields.put("nextStamp", 2 /* MINIMUM_USER_STAMP */);
-        putFields.put("serialVersionOnStream", 1);
-        putFields.put("time", time);
-        putFields.put("zone", zone);
-        stream.writeFields();
-    }
-
-    @SuppressWarnings("nls")
-    private void readObject(ObjectInputStream stream) throws IOException,
-            ClassNotFoundException {
-        ObjectInputStream.GetField readFields = stream.readFields();
-        areFieldsSet = readFields.get("areFieldsSet", false);
-        this.fields = (int[]) readFields.get("fields", null);
-        firstDayOfWeek = readFields.get("firstDayOfWeek", Calendar.SUNDAY);
-        isSet = (boolean[]) readFields.get("isSet", null);
-        isTimeSet = readFields.get("isTimeSet", false);
-        lenient = readFields.get("lenient", true);
-        minimalDaysInFirstWeek = readFields.get("minimalDaysInFirstWeek", 1);
-        time = readFields.get("time", 0L);
-        zone = (TimeZone) readFields.get("zone", null);
-    }
 }

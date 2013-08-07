@@ -17,9 +17,6 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * {@code GregorianCalendar} is a concrete subclass of {@link Calendar}
@@ -1420,18 +1417,6 @@ public class GregorianCalendar extends Calendar {
             lastYearSkew = 0;
             currentYearSkew = julianSkew;
         }
-        isCached = false;
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException,
-            ClassNotFoundException {
-
-        stream.defaultReadObject();
-        setGregorianChange(new Date(gregorianCutover));
         isCached = false;
     }
 

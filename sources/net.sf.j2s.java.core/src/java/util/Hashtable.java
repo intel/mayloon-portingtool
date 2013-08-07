@@ -18,9 +18,6 @@
 package java.util;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -874,43 +871,5 @@ public class Hashtable<K,V> extends Dictionary<K,V> implements Map<K,V>, Cloneab
 				});
 			}
 		}, this);
-	}
-
-	private synchronized void writeObject(ObjectOutputStream stream)
-			throws IOException {
-		stream.defaultWriteObject();
-		stream.writeInt(elementData.length);
-		stream.writeInt(elementCount);
-		for (int i = elementData.length; --i >= 0;) {
-			Entry<K, V> entry = elementData[i];
-			while (entry != null) {
-				stream.writeObject(entry.key);
-				stream.writeObject(entry.value);
-				entry = entry.next;
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-			ClassNotFoundException {
-		stream.defaultReadObject();
-		int length = stream.readInt();
-		elementData = newElementArray(length);
-		elementCount = stream.readInt();
-		for (int i = elementCount; --i >= 0;) {
-			Object key = stream.readObject();
-			int hash = key.hashCode();
-			int index = (hash & 0x7FFFFFFF) % length;
-			if (index < firstSlot) {
-                firstSlot = index;
-            }
-			if (index > lastSlot) {
-                lastSlot = index;
-            }
-			Entry<K, V> entry = newEntry((K)key, (V)stream.readObject(), hash);
-			entry.next = elementData[index];
-			elementData[index] = entry;
-		}
 	}
 }

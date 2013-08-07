@@ -16,9 +16,6 @@
 
 package java.util;
 
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 public class InvalidPropertiesFormatException extends IOException {
@@ -31,15 +28,5 @@ public class InvalidPropertiesFormatException extends IOException {
 
     public InvalidPropertiesFormatException(Throwable c) {
         initCause(c);
-    }
-    
-    private void writeObject(ObjectOutputStream out) 
-            throws NotSerializableException{
-        throw new NotSerializableException();        
-    }
-    
-    private void readObject(ObjectInputStream in) 
-            throws NotSerializableException{
-        throw new NotSerializableException();        
     }
 }

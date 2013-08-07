@@ -1482,17 +1482,6 @@ public class File implements Serializable, Comparable<File> {
         return name;
     }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeChar(separatorChar);
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        char inSeparator = stream.readChar();
-        init(path.replace(inSeparator, separatorChar));
-    }
-
     /**
      * Returns the total size in bytes of the partition containing this path.
      * Returns 0 if this path does not exist.

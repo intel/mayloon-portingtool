@@ -17,9 +17,6 @@
 
 package java.lang;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -717,40 +714,5 @@ public final class StringBuilder extends AbstractStringBuilder implements
          * override it here.
          */
         return super.toString();
-    }
-
-    /**
-     * <p>
-     * Reads the state of a <code>StringBuilder</code> from the passed stream
-     * and restores it to this instance.
-     * </p>
-     * 
-     * @param in The stream to read the state from.
-     * @throws IOException if the stream throws it during the read.
-     * @throws ClassNotFoundException if the stream throws it during the read.
-     */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        in.defaultReadObject();
-        int count = in.readInt();
-        char[] value = (char[]) in.readObject();
-        set(value, count);
-    }
-
-    /**
-     * <p>
-     * Writes the state of this object to the stream passed.
-     * </p>
-     * 
-     * @param out The stream to write the state to.
-     * @throws IOException if the stream throws it during the write.
-     * @serialData <code>int</code> - The length of this object.
-     *             <code>char[]</code> - The buffer from this object, which
-     *             may be larger than the length field.
-     */
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeInt(length());
-        out.writeObject(getValue());
     }
 }

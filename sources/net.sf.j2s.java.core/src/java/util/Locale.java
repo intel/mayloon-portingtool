@@ -1082,60 +1082,6 @@ return [
     }
 
     /**
-     * @serialData The first three fields are three <code>String</code> objects:
-     * the first is a 2-letter ISO 639 code representing the locale's language,
-     * the second is a 2-letter ISO 3166 code representing the locale's region or
-     * country, and the third is an optional chain of variant codes defined by this
-     * library.  Any of the fields may be the empty string.  The fourth field is an
-     * <code>int</code> whose value is always -1.  This is a sentinel value indicating
-     * the <code>Locale</code>'s hash code must be recomputed.
-     * 
-     * @j2sIgnore
-     */
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        // hashcode is semantically transient.  We couldn't define it as transient
-        // because versions of this class that DIDN'T declare it as transient have
-        // already shipped.  What we're doing here is making sure that the written-out
-        // version of hashcode is always -1, regardless of what's really stored there
-        // (we hold onto the original value just in case someone might want it again).
-        // Writing -1 ensures that version 1.1 Locales will always recalculate their
-        // hash codes after being streamed back in.  This is necessary because
-        // String.hashCode() calculates its hash code differently in 1.2 than it did
-        // in 1.1.
-        int temp = hashcode;
-        hashcode = -1;
-        out.defaultWriteObject();
-        hashcode = temp;
-    }
-
-    /**
-     * @serialData The first three fields are three <code>String</code> objects:
-     * the first is a 2-letter ISO 639 code representing the locale's language,
-     * the second is a 2-letter ISO 3166 code representing the locale's region or
-     * country, and the third is an optional chain of variant codes defined by this
-     * library.  Any of the fields may be the empty string.  The fourth field is an
-     * <code>int</code>representing the locale's hash code, but is ignored by
-     * <code>readObject()</code>.  Whatever this field's value, the hash code is
-     * initialized to -1, a sentinel value that indicates the hash code must be
-     * recomputed.
-     * 
-     * @j2sIgnore
-     */
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // hashcode is semantically transient.  We couldn't define it as transient
-        // because versions of this class that DIDN'T declare is as transient have
-        // already shipped.  This code makes sure that whatever value for hashcode
-        // was written on the stream, we ignore it and recalculate it on demand.  This
-        // is necessary because String.hashCode() calculates is hash code differently
-        // in version 1.2 than it did in 1.1.
-        in.defaultReadObject();
-        hashcode = -1;
-        language = convertOldISOCodes(language);
-        country = country.intern();
-        variant = variant.intern();
-    }
-
-    /**
      * List of all 2-letter language codes currently defined in ISO 639.
      * (Because the Java VM specification turns an array constant into executable code
      * that generates the array element by element, we keep the array in compressed

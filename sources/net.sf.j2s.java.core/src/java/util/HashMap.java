@@ -17,9 +17,6 @@
 
 package java.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -682,33 +679,5 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>,
             };
         }
         return valuesCollection;
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeInt(elementData.length);
-        stream.writeInt(elementCount);
-        Iterator<?> iterator = entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry<?, ?> entry = (Entry) iterator.next();
-            stream.writeObject(entry.key);
-            stream.writeObject(entry.value);
-            entry = entry.next;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException,
-            ClassNotFoundException {
-        stream.defaultReadObject();
-        int length = stream.readInt();
-        elementData = newElementArray(length);
-        elementCount = stream.readInt();
-        for (int i = elementCount; --i >= 0;) {
-            K key = (K)stream.readObject();
-            int index = (null == key) ? 0 : (key.hashCode() & 0x7FFFFFFF) % length;
-            createEntry(key, index, (V)stream.readObject());
-        }
-    }
-    
+    } 
 }
