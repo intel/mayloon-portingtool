@@ -1626,10 +1626,12 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 			if (binding != null) {
 				ITypeBinding declaringClass = binding.getDeclaringClass();
 				ITypeBinding superclass = declaringClass.getSuperclass();
-				String qualifiedName = discardGenericType(superclass.getQualifiedName());
-				existedSuperClass = superclass != null 
-						&& !"java.lang.Object".equals(qualifiedName)
-						&& !"java.lang.Enum".equals(qualifiedName);
+                if (superclass != null) {
+    				String qualifiedName = discardGenericType(superclass.getQualifiedName());
+    				existedSuperClass = superclass != null 
+    						&& !"java.lang.Object".equals(qualifiedName)
+    						&& !"java.lang.Enum".equals(qualifiedName);
+                }
 			}
 			if (!isSuperCalled && existedSuperClass) {
 				buffer.append("{\r\n");
@@ -2294,10 +2296,12 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 
 	public boolean visit(SuperConstructorInvocation node) {
 		IMethodBinding constructorBinding = node.resolveConstructorBinding();
-		ITypeBinding declaringClass = constructorBinding.getDeclaringClass();
-		if ("java.lang.Object".equals(declaringClass.getQualifiedName())) {
-			return false;
-		}
+        if (constructorBinding != null) {
+            ITypeBinding declaringClass = constructorBinding.getDeclaringClass();
+            if ("java.lang.Object".equals(declaringClass.getQualifiedName())) {
+                return false;
+            }
+        }
 		ASTNode parent = node.getParent();
 		if (parent instanceof Block) {
 			Block methoBlock = (Block) parent;

@@ -898,6 +898,9 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
         if (resolveTypeBinding != null) {
             if (resolveTypeBinding.isAnonymous()) {
                 resolveTypeBinding = node.getType().resolveBinding();
+                if (resolveTypeBinding == null) {
+                    return super.visit(node);
+                }
             }
             ITypeBinding dclClass = null;
             while ((dclClass = resolveTypeBinding.getDeclaringClass()) != null) {
