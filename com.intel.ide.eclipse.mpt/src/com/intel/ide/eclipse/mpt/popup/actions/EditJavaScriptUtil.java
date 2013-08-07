@@ -250,32 +250,6 @@ public class EditJavaScriptUtil {
 		return null;
 	}
 	
-	protected static String getRelativeJavaPath(IJavaProject javaProject) {
-		
-		if (javaProject != null) {
-			String relativePath = null;
-//			IJavaElement parent = unit.getParent();
-//			while (parent != null) {
-//				if (parent instanceof PackageFragmentRoot) {
-//					relativePath = unit.getPath().toPortableString()
-//							.substring(
-//									parent.getPath().toPortableString()
-//											.length());
-//					break;
-//				}
-//				parent = parent.getParent();
-//			}
-			
-			if (relativePath != null) {
-				relativePath = javaProject.getProject().getLocation().toOSString()
-						+ relativePath.substring(0, relativePath
-								.lastIndexOf('.')) + ".java";
-				return relativePath;
-			}
-		}
-		return null;
-	}
-
 	public static boolean isJSExisted(ICompilationUnit unit) {
 		File file = new File(unit.getJavaModel().getResource()
 				.getLocation().toOSString(), getRelativeJSPath(unit));

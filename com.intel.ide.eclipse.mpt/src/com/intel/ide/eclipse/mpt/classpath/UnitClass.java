@@ -2,7 +2,6 @@ package com.intel.ide.eclipse.mpt.classpath;
 
 import java.io.File;
 
-import com.intel.ide.eclipse.mpt.launching.J2SLaunchingUtil;
 
 public class UnitClass extends Resource {
 	private String className;
@@ -32,18 +31,8 @@ public class UnitClass extends Resource {
 		return new File(getFolder(), getRelativePath()).exists();
 	}
 	public String toHTMLString() {
-		String bin = "";
 		// Class unit *.js is loaded by Clazz.load from now on.
-		if (true) return bin; 
-		if (this.getParent() != null 
-				&& (this.getParent() instanceof CompositeResources)) {
-			CompositeResources cc = (CompositeResources) this.getParent();
-			String binRelative = cc.getBinRelativePath();
-			if (binRelative != null) {
-				bin += binRelative;
-			}
-		}
-		return J2SLaunchingUtil.wrapTypeJS(getClassName(), bin + getBinRelativePath());
+		return "";
 	}
 	
 	public int getType() {
