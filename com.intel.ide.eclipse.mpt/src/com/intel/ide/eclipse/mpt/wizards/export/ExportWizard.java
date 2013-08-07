@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import com.intel.ide.eclipse.mpt.MptConstants;
 import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
+import com.intel.ide.eclipse.mpt.nature.MayloonNature;
 import com.intel.ide.eclipse.mpt.utils.ProjectUtil;
 
 /**
@@ -207,6 +208,16 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	@Override
 	public boolean canFinish() {
 		if (this.getContainer().getCurrentPage() == this.fProjectSelectionPage) {
+			try {
+				if (!fProject.hasNature(MayloonNature.NATURE_ID)){
+					((ProjectSelectionPage) this.fProjectSelectionPage)
+						.setErrorMessage(String
+							.format("Project \"%1$s\" is not a Mayloon project.", fProject.getName()));
+					return false;
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 			if (!checkEntryFile()) {
 				((ProjectSelectionPage) this.fProjectSelectionPage)
 						.setErrorMessage(String
