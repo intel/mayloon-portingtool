@@ -587,7 +587,7 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 		buffer.append(" = ");
 		Expression exp = node.getExpression();
 		ITypeBinding typeBinding = exp.resolveTypeBinding();
-		if (typeBinding.isArray()) {
+        if (typeBinding != null && typeBinding.isArray()) {
 			buffer.append("0, $$");
 			buffer.append(varName);
 			buffer.append(" = ");
