@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.ListViewer;
 
 public class CheckPreConvertPage extends WizardPage {
 
-	private ConvertWizards convertWizards;
 	private Set<String> errorInfoSet;
 	private Set<String> warningInfoSet;
 	private static final String errorInfoType = "Error information:";
@@ -34,8 +33,6 @@ public class CheckPreConvertPage extends WizardPage {
 	
 	protected CheckPreConvertPage(ConvertWizards convertWizards) {
 		super("CheckPreConvertPage");
-		this.setWizard(convertWizards);
-		this.convertWizards = convertWizards;
 		this.setTitle("Check Before Convert");
 		this.setDescription("Check necessary files and information before converting to MayLoon Application");
 		this.errorInfoSet = new HashSet<String>();
@@ -122,20 +119,6 @@ public class CheckPreConvertPage extends WizardPage {
 	
 	public boolean canFlipToNextPage() {
 		return isPageComplete() && errorInfoSet.isEmpty();
-	}
-
-	/**
-	 * @return the convertWizards
-	 */
-	public ConvertWizards getConvertWizards() {
-		return convertWizards;
-	}
-
-	/**
-	 * @param convertWizards the convertWizards to set
-	 */
-	public void setConvertWizards(ConvertWizards convertWizards) {
-		this.convertWizards = convertWizards;
 	}
 
 	/**
