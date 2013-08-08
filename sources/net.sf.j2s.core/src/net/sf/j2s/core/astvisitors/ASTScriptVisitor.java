@@ -3202,24 +3202,28 @@ public class CB extends CA {
 		Type type = node.getType();
 		if (type.isPrimitiveType()) {
 			ITypeBinding resolveBinding = type.resolveBinding();
-			String name = resolveBinding.getName();
-			if ("boolean".equals(name)) {
-				buffer.append("Boolean");
-				return false;
-			} else { // TODO: More types? Integer, Long, Double, ... ?
-				buffer.append("Number");
-				return false;
-			}
+            if (resolveBinding != null) {
+				String name = resolveBinding.getName();
+				if ("boolean".equals(name)) {
+					buffer.append("Boolean");
+					return false;
+				} else { // TODO: More types? Integer, Long, Double, ... ?
+					buffer.append("Number");
+					return false;
+				}
+            }
 		} else if (type.isArrayType()) {
 			buffer.append("Array");
 			return false;
 		} else {
 			ITypeBinding resolveBinding = type.resolveBinding();
-			String name = resolveBinding.getName();
-			if ("Object".equals(name) || "java.lang.Object".equals(name)) {
-				buffer.append("JavaObject");
-				return false;
-			}
+            if (resolveBinding != null) {
+				String name = resolveBinding.getName();
+				if ("Object".equals(name) || "java.lang.Object".equals(name)) {
+					buffer.append("JavaObject");
+					return false;
+				}
+            }
 		}
 		type.accept(this);
 		return false;

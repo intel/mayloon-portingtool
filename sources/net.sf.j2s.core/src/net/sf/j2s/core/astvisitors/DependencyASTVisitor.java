@@ -418,6 +418,9 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 	 */
 	public boolean visit(TypeLiteral node) {
 		ITypeBinding resolveTypeBinding = node.getType().resolveBinding();
+        if (resolveTypeBinding == null) {
+            return false;
+        }
 		ITypeBinding declaringClass = resolveTypeBinding.getDeclaringClass();
 		QNTypeBinding qn = new QNTypeBinding();
 		String qualifiedName = null;
