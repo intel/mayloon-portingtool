@@ -30,12 +30,9 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jdt.internal.ui.text.correction.ProblemLocation;
-import org.eclipse.jdt.internal.ui.text.correction.proposals.ASTRewriteCorrectionProposal;
-import org.eclipse.jdt.internal.ui.text.correction.proposals.CUCorrectionProposal;
+import org.eclipse.jdt.internal.ui.text.correction.proposals.LinkedCorrectionProposal;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
@@ -478,7 +475,7 @@ public class ConvertWizards extends Wizard {
                             };
                             for(IProblem problem: problems){
                                 IProblemLocation pl = new ProblemLocation(problem);
-                                Collection<ASTRewriteCorrectionProposal> proposals = new ArrayList<ASTRewriteCorrectionProposal>();
+                                Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
                                 switch(pl.getProblemId()){
                                     case IProblem.UndefinedMethod:
                                     case IProblem.ParameterMismatch:
@@ -507,8 +504,8 @@ public class ConvertWizards extends Wizard {
                  */
                 for (Map.Entry<String, Map> entry : this.missingFieldsMap.entrySet()) {
                     String fqName = entry.getKey();
-                    final Map<String, CUCorrectionProposal> fieldProposalsMap = entry.getValue();
-                    final Map<String, CUCorrectionProposal> methodProposalsMap = missingMethodsMap.get(fqName);
+                    final Map<String, LinkedCorrectionProposal> fieldProposalsMap = entry.getValue();
+                    final Map<String, LinkedCorrectionProposal> methodProposalsMap = missingMethodsMap.get(fqName);
                     
                     if (!fieldProposalsMap.isEmpty() || !methodProposalsMap.isEmpty()) {
                         MptPluginConsole
@@ -524,7 +521,7 @@ public class ConvertWizards extends Wizard {
                         @Override
                         public void run() {
                             IEditorPart javaEditor = null;
-                            for (CUCorrectionProposal p : fieldProposalsMap.values()) {
+                            for (LinkedCorrectionProposal p : fieldProposalsMap.values()) {
                                 try {
                                     TextChange change = p.getTextChange();
                                     if (javaEditor == null) {
@@ -541,7 +538,7 @@ public class ConvertWizards extends Wizard {
                                 }
                             }
 
-                            for (CUCorrectionProposal p : methodProposalsMap.values()) {
+                            for (LinkedCorrectionProposal p : methodProposalsMap.values()) {
                                 try {
                                     TextChange change = p.getTextChange();
                                     if (javaEditor == null) {
@@ -582,8 +579,8 @@ public class ConvertWizards extends Wizard {
 	    missingMethodsMap = new HashMap<String, Map>();
 	    missingFieldsMap = new HashMap<String, Map>();
 	    for(String type: this.parConversionInfo){
-	        missingMethodsMap.put(type, new HashMap<String, CUCorrectionProposal>());
-	        missingFieldsMap.put(type, new HashMap<String, CUCorrectionProposal>());
+	        missingMethodsMap.put(type, new HashMap<String, LinkedCorrectionProposal>());
+	        missingFieldsMap.put(type, new HashMap<String, LinkedCorrectionProposal>());
 	    }
     }
 
