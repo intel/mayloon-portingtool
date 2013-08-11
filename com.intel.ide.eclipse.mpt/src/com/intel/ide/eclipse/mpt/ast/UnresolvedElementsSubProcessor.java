@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -309,7 +310,7 @@ public class UnresolvedElementsSubProcessor {
 	}
 
 
-	public static void getTypeProposals(IInvocationContext context, IProblemLocation problem, Collection<LinkedCorrectionProposal> proposals) throws CoreException {
+	public static void getTypeProposals(IInvocationContext context, IProblemLocation problem, Map<String, LinkedCorrectionProposal> proposals) throws CoreException {
 		ICompilationUnit cu= context.getCompilationUnit();
 
 		ASTNode selectedNode= problem.getCoveringNode(context.getASTRoot());
@@ -397,9 +398,9 @@ public class UnresolvedElementsSubProcessor {
 		return false;
 	}
 
-	public static void addNewTypeProposals(ICompilationUnit cu, Name refNode, int kind, int relevance, Collection<LinkedCorrectionProposal> proposals) throws CoreException {
+	public static void addNewTypeProposals(ICompilationUnit cu, Name refNode, int kind, int relevance, Map<String, LinkedCorrectionProposal> proposals) throws CoreException {
 		Name node= refNode;
-		do {
+//		do {
 			String typeName= ASTNodes.getSimpleNameIdentifier(node);
 			Name qualifier= null;
 			// only propose to create types for qualifiers when the name starts with upper case
@@ -409,6 +410,7 @@ public class UnresolvedElementsSubProcessor {
 				IType enclosingType= null;
 				if (node.isSimpleName()) {
 					enclosingPackage= (IPackageFragment) cu.getParent();
+					return;
 					// don't suggest member type, user can select it in wizard
 				} else {
 					Name qualifierName= ((QualifiedName) node).getQualifier();
@@ -440,55 +442,21 @@ public class UnresolvedElementsSubProcessor {
 						|| enclosingType != null && !enclosingType.isReadOnly() && !enclosingType.getType(typeName).exists()) { // new member type
 					IJavaElement enclosing= enclosingPackage != null ? (IJavaElement) enclosingPackage : enclosingType;
 
-//					if ((kind & SimilarElementsRequestor.CLASSES) != 0) {
-//						proposals.add(new NewCUUsingWizardProposal(cu, node, NewCUUsingWizardProposal.K_CLASS, enclosing, rel+3));
-//					}
-//					if ((kind & SimilarElementsRequestor.INTERFACES) != 0) {
-//						proposals.add(new NewCUUsingWizardProposal(cu, node, NewCUUsingWizardProposal.K_INTERFACE, enclosing, rel+2));
-//					}
-//					if ((kind & SimilarElementsRequestor.ENUMS) != 0) {
-//						proposals.add(new NewCUUsingWizardProposal(cu, node, NewCUUsingWizardProposal.K_ENUM, enclosing, rel));
-//					}
-//					if ((kind & SimilarElementsRequestor.ANNOTATIONS) != 0) {
-//						proposals.add(new NewCUUsingWizardProposal(cu, node, NewCUUsingWizardProposal.K_ANNOTATION, enclosing, rel + 1));
-//						addNullityAnnotationTypesProposals(cu, node, proposals);
-//					}
+					String name = node.getFullyQualifiedName();
+					
+					if ((kind & SimilarElementsRequestor.CLASSES) != 0) {
+						proposals.put(name, new NewCUProposal(cu, node, NewCUProposal.K_CLASS, enclosing, rel+3));
+					}
+					else if ((kind & SimilarElementsRequestor.INTERFACES) != 0) {
+						proposals.put(name, new NewCUProposal(cu, node, NewCUProposal.K_INTERFACE, enclosing, rel+2));
+					}
+					else if ((kind & SimilarElementsRequestor.ENUMS) != 0) {
+						proposals.put(name, new NewCUProposal(cu, node, NewCUProposal.K_ENUM, enclosing, rel));
+					}
 				}
 			}
 			node= qualifier;
-		} while (node != null);
-
-		// type parameter proposals
-		if (refNode.isSimpleName() && (kind & SimilarElementsRequestor.VARIABLES)  != 0) {
-			CompilationUnit root= (CompilationUnit) refNode.getRoot();
-			String name= ((SimpleName) refNode).getIdentifier();
-			BodyDeclaration declaration= ASTResolving.findParentBodyDeclaration(refNode);
-			int baseRel= relevance;
-			if (isLikelyTypeParameterName(name)) {
-				baseRel += 8;
-			}
-			while (declaration != null) {
-				IBinding binding= null;
-				int rel= baseRel;
-				if (declaration instanceof MethodDeclaration) {
-					binding= ((MethodDeclaration) declaration).resolveBinding();
-					if (isLikelyMethodTypeParameterName(name))
-						rel+= 2;
-				} else if (declaration instanceof TypeDeclaration) {
-					binding= ((TypeDeclaration) declaration).resolveBinding();
-					rel++;
-				}
-				if (binding != null) {
-//					AddTypeParameterProposal proposal= new AddTypeParameterProposal(cu, binding, root, name, null, rel);
-//					proposals.add(proposal);
-				}
-				if (!Modifier.isStatic(declaration.getModifiers())) {
-					declaration= ASTResolving.findParentBodyDeclaration(declaration.getParent());
-				} else {
-					declaration= null;
-				}
-			}
-		}
+//		} while (node != null);
 	}
 
 	public static void getMethodProposals(IInvocationContext context, IProblemLocation problem, boolean isOnlyParameterMismatch, Map<String, Map> proposals) throws CoreException {
@@ -954,5 +922,26 @@ public class UnresolvedElementsSubProcessor {
 			}
 		}
 	}
+
+    public static void importNotFoundProposals(IInvocationContext context, IProblemLocation problem, Map<String, LinkedCorrectionProposal> proposals) throws CoreException {
+        ICompilationUnit cu= context.getCompilationUnit();
+
+        ASTNode selectedNode= problem.getCoveringNode(context.getASTRoot());
+        if (selectedNode == null) {
+            return;
+        }
+        ImportDeclaration importDeclaration= (ImportDeclaration) ASTNodes.getParent(selectedNode, ASTNode.IMPORT_DECLARATION);
+        if (importDeclaration == null) {
+            return;
+        }
+        if (!importDeclaration.isOnDemand()) {
+            Name name= importDeclaration.getName();
+            if (importDeclaration.isStatic() && name.isQualifiedName()) {
+                name= ((QualifiedName) name).getQualifier();
+            }
+            int kind= JavaModelUtil.is50OrHigher(cu.getJavaProject()) ? SimilarElementsRequestor.REF_TYPES : SimilarElementsRequestor.CLASSES | SimilarElementsRequestor.INTERFACES;
+            UnresolvedElementsSubProcessor.addNewTypeProposals(cu, name, kind, IProposalRelevance.IMPORT_NOT_FOUND_NEW_TYPE, proposals);
+        }
+    }
 
 }

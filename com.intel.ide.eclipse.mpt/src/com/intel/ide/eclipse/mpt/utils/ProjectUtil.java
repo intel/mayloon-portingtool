@@ -22,13 +22,10 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -48,17 +45,14 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -2200,36 +2194,6 @@ public class ProjectUtil {
 							MptConstants.MAYLOON_STUB_ANNOTATION_PATH,
 							project.getName());
 		}
-	}
-
-	private static HashSet<String> mayloonJarClassSet = null;
-	/**
-	 * get the class names from mayloon.jar
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public static HashSet<String> getMayloonJarClasses(){
-		if (mayloonJarClassSet == null) {
-			mayloonJarClassSet = new HashSet<String>();
-			String mayloonSDKPath = MayloonSDK.getSdkLocation();
-			File mayloonJarFile = new File(mayloonSDKPath
-					+ MptConstants.WS_ROOT + MptConstants.MAYLOON_JAR_LIB);
-			JarFile jar;
-			try {
-				jar = new JarFile(mayloonJarFile, true);
-				Enumeration<JarEntry> e = jar.entries();
-				while (e.hasMoreElements()) {
-					mayloonJarClassSet.add(e.nextElement().getName()
-							.replace('/', '.'));
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-		}
-		return mayloonJarClassSet;
 	}
 
 	public static boolean checkIsMayloonProject(IProject project){

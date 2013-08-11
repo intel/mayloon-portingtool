@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -18,8 +17,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IImportDeclaration;
-import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -30,7 +27,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jdt.internal.ui.text.correction.ProblemLocation;
 import org.eclipse.jdt.internal.ui.text.correction.proposals.LinkedCorrectionProposal;
 import org.eclipse.jdt.ui.JavaUI;
@@ -52,6 +48,7 @@ import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.NewCUProposal;
 import com.intel.ide.eclipse.mpt.ast.UnresolvedElementsSubProcessor;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
 import com.intel.ide.eclipse.mpt.nature.MayloonNature;
@@ -68,6 +65,7 @@ public class ConvertWizards extends Wizard {
 	private Boolean originalAutoBuild;
 	private Boolean convertFlag;	//see if already tried converting; check this before perform finishing
 	ArrayList<String> parConversionInfo = new ArrayList<String>();
+	Map<String, LinkedCorrectionProposal> missingTypesMap;
     Map<String, Map> missingMethodsMap; // Map of the stub class' fully
                                         // qualified name to its missing
                                         // methods
@@ -286,49 +284,53 @@ public class ConvertWizards extends Wizard {
 			reportError(e);
 		}
 	}
-	
 
-	public IMarker[] findJavaProblemMarkers(ICompilationUnit cu)
-			throws CoreException {
-		IResource javaSourceFile = cu.getUnderlyingResource();
-		IMarker[] markers = javaSourceFile.findMarkers(
-				IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
-				IResource.DEPTH_INFINITE);
-		
-		return markers;
-	}
-	
-	private static String outerClassName(String className){
-		String[] split = className.split("\\.");
-		StringBuilder outerClassName = new StringBuilder();
-		boolean found = false;
-		outerClassName.append(split[0]);
-		
-		for(int i =1; i<split.length; i++){
-			char c = split[i].charAt(0);
-			if (c >= 'A' && c <= 'Z'){
-				if(found){
-					break;
-				}
-				found = true;
-			}
-			outerClassName.append(".").append(split[i]);
-		}
-		return outerClassName.toString();
-	}
-	
-	private static boolean needStub(String name, Set<String> unresolvedImports) {
-		for (String item : unresolvedImports) {
-			if (name.equals(item) || name.startsWith(item + "."))
-				if (!ProjectUtil.getMayloonJarClasses().contains(name))
-					return true;
-		}
-		return false;
-	}
-	
+	private class InvocationContext implements IInvocationContext{
+	    CompilationUnit astRoot;
+	    ICompilationUnit unit;
+	    
+	    InvocationContext(final CompilationUnit astRoot, final ICompilationUnit unit){
+	        this.astRoot = astRoot;
+	        this.unit = unit;
+	    }
+	    
+        @Override
+        public CompilationUnit getASTRoot() {
+            return astRoot;
+        }
+
+        @Override
+        public ICompilationUnit getCompilationUnit() {
+            return unit;
+        }
+
+        @Override
+        public ASTNode getCoveredNode() {
+            return null;
+        }
+
+        @Override
+        public ASTNode getCoveringNode() {
+            return null;
+        }
+
+        @Override
+        public int getSelectionLength() {
+            return 0;
+        }
+
+        @Override
+        public int getSelectionOffset() {
+            return 0;
+        }
+    }
+    
 	private void partialConversionSync(final IProgressMonitor monitor){
 		try {
 			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
+			    
+			    this.missingTypesMap = new HashMap<String, LinkedCorrectionProposal>();
+			    
 				IJavaProject javaProject = JavaCore.create(project);
 				Map<String, String> options = javaProject.getOptions(false);
 				options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, JavaCore.IGNORE);
@@ -344,8 +346,6 @@ public class ConvertWizards extends Wizard {
 						.create(project)
 						.getPackageFragments();
 				
-				Set <String> unresolvedImports = new HashSet <String>();
-				Set <String> allImports = new HashSet <String>();
 				int numJavaProblems = 0;
 
 				for (IPackageFragment mypackage : packages) {
@@ -361,49 +361,43 @@ public class ConvertWizards extends Wizard {
 							this.parConversionInfoPage.addStubMethodInfo(
 									astParserAddNativeMethod.getStubMethodInfo());
 
-							// All imports
-							IImportDeclaration[] thisImports = unit.getImports();
-							for(IImportDeclaration node: thisImports){
-								String importNodeName = node.getElementName();
-								if(node.isOnDemand()){
-									MptPluginConsole.warning(MptConstants.PARTIAL_CONVERSION_TAG,
-											"The on demand import: '%1$s' is not supported in Partial Conversion mode",
-											importNodeName);
-									continue;
-								}
-								allImports.add(importNodeName);
-							}
-
-							// Unresolved imports
-							IMarker[] markers = findJavaProblemMarkers(unit);
-							numJavaProblems += markers.length;
-							for (IMarker marker : markers) {
-								int id = marker.getAttribute(IJavaModelMarker.ID,
-										-1);
-								
-								if (id == IProblem.ImportNotFound){
-									String[] args = Util
-											.getProblemArgumentsFromMarker(marker
-													.getAttribute(
-															IJavaModelMarker.ARGUMENTS,
-															""));
-									unresolvedImports.add(args[0]);
-								}
-							}
+                            ASTParser parser = ASTParser.newParser(AST.JLS3);
+                            parser.setKind(ASTParser.K_COMPILATION_UNIT);
+                            parser.setSource(unit);
+                            parser.setResolveBindings(true); //Need bindings later on
+                            final CompilationUnit astRoot = (CompilationUnit) parser
+                                    .createAST(null);
+                            
+                            IProblem[] problems = astRoot.getProblems();
+                            IInvocationContext context = new InvocationContext(astRoot, unit);
+                            for(IProblem problem: problems){
+                                IProblemLocation pl = new ProblemLocation(problem);
+                                Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
+                                switch(pl.getProblemId()){
+                                    case IProblem.ImportNotFound:
+                                        UnresolvedElementsSubProcessor.importNotFoundProposals(context, pl, missingTypesMap);
+                                        break;
+                                    case IProblem.UndefinedType:
+                                    case IProblem.JavadocUndefinedType:
+                                        UnresolvedElementsSubProcessor.getTypeProposals(context, pl, missingTypesMap);
+                                        break;
+                                }
+                            }
+                        
 						}
 					}
 				}
 
-				if (!unresolvedImports.isEmpty()) {
+				if (!missingTypesMap.isEmpty()) {
 					IPath templateFilePath = new Path(MayloonSDK.getSdkLocation()
 							+ IPath.SEPARATOR
 							+ MptConstants.MAYLOON_MISSCLASS_TEMPLATE_FILE);
 					boolean AnnotationClassAddedFlag = false;
-					for (String importName : allImports) {
-						String outerClassName = outerClassName(importName);
-						if (needStub(outerClassName, unresolvedImports)) {
+					for (String fqName : missingTypesMap.keySet()) {
+					    NewCUProposal p = (NewCUProposal) missingTypesMap.get(fqName);
+						if (p.getKind() == NewCUProposal.K_CLASS && !p.isInnerType()) {
 							ProjectUtil.AddMissedClass2UserApp(
-									templateFilePath, outerClassName, project,
+									templateFilePath, fqName, project,
 									this.parConversionInfo);
 							
 							if(!AnnotationClassAddedFlag){
@@ -412,10 +406,10 @@ public class ConvertWizards extends Wizard {
 							}
 						}
 					}
+		            missingTypesMap.clear();
 					parConversionInfoPage.addStubClassInfo(parConversionInfo);
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
-
 
                 /*
                  * Perform an incremental build and retrieve the missing methods
@@ -437,42 +431,14 @@ public class ConvertWizards extends Wizard {
                                     .createAST(null);
                             
                             IProblem[] problems = astRoot.getProblems();
-                            IInvocationContext context = new IInvocationContext(){
-
-                                @Override
-                                public CompilationUnit getASTRoot() {
-                                    return astRoot;
-                                }
-
-                                @Override
-                                public ICompilationUnit getCompilationUnit() {
-                                    return unit;
-                                }
-
-                                @Override
-                                public ASTNode getCoveredNode() {
-                                    return null;
-                                }
-
-                                @Override
-                                public ASTNode getCoveringNode() {
-                                    return null;
-                                }
-
-                                @Override
-                                public int getSelectionLength() {
-                                    return 0;
-                                }
-
-                                @Override
-                                public int getSelectionOffset() {
-                                    return 0;
-                                }
-                            };
+                            IInvocationContext context = new InvocationContext(astRoot, unit);
                             for(IProblem problem: problems){
                                 IProblemLocation pl = new ProblemLocation(problem);
                                 Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
                                 switch(pl.getProblemId()){
+                                    case IProblem.ImportNotFound:
+                                        UnresolvedElementsSubProcessor.importNotFoundProposals(context, pl, this.missingTypesMap);
+                                        break;
                                     case IProblem.UndefinedMethod:
                                     case IProblem.ParameterMismatch:
                                         UnresolvedElementsSubProcessor.getMethodProposals(context, pl, false, this.missingMethodsMap);
@@ -487,7 +453,7 @@ public class ConvertWizards extends Wizard {
                                         break;
                                     case IProblem.UndefinedType:
                                     case IProblem.JavadocUndefinedType:
-                                        UnresolvedElementsSubProcessor.getTypeProposals(context, pl, proposals);
+                                        UnresolvedElementsSubProcessor.getTypeProposals(context, pl, missingTypesMap);
                                         break;
                                 }
                             }
