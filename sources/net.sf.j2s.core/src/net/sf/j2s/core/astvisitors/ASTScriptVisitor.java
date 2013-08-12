@@ -1188,7 +1188,15 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
             //buffer.append(element.getName());
             buffer.append(" = ");
                 if (!ignoreInitializer && element.getInitializer() != null) {
-                    boxingNode(element.getInitializer());
+                    String fieldType = node.getType().toString();
+                    int valType = element.getInitializer().getNodeType();
+                    if ("char".equals(fieldType) && valType == PrimitiveType.NUMBER_LITERAL) {
+                        buffer.append("String.fromCharCode (");
+                        boxingNode(element.getInitializer());
+                        buffer.append(")");
+                    } else {
+                        boxingNode(element.getInitializer());
+                    }
                 } else {
 					boolean isArray = false;
 					List frags = node.fragments();
@@ -2817,7 +2825,15 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 					buffer.append("\", ");
 					
 					if (initializer != null) { 
-						initializer.accept(this);
+                        String fieldType = field.getType().toString();
+                        int valType = initializer.getNodeType();
+                        if ("char".equals(fieldType) && valType == PrimitiveType.NUMBER_LITERAL) {
+                            buffer.append("String.fromCharCode (");
+                            initializer.accept(this);
+                            buffer.append(")");
+                        } else {
+                            initializer.accept(this);
+                        }
 					} else {
 						Type type = field.getType();
 						if (type.isPrimitiveType()){
@@ -2872,7 +2888,15 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 					vdf.getName().accept(this);
 					buffer.append("\", ");
 					if (initializer != null) { 
-						initializer.accept(this);
+                        String fieldType = field.getType().toString();
+                        int valType = initializer.getNodeType();
+                        if ("char".equals(fieldType) && valType == PrimitiveType.NUMBER_LITERAL) {
+                            buffer.append("String.fromCharCode (");
+                            initializer.accept(this);
+                            buffer.append(")");
+                        } else {
+                            initializer.accept(this);
+                        }
 					} else {
 						Type type = field.getType();
 						if (type.isPrimitiveType()){
