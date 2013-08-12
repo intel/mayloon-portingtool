@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -47,30 +48,14 @@ import com.intel.ide.eclipse.mpt.MptPlugin;
 
 /**
  * @author zhou renjian
- *
- * 2006-4-30
+ * 
+ *         2006-4-30
  */
-public class EditJavaScriptUtil {
-	protected static String getEditorID() {
-		IEditorRegistry editorRegistry = MptPlugin
-				.getDefault().getWorkbench().getEditorRegistry();
-		IEditorDescriptor descriptor = editorRegistry
-				.getDefaultEditor("j2s.js", Platform
-						.getContentTypeManager()
-						.findContentTypeFor("j2s.js"));
-		String editorID = null;
-		if (descriptor != null) {
-			editorID = descriptor.getId();
-		} else {
-			editorID = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
-		}
-		return editorID;
-	}
-	
-	public static boolean openEditor4Java(String filePath) {
-		
-		File file = new File(filePath);
 
+public class EditJavaScriptUtil {
+
+	public static boolean openEditor4Java(String filePath) {
+		File file = new File(filePath);
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(
 				new Path(file.getParent()));
 		fileStore = fileStore.getChild(file.getName());
@@ -105,62 +90,49 @@ public class EditJavaScriptUtil {
 		}
 		return false;
 	}
-	
-	public static boolean openEditor4JS( ICompilationUnit unit) {
-		String relativePath = getRelativeJSPath(unit);
-		IJavaModel javaModel = unit.getJavaModel();
-		File file = new File(javaModel.getResource()
-				.getLocation().toOSString(), relativePath);
 
-		IFile[] files = javaModel.getWorkspace().getRoot()
-				.findFilesForLocation(
-						Path.fromPortableString(relativePath));
-		IEditorInput editorInput = null;
-		if (files != null && files.length != 0) {
-			editorInput = new FileEditorInput(files[0]);
-			try {
-				MptPlugin.getDefault().getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage()
-						.openEditor(editorInput, getEditorID());
-				return true;
-			} catch (PartInitException e) {
-				e.printStackTrace();
-			}
-		} else {
-			IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(file.getParent()));
-			fileStore= fileStore.getChild(file.getName());
-			if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
-				IWorkbenchWindow fWindow = MptPlugin.getDefault()
-						.getWorkbench().getActiveWorkbenchWindow();
-				IWorkbenchPage page =  fWindow.getActivePage();
-				try {
-					// Copy from IDE.openEditorOnFileStore
-			        IEditorInput input = getEditorInput(fileStore);
-			        String editorId = null;
-					IEditorDescriptor descriptor;
-					try {
-						descriptor = IDE.getEditorDescriptor("javascript.js");
-						if (descriptor != null)
-							editorId = descriptor.getId();
-					} catch (PartInitException e) {
-					}
-			        
-			        // open the editor on the file
-			        page.openEditor(input, editorId);
-					return true;
-				} catch (PartInitException e) {
-					String msg =  NLS.bind(IDEWorkbenchMessages.OpenLocalFileAction_message_errorOnOpen, fileStore.getName());
-					IDEWorkbenchPlugin.log(msg,e.getStatus());
-					MessageDialog.openError(fWindow.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg);
-				}
-			}
+	protected static String getAbsoluteJSPath(IFile unit) {
+		String pre = null;
+		String post = null;
+		String fullPath = unit.getLocation().toString();
+
+		// got the relativepath such: src/android/core/Start.java
+		String RelativePath = unit.getProjectRelativePath().toString();
+		pre = fullPath.substring(0, fullPath.indexOf(RelativePath));
+		post = "bin/classes"
+				+ RelativePath.substring(RelativePath.indexOf("/"),
+						RelativePath.indexOf(".")) + ".js";
+		return pre + post;
+	}
+
+	public static boolean openEditor4JS(IFile unit) {
+		String jsPath = getAbsoluteJSPath(unit);
+
+		File file = new File(jsPath);
+		try {
+			IEditorInput editorInput = null;
+			IWorkbenchWindow fWindow = MptPlugin.getDefault().getWorkbench()
+					.getActiveWorkbenchWindow();
+			IWorkbenchPage page = fWindow.getActivePage();
+			IFileStore fileStore = EFS.getLocalFileSystem().getStore(
+					new Path(jsPath));
+			IEditorInput input = getEditorInput(fileStore);
+			String editorId = null;
+
+			editorId = "net.sourceforge.jseditor.editors.JSEditor";
+			// open the editor on the file
+			page.openEditor(input, editorId);
+			return true;
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return false;
 	}
 
 	/**
-	 * Create the Editor Input appropriate for the given <code>IFileStore</code>.
-	 * The result is a normal file editor input if the file exists in the
+	 * Create the Editor Input appropriate for the given <code>IFileStore</code>
+	 * . The result is a normal file editor input if the file exists in the
 	 * workspace and, if not, we create a wrapper capable of managing an
 	 * 'external' file using its <code>IFileStore</code>.
 	 * 
@@ -196,8 +168,8 @@ public class EditJavaScriptUtil {
 	}
 
 	/**
-	 * Filter the incoming array of <code>IFile</code> elements by removing
-	 * any that do not currently exist in the workspace.
+	 * Filter the incoming array of <code>IFile</code> elements by removing any
+	 * that do not currently exist in the workspace.
 	 * 
 	 * @param files
 	 *            The array of <code>IFile</code> elements
@@ -216,46 +188,11 @@ public class EditJavaScriptUtil {
 		return (IFile[]) existentFiles.toArray(new IFile[existentFiles.size()]);
 	}
 
-	protected static String getRelativeJSPath(ICompilationUnit unit) {
-		if (unit == null) {
-			return null;
-		}
-		IJavaProject javaProject = unit.getJavaProject();
-		if (javaProject != null) {
-			String relativePath = null;
-			IJavaElement parent = unit.getParent();
-			while (parent != null) {
-				if (parent instanceof PackageFragmentRoot) {
-					relativePath = unit.getPath().toPortableString()
-							.substring(
-									parent.getPath().toPortableString()
-											.length());
-					break;
-				}
-				parent = parent.getParent();
-			}
-			IPath outputLocation = null;
-			try {
-				outputLocation = javaProject.getOutputLocation();
-			} catch (JavaModelException e) {
-				e.printStackTrace();
-			}
-			if (outputLocation != null && relativePath != null) {
-				relativePath = outputLocation
-						+ relativePath.substring(0, relativePath
-								.lastIndexOf('.')) + ".js";
-				return relativePath;
-			}
-		}
-		return null;
-	}
-	
-	public static boolean isJSExisted(ICompilationUnit unit) {
-		File file = new File(unit.getJavaModel().getResource()
-				.getLocation().toOSString(), getRelativeJSPath(unit));
+	public static boolean isJSExisted(IFile unit) {
+		File file = new File(getAbsoluteJSPath(unit));
 		return file.exists();
 	}
-	
+
 	public static boolean isJavaExisted(String filePath) {
 		if (filePath != null) {
 			File file = new File(filePath);
@@ -263,13 +200,13 @@ public class EditJavaScriptUtil {
 		}
 		return false;
 	}
-	
+
 	public static void popupError4JS() {
 		Shell shell = new Shell();
 		MessageDialog.openError(shell, "Generated JavaScript",
 				"Error occurs while opening the generated JavaScript file.");
 	}
-	
+
 	public static void popupError4Java() {
 		Shell shell = new Shell();
 		MessageDialog.openError(shell, "Origin Java",
