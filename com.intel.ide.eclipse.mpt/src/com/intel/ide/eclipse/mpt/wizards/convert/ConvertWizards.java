@@ -550,7 +550,7 @@ public class ConvertWizards extends Wizard {
                                     e.printStackTrace();
                                 }
                             }
-                            if (javaEditor != null) {
+                            if (javaEditor != null && !ConvertWizards.this.keepOpen) {
                                 IWorkbenchPage page = PlatformUI.getWorkbench()
                                         .getActiveWorkbenchWindow().getActivePage();
                                 page.closeEditor(javaEditor, false);
@@ -627,7 +627,13 @@ public class ConvertWizards extends Wizard {
 	void enablePartialConversion(boolean enabled){
 		partialConversionFlag = enabled;
 	}
-	
+
+    private boolean keepOpen = false;
+    
+    void setReviewStubs(boolean enabled){
+        keepOpen = enabled;
+    }
+    
 	public void setWizardDialog(ConvertWizardDialog dialog){
 		this.wizardDialog = dialog;
 	}

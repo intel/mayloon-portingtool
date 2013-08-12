@@ -33,17 +33,30 @@ public class StartConvertPage extends WizardPage {
 
 		final Button btnEnablePartialConversion = new Button(composite,
 				SWT.CHECK);
+        final Button btnReviewStubs = new Button(composite, SWT.CHECK);
+        
 		btnEnablePartialConversion.setToolTipText("Enable partial conversion if you want to generate stubs for JNI method declarations and APIs not supported so far.");
 		final ConvertWizards host = (ConvertWizards) this.getWizard();
 
 		btnEnablePartialConversion.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				host.enablePartialConversion(btnEnablePartialConversion
-						.getSelection());
+			    boolean enabled = btnEnablePartialConversion
+                        .getSelection();
+				host.enablePartialConversion(enabled);
+				btnReviewStubs.setEnabled(enabled);
 			}
 		});
-
 		btnEnablePartialConversion.setText("Enable partial conversion");
+
+        btnReviewStubs.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boolean enabled = btnReviewStubs.getSelection();
+                host.setReviewStubs(enabled);
+            }
+        });
+        btnReviewStubs.setEnabled(false);
+        btnReviewStubs.setText("Review the created Java files after conversion");
 		host.enablePartialConversion(btnEnablePartialConversion.getSelection());
 	}
 	
