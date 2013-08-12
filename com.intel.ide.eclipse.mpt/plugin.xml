@@ -268,35 +268,7 @@
             icon="icons/sample.gif"
             id="com.intel.ide.eclipse.launching.launchConfigurationTypeImage.MayloonApplication"/>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="com.intel.ide.eclipse.mpt.editContribution"
-            objectClass="org.eclipse.jdt.core.ICompilationUnit">
-         <action
-               class="com.intel.ide.eclipse.mpt.popup.actions.EditJSAction"
-               enablesFor="1"
-               id="com.intel.ide.eclipse.mpt.action.editjs4object"
-               label="%mayloon_edit_js"
-               menubarPath="additions">
-         </action>
-      </objectContribution>
-   </extension>
    
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="com.intel.ide.eclipse.mpt.editViewContribution"
-            targetID="#CompilationUnitEditorContext">
-         <action
-               class="com.intel.ide.eclipse.mpt.popup.actions.OpenJSEditorViewAction"
-               id="com.intel.ide.eclipse.mpt.action.editjs4view"
-               label="%mayloon_edit_js"
-               menubarPath="additions">
-         </action>
-      </viewerContribution>
-   </extension>
    
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -325,6 +297,19 @@
             id="com.intel.ide.eclipse.mpt.wizards.exportMayloonApp"
             name="Export Mayloon Application">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="com.intel.ide.eclipse.mpt.editObjectContribution"
+            objectClass="org.eclipse.core.resources.IResource">
+         <action
+               class="com.intel.ide.eclipse.mpt.popup.actions.OpenJSEditorViewAction"
+               id="com.intel.ide.eclipse.mpt.action.editjsview"
+               label="%mayloon_edit_js">
+         </action>
+      </objectContribution>
    </extension>
    
 
