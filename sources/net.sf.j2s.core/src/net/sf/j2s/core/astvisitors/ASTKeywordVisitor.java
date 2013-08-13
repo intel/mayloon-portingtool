@@ -56,6 +56,7 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -128,9 +129,25 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 	}
 
 	protected void visitList(List list, String seperator) {
+        boolean initCharArray = false;
+        if (list.size() > 0) {
+            ASTNode node = ((ASTNode)list.get(0)).getParent();
+            if (node != null && node instanceof ArrayInitializer) {
+                ITypeBinding typeBinding = ((ArrayInitializer)node).resolveTypeBinding();
+                if (typeBinding != null && "char[]".equals(typeBinding.getName())) {
+                    initCharArray = true;
+                }
+            }
+        }
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			ASTNode element = (ASTNode) iter.next();
-			boxingNode(element);
+            if (initCharArray && element instanceof NumberLiteral) {
+                buffer.append(" String.fromCharCode (");
+                boxingNode(element);
+                buffer.append(")");
+            } else {
+                boxingNode(element);
+            }
 			if (iter.hasNext()) {
 				buffer.append(seperator);
 			}
