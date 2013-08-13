@@ -149,9 +149,9 @@ public class Thread implements Runnable {
      function do_run(){
          var datas;
          if(!obj_this.target){
-            datas= obj_this.run.toString().replace(new RegExp("this","gm"),"this.obj_this");
+            datas= obj_this.run.toString().replace(new RegExp("this\\.","gm"),"this.obj_this.");
           }else{
-            datas= obj_this.target.run.toString().replace(new RegExp("this","gm"),"this.obj_this");
+            datas= obj_this.target.run.toString().replace(new RegExp("this\\.","gm"),"this.obj_this.");
           }
          datas = eval("("+datas+")");
          obj_this.worker = Concurrent.Thread.create(datas);
