@@ -35,11 +35,12 @@
 	<property name="cfg.dir" location="./buildconfig" />
 	<property name="current.dir" location="." />
 	<property name="update.site.source.dir" location="./site"/>
-	<property name="mpt.source.dir" location="${current.dir}/plugins" />
-	<property name="json.source.dir" location="${current.dir}/plugins" />
-	<property name="j2s.core.source.dir" location="${current.dir}/plugins" />
-	<property name="j2s.lib.source.dir" location="${current.dir}/plugins" />
-	<property name="features.source.dir" location="${current.dir}/features" />
+	<property name="mpt.source.dir" location="../" />
+	<property name="jseditor.source.dir" location="../" />
+	<property name="json.source.dir" location="../" />
+	<property name="j2s.core.source.dir" location="../sources" />
+	<property name="j2s.lib.source.dir" location="../sources" />
+	<property name="features.source.dir" location="../" />
 	<property name="mayloon.dir" location="." />
 	<!-- var: this is where the build will take place, source code will be copied there and build into package. -->
 	<condition property="build.dir" value="${current.dir}/buildDirectory">
@@ -89,11 +90,12 @@
 	            Base Arch                       : ${base.arch}
 	            Eclipse Home                    : ${eclipse.home}
 	            Eclipse launcher                : ${eclipse.home}/plugins/${launcher.jar}
-                MPT Source                      : ${mpt.source.dir}
-                Json Source                     : ${json.source.dir}
-                J2S.core Source                 : ${j2s.core.source.dir}
-                J2S.lib Source                  : ${j2s.lib.source.dir}
-                Mayloon Home                    : ${mayloon.dir}
+		    MPT Source                      : ${mpt.source.dir}
+		    Jseditor Source                 : ${jseditor.source.dir}
+		    Json Source                     : ${json.source.dir}
+		    J2S.core Source                 : ${j2s.core.source.dir}
+		    J2S.lib Source                  : ${j2s.lib.source.dir}
+		    Mayloon Home                    : ${mayloon.dir}
 	            PDE Build Script                : ${eclipse.home}/plugins/${pdebuild.script}
 	            MPT Build Config Directory      : ${cfg.dir}
 	            MPT Build Destination Directory : ${build.dir}
@@ -104,6 +106,9 @@
 		<copy todir="${build.dir}/plugins">
 			<fileset dir="${mpt.source.dir}">
 				<include name="com.intel.ide.eclipse.mpt/**" />
+			</fileset>
+			<fileset dir="${jseditor.source.dir}">
+				<include name="net.sourceforge.jseditor/**" />
 			</fileset>
 			<fileset dir="${json.source.dir}">
 				<include name="org.json.simple/**" />
