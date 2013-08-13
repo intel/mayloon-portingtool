@@ -46,10 +46,12 @@ public class OpenJavaEditorViewAction implements IEditorActionDelegate {
 		action.setEnabled(false);
 	}
 
-
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
+
 	}
+	
+	
 
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
@@ -64,19 +66,25 @@ public class OpenJavaEditorViewAction implements IEditorActionDelegate {
 			String pre = activeProject.getLocation().toString();
 			String RelativePath = file.getProjectRelativePath().toString();
 			// **bin/classes/android/core/Start.js
-			String post1 = "/src"
-					+ RelativePath.substring(RelativePath.indexOf("/",
-							RelativePath.indexOf("/") + 1), RelativePath
-							.indexOf(".")) + ".java";
-			String post2 = "/gen"
-					+ RelativePath.substring(RelativePath.indexOf("/",
-							RelativePath.indexOf("/") + 1), RelativePath
-							.indexOf(".")) + ".java";
+			int subPara_pre = RelativePath.indexOf("/",
+					RelativePath.indexOf("/") + 1);
+			int subPara_post = RelativePath.indexOf(".");
+			//because any new editor pop out ,it will trigger the method
+			if (subPara_pre == -1 || subPara_post == -1) {
+				action.setEnabled(enabled);
+				return;
+			}
+			String post_src = "/src"
+					+ RelativePath.substring(subPara_pre, subPara_post)
+					+ ".java";
+			String post_gen = "/gen"
+					+ RelativePath.substring(subPara_pre, subPara_post)
+					+ ".java";
 
-			if (EditJavaScriptUtil.isJavaExisted(pre + post1))
-				filePath = pre + post1;
-			else if (EditJavaScriptUtil.isJavaExisted(pre + post2))
-				filePath = pre + post1;
+			if (EditJavaScriptUtil.isJavaExisted(pre + post_src))
+				filePath = pre + post_src;
+			else if (EditJavaScriptUtil.isJavaExisted(pre + post_gen))
+				filePath = pre + post_gen;
 			if (filePath != null)
 				enabled = true;
 			action.setEnabled(enabled);

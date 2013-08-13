@@ -96,6 +96,8 @@ public class JSOutlinePage extends ContentOutlinePage implements
 
 	// this method is use to show the outline item
 	private class SimpleLabelProvider extends LabelProvider {
+		String nameOfClass = null;
+
 		@Override
 		public String getText(Object element) {
 			if (element instanceof ITypedRegion) {
@@ -108,21 +110,23 @@ public class JSOutlinePage extends ContentOutlinePage implements
 					if (text.startsWith("declarePackage")) {
 						String tag1 = "(\"";
 						String tag2 = "\")";
-						return subString(tag1, tag2, text); 
+						return subString(tag1, tag2, text);
 					} else if (text.startsWith("load")) {
 						String tag1 = "],\"";
 						String tag2 = "\",";
-						String loadView=subString(tag1, tag2, text);
-						if (loadView.equals(ERROR))
-						{
+						nameOfClass = subString(tag1, tag2, text);
+						if (nameOfClass.equals(ERROR)) {
 							String tag3 = "null,\"";
 							String tag4 = "\",";
-							return subString(tag3, tag4, text);
+							nameOfClass = subString(tag3, tag4, text);
 						}
-						return loadView;
+						return nameOfClass;
 
 					} else if (text.startsWith("makeConstructor")) {
-						return "makeConstructor";
+						return nameOfClass.substring(nameOfClass
+								.lastIndexOf(".") + 1)
+								+ '('
+								+ paramList(offset) + ')';
 
 					} else if (text.startsWith("defineMethod")) {
 						String tag1 = ",\"";
@@ -148,7 +152,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 
 	}
 
-	//return the string of function's parameter list
+	// return the string of function's parameter list
 	private String paramList(int offset) {
 		int n = 0;
 		try {
@@ -162,35 +166,66 @@ public class JSOutlinePage extends ContentOutlinePage implements
 			while (!stack.isEmpty()) {
 				c1 = (Character) stack.peek();
 				Character c2 = input.getChar(offset + n++);
-				if (c2.equals(')') | c2.equals('('))
-				{
+				if (c2.equals(')') | c2.equals('(')) {
 					if (c1.equals('(') && c2.equals(')'))
 						stack.pop();
-					 else {
+					else {
 						stack.push(c2);
 					}
 				}
-					
-			}
 
-			String paramText = input.get(offset, n).replaceAll("\t*\n* *",
-					"");
+			}
+			String bodyText = input.get(offset, n).replaceAll("\t*\n* *", "");
 			String tag1 = "},\"";
 			String tag2 = "\")";
-			
-			int beginIdx = paramText.indexOf(tag1) + tag1.length();
-			int endIdx = paramText.indexOf(tag2, beginIdx);
-			if (paramText.indexOf(tag1) != -1 && endIdx != -1)
-				return paramText.substring(beginIdx, endIdx);
-			else return " ";
-			
-		
+
+			int beginIdx = bodyText.indexOf(tag1) + tag1.length();
+			int endIdx = bodyText.indexOf(tag2, beginIdx);
+			if (bodyText.indexOf(tag1) != -1 && endIdx != -1)
+				return Parameter_types(bodyText.substring(beginIdx, endIdx));
+			else
+				return " ";
+
 		} catch (BadLocationException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		return ERROR;
+
+	}
+
+	private String Parameter_types(String paramters_before) {
+		String paramters[] = paramters_before.split(",");
+		for (int i = 0; i < paramters.length; i++) {
+			if (paramters[i].equals("~N")) {
+
+				paramters[i] = "Number";
+
+			} else if (paramters[i].equals("~B")) {
+
+				paramters[i] = "Boolean";
+
+			} else if (paramters[i].equals("~S")) {
+
+				paramters[i] = "String";
+
+			} else if (paramters[i].equals("~O")) {
+
+				paramters[i] = "Object";
+
+			} else if (paramters[i].equals("~A")) {
+
+				paramters[i] = "Array";
+
+			}
+
+		}
+		String parameters_changeType = paramters[paramters.length - 1];
+		for (int i = paramters.length - 2; i >= 0; i--) {
+			parameters_changeType = paramters[i] + ", " + parameters_changeType;
+		}
+		return parameters_changeType;
 
 	}
 

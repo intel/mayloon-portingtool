@@ -303,7 +303,8 @@
       <objectContribution
             adaptable="true"
             id="com.intel.ide.eclipse.mpt.editObjectContribution"
-            objectClass="org.eclipse.core.resources.IResource">
+            nameFilter="*.java"
+            objectClass="org.eclipse.core.resources.IFile">
          <action
                class="com.intel.ide.eclipse.mpt.popup.actions.OpenJSEditorViewAction"
                id="com.intel.ide.eclipse.mpt.action.editjsview"
