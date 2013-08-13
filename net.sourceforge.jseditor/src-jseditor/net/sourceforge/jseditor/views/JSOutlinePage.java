@@ -26,7 +26,7 @@ package net.sourceforge.jseditor.views;
 import java.util.Stack;
 
 import net.sourceforge.jseditor.editors.JSElement;
-
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.CaretEvent;
 import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -68,6 +69,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 	public JSOutlinePage(IDocument input) {
 		super();
 		this.input = input;
+		
 	}
 
 	/**
@@ -84,6 +86,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 		super.createControl(parent);
 		TreeViewer treeViewer = getTreeViewer();
 		treeViewer.setContentProvider(new JSSyntaxContentProvider());
+		
 		treeViewer.setLabelProvider(new SimpleLabelProvider());
 		treeViewer.setInput(this.input);
 
@@ -91,6 +94,8 @@ public class JSOutlinePage extends ContentOutlinePage implements
 		// properties
 		// of the selected node
 		getSite().setSelectionProvider(treeViewer);
+		//expand all levels of the outline,not just the first level
+		treeViewer.expandAll();
 
 	}
 
