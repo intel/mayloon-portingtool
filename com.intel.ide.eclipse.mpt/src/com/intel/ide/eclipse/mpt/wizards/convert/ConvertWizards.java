@@ -27,12 +27,15 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.correction.ProblemLocation;
 import org.eclipse.jdt.internal.ui.text.correction.proposals.LinkedCorrectionProposal;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ltk.core.refactoring.TextChange;
@@ -70,7 +73,8 @@ public class ConvertWizards extends Wizard {
                                         // qualified name to its missing
                                         // methods
     Map<String, Map> missingFieldsMap;
-    
+    private static final String PREF_KEY_JAVADOC = "org.eclipse.jdt.ui.javadoc";
+
 	public ConvertWizards(IProject project){
 		this.project = project;
 		this.wizardDialog = null;
@@ -324,13 +328,12 @@ public class ConvertWizards extends Wizard {
             return 0;
         }
     }
-    
+
 	private void partialConversionSync(final IProgressMonitor monitor){
 		try {
 			if (project.isNatureEnabled("org.eclipse.jdt.core.javanature")) {
 			    
 			    this.missingTypesMap = new HashMap<String, LinkedCorrectionProposal>();
-			    
 				IJavaProject javaProject = JavaCore.create(project);
 				Map<String, String> options = javaProject.getOptions(false);
 				options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, JavaCore.IGNORE);
@@ -460,7 +463,20 @@ public class ConvertWizards extends Wizard {
                         }
                     }
                 }
-                
+
+                /**
+                 * Configure JDT to add comment and annotation to the generated method stubs.
+                 */
+                IPreferenceStore preferenceStore = JavaPlugin.getDefault().getPreferenceStore();
+                boolean origAddJavadoc = preferenceStore.getBoolean(PREF_KEY_JAVADOC);
+                if(!origAddJavadoc){
+                    preferenceStore.setValue(PREF_KEY_JAVADOC, true);
+                }
+
+                Template t = JavaPlugin.getDefault().getCodeTemplateStore()
+                        .findTemplateById("org.eclipse.jdt.ui.text.codetemplates.methodcomment");
+                t.setPattern(t.getPattern() + "\n@MayloonStubAnnotation()");
+
                 /**
                  * Generate stubs for the missing methods and fields.
                  */
@@ -524,6 +540,7 @@ public class ConvertWizards extends Wizard {
                         }
                     });
                 }
+                preferenceStore.setValue(PREF_KEY_JAVADOC, origAddJavadoc);
 			}
 		} catch (JavaModelException e) {
 			reportError(e);
