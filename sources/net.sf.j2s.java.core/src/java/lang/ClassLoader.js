@@ -801,7 +801,11 @@ ClazzLoader.xhrOnload = function (transport, file) {
 				}				
 			*/
 			//	fileCount += transport.responseText.length;
-			eval (transport.responseText);
+                        // Add sourceURL so that dynamic loaded js file can show name
+                        // in Inspector.
+                        var fileName = file.substr(file.lastIndexOf("/") + 1);
+                        var sourceURL = "\r\n" + "//@ sourceURL=" + fileName + "\r\n";
+                        eval (transport.responseText + sourceURL);
 		} catch (e) {
 			console.error ("[Java2Script] Script error: " + e.message);
 			throw e;
