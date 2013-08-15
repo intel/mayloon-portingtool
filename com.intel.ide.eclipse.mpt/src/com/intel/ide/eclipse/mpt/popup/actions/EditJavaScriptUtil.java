@@ -77,7 +77,7 @@ public class EditJavaScriptUtil {
 				}
 
 				// open the editor on the file
-				page.openEditor(input, editorId);
+				page.openEditor(input, editorId,true);
 				return true;
 			} catch (PartInitException e) {
 				String msg = NLS

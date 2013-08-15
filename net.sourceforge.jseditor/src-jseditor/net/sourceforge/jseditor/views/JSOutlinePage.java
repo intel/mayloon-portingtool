@@ -71,7 +71,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 	public JSOutlinePage(IDocument input) {
 		super();
 		this.input = input;
-		
+
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 		super.createControl(parent);
 		TreeViewer treeViewer = getTreeViewer();
 		treeViewer.setContentProvider(new JSSyntaxContentProvider());
-		
+
 		treeViewer.setLabelProvider(new SimpleLabelProvider());
 		treeViewer.setInput(this.input);
 
@@ -96,15 +96,14 @@ public class JSOutlinePage extends ContentOutlinePage implements
 		// properties
 		// of the selected node
 		getSite().setSelectionProvider(treeViewer);
-		//expand all levels of the outline,not just the first level
+		// expand all levels of the outline,not just the first level
 		treeViewer.expandAll();
 
 	}
 
 	/***
 	 * 
-	 * @author zhihaoguo
-	 * Copyright 2013
+	 * @author zhihaoguo Copyright 2013
 	 * 
 	 */
 	// this method is use to show the outline item
@@ -116,11 +115,21 @@ public class JSOutlinePage extends ContentOutlinePage implements
 			if (element instanceof ITypedRegion) {
 				ITypedRegion region = (ITypedRegion) element;
 				int offset = region.getOffset();
-
 				try {
-					//"\r"means carriage return,in eclipse,it seems just '\n' is not line feed
-					//JSConstant.stringOffsetLength ,the default value is 200
-					String text = input.get(region.getOffset(), JSConstant.stringOffsetLength)
+					/*
+					 * "\r"means carriage return,in eclipse,it seems just '\n'
+					 * is not line feed JSConstant.stringOffsetLength ,the
+					 * default value is 200
+					 * in case that after the keyword we designed,there is not
+					 * so many characters the const
+					 * JSConstant.stringOffsetLength represents to the end of
+					 * the document,so we have to change the parameters
+					 */
+					String text = input
+							.get(region.getOffset(),
+									input.getLength() - region.getOffset() < JSConstant.stringOffsetLength ? input
+											.getLength() - region.getOffset()
+											: JSConstant.stringOffsetLength)
 							.replaceAll("\t*\n*\b*\r* *", "");
 					if (text.startsWith("declarePackage")) {
 						String tag1 = "(\"";
@@ -136,14 +145,22 @@ public class JSOutlinePage extends ContentOutlinePage implements
 							nameOfClass = subString(tag3, tag4, text);
 						}
 						return nameOfClass;
-
+					} else if (text.startsWith("declareType")) {
+						String tag1 = "\"";
+						String tag2 = "\"";
+						nameOfClass = subString(tag1, tag2, text);
+						return nameOfClass;
 					} else if (text.startsWith("makeConstructor")) {
-						return nameOfClass.substring(nameOfClass
-								.lastIndexOf(".") + 1)
-								+ '('
-								+ paramList(offset) + ')';
+						if (nameOfClass != null)
+							return nameOfClass.substring(nameOfClass
+									.lastIndexOf(".") + 1)
+									+ '('
+									+ paramList(offset) + ')';
+						else
+							return ERROR;
 
-					} else if (text.startsWith("defineMethod")||text.startsWith("overrideMethod")) {
+					} else if (text.startsWith("defineMethod")
+							|| text.startsWith("overrideMethod")) {
 						String tag1 = ",\"";
 						String tag2 = "\",";
 						return subString(tag1, tag2, text) + '('

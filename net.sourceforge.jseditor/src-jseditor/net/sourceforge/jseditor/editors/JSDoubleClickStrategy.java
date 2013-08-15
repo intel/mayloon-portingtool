@@ -20,6 +20,8 @@
 
 package net.sourceforge.jseditor.editors;
 
+import net.sourceforge.jseditor.utility.JSConstant;
+
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -53,23 +55,25 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 * @see ITextDoubleClickStrategy#doubleClicked
 	 */
 	public void doubleClicked(ITextViewer text) {
-
+		text.invalidateTextPresentation();
 		// attention length must >0
 		// the part doubleclicked
+		
 		String choosenPart;
 		// red
 		Point selected = text.getSelectedRange(); // x is offset, y is length
 		IDocument doc = text.getDocument();
 
+
 		// important£¬repaint the editor
 		text.invalidateTextPresentation();
-
 		if (selected.x < 0)
 			return;
 
 		// The double-click may start in one place and end in another, so check
 		// both ends
 		// of the double-clicked range then set up a span between them
+		
 		WordBounds firstWord = findWord(doc, selected.x);
 		WordBounds lastWord = (selected.y > 0) ? findWord(doc, selected.x
 				+ selected.y) : firstWord;
@@ -81,7 +85,8 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 		try {
 			if (length > 0) {
 				if(!cursortag)
-				text.setSelectedRange(firstWord.getStart() + 1, length);
+				 text.setSelectedRange(firstWord.getStart() + 1, length);
+
 				choosenPart = doc.get(firstWord.getStart() + 1, length);
 				// debug
 				// System.out.println(choosenPart);
@@ -102,25 +107,10 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 					text.changeTextPresentation(presentation, true);
 					begin = wholedoc.indexOf(choosenPart, begin + length);
 
-					/***
-					 * aborted
-					 */
-					// this is the first version ,just change the text color,not
-					// background
-					// text.setTextColor(colormanager.getColor(color),
-					// begin,length,false);
+
 
 				}
-				/***
-				 * aborted
-				 */
-				// begin = wholedoc.indexOf(choosenPart, begin + length);
-				// while (begin != -1) {
-				// text.setTextColor(colman.getColor(color), begin, length,
-				// false);
-				//
-				// begin = wholedoc.indexOf(choosenPart, begin + length);
-				// }
+
 			}
 
 		} catch (BadLocationException e) {
@@ -141,7 +131,28 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 * 
 	 * @return
 	 */
-	protected WordBounds findWord(IDocument doc, int caretPos) {
+	protected WordBounds findWord(IDocument doc, int caretPosOrigin) {
+		int caretPos=caretPosOrigin;
+		try {
+			if(caretPos<0)
+				return new WordBounds(0,0);
+			if(doc.getChar(caretPos)=='.')
+				caretPos--;
+			else if(doc.getChar(caretPos)=='\"')
+				{caretPos--;
+				while(doc.getChar(caretPos)!='\"'&&caretPos>0)
+					caretPos--;
+				if(caretPos==0&&doc.getChar(caretPos)=='\"')
+					return new WordBounds(caretPosOrigin, 0);
+				else
+				
+				return new WordBounds(caretPos,caretPosOrigin-caretPos);
+				}
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		WordBounds result = new WordBounds(caretPos, 0);
 		if (caretPos >= 0) {
 			try {
@@ -321,7 +332,6 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 		}
 
 		int startPos = pos;
-
 		pos = caretPos;
 
 		int length = doc.getLength();

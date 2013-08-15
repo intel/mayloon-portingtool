@@ -102,6 +102,7 @@ public class JSPartitionScanner extends RuleBasedPartitionScanner {
 		
 		rules.add(new PatternRule("makeConstructo", "r", TOKEN_OUTLINE_3, (char) 0, true));
 		rules.add(new PatternRule("loa", "d", TOKEN_OUTLINE_1, (char) 0, true));
+		rules.add(new PatternRule("declareTyp", "e", TOKEN_OUTLINE_1, (char) 0, true));
 		
 		
 		rules.add(new MultiLineRule("/*", "*/", TOKEN_COMMENT));

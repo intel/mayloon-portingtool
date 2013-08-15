@@ -71,12 +71,13 @@ public class JSEditorPlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
+	
+	
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		// TODO Auto-generated method stub
 		super.start(context);
-		System.out.println("first ?");
 	}
 
 	/**
@@ -154,7 +155,6 @@ public class JSEditorPlugin extends AbstractUIPlugin {
 
 	private void initializeDefaults(IPreferenceStore store) {
 		store.setDefault(PreferenceNames.P_AUTO_OUTLINE, true);
-
 		store.setDefault(PreferenceNames.P_COMMENT_COLOR, "63,127,95");
 		store.setDefault(PreferenceNames.P_STRING_COLOR, "42,0,255");
 		store.setDefault(PreferenceNames.P_KEYWORD_COLOR, "127,0,85");

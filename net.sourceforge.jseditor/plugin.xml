@@ -26,12 +26,12 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="JavaScript Editor"
-            extensions="js,as"
-            icon="icons/js.gif"
             class="net.sourceforge.jseditor.editors.JSEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            id="net.sourceforge.jseditor.editors.JSEditor">
+            extensions="js"
+            icon="icons/js.gif"
+            id="net.sourceforge.jseditor.editors.JSEditor"
+            name="JavaScript Editor">
       </editor>
    </extension>
    <extension
