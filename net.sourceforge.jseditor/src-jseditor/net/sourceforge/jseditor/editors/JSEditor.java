@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import net.sourceforge.jseditor.utility.JSConstant;
 import net.sourceforge.jseditor.views.JSOutlinePage;
 
 /**
@@ -142,7 +143,8 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener
 				                        //selectAndReveal(region.getOffset(), region.getLength());
 				                        //setHighlightRange(region.getOffset(), region.getLength(),true);
 				                        try {
-				        					String text = getSourceViewer().getDocument().get(region.getOffset(), 100);
+				                        	//JSConstant.stringOffsetLength ,the default value is 200
+				        					String text = getSourceViewer().getDocument().get(region.getOffset(), JSConstant.stringOffsetLength);
 				        					if (text.startsWith("declarePackage")) {
 				        						String tag1="\"";
 				        						String tag2="\"";
@@ -150,9 +152,13 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener
 				        					}
 				        					else if (text.startsWith("load"))
 				        					{
-				        						int beginIdx = text.indexOf("\"",text.indexOf(","))+1;
+				        						//in case that,user have type a lot of tabs or space...
+				        						int m=text.indexOf("]");
+				        						int d=text.indexOf(",",m);
+				        						
+				        						int beginIdx = text.indexOf("\"",d)+1;
 				        						int endIdx = text.indexOf("\"",beginIdx);
-				        						if(text.indexOf("\"",text.indexOf(","))!=-1&&endIdx!=-1){
+				        						if(text.indexOf("\"",text.indexOf(",",text.indexOf("]")))!=-1&&endIdx!=-1){
 				        						int x=region.getOffset()+beginIdx;
 				        						int y=endIdx-beginIdx;
 				        						setHighlightRange(x, y,true);
@@ -164,7 +170,7 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener
 				        						
 				        					} else if (text.startsWith("makeConstructor")) {
 				        						setHighlightRange(region.getOffset(), region.getLength(),true);
-				        					} else if (text.startsWith("defineMethod")) {
+				        					} else if (text.startsWith("defineMethod")||text.startsWith("overrideMethod")) {
 				        						String tag1="\"";
 				        						String tag2="\"";
 				        						clickOutline(region.getOffset(),tag1,tag2,text);}

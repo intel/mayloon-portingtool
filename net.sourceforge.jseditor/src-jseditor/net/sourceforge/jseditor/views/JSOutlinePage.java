@@ -26,6 +26,8 @@ package net.sourceforge.jseditor.views;
 import java.util.Stack;
 
 import net.sourceforge.jseditor.editors.JSElement;
+import net.sourceforge.jseditor.utility.JSConstant;
+
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.BadLocationException;
@@ -99,6 +101,12 @@ public class JSOutlinePage extends ContentOutlinePage implements
 
 	}
 
+	/***
+	 * 
+	 * @author zhihaoguo
+	 * Copyright 2013
+	 * 
+	 */
 	// this method is use to show the outline item
 	private class SimpleLabelProvider extends LabelProvider {
 		String nameOfClass = null;
@@ -110,8 +118,10 @@ public class JSOutlinePage extends ContentOutlinePage implements
 				int offset = region.getOffset();
 
 				try {
-					String text = input.get(region.getOffset(), 100)
-							.replaceAll("\t*\n*\b* *", "");
+					//"\r"means carriage return,in eclipse,it seems just '\n' is not line feed
+					//JSConstant.stringOffsetLength ,the default value is 200
+					String text = input.get(region.getOffset(), JSConstant.stringOffsetLength)
+							.replaceAll("\t*\n*\b*\r* *", "");
 					if (text.startsWith("declarePackage")) {
 						String tag1 = "(\"";
 						String tag2 = "\")";
@@ -133,7 +143,7 @@ public class JSOutlinePage extends ContentOutlinePage implements
 								+ '('
 								+ paramList(offset) + ')';
 
-					} else if (text.startsWith("defineMethod")) {
+					} else if (text.startsWith("defineMethod")||text.startsWith("overrideMethod")) {
 						String tag1 = ",\"";
 						String tag2 = "\",";
 						return subString(tag1, tag2, text) + '('
