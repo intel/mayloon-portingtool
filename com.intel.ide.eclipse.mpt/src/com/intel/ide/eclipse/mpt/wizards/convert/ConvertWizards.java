@@ -199,7 +199,7 @@ public class ConvertWizards extends Wizard {
 			monitor.worked(1);
 			
 			monitor.subTask("Libraries information");
-			ProjectUtil.checkLibraryDependency(project, warningInfoSet);
+			ProjectUtil.checkLibraryDependency(project, warningInfoSet, errorInfoSet);
 			monitor.worked(1);
 			
 			monitor.subTask("Package name information");

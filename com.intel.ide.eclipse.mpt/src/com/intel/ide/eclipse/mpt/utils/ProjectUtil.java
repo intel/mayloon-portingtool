@@ -40,6 +40,8 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -844,7 +846,6 @@ public class ProjectUtil {
 	public static boolean addReferencedProjectSource(IProject project, IProject ref_proj){
 		String dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "src";
 		String srcProjectFolder = ref_proj.getLocation().toOSString();
-		srcProjectFolder = srcProjectFolder.substring(0, srcProjectFolder.lastIndexOf(MptConstants.FILE_SEPARATOR));
 
 		IJavaProject javaProject = JavaCore.create(ref_proj);
 		try {
@@ -855,7 +856,7 @@ public class ProjectUtil {
 					if (path.substring(path.lastIndexOf('/') + 1).equals("gen")){
 						continue; //generated files won't be copied
 					}
-					String srcFolderPath = srcProjectFolder + path;
+					String srcFolderPath = srcProjectFolder + path.substring(path.lastIndexOf('/'));
 					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath, false, false)){
 						try {
 							project.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -880,7 +881,7 @@ public class ProjectUtil {
 		return projects;
 	}
 	
-	public static void checkLibraryDependency(IProject project, Set<String> warningInfo)
+	public static void checkLibraryDependency(IProject project, Set<String> warningInfo, Set<String> errorInfo)
 			throws JavaModelException {
 		IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
@@ -925,24 +926,57 @@ public class ProjectUtil {
 		for (int i = 0;i < entries.length;i ++){
 			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
 				if (!entries[i].getPath().toOSString().startsWith(path)){
-					String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
+					String info = "Project depends on " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString() + ".";
 					warningInfo.add(info);
 					MptPluginConsole.warning(MptConstants.CONVERT_TAG, info);
 				}				
 			}
 			else if (entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT){
-				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
-				MptPluginConsole.general(MptConstants.CONVERT_TAG, info);
+				String info = "Project depends on " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString() + ".";
+				String fullname = entries[i].getPath().toOSString();
+				String name = fullname.substring(fullname.lastIndexOf('/') + 1);
+				if (findProject(name) == null){
+					info = "Project \"" + name + "\" in dependency could not be found.";
+					errorInfo.add(info);
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
+				}
+				else {
+					MptPluginConsole.general(MptConstants.CONVERT_TAG, info);
+				}
 			}
 			else {
-				String info = "Project depends on other " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString();
+				String info = "Project depends on " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString() + ".";
 				warningInfo.add(info);
 				MptPluginConsole.warning(MptConstants.CONVERT_TAG, info);
 			}
 		}
 		
 		//check Android referenced projects
-		ProjectUtil.checkAndroidReferencedProjects(project);
+		errorInfo.addAll(ProjectUtil.checkAndroidReferencedProjects(project));
+	}
+	
+	private static IProject findProject(String name){
+		if (name == null || name.length() == 0){
+			return null;
+		}
+		IProject[] projects = ProjectUtil.getProjectList();
+		for (int i = 0;i < projects.length;i ++){
+			if (projects[i].getName().equals(name)){
+				return projects[i];
+			}
+		}
+		return null;
+	}
+	
+	private static IProject findProject(IPath absolutePath){
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IContainer[] container = workspaceRoot.findContainersForLocationURI(URIUtil.toURI(absolutePath));
+		for (int i = 0;container != null && i < container.length;i ++){
+			if (container[i] instanceof IProject){
+				return (IProject) container[i];
+			}
+		}
+		return null;
 	}
 	
 	public static String getKindName(int kind){
@@ -1041,7 +1075,7 @@ public class ProjectUtil {
 				}
 				if (!foundFlag){
 					MptPluginConsole.warning(MptConstants.CONVERT_TAG, 
-							"Referenced project [" + name + "] not found.");
+							"Referenced project \"" + name + "\" not found.");
 				}
 			}
 		}
@@ -1075,26 +1109,16 @@ public class ProjectUtil {
 			
 			int refer = 1;
 			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
-				String name = value.substring(value.lastIndexOf('/') + 1);
-				if (name.length() <= 0 && value.length() > 0){
-					value = value.substring(0, value.lastIndexOf('/'));
-					name = value.substring(value.lastIndexOf('/') + 1);
+				IPath path = project.getLocation().append(value);
+				IProject refProj = findProject(path);
+				if (refProj != null){
+					proj_list.add(refProj);
+					ProjectUtil.getProjectDependency(refProj, proj_list);
+					ProjectUtil.getAndroidDependency(refProj, proj_list);
 				}
-				IProject[] projects = ProjectUtil.getProjectList();
-				boolean foundFlag = false;
-				for (int j = 0;j < projects.length;j ++){
-					if (projects[j].getName().equals(name)){
-						if (!proj_list.contains(projects[j])){
-							proj_list.add(projects[j]);
-							ProjectUtil.getProjectDependency(projects[j], proj_list);
-							ProjectUtil.getAndroidDependency(projects[j], proj_list);
-						}
-						foundFlag = true; break;
-					}
-				}
-				if (!foundFlag){
+				else {
 					MptPluginConsole.warning(MptConstants.CONVERT_TAG, 
-							"Referenced project [" + name + "] not found.");
+							"Referenced project \"" + value + "\" not found.");
 				}
 			}
 		}
@@ -1361,9 +1385,16 @@ public class ProjectUtil {
 			
 			int refer = 1;
 			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
-				String refProj = "Project depends on other Android project :" + value;
-				refInfo.add(refProj);
-				MptPluginConsole.general(MptConstants.CONVERT_TAG, refProj);
+				IPath path = project.getLocation().append(value);
+				String refProj = "Project depends on Android project :" + value + ".";
+				if (findProject(path) == null){
+					refProj = "Project \"" + value + "\" in android dependency could not be found.";
+					refInfo.add(refProj);
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, refProj);
+				}
+				else {
+					MptPluginConsole.general(MptConstants.CONVERT_TAG, refProj);
+				}
 			}
 		}
 		return refInfo;
