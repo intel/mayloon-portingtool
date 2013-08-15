@@ -471,9 +471,19 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		if (getJ2STag(node, "@j2sIgnore") != null) {
 			return false;
 		}
+		
+		inStaticInitializer = Modifier.isStatic(node.getModifiers());
 		return super.visit(node);
 	}
 
+	@Override
+	public void endVisit(FieldDeclaration node){
+	    if(Modifier.isStatic(node.getModifiers())) {
+	        inStaticInitializer = false;
+	    }
+	    super.endVisit(node);
+	}
+	
 	public boolean visit(Initializer node) {
 		if (getJ2STag(node, "@j2sIgnore") != null) {
 			return false;
