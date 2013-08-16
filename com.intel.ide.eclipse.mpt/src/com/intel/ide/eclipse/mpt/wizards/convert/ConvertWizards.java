@@ -51,6 +51,7 @@ import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.MptPluginLogger;
 import com.intel.ide.eclipse.mpt.ast.ASTParserAddNativeMethodDeclaration;
+import com.intel.ide.eclipse.mpt.ast.ModifierCorrectionSubProcessor;
 import com.intel.ide.eclipse.mpt.ast.NewCUProposal;
 import com.intel.ide.eclipse.mpt.ast.UnresolvedElementsSubProcessor;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
@@ -457,6 +458,10 @@ public class ConvertWizards extends Wizard {
                                     case IProblem.UndefinedType:
                                     case IProblem.JavadocUndefinedType:
                                         UnresolvedElementsSubProcessor.getTypeProposals(context, pl, missingTypesMap);
+                                        break;
+                                    case IProblem.MethodMustOverride:
+                                    case IProblem.MethodMustOverrideOrImplement:
+                                        ModifierCorrectionSubProcessor.removeOverrideAnnotationProposal(context, pl, missingMethodsMap);
                                         break;
                                 }
                             }
