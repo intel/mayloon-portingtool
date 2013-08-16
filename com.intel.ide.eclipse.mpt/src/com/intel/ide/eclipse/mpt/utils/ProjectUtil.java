@@ -853,9 +853,6 @@ public class ProjectUtil {
 			for (int i = 0;i < entries.length;i ++){
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
 					String path = entries[i].getPath().toOSString();
-					if (path.substring(path.lastIndexOf('/') + 1).equals("gen")){
-						continue; //generated files won't be copied
-					}
 					String srcFolderPath = srcProjectFolder + path.substring(path.lastIndexOf('/'));
 					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath, false, false)){
 						try {
