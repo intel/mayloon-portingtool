@@ -39,7 +39,8 @@ import org.eclipse.jface.text.rules.*;
  * @version $Revision: 1.4 $
  */
 public class JSPartitionScanner extends RuleBasedPartitionScanner {
-	public final static String JS_DEFAULT = "__js_default";
+	//three classes of outline//此处一定要写“__dftl_partition_content_type”
+	public final static String JS_DEFAULT = "__dftl_partition_content_type";
 	public final static String JS_COMMENT = "__js_comment";
 	public final static String JS_KEYWORD = "__js_keyword";
 	public final static String JS_STRING = "__js_string";
