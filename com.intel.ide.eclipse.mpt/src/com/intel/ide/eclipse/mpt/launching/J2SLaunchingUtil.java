@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -51,6 +52,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.intel.ide.eclipse.mpt.MptConstants;
+import com.intel.ide.eclipse.mpt.MptException;
 import com.intel.ide.eclipse.mpt.MptPlugin;
 import com.intel.ide.eclipse.mpt.MptPluginConsole;
 import com.intel.ide.eclipse.mpt.builder.MayloonPropertiesBuilder;
@@ -67,6 +69,10 @@ public class J2SLaunchingUtil {
 
 	public static void launchingJ2SUnit(ILaunchConfiguration configuration, String mode, String extensionName)
 			throws CoreException {
+		// check SDK Floder
+		if(!checkSDKFolder()){
+			return;
+		}
 		boolean isJUnit = true;
 		String mainType = J2SLaunchingUtil.getMainType(configuration);
 		if (mainType == null) {
@@ -206,6 +212,10 @@ public class J2SLaunchingUtil {
 
 	public static void launchingJ2SApp(ILaunchConfiguration configuration, String mode, String extensionName)
 			throws CoreException {
+		// check SDK Floder
+		if(!checkSDKFolder()){
+			return;
+		}
 		boolean isJUnit = false;
 		String mainType = J2SLaunchingUtil.getMainType(configuration);
 		if (mainType == null) {
@@ -1253,5 +1263,57 @@ public class J2SLaunchingUtil {
 		mainType = VariablesPlugin.getDefault().getStringVariableManager()
 				.performStringSubstitution(mainType);
 		return mainType;
+	}
+	
+	private static boolean checkSDKFolder(){
+		// check Mayloon SDK folder
+		String mayloonSDKPath = MayloonSDK.getSdkLocation();
+		if (mayloonSDKPath == null || mayloonSDKPath.isEmpty()) {
+			MptPluginConsole.error(MptConstants.RUN_TAG, MptException.MAYLOON_SDK_ERROR);
+			return false;
+		}
+		// check external-info.properties file
+		File propertyFile = new File(mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY);
+		if (!propertyFile.exists()) {
+			String errorMessage = ProjectUtil.getNoSdkFileErrorInfo(mayloonSDKPath, MptConstants.MAYLOON_EXTERNAL_PROPERTY);
+			MptPluginConsole.error(MptConstants.RUN_TAG, errorMessage);
+			return false;
+		}
+		
+		FileInputStream stream = null;
+		try {
+			Properties properties = new Properties();
+			properties.load(stream = new FileInputStream(propertyFile));
+			String filePath = properties.getProperty(MptConstants.MAYLOON_JS_FRAMEWORK_PATH, null);
+			
+			if (filePath == null) {
+				String errorMessage = String.format("The %1$s is not set correctly.", MptConstants.MAYLOON_JS_FRAMEWORK_PATH);
+				MptPluginConsole.error(MptConstants.RUN_TAG, errorMessage);
+				return false;
+			} else {
+				if(!ProjectUtil.checkSdkFile(mayloonSDKPath, filePath)){
+					MptPluginConsole.error(MptConstants.RUN_TAG,ProjectUtil.getNoSdkFileErrorInfo(mayloonSDKPath, filePath));
+					return false;
+				}
+			}
+		} catch (FileNotFoundException e) {
+			MptPluginConsole.error(MptConstants.RUN_TAG, e.getMessage());
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			MptPluginConsole.error(MptConstants.RUN_TAG, e.getMessage());
+			e.printStackTrace();
+			return false;
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					MptPluginConsole.error(MptConstants.RUN_TAG, e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
+		return true;
 	}
 }
