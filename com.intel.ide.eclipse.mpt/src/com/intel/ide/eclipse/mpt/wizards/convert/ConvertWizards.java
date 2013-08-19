@@ -480,8 +480,10 @@ public class ConvertWizards extends Wizard {
 
                 Template t = JavaPlugin.getDefault().getCodeTemplateStore()
                         .findTemplateById("org.eclipse.jdt.ui.text.codetemplates.methodcomment");
-                t.setPattern(t.getPattern() + "\n@MayloonStubAnnotation()");
-
+                String origMethodComment = t.getPattern();
+                if (origMethodComment.indexOf("MayloonStubAnnotation") < 0) {
+                    t.setPattern(origMethodComment + "\n@MayloonStubAnnotation()");
+                }
                 /**
                  * Generate stubs for the missing methods and fields.
                  */
@@ -545,6 +547,7 @@ public class ConvertWizards extends Wizard {
                         }
                     });
                 }
+                t.setPattern(origMethodComment);
                 preferenceStore.setValue(PREF_KEY_JAVADOC, origAddJavadoc);
 			}
 		} catch (JavaModelException e) {
