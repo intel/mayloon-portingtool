@@ -128,7 +128,16 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		set.removeAll(reseted);
 		for (Iterator i = reseted.iterator(); i.hasNext();) {
 			QNTypeBinding qn = (QNTypeBinding) i.next();
-			set.add(qn.qualifiedName);
+            ITypeBinding typeBinding = qn.binding;
+            String qualifiedName = qn.qualifiedName;
+            if (typeBinding != null && typeBinding.isFromSource()) {
+                String fileName = typeBinding.getJavaElement().getPath().toFile().getName();
+                fileName = fileName.substring(0, fileName.lastIndexOf("."));
+                if (!typeBinding.getName().equals(fileName)) {
+                    qualifiedName = typeBinding.getPackage().getName()+"."+fileName;
+                }
+            }
+            set.add(qualifiedName);
 		}
 	}
 	
@@ -454,7 +463,9 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 	 */
 	public boolean visit(TypeDeclaration node) {
 		ITypeBinding resolveBinding = node.resolveBinding();
-		if (resolveBinding != null && resolveBinding.isTopLevel()) {
+        String fileName = resolveBinding.getJavaElement().getPath().toFile().getName();
+        fileName = fileName.substring(0, fileName.lastIndexOf("."));
+		if (resolveBinding != null && resolveBinding.isTopLevel() && fileName.equals(resolveBinding.getName())) {
 			String thisClassName = resolveBinding.getQualifiedName();
 			classNameSet.add(thisClassName);
 			classBindingSet.add(resolveBinding);
@@ -548,9 +559,13 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 	public boolean visit(EnumDeclaration node) {
 		ITypeBinding resolveBinding = node.resolveBinding();
 		if (resolveBinding.isTopLevel()) {
-			String thisClassName = resolveBinding.getQualifiedName();
-			classNameSet.add(thisClassName);
-			classBindingSet.add(resolveBinding);
+            String fileName = resolveBinding.getJavaElement().getPath().toFile().getName();
+            fileName = fileName.substring(0, fileName.lastIndexOf("."));
+            if (fileName.equals(resolveBinding.getName())) {
+			    String thisClassName = resolveBinding.getQualifiedName();
+			    classNameSet.add(thisClassName);
+			    classBindingSet.add(resolveBinding);
+            }
 		}
 		readTags(node);
 
