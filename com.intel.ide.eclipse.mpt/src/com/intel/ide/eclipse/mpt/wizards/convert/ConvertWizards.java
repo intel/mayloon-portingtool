@@ -74,6 +74,8 @@ public class ConvertWizards extends Wizard {
                                         // qualified name to its missing
                                         // methods
     Map<String, Map> missingFieldsMap;
+    Map<String, Map> missingConstructorsMap;
+
     private static final String PREF_KEY_JAVADOC = "org.eclipse.jdt.ui.javadoc";
 
 	public ConvertWizards(IProject project){
@@ -438,7 +440,7 @@ public class ConvertWizards extends Wizard {
                             IInvocationContext context = new InvocationContext(astRoot, unit);
                             for(IProblem problem: problems){
                                 IProblemLocation pl = new ProblemLocation(problem);
-                                Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
+//                                Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
                                 switch(pl.getProblemId()){
                                     case IProblem.ImportNotFound:
                                         UnresolvedElementsSubProcessor.importNotFoundProposals(context, pl, this.missingTypesMap);
@@ -448,7 +450,7 @@ public class ConvertWizards extends Wizard {
                                         UnresolvedElementsSubProcessor.getMethodProposals(context, pl, false, this.missingMethodsMap);
                                         break;
                                     case IProblem.UndefinedConstructor:
-                                        UnresolvedElementsSubProcessor.getConstructorProposals(context, pl, proposals);
+                                        UnresolvedElementsSubProcessor.getConstructorProposals(context, pl, this.missingConstructorsMap);
                                         break;
                                     case IProblem.UndefinedField:
                                     case IProblem.UndefinedName:
@@ -491,8 +493,9 @@ public class ConvertWizards extends Wizard {
                     String fqName = entry.getKey();
                     final Map<String, LinkedCorrectionProposal> fieldProposalsMap = entry.getValue();
                     final Map<String, LinkedCorrectionProposal> methodProposalsMap = missingMethodsMap.get(fqName);
+                    final Map<String, LinkedCorrectionProposal> constructorProposals = missingConstructorsMap.get(fqName);
                     
-                    if (!fieldProposalsMap.isEmpty() || !methodProposalsMap.isEmpty()) {
+                    if (!fieldProposalsMap.isEmpty() || !methodProposalsMap.isEmpty() || !constructorProposals.isEmpty()) {
                         MptPluginConsole
                                 .general(
                                         MptConstants.PARTIAL_CONVERSION_TAG,
@@ -539,6 +542,23 @@ public class ConvertWizards extends Wizard {
                                     e.printStackTrace();
                                 }
                             }
+                            
+                            for (LinkedCorrectionProposal p : constructorProposals.values()) {
+                                try {
+                                    TextChange change = p.getTextChange();
+                                    if (javaEditor == null) {
+                                        ICompilationUnit targetCU = p
+                                                .getCompilationUnit();
+                                        javaEditor = JavaUI.openInEditor(targetCU);
+                                        JavaUI.revealInEditor(javaEditor,
+                                                targetCU.getPrimaryElement());
+                                    }
+                                    change.perform(monitor);
+                                    javaEditor.doSave(monitor);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             if (javaEditor != null && !ConvertWizards.this.keepOpen) {
                                 IWorkbenchPage page = PlatformUI.getWorkbench()
                                         .getActiveWorkbenchWindow().getActivePage();
@@ -560,14 +580,17 @@ public class ConvertWizards extends Wizard {
 		
 		missingFieldsMap = null;
 		missingMethodsMap = null;
+		missingConstructorsMap = null;
 	}	
 	
 	private void initMaps() {
 	    missingMethodsMap = new HashMap<String, Map>();
 	    missingFieldsMap = new HashMap<String, Map>();
+	    missingConstructorsMap = new HashMap<String, Map>();
 	    for(String type: this.parConversionInfo){
 	        missingMethodsMap.put(type, new HashMap<String, LinkedCorrectionProposal>());
 	        missingFieldsMap.put(type, new HashMap<String, LinkedCorrectionProposal>());
+	        missingConstructorsMap.put(type, new HashMap<String, LinkedCorrectionProposal>());
 	    }
     }
 
