@@ -859,7 +859,7 @@ public class ProjectUtil {
 					else {
 						dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "src";
 					}
-					String srcFolderPath = srcProjectFolder + path.substring(path.lastIndexOf('/'));
+					String srcFolderPath = srcProjectFolder + path.substring(path.lastIndexOf(MptConstants.FILE_SEPARATOR));
 					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath, false, false)){
 						try {
 							project.refreshLocal(IResource.DEPTH_INFINITE, null);
