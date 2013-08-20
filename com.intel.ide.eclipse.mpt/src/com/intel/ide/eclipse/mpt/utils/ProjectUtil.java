@@ -844,7 +844,7 @@ public class ProjectUtil {
 	 * @return if succeed
 	 */
 	public static boolean addReferencedProjectSource(IProject project, IProject ref_proj){
-		String dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "src";
+		String dstFolderPath;
 		String srcProjectFolder = ref_proj.getLocation().toOSString();
 
 		IJavaProject javaProject = JavaCore.create(ref_proj);
@@ -853,6 +853,12 @@ public class ProjectUtil {
 			for (int i = 0;i < entries.length;i ++){
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE ){
 					String path = entries[i].getPath().toOSString();
+					if (path.substring(path.lastIndexOf('/') + 1).equals("gen")){
+						dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "gen";
+					}
+					else {
+						dstFolderPath = project.getLocation().toOSString() + MptConstants.FILE_SEPARATOR + "src";
+					}
 					String srcFolderPath = srcProjectFolder + path.substring(path.lastIndexOf('/'));
 					if (ProjectUtil.mergeFolder(srcFolderPath, dstFolderPath, false, false)){
 						try {
