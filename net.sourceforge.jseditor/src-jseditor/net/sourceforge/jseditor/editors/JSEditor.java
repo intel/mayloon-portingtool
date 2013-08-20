@@ -44,6 +44,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import net.sourceforge.jseditor.utility.JSConstant;
@@ -77,6 +78,8 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 		super.handleCursorPositionChanged();
 		JSDoubleClickStrategy jsdc = new JSDoubleClickStrategy(true);
 		jsdc.doubleClicked(getSourceViewer());
+		//activate Ctrl+F action
+		getAction(ITextEditorActionConstants.FIND).setEnabled(true);
 
 	}
 
