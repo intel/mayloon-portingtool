@@ -932,8 +932,14 @@ public class ProjectUtil {
 				String info = "Project depends on " +	getKindName(entries[i].getEntryKind()) + ":" + entries[i].getPath().toOSString() + ".";
 				String fullname = entries[i].getPath().toOSString();
 				String name = fullname.substring(fullname.lastIndexOf('/') + 1);
-				if (findProject(name) == null){
+				IProject proj = findProject(name);
+				if (proj == null){
 					info = "Project \"" + name + "\" in dependency could not be found.";
+					errorInfo.add(info);
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
+				}
+				else if (!proj.isOpen()){
+					info = "Project \"" + name + "\" in dependency is closed.";
 					errorInfo.add(info);
 					MptPluginConsole.error(MptConstants.CONVERT_TAG, info);
 				}
@@ -1384,8 +1390,14 @@ public class ProjectUtil {
 			for (String value = null; (value = prop.getProperty("android.library.reference." + refer, "")).length() > 0; refer ++) {
 				IPath path = project.getLocation().append(value);
 				String refProj = "Project depends on Android project :" + value + ".";
-				if (findProject(path) == null){
+				IProject proj = findProject(path);
+				if (proj == null){
 					refProj = "Project \"" + value + "\" in android dependency could not be found.";
+					refInfo.add(refProj);
+					MptPluginConsole.error(MptConstants.CONVERT_TAG, refProj);
+				}
+				else if (!proj.isOpen()){
+					refProj = "Project \"" + proj.getName() + "\" in android dependency is closed.";
 					refInfo.add(refProj);
 					MptPluginConsole.error(MptConstants.CONVERT_TAG, refProj);
 				}
