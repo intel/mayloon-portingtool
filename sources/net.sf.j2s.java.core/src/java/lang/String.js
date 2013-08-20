@@ -1,6 +1,7 @@
 Clazz.load (["java.lang.CharSequence", "$.Comparable", "java.io.Serializable", "java.util.Comparator"], "java.lang.String", null, function () {
 if (String.prototype.$replace == null) { // not defined yet! ClazzLoader may try to load this twice!
 java.lang.String = String;
+Clazz.decorateAsType (String, "String", null, [java.io.Serializable, Comparable, CharSequence], null, true);
 if (Clazz.supportsNativeObject) {
 	for (var i = 0; i < Clazz.extendedObjectMethods.length; i++) {
 		var p = Clazz.extendedObjectMethods[i];

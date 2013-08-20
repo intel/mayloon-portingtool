@@ -2,6 +2,7 @@ Clazz.load(["java.lang.Comparable", "java.io.Serializable"], "java.lang.Boolean"
 	java.lang.Boolean = Boolean = function () {
 		Clazz.instantialize(this, arguments);
 	};
+    Clazz.decorateAsType (Boolean, "Boolean", null, [java.io.Serializable, Comparable], null, true);
 	if (Clazz.supportsNativeObject) {
 		for (var i = 0; i < Clazz.extendedObjectMethods.length; i++) {
 			var p = Clazz.extendedObjectMethods[i];

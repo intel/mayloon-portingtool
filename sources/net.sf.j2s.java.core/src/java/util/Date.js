@@ -1,6 +1,6 @@
 Clazz.load (null, "java.util.Date", null, function () {
 java.util.Date = Date;
-Clazz.decorateAsType (java.util.Date, "java.util.Date", null, [java.io.Serializable, Cloneable, Comparable]);
+Clazz.decorateAsType (java.util.Date, "java.util.Date", null, [java.io.Serializable, Cloneable, Comparable], null, true);
 
 Clazz.defineMethod (java.util.Date, "clone", 
 function () {
