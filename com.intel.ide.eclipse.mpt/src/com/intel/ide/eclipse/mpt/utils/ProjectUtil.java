@@ -2561,7 +2561,6 @@ public class ProjectUtil {
 				
 				ProjectUtil.copyFilesFromPlugin2UserProject(srcPath, destPath);
 				IFolder folder = JavaCore.create(project).getProject().getFolder(outputPath);
-				folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 			} catch (JavaModelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

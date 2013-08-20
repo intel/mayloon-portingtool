@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -59,7 +58,6 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		saveProperty(project, PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION, MayloonOutputFolder.getRawLocation().toString());
 		
 		ProjectUtil.addMayloonRuntimeJSFiles(project);
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		monitor.done();
 		return project.getReferencedProjects();
 	}
