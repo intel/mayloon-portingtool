@@ -132,7 +132,7 @@ public void done() {
 		if(NewErrorCount != 0){
 			CorePluginConsole.warning(MptConstants.BUILD_TAG, "There is a problem in project '%1$s'", currentProject.getName());
 		}else{
-			CorePluginConsole.success(MptConstants.BUILD_TAG, "Project '%1$s' has been built successfully.", currentProject.getName());
+			CorePluginConsole.success(MptConstants.BUILD_TAG, "Project '%1$s' code has been converted to Javascript successfully.", currentProject.getName());
 		}
 	}
 		currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
