@@ -106,8 +106,6 @@ public class ProjectUtil {
 		VERBOSE;
 	}
 
-	private static OutputLevel mLevel;
-
 	/**
 	 * Get the Mayloon output folder, the tizen package will be created there.
 	 * 
@@ -278,11 +276,7 @@ public class ProjectUtil {
 		boolean retVal = true;
 		File files = new File(destFilePath.toOSString());
 		if (!files.exists()) {
-			if (files.mkdirs()) {
-				System.out
-						.println("Miss Class Package directories are created!");
-
-			} else {
+			if (!files.mkdirs()) {
 				System.out
 						.println("Failed to create Miss Class Package directories!");
 				retVal = false;

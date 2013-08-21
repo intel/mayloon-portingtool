@@ -90,8 +90,6 @@ import com.intel.ide.eclipse.mpt.MptPluginConsole;
 
 public class UnresolvedElementsSubProcessor {
 
-	private static final String ADD_IMPORT_ID= "org.eclipse.jdt.ui.correction.addImport"; //$NON-NLS-1$
-
 	public static void getVariableProposals(IInvocationContext context, IProblemLocation problem, IVariableBinding resolvedField, Map<String, Map> proposals) throws CoreException {
 
 		ICompilationUnit cu= context.getCompilationUnit();
@@ -457,7 +455,7 @@ public class UnresolvedElementsSubProcessor {
 //		} while (node != null);
 	}
 
-	public static void getMethodProposals(IInvocationContext context, IProblemLocation problem, boolean isOnlyParameterMismatch, Map<String, Map> proposals) throws CoreException {
+	public static void getMethodProposals(IInvocationContext context, IProblemLocation problem, boolean isOnlyParameterMismatch, Map<String, Map> missingMethodsMap) throws CoreException {
 
 		ICompilationUnit cu= context.getCompilationUnit();
 
@@ -489,17 +487,16 @@ public class UnresolvedElementsSubProcessor {
 		}
 
 		String methodName= nameNode.getIdentifier();
-		int nArguments= arguments.size();
 
 		// new method
-		addNewMethodProposals(cu, astRoot, sender, arguments, isSuperInvocation, invocationNode, methodName, proposals);
+		addNewMethodProposals(cu, astRoot, sender, arguments, isSuperInvocation, invocationNode, methodName, missingMethodsMap);
 
 //		if (!isOnlyParameterMismatch && !isSuperInvocation && sender != null) {
 //			addMissingCastParentsProposal(cu, (MethodInvocation) invocationNode, proposals);
 //		}
 	}
 	
-	private static void addNewMethodProposals(ICompilationUnit cu, CompilationUnit astRoot, Expression sender, List<Expression> arguments, boolean isSuperInvocation, ASTNode invocationNode, String methodName, Map<String, Map> proposals) throws JavaModelException {
+	private static void addNewMethodProposals(ICompilationUnit cu, CompilationUnit astRoot, Expression sender, List<Expression> arguments, boolean isSuperInvocation, ASTNode invocationNode, String methodName, Map<String, Map> missingMethodsMap) throws JavaModelException {
 		ITypeBinding nodeParentType= Bindings.getBindingOfParentType(invocationNode);
 		ITypeBinding binding= null;
 		if (sender != null) {
@@ -516,7 +513,7 @@ public class UnresolvedElementsSubProcessor {
 			ICompilationUnit targetCU= ASTResolving.findCompilationUnitForBinding(cu, astRoot, senderDeclBinding);
 			if (targetCU != null) {
 			    String fqName = targetCU.findPrimaryType().getFullyQualifiedName();
-			    Map<String, LinkedCorrectionProposal> proposalsMap = proposals.get(fqName);
+			    Map<String, LinkedCorrectionProposal> proposalsMap = missingMethodsMap.get(fqName);
 			    
 			    if (proposalsMap == null){
 			         MptPluginConsole.general(MptConstants.PARTIAL_CONVERSION_TAG, "Skip adding method for " + fqName);
@@ -525,6 +522,9 @@ public class UnresolvedElementsSubProcessor {
 				String label;
 				Image image = null;
 				ITypeBinding[] parameterTypes= getParameterTypes(arguments);
+				
+				if(!checkParameterTypes(parameterTypes, missingMethodsMap))
+				    return;
 				if (parameterTypes != null) {
 					String sig= ASTResolving.getMethodSignature(methodName, parameterTypes, false);
 
@@ -536,7 +536,7 @@ public class UnresolvedElementsSubProcessor {
 							label= Messages.format(CorrectionMessages.UnresolvedElementsSubProcessor_createmethod_other_description, new Object[] { sig, BasicElementLabels.getJavaElementName(senderDeclBinding.getName()) } );
 //							image= JavaPluginImages.get(JavaPluginImages.IMG_MISC_PUBLIC);
 						}
-						proposalsMap.put(methodName, 
+						proposalsMap.put(sig, 
 						        new NewMethodCorrectionProposal(label, targetCU, invocationNode, arguments, senderDeclBinding, IProposalRelevance.CREATE_METHOD, image));
 					}
 					if (senderDeclBinding.isNested() && cu.equals(targetCU) && sender == null && Bindings.findMethodInHierarchy(senderDeclBinding, methodName, (ITypeBinding[]) null) == null) { // no covering method
@@ -547,7 +547,7 @@ public class UnresolvedElementsSubProcessor {
 								String[] args= new String[] { sig, ASTResolving.getTypeSignature(senderDeclBinding) };
 								label= Messages.format(CorrectionMessages.UnresolvedElementsSubProcessor_createmethod_other_description, args);
 //								image= JavaPluginImages.get(JavaPluginImages.IMG_MISC_PROTECTED);
-								proposalsMap.put(methodName, new NewMethodCorrectionProposal(label, targetCU, invocationNode, arguments, senderDeclBinding, IProposalRelevance.CREATE_METHOD, image));
+								proposalsMap.put(sig, new NewMethodCorrectionProposal(label, targetCU, invocationNode, arguments, senderDeclBinding, IProposalRelevance.CREATE_METHOD, image));
 							}
 						}
 					}
@@ -556,7 +556,26 @@ public class UnresolvedElementsSubProcessor {
 		}
 	}
 
-	private static void addMissingCastParentsProposal(ICompilationUnit cu, MethodInvocation invocationNode, Collection<LinkedCorrectionProposal> proposals) {
+	/**
+     * @param parameterTypes Type bindings of the arguments
+     * @param missingMethodsMap Missing methods map
+     * @return If a method with the given argument types could be generated safely
+     */
+    private static boolean checkParameterTypes(ITypeBinding[] parameterTypes,
+            Map<String, Map> missingMethodsMap) {
+        if (parameterTypes == null)
+            return false;
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            ITypeBinding binding = parameterTypes[i];
+            if (binding.isFromSource() && !missingMethodsMap.containsKey(binding.getQualifiedName()))
+                return false;
+        }
+
+        return true;
+    }
+    
+    private static void addMissingCastParentsProposal(ICompilationUnit cu, MethodInvocation invocationNode, Collection<LinkedCorrectionProposal> proposals) {
 		Expression sender= invocationNode.getExpression();
 		if (sender instanceof ThisExpression) {
 			return;
