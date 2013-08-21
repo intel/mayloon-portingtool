@@ -923,7 +923,12 @@ Clazz.forName = function (clazzName) {
 	}
 	if (window["ClazzLoader"] != null) {
 		ClazzLoader.setLoadingMode ("xhr.sync");
-		ClazzLoader.loadClass (clazzName);
+        var loadName = clazzName;
+        if (clazzName.indexOf("$") > 0) {
+            loadName = clazzName.substring(0, clazzName.indexOf("$"));
+        }
+        ClazzLoader.loadClass (loadName);
+        clazzName = clazzName.replace(/\$/g, ".");
 		return Clazz.evalType (clazzName);
 	} else {
 		console.error ("[Java2Script] Error: No ClassLoader!");
