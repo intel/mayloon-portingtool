@@ -90,6 +90,23 @@ import com.intel.ide.eclipse.mpt.MptPluginConsole;
 
 public class UnresolvedElementsSubProcessor {
 
+	/**
+	 * 
+	 * @param node The name node in question
+	 * @return If it is safe to declare this node as a field, as opposed to a type
+	 */
+	private static boolean isVariableProposalSafe(Name node){
+		ASTNode parent = node.getParent();
+		if(parent == null || !(parent instanceof Name))
+			return true;
+		
+		QualifiedName parentName = (QualifiedName) parent;
+		if(parentName.getQualifier() == node)
+			return false;
+		
+		return isVariableProposalSafe(parentName);
+	}
+	
 	public static void getVariableProposals(IInvocationContext context, IProblemLocation problem, IVariableBinding resolvedField, Map<String, Map> proposals) throws CoreException {
 
 		ICompilationUnit cu= context.getCompilationUnit();
@@ -119,6 +136,9 @@ public class UnresolvedElementsSubProcessor {
 		switch (selectedNode.getNodeType()) {
 			case ASTNode.SIMPLE_NAME:
 				node= (SimpleName) selectedNode;
+				
+				if(!isVariableProposalSafe(node))
+					return;
 				ASTNode parent= node.getParent();
 				StructuralPropertyDescriptor locationInParent= node.getLocationInParent();
 				if (locationInParent == MethodInvocation.EXPRESSION_PROPERTY) {
