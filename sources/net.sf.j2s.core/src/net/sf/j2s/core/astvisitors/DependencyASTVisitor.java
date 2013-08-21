@@ -463,13 +463,15 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 	 */
 	public boolean visit(TypeDeclaration node) {
 		ITypeBinding resolveBinding = node.resolveBinding();
-        String fileName = resolveBinding.getJavaElement().getPath().toFile().getName();
-        fileName = fileName.substring(0, fileName.lastIndexOf("."));
-		if (resolveBinding != null && resolveBinding.isTopLevel() && fileName.equals(resolveBinding.getName())) {
-			String thisClassName = resolveBinding.getQualifiedName();
-			classNameSet.add(thisClassName);
-			classBindingSet.add(resolveBinding);
-		}
+        if (resolveBinding != null) {
+            String fileName = resolveBinding.getJavaElement().getPath().toFile().getName();
+            fileName = fileName.substring(0, fileName.lastIndexOf("."));
+            if (resolveBinding != null && resolveBinding.isTopLevel() && fileName.equals(resolveBinding.getName())) {
+                String thisClassName = resolveBinding.getQualifiedName();
+                classNameSet.add(thisClassName);
+                classBindingSet.add(resolveBinding);
+            }
+        }
 		readTags(node);
 
 		visitForMusts(node);

@@ -160,19 +160,21 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		ITypeBinding binding = node.resolveBinding();
 		ASTTypeVisitor typeVisitor = ((ASTTypeVisitor) getAdaptable(ASTTypeVisitor.class));
 		
-		String anonClassName = null;
-		if (binding.isAnonymous() || binding.isLocal()) {
-			String binaryName = binding.getBinaryName();
-			if (binaryName == null) {
-				String bindingKey = binding.getKey();
-				if (bindingKey != null) {
-					binaryName = bindingKey = bindingKey.substring(1, bindingKey.length() - 1).replace('/', '.');
+		String anonClassName = "";
+        if (binding != null) {
+			if (binding.isAnonymous() || binding.isLocal()) {
+				String binaryName = binding.getBinaryName();
+				if (binaryName == null) {
+					String bindingKey = binding.getKey();
+					if (bindingKey != null) {
+						binaryName = bindingKey = bindingKey.substring(1, bindingKey.length() - 1).replace('/', '.');
+					}
 				}
+				anonClassName = assureQualifiedName(shortenQualifiedName(binaryName));
+			} else {
+				anonClassName = assureQualifiedName(shortenQualifiedName(binding.getQualifiedName()));
 			}
-			anonClassName = assureQualifiedName(shortenQualifiedName(binaryName));
-		} else {
-			anonClassName = assureQualifiedName(shortenQualifiedName(binding.getQualifiedName()));
-		}
+        }
 		String shortClassName = null;
 		int idx = anonClassName.lastIndexOf('.');
 		if (idx == -1) {
@@ -544,18 +546,20 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		} else {
 			ITypeBinding binding = node.resolveTypeBinding();
 			String anonClassName = null;
-			if (binding.isAnonymous() || binding.isLocal()) {
-				String binaryName = binding.getBinaryName();
-				if (binaryName == null) {
-					String bindingKey = binding.getKey();
-					if (bindingKey != null) {
-						binaryName = bindingKey = bindingKey.substring(1, bindingKey.length() - 1).replace('/', '.');
+           if (binding != null) {
+				if (binding.isAnonymous() || binding.isLocal()) {
+					String binaryName = binding.getBinaryName();
+					if (binaryName == null) {
+						String bindingKey = binding.getKey();
+						if (bindingKey != null) {
+							binaryName = bindingKey = bindingKey.substring(1, bindingKey.length() - 1).replace('/', '.');
+						}
 					}
+					anonClassName = assureQualifiedName(shortenQualifiedName(binaryName));
+				} else {
+					anonClassName = assureQualifiedName(shortenQualifiedName(binding.getQualifiedName()));
 				}
-				anonClassName = assureQualifiedName(shortenQualifiedName(binaryName));
-			} else {
-				anonClassName = assureQualifiedName(shortenQualifiedName(binding.getQualifiedName()));
-			}
+            }
 
 //			String baseClassName = assureQualifiedName(shortenQualifiedName(getFullClassName()));
 //			String shortClassName = null;
