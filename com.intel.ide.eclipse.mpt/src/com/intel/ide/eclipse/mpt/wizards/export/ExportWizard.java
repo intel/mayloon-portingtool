@@ -43,6 +43,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	private File fDestinationFile;
 	
 	private boolean bEnableCompress;
+	private Boolean originalAutoBuild;
 
 	public ExportWizard() {
 		this.setHelpAvailable(false);
@@ -100,6 +101,11 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	private void performTizenPackage(IProgressMonitor monitor) {
 		try {
 			monitor.beginTask("Exporting MayLoon application...", 5);
+			// disable AutoBuild
+			originalAutoBuild = ProjectUtil.getAutoBuild();
+			if (originalAutoBuild) {
+				ProjectUtil.setAutoBuild(false);
+			}
 			// set export destination
 			ProjectUtil.setMayloonOutputFolder(fProject, fDestinationFile);
 			// get package name from AndroidManifest.xml
@@ -155,6 +161,14 @@ public class ExportWizard extends Wizard implements IExportWizard {
 					"Project '%1$s' could not be exported due to cause {%2$s}",
 					fProject.getName(), e.getMessage());
 			e.printStackTrace();
+		}finally {
+		    if (originalAutoBuild){
+		    	try {
+		    		ProjectUtil.setAutoBuild(true);
+		    		} catch (CoreException e) {
+		    			e.printStackTrace();
+		    		}
+		    }
 		}
 	}
 
