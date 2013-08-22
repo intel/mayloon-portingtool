@@ -379,7 +379,11 @@ public class ConvertWizards extends Wizard {
                             for(IProblem problem: problems){
                                 IProblemLocation pl = new ProblemLocation(problem);
                                 Collection<LinkedCorrectionProposal> proposals = new ArrayList<LinkedCorrectionProposal>();
-                                switch(pl.getProblemId()){
+                                int id = pl.getProblemId();
+                                switch(id){
+                                	case IProblem.IsClassPathCorrect:
+                                		MptPluginConsole.warning(MptConstants.PARTIAL_CONVERSION_TAG, problem.getMessage());
+                                		break;
                                     case IProblem.ImportNotFound:
                                         UnresolvedElementsSubProcessor.importNotFoundProposals(context, pl, missingTypesMap);
                                         break;
