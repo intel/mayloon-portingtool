@@ -441,6 +441,7 @@
     			<exclude name="**/*.class"/>
     			<exclude name="**/*.swp"/>
     			<exclude name="**/*.swo"/>
+                <exclude name="**/org/w3c/**"/>
     		</fileset>
     		<fileset dir="${j2s.swt.bin}">
     			<exclude name="org/eclipse/swt/internal/xhtml/**"/>
