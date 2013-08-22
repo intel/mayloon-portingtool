@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -185,6 +187,12 @@ public class AntPropertiesBuilder {
 			}
 			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_DIR, projectName), fProject.getProject().getLocation().toOSString());
 			prop.setProperty(getPropertyName(FORMAT_REFERENCE_PROJECT_REFERENCE_PROJECTS, projectName), referenceProjects);
+		}
+		// create Mayloon output folder if it's not present
+		IFolder MayloonOutputFolder = this.fProject.getProject().getFolder(MptConstants.MAYLOON_OUTPUT_DIR);
+		if(MayloonOutputFolder==null || !MayloonOutputFolder.exists()){
+			MayloonOutputFolder.create(true, true, null);
+			prop.setProperty(MptConstants.PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION, MayloonOutputFolder.getRawLocation().toString());
 		}
 		
 		for(IJavaProject project : projects) {

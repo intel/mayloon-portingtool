@@ -46,17 +46,6 @@ public class MayloonPackageBuilder extends IncrementalProjectBuilder {
 		if(ProjectUtil.isLibraryProject(project)) {
 			return project.getReferencedProjects();
 		}
-		
-		// remove build problem marker
-		ProjectUtil.removeMarkersFromResource(project, MptConstants.MARKER_BUILDER, IResource.DEPTH_ONE);
-		
-		// create Mayloon output folder if it's not present
-		IFolder MayloonOutputFolder = project.getFolder(MptConstants.MAYLOON_OUTPUT_DIR);
-		if(MayloonOutputFolder==null || !MayloonOutputFolder.exists()){
-			MayloonOutputFolder.create(true, true, new SubProgressMonitor(monitor, 1));
-		}
-		saveProperty(project, PROPERTY_CURRENT_PROJECT_EXPORT_DESTINATION, MayloonOutputFolder.getRawLocation().toString());
-		
 		ProjectUtil.addMayloonRuntimeJSFiles(project);
 		monitor.done();
 		return project.getReferencedProjects();
