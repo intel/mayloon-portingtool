@@ -43,6 +43,11 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 * Creates a new JSDoubleClickStrategy object.
 	 */
 	boolean cursortag=false;
+	// the part doubleclicked
+	String choosenPart="null";
+	public String getChoosenPart(){
+		return choosenPart;
+	}
 	public JSDoubleClickStrategy() {
 		super();
 	}
@@ -57,10 +62,7 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	public void doubleClicked(ITextViewer text) {
 		text.invalidateTextPresentation();
 		// attention length must >0
-		// the part doubleclicked
 		
-		String choosenPart;
-		// red
 		Point selected = text.getSelectedRange(); // x is offset, y is length
 		IDocument doc = text.getDocument();
 

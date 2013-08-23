@@ -31,9 +31,11 @@
 
 package net.sourceforge.jseditor.editors;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import javax.swing.Timer;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,6 +49,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -68,6 +71,8 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected JSConfiguration configuration;
 	protected JSDoubleClickStrategy jsdc = new JSDoubleClickStrategy(true);
 	protected String keywords[]={"Clazz"};
+	protected static Timer timer;
+	protected static int delay = 1000; //milliseconds
 	
 	
 	/*
@@ -83,13 +88,15 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected void handleCursorPositionChanged() {
 		// TODO Auto-generated method stub
 		super.handleCursorPositionChanged();
-		jsdc.doubleClicked(getSourceViewer());
-		setKeywordTextColor(keywords);
-		
-
+		timer.stop();
+		timer.start();
 	}
 	
 	private void setKeywordTextColor(String keywords[]){
+		for(int i=0;i<keywords.length;i++){
+			if(jsdc.getChoosenPart().equals(keywords[i]))
+				return;
+		}
 		String doc=getSourceViewer().getDocument().get();
 		for(int i=0;i<keywords.length;i++){
 			int offset = doc.indexOf(keywords[i]);
@@ -121,6 +128,19 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 		configuration = new JSConfiguration(colorManager);
 		setSourceViewerConfiguration(configuration);
 		setDocumentProvider(new JSDocumentProvider());
+		ActionListener taskPerformer = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					 Display.getDefault().syncExec(new Runnable() {
+						    public void run() {
+						    	jsdc.doubleClicked(getSourceViewer());
+								setKeywordTextColor(keywords);
+								timer.stop();
+						    }
+						    }); 
+				}
+			  };
+        timer=new Timer(delay,taskPerformer);
 	}
 
 
