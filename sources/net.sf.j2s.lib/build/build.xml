@@ -160,7 +160,7 @@
         		<pathelement path="${j2s.lib.project}/bin"/>
         	</classpath>
        	</java>
-        <java classname="net.sf.j2s.lib.build.UTF8Concat">
+        <!-- <java classname="net.sf.j2s.lib.build.UTF8Concat">
         	<arg value="none"/>
         	<arg value="${j2s.lib.dist}/j2slib.swt.z.js"/>
         	
@@ -176,12 +176,12 @@
 	    	<classpath>
 	    		<pathelement path="${j2s.lib.project}/bin"/>
 	    	</classpath>
-	    </java>
+	    </java> -->
     	
     	<!--<delete file="${j2s.core.bin}/org/eclipse/swt/package.js" quiet="true"/>-->
 
     	<!-- j2slibcore.z.js does not contains Console -->
-        <java classname="net.sf.j2s.lib.build.UTF8Concat">
+        <!-- <java classname="net.sf.j2s.lib.build.UTF8Concat">
         	<arg value="none"/>
         	<arg value="${j2s.lib.dist}/j2slibcore.z.js"/>
         	
@@ -193,7 +193,7 @@
 	    	<classpath>
 	    		<pathelement path="${j2s.lib.project}/bin"/>
 	    	</classpath>
-	    </java>
+	    </java> -->
 	</target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
