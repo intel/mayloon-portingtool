@@ -208,6 +208,11 @@ public class ASTMethodVisitor extends AbstractPluginVisitor {
 	 */
 	protected boolean canAutoOverride(MethodDeclaration node) {
 		boolean isOK2AutoOverriding = false;
+		
+		if (!checkExceptionForOverrideMethod(node)){
+			return isOK2AutoOverriding;
+		}
+		
 		IMethodBinding methodBinding = node.resolveBinding();
 		if (methodBinding != null && testForceOverriding(methodBinding)) {
 			IMethodBinding superMethod = Bindings.findMethodDeclarationInHierarchy(methodBinding.getDeclaringClass(), methodBinding);
@@ -224,4 +229,18 @@ public class ASTMethodVisitor extends AbstractPluginVisitor {
 		return isOK2AutoOverriding;
 	}
 
+	/**
+	 * some exceptions for avoiding other bugs in j2s plugin or jsthread
+	 * @param node
+	 * @return
+	 */
+	private boolean checkExceptionForOverrideMethod(MethodDeclaration node){
+		IMethodBinding methodBinding = node.resolveBinding();
+		String superClassName = methodBinding.getDeclaringClass().getSuperclass().getName();
+		String methodName = methodBinding.getName();
+		if (superClassName.equals("Thread") && methodName.equals("run")){
+			return true;
+		}
+		return false;
+	}
 }
