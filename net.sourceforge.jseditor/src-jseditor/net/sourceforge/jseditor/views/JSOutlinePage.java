@@ -131,26 +131,33 @@ public class JSOutlinePage extends ContentOutlinePage implements
 											.getLength() - region.getOffset()
 											: JSConstant.stringOffsetLength)
 							.replaceAll("\t*\n*\b*\r* *", "");
-					if (text.startsWith("declarePackage")) {
+					if (text.startsWith(JSConstant.Keyword_declarePackage)) {
 						String tag1 = "(\"";
 						String tag2 = "\")";
 						return subString(tag1, tag2, text);
-					} else if (text.startsWith("load")) {
+					} else if (text.startsWith(JSConstant.Keyword_load)) {
 						String tag1 = "],\"";
 						String tag2 = "\",";
 						nameOfClass = subString(tag1, tag2, text);
+						JSConstant.load_pattern_tag="default";
 						if (nameOfClass.equals(ERROR)) {
 							String tag3 = "null,\"";
 							String tag4 = "\",";
 							nameOfClass = subString(tag3, tag4, text);
+							JSConstant.load_pattern_tag="null";
 						}
 						return nameOfClass;
-					} else if (text.startsWith("declareType")) {
+					} else if (text.startsWith(JSConstant.Keyword_declareType)) {
 						String tag1 = "\"";
 						String tag2 = "\"";
 						nameOfClass = subString(tag1, tag2, text);
 						return nameOfClass;
-					} else if (text.startsWith("makeConstructor")) {
+					} else if (text.startsWith(JSConstant.Keyword_decorateasclass)) {
+						String tag1 = "\"";
+						String tag2 = "\"";
+						nameOfClass = subString(tag1, tag2, text);
+						return nameOfClass;
+					} else if (text.startsWith(JSConstant.Keyword_makeConstructor)) {
 						if (nameOfClass != null)
 							return nameOfClass.substring(nameOfClass
 									.lastIndexOf(".") + 1)
@@ -159,8 +166,8 @@ public class JSOutlinePage extends ContentOutlinePage implements
 						else
 							return ERROR;
 
-					} else if (text.startsWith("defineMethod")
-							|| text.startsWith("overrideMethod")) {
+					} else if (text.startsWith(JSConstant.Keyword_defineMethod)
+							|| text.startsWith(JSConstant.Keyword_overrideMethod)) {
 						String tag1 = ",\"";
 						String tag2 = "\",";
 						return subString(tag1, tag2, text) + '('

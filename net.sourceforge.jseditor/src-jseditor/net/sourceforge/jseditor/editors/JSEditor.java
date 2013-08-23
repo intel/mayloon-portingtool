@@ -31,6 +31,11 @@
 
 package net.sourceforge.jseditor.editors;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -50,6 +55,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import net.sourceforge.jseditor.utility.JSConstant;
 import net.sourceforge.jseditor.views.JSOutlinePage;
 
+
 /**
  * DOCUMENT ME!
  * 
@@ -60,9 +66,10 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected JSColorManager colorManager = new JSColorManager();
 	protected JSOutlinePage outlinePage;
 	protected JSConfiguration configuration;
-
-	protected boolean updating = false;
-
+	protected JSDoubleClickStrategy jsdc = new JSDoubleClickStrategy(true);
+	protected String keywords[]={"Clazz"};
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,11 +83,34 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected void handleCursorPositionChanged() {
 		// TODO Auto-generated method stub
 		super.handleCursorPositionChanged();
-		JSDoubleClickStrategy jsdc = new JSDoubleClickStrategy(true);
 		jsdc.doubleClicked(getSourceViewer());
-		//activate Ctrl+F action
-		getAction(ITextEditorActionConstants.FIND).setEnabled(true);
+		setKeywordTextColor(keywords);
+		
 
+	}
+	
+	private void setKeywordTextColor(String keywords[]){
+		String doc=getSourceViewer().getDocument().get();
+		for(int i=0;i<keywords.length;i++){
+			int offset = doc.indexOf(keywords[i]);
+			int length = keywords[i].length();
+			while (offset != -1) {
+				// call the function
+				getSourceViewer().setTextColor(JSTextColorConstants.JS_KEYWORD, offset, keywords[i].length(), true);
+				offset = doc.indexOf(keywords[i], offset + length);
+			}
+		}
+		
+	}
+	
+
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+		super.setFocus();
+		getAction(ITextEditorActionConstants.FIND).setEnabled(true);
+		setKeywordTextColor(keywords);
+		
 	}
 
 	/**
@@ -92,6 +122,7 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 		setSourceViewerConfiguration(configuration);
 		setDocumentProvider(new JSDocumentProvider());
 	}
+
 
 	/**
 	 * Method declared on IEditorPart
@@ -153,19 +184,29 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 											.getFirstElement();
 									try {
 										// JSConstant.stringOffsetLength ,the
-										// default value is 200
+										// default value is 600
+										int length_to_bottom =getSourceViewer().getDocument().getLength()-region.getOffset();
 										String text = getSourceViewer()
 												.getDocument()
 												.get(region.getOffset(),
-														JSConstant.stringOffsetLength);
-										if (text.startsWith("declarePackage")) {
+														JSConstant.stringOffsetLength<length_to_bottom?JSConstant.stringOffsetLength:length_to_bottom);
+										if (text.startsWith(JSConstant.Keyword_declarePackage)) {
 											String tag1 = "\"";
 											String tag2 = "\"";
 											clickOutline(region.getOffset(),
 													tag1, tag2, text);
-										} else if (text.startsWith("load")) {
+										} else if (text.startsWith(JSConstant.Keyword_load)) {
 											// in case that,user have type a lot
 											// of tabs or space...
+											if(JSConstant.load_pattern_tag.equals("null"))
+											{
+												String tag1 = "\"";
+												String tag2 = "\"";
+												clickOutline(region.getOffset(),
+														tag1, tag2, text);
+												return ;
+											}
+												
 											int m = text.indexOf("]");
 											int d = text.indexOf(",", m);
 											int beginIdx = text
@@ -188,25 +229,33 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 														region.getOffset(), 10,
 														true);
 										} else if (text
-												.startsWith("declareType")) {
+												.startsWith(JSConstant.Keyword_declareType)) {
 											String tag1 = "\"";
 											String tag2 = "\"";
 											clickOutline(region.getOffset(),
 													tag1, tag2, text);
-											setHighlightRange(424, 15, true);
-										} else if (text
-												.startsWith("makeConstructor")) {
-											setHighlightRange(
-													region.getOffset(),
-													region.getLength(), true);
-											getSourceViewer().setSelectedRange(
-													region.getOffset(),
-													region.getLength());
-										} else if (text
-												.startsWith("defineMethod")
-												|| text.startsWith("overrideMethod")) {
+										}else if(text.startsWith(JSConstant.Keyword_decorateasclass))
+										{
 											String tag1 = "\"";
 											String tag2 = "\"";
+											clickOutline(region.getOffset(),
+													tag1, tag2, text);
+											
+										}
+										else if (text
+												.startsWith(JSConstant.Keyword_makeConstructor)) {
+											setHighlightRange(
+													region.getOffset()+"Clazz.".length(),
+													"makeConstructor".length(), true);
+											getSourceViewer().setSelectedRange(
+													region.getOffset()+"Clazz.".length(),
+													"makeConstructor".length());
+										} else if (text
+												.startsWith(JSConstant.Keyword_defineMethod)
+												|| text.startsWith(JSConstant.Keyword_overrideMethod)) {
+											String tag1 = "\"";
+											String tag2 = "\"";
+											
 											clickOutline(region.getOffset(),
 													tag1, tag2, text);
 										} else
