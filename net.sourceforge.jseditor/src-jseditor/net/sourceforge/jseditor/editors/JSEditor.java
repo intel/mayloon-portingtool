@@ -33,24 +33,20 @@ package net.sourceforge.jseditor.editors;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 import javax.swing.Timer;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -102,8 +98,17 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 			int offset = doc.indexOf(keywords[i]);
 			int length = keywords[i].length();
 			while (offset != -1) {
-				// call the function
-				getSourceViewer().setTextColor(JSTextColorConstants.JS_KEYWORD, offset, keywords[i].length(), true);
+				StyleRange range = new StyleRange();
+				// The range of word
+				range.foreground=JSTextColorConstants.JS_KEYWORD;
+				range.borderColor=JSTextColorConstants.JS_KEYWORD;
+				range.start = offset;
+				range.length = length;
+				range.fontStyle=SWT.BOLD;
+				TextPresentation presentation = new TextPresentation();
+				// set TextPresentation with the StyleRange parameter
+				presentation.setDefaultStyleRange(range);
+				getSourceViewer().changeTextPresentation(presentation, true);
 				offset = doc.indexOf(keywords[i], offset + length);
 			}
 		}
