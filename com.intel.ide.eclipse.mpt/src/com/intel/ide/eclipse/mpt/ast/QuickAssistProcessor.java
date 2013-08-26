@@ -32,7 +32,7 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
  */
 public class QuickAssistProcessor {
 
-    public static boolean getCreateInSuperClassProposals(IInvocationContext context, ASTNode node, Map<String, Map> proposals) throws CoreException {
+    public static boolean getCreateInSuperClassProposals(IInvocationContext context, ASTNode node, Map<String, Map> missingMethodsMap) throws CoreException {
         if (!(node instanceof SimpleName) || !(node.getParent() instanceof MethodDeclaration)) {
             return false;
         }
@@ -47,6 +47,9 @@ public class QuickAssistProcessor {
         IMethodBinding binding= decl.resolveBinding();
         ITypeBinding[] paramTypes= binding.getParameterTypes();
 
+		if(!checkParameterTypes(paramTypes, missingMethodsMap))
+		    return false;
+
         ITypeBinding[] superTypes= getAllSuperTypes(binding.getDeclaringClass());
 
         List<SingleVariableDeclaration> params= decl.parameters();
@@ -56,6 +59,8 @@ public class QuickAssistProcessor {
             paramNames[i]= param.getName().getIdentifier();
         }
 
+		String sig= ASTResolving.getMethodSignature(binding.getName(), paramTypes, false);
+		
         for (int i= 0; i < superTypes.length; i++) {
             ITypeBinding curr= superTypes[i];
             if (curr.isFromSource()) {
@@ -65,20 +70,39 @@ public class QuickAssistProcessor {
                     ICompilationUnit targetCU= ASTResolving.findCompilationUnitForBinding(cu, astRoot, typeDecl);
                     if (targetCU != null) {
                         String fqName = targetCU.findPrimaryType().getFullyQualifiedName();
-                        Map<String, LinkedCorrectionProposal> proposalsMap = proposals.get(fqName);
+                        Map<String, LinkedCorrectionProposal> proposalsMap = missingMethodsMap.get(fqName);
                         
                         if (proposalsMap == null){
                              continue;
                         }
                         String label= Messages.format(CorrectionMessages.QuickAssistProcessor_createmethodinsuper_description, new String[] { BasicElementLabels.getJavaElementName(curr.getName()), BasicElementLabels.getJavaElementName(binding.getName()) });
-                        proposalsMap.put(binding.getName(), new NewDefiningMethodProposal(label, targetCU, astRoot, typeDecl, binding, paramNames, IProposalRelevance.CREATE_METHOD_IN_SUPER));
+                        proposalsMap.put(sig, new NewDefiningMethodProposal(label, targetCU, astRoot, typeDecl, binding, paramNames, IProposalRelevance.CREATE_METHOD_IN_SUPER));
+                        break;
                     }
                 }
             }
         }
         return true;
     }
-    
+
+	/**
+     * @param parameterTypes Type bindings of the arguments
+     * @param missingMethodsMap Missing methods map
+     * @return If a method with the given argument types could be generated safely
+     */
+    private static boolean checkParameterTypes(ITypeBinding[] parameterTypes,
+            Map<String, Map> missingMethodsMap) {
+        if (parameterTypes == null)
+            return false;
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            ITypeBinding binding = parameterTypes[i];
+            if (binding.isFromSource() && !missingMethodsMap.containsKey(binding.getQualifiedName()))
+                return false;
+        }
+
+        return true;
+    }
 
     /**
      * Returns all super types (classes and interfaces) for the given type in inheritance order.
