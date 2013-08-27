@@ -1326,6 +1326,16 @@ Clazz.isClassUnloaded = function (clzz) {
 	return Clazz.unloadedClasses[thisClassName] != null;
 };
 
+Clazz.innerPackageFunctions = {
+    getName : function () {
+        return this.__PKG_NAME__;
+    },
+
+    toString : function () {
+        return"package "+this.__PKG_NAME__;
+    }
+};
+
 /* public */
 Clazz.declarePackage = function (pkgName) {
 	if (Clazz.lastPackageName == pkgName) {
@@ -1338,7 +1348,9 @@ Clazz.declarePackage = function (pkgName) {
 			if (pkg[pkgFrags[i]] == null) {
 				pkg[pkgFrags[i]] = { 
 					__PKG_NAME__ : ((pkg.__PKG_NAME__ != null) ? 
-						pkg.__PKG_NAME__ + "." + pkgFrags[i] : pkgFrags[i])
+						pkg.__PKG_NAME__ + "." + pkgFrags[i] : pkgFrags[i]),
+                    getName : Clazz.innerPackageFunctions.getName,
+                    toString : Clazz.innerPackageFunctions.toString
 				}; 
 				// pkg[pkgFrags[i]] = new Object ();
 				if (i == 0) {
@@ -1521,7 +1533,7 @@ Clazz.instantialize = function (objThis, args) {
 /* protected */
 /*-# innerFunctionNames -> iFN #-*/
 Clazz.innerFunctionNames = [
-	"equals", "isInstance", "getName", "getClassLoader", "getResourceAsStream" /*# {$no.javascript.support} >>x #*/, "defineMethod", "defineStaticMethod", "makeConstructor"/*# x<< #*/
+	"equals", "isInstance", "getName", "getPackage", "getClassLoader", "getResourceAsStream" /*# {$no.javascript.support} >>x #*/, "defineMethod", "defineStaticMethod", "makeConstructor"/*# x<< #*/
 ];
 
 /*
@@ -1541,6 +1553,30 @@ Clazz.innerFunctions = {
      */
     isInstance : function (obj) {
         return Clazz.instanceOf(obj, this);
+    },
+
+    /**
+     * Similar to Class#getPackage
+     */
+    getPackage : function () {
+        var pkgName = this.getName().substring(0, this.getName().lastIndexOf("."));
+        var pkgFrags = pkgName.split(/\./);
+        var pkg = Clazz.allPackage;
+        var lastPkg;
+        for (var i = 0; i < pkgFrags.length; i++) {
+            lastPkg = pkg;
+            pkg = pkg[pkgFrags[i]];
+            /*
+            * According to the full class name to get the package object, if it is an inner class, 
+            * it will get the external object class instead of the package object. 
+            * so return the last package object if it has a class_name attribute. 
+            */
+            if (pkg.__CLASS_NAME__) {
+                pkg = lastPkg;
+                break;
+            }
+        }
+        return pkg;
     },
 
 	/*
