@@ -235,11 +235,15 @@ public class ASTMethodVisitor extends AbstractPluginVisitor {
 	 * @return
 	 */
 	private boolean checkExceptionForOverrideMethod(MethodDeclaration node){
-		IMethodBinding methodBinding = node.resolveBinding();
-		String superClassName = methodBinding.getDeclaringClass().getSuperclass().getName();
-		String methodName = methodBinding.getName();
-		if (superClassName.equals("Thread") && methodName.equals("run")){
-			return true;
+		try {
+			IMethodBinding methodBinding = node.resolveBinding();
+			String superClassName = methodBinding.getDeclaringClass().getSuperclass().getName();
+			String methodName = methodBinding.getName();
+			if (superClassName.equals("Thread") && methodName.equals("run")){
+				return true;
+			}
+		} catch(Exception e){
+			return false;
 		}
 		return false;
 	}
