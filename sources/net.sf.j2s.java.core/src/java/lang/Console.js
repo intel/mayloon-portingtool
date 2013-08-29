@@ -479,9 +479,9 @@ window.assert = function () {
 	System.getProperties = function () {
 		return System.props;
 	};
-	System.getProperty = function (key, def) {
+    System.getProperty = function (key, def) {
 		if (System.props != null) {
-			return System.props.getProperty (key, def);
+			return System.props[key];
 		}
 		if (def != null) {
 			return def;
@@ -492,11 +492,13 @@ window.assert = function () {
 		System.props = props;
 	};
 	System.setProperty = function (key, val) {
-		if (System.props == null) {
-			return ;
-		}
-		System.props.setProperty (key, val);
+	 if (System.props == null ) {
+	       System.props = new Array();
+	 }
+	    System.props[key] = val;
+	    return;
 	};
+
 
 	/* public */
 	System.out = new JavaObject ();
