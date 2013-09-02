@@ -1219,6 +1219,8 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 							PrimitiveType pType = (PrimitiveType) node.getType();
 							if (pType.getPrimitiveTypeCode() == PrimitiveType.BOOLEAN) {
 								buffer.append("false");
+                            } else if (pType.getPrimitiveTypeCode() == PrimitiveType.CHAR) {
+                                buffer.append("String.fromCharCode(0)");
 							} else {
 								buffer.append("0");
 							}
@@ -2845,7 +2847,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 							if (pType.getPrimitiveTypeCode() == PrimitiveType.BOOLEAN) {
 								buffer.append("false");
 							} else if (pType.getPrimitiveTypeCode() == PrimitiveType.CHAR) {
-								buffer.append("'\\0'");
+                                buffer.append("String.fromCharCode (0)");
 							} else {
 								buffer.append("0");
 							}
@@ -2908,7 +2910,7 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 							if (pType.getPrimitiveTypeCode() == PrimitiveType.BOOLEAN) {
 								buffer.append("false");
 							} else if (pType.getPrimitiveTypeCode() == PrimitiveType.CHAR) {
-								buffer.append("'\\0'");
+                                buffer.append("String.fromCharCode (0)");
 							} else {
 								buffer.append("0");
 							}
