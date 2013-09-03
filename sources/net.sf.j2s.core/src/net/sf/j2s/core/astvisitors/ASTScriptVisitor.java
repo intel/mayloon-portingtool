@@ -2277,7 +2277,12 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 	public boolean visit(SimpleType node) {
 		ITypeBinding binding = node.resolveBinding();
 		if (binding != null) {
-			buffer.append(assureQualifiedName(shortenQualifiedName(binding.getQualifiedName())));
+            String name = binding.getQualifiedName();
+            if (binding.isLocal()) {
+                name = binding.getDeclaringClass().getQualifiedName() + "$1" +
+                        binding.getName();
+            }
+			buffer.append(assureQualifiedName(shortenQualifiedName(name)));
 		} else {
 			buffer.append(node);
 		}
