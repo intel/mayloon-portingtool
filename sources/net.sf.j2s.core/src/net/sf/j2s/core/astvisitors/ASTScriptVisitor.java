@@ -493,12 +493,6 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		AnonymousClassDeclaration anonDeclare = node.getAnonymousClassDeclaration();
 		Expression expression = node.getExpression();
 		if (anonDeclare == null) {
-			if (expression != null) {
-				/*
-				 * TODO: make sure the expression is not effected
-				 */
-				expression.accept(this);
-			}
 			ITypeBinding binding = node.resolveTypeBinding();
 			if (binding != null) {
 				if (!binding.isTopLevel()) {
@@ -521,6 +515,9 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 					}
 				}
 			}
+            if (expression != null) {
+                expression.accept(this);
+            }
 			String fqName = getTypeStringName(node.getType());
 			if ("String".equals(fqName) || "java.lang.String".equals(fqName)) {
 				buffer.append(" String.instantialize");
