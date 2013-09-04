@@ -581,7 +581,6 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 				"java.lang.Runnable",
 				"java.util.Comparator",
 				"java.lang.System",
-				"java.io.PrintStream",
 				"java.lang.Math",
 				"java.lang.Integer"
 		};
