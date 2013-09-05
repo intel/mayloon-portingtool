@@ -417,15 +417,17 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 					if ("char".equals(rightTypeBinding.getName())) {
 						buffer.append(".charCodeAt (0)");
 					}
-				} else {
+				}else if(right instanceof NumberLiteral) {
 					buffer.append(' ');
-					if ("char".equals(rightTypeBinding.getName())) {
-						buffer.append(" (");
-						right.accept(this);
-						buffer.append(").charCodeAt (0)");
-					} else {
-						right.accept(this);
-					}
+					buffer.append("String.fromCharCode (");
+					right.accept(this);
+					buffer.append(").charCodeAt (0)");
+				}
+				else {
+					buffer.append(' ');
+					buffer.append(" (");
+					right.accept(this);
+					buffer.append(").charCodeAt (0)");
 				}
 				buffer.append(')');
 				return false;
@@ -557,11 +559,46 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 
 	public boolean visit(ConditionalExpression node) {
 		node.getExpression().accept(this);
-		buffer.append(" ? ");
-		node.getThenExpression().accept(this);
-		buffer.append(" : ");
-		node.getElseExpression().accept(this);
-		return false;
+        buffer.append(" ? ");
+        String leftHandName = null;
+        try {
+			if (node.getParent() instanceof Assignment) {
+				leftHandName = ((Assignment) node.getParent())
+						.getLeftHandSide().resolveTypeBinding().getName();
+			} else {
+				leftHandName = ((VariableDeclarationFragment) node.getParent())
+						.resolveBinding().getType().getName();
+			}
+			Expression thenExpression = node.getThenExpression();
+			Expression elseExpression = node.getElseExpression();
+			int thenType = thenExpression.getNodeType();
+			int elseType = elseExpression.getNodeType();
+			if (("char".equals(leftHandName))) {
+				if (thenType == ASTNode.NUMBER_LITERAL) {
+					buffer.append("String.fromCharCode(");
+					thenExpression.accept(this);
+					buffer.append("):");
+				} else {
+					thenExpression.accept(this);
+					buffer.append(":");
+                }
+                if (elseType == ASTNode.NUMBER_LITERAL) {
+                    buffer.append("String.fromCharCode(");
+                    elseExpression.accept(this);
+                    buffer.append(")");
+                    return false;
+                } else {
+                    elseExpression.accept(this);
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + "continue with following codes");
+        }
+        node.getThenExpression().accept(this);
+        buffer.append(" : ");
+        node.getElseExpression().accept(this);
+        return false;
 	}
 
 	public boolean visit(ContinueStatement node) {
