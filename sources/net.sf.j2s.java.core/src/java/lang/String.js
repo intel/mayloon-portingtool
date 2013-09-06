@@ -50,7 +50,7 @@ String.prototype.$generateExpFunction = function (str) {
 		if (i != str.length - 1 && ch == '\\') {
 			i++;
 			var c = str.charAt (i);
-			if (c == '\\') {
+			if (c == '\\' || c == '"') {
 				arr[idx] += '\\';
 			}
 			arr[idx] += c;
