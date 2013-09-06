@@ -27,7 +27,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * Replaces Eclipse's native double-click strategy with a slightly enhanced one:
@@ -42,59 +41,60 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	/**
 	 * Creates a new JSDoubleClickStrategy object.
 	 */
-	boolean cursortag=false;
+	boolean cursortag = false;
 	// the part doubleclicked
-	String choosenPart="null";
-	public String getChoosenPart(){
+	String choosenPart = "null";
+
+	public String getChoosenPart() {
 		return choosenPart;
 	}
+
 	public JSDoubleClickStrategy() {
 		super();
 	}
+
 	public JSDoubleClickStrategy(boolean cursortag) {
 		super();
-		this.cursortag=cursortag;
+		this.cursortag = cursortag;
 	}
 
 	/*
 	 * @see ITextDoubleClickStrategy#doubleClicked
 	 */
 	public void doubleClicked(ITextViewer text) {
-		text.invalidateTextPresentation();
 		// attention length must >0
-		
+
 		Point selected = text.getSelectedRange(); // x is offset, y is length
 		IDocument doc = text.getDocument();
-
-
 		// important，repaint the editor
-		text.invalidateTextPresentation();
+
 		if (selected.x < 0)
 			return;
 
 		// The double-click may start in one place and end in another, so check
 		// both ends
 		// of the double-clicked range then set up a span between them
-		
+
 		WordBounds firstWord = findWord(doc, selected.x);
 		WordBounds lastWord = (selected.y > 0) ? findWord(doc, selected.x
 				+ selected.y) : firstWord;
 		// 定义选中的长度
 		int length = lastWord.getEnd() - firstWord.getStart() - 1;
 		String wholedoc = doc.get();
-		JSColorManager colormanager = new JSColorManager();
-		
+
 		try {
 			if (length > 0) {
-				if(!cursortag)
-				 text.setSelectedRange(firstWord.getStart() + 1, length);
-
+				if (!cursortag)
+					text.setSelectedRange(firstWord.getStart() + 1, length);
+				String contentType = doc
+						.getContentType(firstWord.getStart() + 1);
+				if (contentType.equals(JSPartitionScanner.JS_KEYWORD))
+					return;
 				choosenPart = doc.get(firstWord.getStart() + 1, length);
-				// debug
-				// System.out.println(choosenPart);
+				if (choosenPart.equals("Clazz"))
+					return;
+				text.invalidateTextPresentation();
 				int begin = wholedoc.indexOf(choosenPart);
-				// ----------debug----------------------------
-				// System.out.println("debug---begin=" + begin);
 				while (begin != -1) {
 					StyleRange range = new StyleRange();
 					// LightGrey RGB(211, 211, 211)
@@ -109,8 +109,6 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 					text.changeTextPresentation(presentation, true);
 					begin = wholedoc.indexOf(choosenPart, begin + length);
 
-
-
 				}
 
 			}
@@ -119,7 +117,6 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 
 	}
 
@@ -134,34 +131,33 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 	 * @return
 	 */
 	protected WordBounds findWord(IDocument doc, int caretPosOrigin) {
-		int caretPos=caretPosOrigin;
+		int caretPos = caretPosOrigin;
 		try {
-			if(caretPos<0)
-				return new WordBounds(0,0);
-			if(doc.getChar(caretPos)=='.')
+			if (caretPos < 0)
+				return new WordBounds(0, 0);
+			if (doc.getChar(caretPos) == '.')
 				caretPos--;
-			else if(doc.getChar(caretPos)=='\"')
-				{caretPos--;
-				while(doc.getChar(caretPos)!='\"'&&caretPos>0)
+			else if (doc.getChar(caretPos) == '\"') {
+				caretPos--;
+				while (doc.getChar(caretPos) != '\"' && caretPos > 0)
 					caretPos--;
-				if(caretPos==0&&doc.getChar(caretPos)=='\"')
+				if (caretPos == 0 && doc.getChar(caretPos) == '\"')
 					return new WordBounds(caretPosOrigin, 0);
 				else
-				
-				return new WordBounds(caretPos,caretPosOrigin-caretPos);
-				}
+
+					return new WordBounds(caretPos, caretPosOrigin - caretPos);
+			}
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		WordBounds result = new WordBounds(caretPos, 0);
 		if (caretPos >= 0) {
 			try {
 				char currChar = doc.getChar(caretPos);
 				char prevChar = (caretPos > 0) ? doc.getChar(caretPos - 0)
 						: (char) 0;
-				int limit = doc.getLength();
 
 				// The definition of a "word" changes depending on the
 				// characters to either side.
