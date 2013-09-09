@@ -40,18 +40,16 @@ import javax.swing.Timer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import net.sourceforge.jseditor.utility.JSConstant;
+import net.sourceforge.jseditor.utility.JSUtility;
 import net.sourceforge.jseditor.views.JSOutlinePage;
 
 
@@ -66,7 +64,6 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected JSOutlinePage outlinePage;
 	protected JSConfiguration configuration;
 	protected JSDoubleClickStrategy jsdc = new JSDoubleClickStrategy(true);
-	protected String keywords[]={"Clazz"};
 	protected static Timer timer;
 	protected static int delay = 1000; //milliseconds
 	
@@ -84,32 +81,16 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	protected void handleCursorPositionChanged() {
 		// TODO Auto-generated method stub
 		super.handleCursorPositionChanged();
+		JSConstant.doubleClickTag++;
+		if(JSConstant.doubleClickTag==1)
+			JSConstant.isDoubleClicked=true;
+		else 
+			JSConstant.isDoubleClicked=false;
 		timer.stop();
 		timer.start();
 	}
 	
-	private void setKeywordTextColor(String keywords[]){
-		String doc=getSourceViewer().getDocument().get();
-		for(int i=0;i<keywords.length;i++){
-			int offset = doc.indexOf(keywords[i]);
-			int length = keywords[i].length();
-			while (offset != -1) {
-				StyleRange range = new StyleRange();
-				// The range of word
-				range.foreground=JSTextColorConstants.JS_KEYWORD;
-				range.borderColor=JSTextColorConstants.JS_KEYWORD;
-				range.start = offset;
-				range.length = length;
-				range.fontStyle=SWT.BOLD;
-				TextPresentation presentation = new TextPresentation();
-				// set TextPresentation with the StyleRange parameter
-				presentation.setDefaultStyleRange(range);
-				getSourceViewer().changeTextPresentation(presentation, true);
-				offset = doc.indexOf(keywords[i], offset + length);
-			}
-		}
-		
-	}
+	
 	
 
 	@Override
@@ -117,7 +98,7 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 		// TODO Auto-generated method stub
 		super.setFocus();
 		getAction(ITextEditorActionConstants.FIND).setEnabled(true);
-		setKeywordTextColor(keywords);
+		JSUtility.setKeywordTextColor(getSourceViewer());
 		
 	}
 
@@ -134,8 +115,13 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 				public void actionPerformed(ActionEvent arg0) {
 					 Display.getDefault().syncExec(new Runnable() {
 						    public void run() {
+						    	if(JSConstant.isDoubleClicked==true)
+						    	{
+						    		timer.stop();
+						    		return;
+						    	}
 						    	jsdc.doubleClicked(getSourceViewer());
-								setKeywordTextColor(keywords);
+						    	JSUtility.setKeywordTextColor(getSourceViewer());
 								timer.stop();
 						    }
 						    }); 

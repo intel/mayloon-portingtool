@@ -21,6 +21,7 @@
 package net.sourceforge.jseditor.editors;
 
 import net.sourceforge.jseditor.utility.JSConstant;
+import net.sourceforge.jseditor.utility.JSUtility;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.custom.StyleRange;
@@ -85,7 +86,10 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 		try {
 			if (length > 0) {
 				if (!cursortag)
+				{
 					text.setSelectedRange(firstWord.getStart() + 1, length);
+					JSConstant.doubleClickTag=0;
+				}
 				String contentType = doc
 						.getContentType(firstWord.getStart() + 1);
 				if (contentType.equals(JSPartitionScanner.JS_KEYWORD))
@@ -94,6 +98,8 @@ public class JSDoubleClickStrategy implements ITextDoubleClickStrategy {
 				if (choosenPart.equals("Clazz"))
 					return;
 				text.invalidateTextPresentation();
+				if(JSConstant.doubleClickTag==0)
+					JSUtility.setKeywordTextColor(text);
 				int begin = wholedoc.indexOf(choosenPart);
 				while (begin != -1) {
 					StyleRange range = new StyleRange();
