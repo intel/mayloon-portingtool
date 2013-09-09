@@ -1,9 +1,8 @@
 package net.sourceforge.jseditor.views;
 
 import java.util.ArrayList;
-
 import net.sourceforge.jseditor.editors.JSPartitionScanner;
-
+import net.sourceforge.jseditor.utility.JSConstant;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -63,13 +62,13 @@ public class JSSyntaxContentProvider implements ITreeContentProvider {
 					if (region.getType().equals(JSPartitionScanner.JS_OUTlINE_1)) {
 						result.add(region);
 					}
+					
 				}
 			} catch (BadLocationException e) {						
 				e.printStackTrace();
 			}
 			return result.toArray();			
 		}
-		
 		return EMPTY;
 	}
 	
@@ -81,6 +80,7 @@ public class JSSyntaxContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ITypedRegion) {
@@ -89,16 +89,53 @@ public class JSSyntaxContentProvider implements ITreeContentProvider {
 			if (parentRegion.getType().equals(JSPartitionScanner.JS_OUTlINE_1)) {
 				ITypedRegion[] regions;
 				try {
-					regions = document.computePartitioning(parentRegion.getOffset()+parentRegion.getLength(), document.getLength()-parentRegion.getOffset()-parentRegion.getLength());
-				
+					regions = document.computePartitioning(parentRegion.getOffset()+parentRegion.getLength(), 
+							                               document.getLength()-parentRegion.getOffset()-parentRegion.getLength());
 					for(ITypedRegion h2region : regions) {
-						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_2)||h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_3)) {
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_4)) {
+						    JSConstant.innerClassLevel++;
+						}
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_5)) {
+							JSConstant.innerClassLevel--;
+						}
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_3)) {
 							result.add(h2region);
-							
+							JSConstant.isFirstClass=true;
+						}
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_2)) {
+							if(JSConstant.innerClassLevel != 0)
+								;
+							else
+								result.add(h2region);
 						}
 						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_1)) {
 							break;
 						}
+					}
+					return result.toArray();
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (parentRegion.getType().equals(JSPartitionScanner.JS_OUTlINE_3)) {
+				//if it is the first class of the js file,it means it is not a inner class
+				if(JSConstant.isFirstClass) {
+					JSConstant.isFirstClass=false;
+					return result.toArray();
+				}
+				ITypedRegion[] regions;
+				try {
+					regions = document.computePartitioning(parentRegion.getOffset()+parentRegion.getLength(), 
+							                               document.getLength()-parentRegion.getOffset()-parentRegion.getLength());
+					for(ITypedRegion h2region : regions) {
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_2)) {
+							result.add(h2region);
+						}
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_5)) 
+							 break ;
+						if (h2region.getType().equals(JSPartitionScanner.JS_OUTlINE_4)) 
+							 break ;
 					}
 					
 					return result.toArray();
@@ -120,7 +157,9 @@ public class JSSyntaxContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		if (element instanceof ITypedRegion) {
 			ITypedRegion region = (ITypedRegion) element;
-			if (region.getType().equals(JSPartitionScanner.JS_OUTlINE_1)) {
+			if (region.getType().equals(JSPartitionScanner.JS_OUTlINE_1)
+					||region.getType().equals(JSPartitionScanner.JS_OUTlINE_3)
+					) {
 				return true;
 			}			
 		}

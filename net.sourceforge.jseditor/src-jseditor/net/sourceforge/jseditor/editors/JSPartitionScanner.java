@@ -48,8 +48,10 @@ public class JSPartitionScanner extends RuleBasedPartitionScanner {
 	public final static String JS_OUTlINE_1 = "__js_outline_1";
 	public final static String JS_OUTlINE_2 = "__js_outline_2";
 	public final static String JS_OUTlINE_3 = "__js_outline_3";
+	public final static String JS_OUTlINE_4 = "__js_outline_4";
+	public final static String JS_OUTlINE_5 = "__js_outline_5";
 	
-	public final static String[] LEGAL_CONTENT_TYPES = {JS_DEFAULT, JS_COMMENT, JS_KEYWORD, JS_STRING,JS_OUTlINE_1,JS_OUTlINE_2,JS_OUTlINE_3};
+	public final static String[] LEGAL_CONTENT_TYPES = {JS_DEFAULT, JS_COMMENT, JS_KEYWORD, JS_STRING,JS_OUTlINE_1,JS_OUTlINE_2,JS_OUTlINE_3,JS_OUTlINE_4,JS_OUTlINE_5};
 
 	
 	public final static IToken TOKEN_STRING = new Token(JS_STRING);
@@ -59,6 +61,8 @@ public class JSPartitionScanner extends RuleBasedPartitionScanner {
 	public final static IToken TOKEN_OUTLINE_1 = new Token(JS_OUTlINE_1);
 	public final static IToken TOKEN_OUTLINE_2 = new Token(JS_OUTlINE_2);
 	public final static IToken TOKEN_OUTLINE_3 = new Token(JS_OUTlINE_3);
+	public final static IToken TOKEN_OUTLINE_4 = new Token(JS_OUTlINE_4);
+	public final static IToken TOKEN_OUTLINE_5 = new Token(JS_OUTlINE_5);
 	/**
 	 * Array of keyword token strings.
 	 */
@@ -97,14 +101,17 @@ public class JSPartitionScanner extends RuleBasedPartitionScanner {
 		//attention:declarePackage
 		//同一个token可以有多个patternrule
 		
+		rules.add(new PatternRule("Clazz.pu$", "h", TOKEN_OUTLINE_4, (char) 0, true));
+		rules.add(new PatternRule("Clazz.p0", "p", TOKEN_OUTLINE_5, (char) 0, true));
+		
 		rules.add(new PatternRule("Clazz.declarePackag", "e", TOKEN_OUTLINE_1, (char) 0, true));
 		rules.add(new PatternRule("Clazz.defineMetho", "d", TOKEN_OUTLINE_2, (char) 0, true));
 		rules.add(new PatternRule("Clazz.overrideMetho", "d", TOKEN_OUTLINE_2, (char) 0, true));
 		
-		rules.add(new PatternRule("Clazz.makeConstructo", "r", TOKEN_OUTLINE_3, (char) 0, true));
+		rules.add(new PatternRule("Clazz.makeConstructo", "r", TOKEN_OUTLINE_2, (char) 0, true));
 		rules.add(new PatternRule("Clazz.loa", "d", TOKEN_OUTLINE_1, (char) 0, true));
 		rules.add(new PatternRule("Clazz.declareTyp", "e", TOKEN_OUTLINE_1, (char) 0, true));
-		rules.add(new PatternRule("Clazz.instantializ", "e", TOKEN_OUTLINE_1, (char) 0, true));
+		rules.add(new PatternRule("Clazz.instantializ", "e", TOKEN_OUTLINE_3, (char) 0, true));
 		
 		rules.add(new MultiLineRule("/*", "*/", TOKEN_COMMENT));
 		rules.add(new EndOfLineRule("//", TOKEN_COMMENT));
