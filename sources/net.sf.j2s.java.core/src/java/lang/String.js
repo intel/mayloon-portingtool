@@ -223,8 +223,20 @@ String.prototype.$plit = function (regex, limit) {
 		}
 		return arr;
 	} else {
-		var regExp = new RegExp (regex, "gm");
-		return this.split (regExp);
+        var regExp=new RegExp(regex,"gm");
+        var arr = this.split(regExp);
+        if (this == "") {
+            return arr;
+        }
+        if(regex == "") {
+            arr.unshift("");
+        }
+        if (typeof(limit) == "undefined" || limit == 0) {
+            while(arr.length > 0 && arr[arr.length-1] == "") {
+                arr.pop();
+            }
+        }
+        return arr;
 	}
 };
 
