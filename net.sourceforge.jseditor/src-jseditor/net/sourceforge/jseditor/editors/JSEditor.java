@@ -89,10 +89,6 @@ public class JSEditor extends TextEditor implements ISelectionChangedListener {
 	}
 	
 	private void setKeywordTextColor(String keywords[]){
-		for(int i=0;i<keywords.length;i++){
-			if(jsdc.getChoosenPart().equals(keywords[i]))
-				return;
-		}
 		String doc=getSourceViewer().getDocument().get();
 		for(int i=0;i<keywords.length;i++){
 			int offset = doc.indexOf(keywords[i]);
