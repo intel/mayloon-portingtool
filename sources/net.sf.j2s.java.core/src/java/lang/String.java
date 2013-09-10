@@ -2059,12 +2059,12 @@ outer:
      * @see Character#codePointAt(char[], int, int)
      * @since 1.5
      */
-    /*public int codePointAt(int index) {
+    public int codePointAt(int index) {
         if (index < 0 || index >= count) {
             throw new StringIndexOutOfBoundsException();
         }
         return Character.codePointAt(value, offset + index, offset + count);
-    }*/
+    }
 
     /**
      * Returns the Unicode code point that precedes the given {@code index}.
@@ -2073,12 +2073,12 @@ outer:
      * @see Character#codePointBefore(char[], int, int)
      * @since 1.5
      */
-    /*public int codePointBefore(int index) {
+    public int codePointBefore(int index) {
         if (index < 1 || index > count) {
             throw new StringIndexOutOfBoundsException();
         }
-        return Character.codePointBefore(value, offset + index, offset);
-    }*/
+        return Character.codePointBefore(value, offset + index);
+    }
 
     /**
      * Calculates the number of Unicode code points between {@code beginIndex}
@@ -2094,12 +2094,12 @@ outer:
      * @see Character#codePointCount(CharSequence, int, int)
      * @since 1.5
      */
-    /*public int codePointCount(int beginIndex, int endIndex) {
+    public int codePointCount(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex > count || beginIndex > endIndex) {
             throw new StringIndexOutOfBoundsException();
         }
         return Character.codePointCount(value, offset + beginIndex, endIndex - beginIndex);
-    }*/
+    }
 
     /**
      * Determines if this {@code String} contains the sequence of characters in
@@ -2133,11 +2133,11 @@ outer:
      *             index} to match {@code codePointOffset}.
      * @since 1.5
      */
-   /* public int offsetByCodePoints(int index, int codePointOffset) {
+    public int offsetByCodePoints(int index, int codePointOffset) {
         int s = index + offset;
         int r = Character.offsetByCodePoints(value, offset, count, s, codePointOffset);
         return r - offset;
-    }*/
+    }
 
     /**
      * Returns a localized formatted string, using the supplied format and arguments,

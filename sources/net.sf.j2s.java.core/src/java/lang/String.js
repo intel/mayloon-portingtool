@@ -322,6 +322,77 @@ String.prototype.contains = function(anotherString) {
     return this.indexOf(anotherString) > -1 ? true : false;
 };
 
+String.prototype.codePointAt = function(index) {
+    if(index < 0 || index >= this.length) {
+        throw  new StringIndexOutOfBoundsException (index);
+    }
+    return this.charCodeAt(index);
+};
+
+String.prototype.codePointBefore = function(index) {
+    var i = index - 1;
+    if(i < 0 || i >= this.length) {
+        throw  new StringIndexOutOfBoundsException (index);
+    }
+    return this.charCodeAt(index-1);
+};
+
+String.prototype.codePointCount = function(beginIndex, endIndex) {
+    if (beginIndex < 0 || endIndex > this.length || beginIndex > endIndex) {
+        throw new IndexOutOfBoundsException();
+    }
+    var n = 0;
+    for (var i = beginIndex; i < endIndex; ) {
+        n++;
+        var ch = this.charAt(i++);
+        if (ch >= '\uD800' && ch <= '\uDBFF') {
+            ch = this.charAt(i);
+            if (i < endIndex && ch >= '\uDC00' && ch <= '\uDFFF') {
+                i++;
+            }
+        }
+    }
+    return n;
+};
+
+String.prototype.offsetByCodePoints = function(index, codePointOffset) {
+    if (index < 0 || index > this.length) {
+        throw new IndexOutOfBoundsException();
+    }
+    var x = index;
+    if (codePointOffset >= 0) {
+        var limit = this.length;
+        var i;
+        for (i = 0; x < limit && i < codePointOffset; i++) {
+            var ch = this.charAt(x++);
+            if (ch >= '\uD800' && ch <= '\uDBFF') {
+                ch = this.charAt(x);
+                if (x < limit && ch >= '\uDC00' && ch <= '\uDFFF') {
+                    x++;
+                }
+            }
+        }
+        if (i < codePointOffset) {
+            throw new IndexOutOfBoundsException();
+        }
+    } else {
+        var i;
+        for (i = codePointOffset; x > 0 && i < 0; i++) {
+            var ch = this.charAt(--x);
+            if (ch >= '\uDC00' && ch <= '\uDFFF') {
+                ch = this.charAt(x-1);
+                if (x > 0 && ch >= '\uD800' && ch <= '\uDBFF') {
+                    x--;
+                }
+            }
+        } 
+        if (i < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+    return x;
+};
+
 String.prototype.getBytes = function () {
 	if (arguments.length == 4) {
 		return this.getChars (arguments[0], arguments[1], arguments[2], arguments[3]);
