@@ -1307,11 +1307,21 @@ public class ASTKeywordVisitor extends ASTEmptyVisitor {
 			if (nameTypeBinding != null) {
 				String nameType = nameTypeBinding.getName();
 				if ("char".equals(nameType)) {
-					if (typeBinding != null && !"char".equals(typeBinding.getName())) {
+					if (typeBinding != null
+							&& !"char".equals(typeBinding.getName())) {
 						buffer.append("String.fromCharCode (");
-						initializer.accept(this);
-						buffer.append(")");
-						return false;
+						if (initializer.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION) {
+							buffer.append(' ');
+							buffer.append("(");
+							initializer.accept(this);
+							buffer.append(").charCodeAt (0)");
+							buffer.append(")");
+							return false;
+						} else {
+							initializer.accept(this);
+							buffer.append(")");
+							return false;
+						}
 					}
 				}
 			}
