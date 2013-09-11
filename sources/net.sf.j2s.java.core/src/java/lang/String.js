@@ -101,7 +101,11 @@ String.strRepeat = String.prototype.strRepeat = function(input, multiplier) {
 };
 
 String.format = String.prototype.format = function(){
-    var i = 0, arg, fmt = arguments[i++], output = [], match, pad, padded, c, x, s = '';
+    var i = 0;
+    if (arguments.length == 3) {
+        i = 1;
+    }
+    var arg, fmt = arguments[i++], output = [], match, pad, padded, c, x, s = '';
     var args = arguments[i];
     args.unshift(fmt);
     while (fmt) {
@@ -109,7 +113,7 @@ String.format = String.prototype.format = function(){
             output.push(match[0]);
         } else if (match = /^\x25{2}/.exec(fmt)) {
             output.push('%');
-        } else if (match = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(fmt)) {
+        } else if (match = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+|\(\d+|#\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(fmt)) {
             if (((arg = args[match[1] || i++]) == null) || (arg == undefined)) {
                 throw('Too few arguments.');
             }
@@ -120,17 +124,24 @@ String.format = String.prototype.format = function(){
             if (/[^s]/.test(match[7]) && (typeof(arg) != 'number')) {
                 throw('Expecting number but found ' + typeof(arg));
             }
+            var symbol = match[5] ? match[5].charAt(0) : '';
+            if (symbol == '(' || symbol == '#') {
+                match[5] = match[5].substr(1);
+            }
             switch (match[7]) {
                 case 'b': arg = arg.toString(2); break;
                 case 'c': arg = String.fromCharCode(arg); break;
                 case 'd': arg = parseInt(arg); break;
                 case 'e': arg = match[6] ? arg.toExponential(match[6]) : arg.toExponential(); break;
                 case 'f': arg = match[6] ? parseFloat(arg).toFixed(match[6]) : parseFloat(arg); break;
-                case 'o': arg = arg.toString(8); break;
+                case 'o': arg = symbol == '#' ? '0' + arg.toString(8) : arg.toString(8); break;
                 case 's': arg = ((arg = String(arg)) && match[6] ? arg.substring(0, match[6]) : arg); break;
                 case 'u': arg = Math.abs(arg); break;
-                case 'x': arg = arg.toString(16); break;
-                case 'X': arg = arg.toString(16).toUpperCase(); break;
+                case 'x': arg = symbol == '#' ? '0x' + arg.toString(16) : arg.toString(16); break;
+                case 'X': arg = symbol == '#' ? '0x' + arg.toString(16).toUpperCase() : arg.toString(16).toUpperCase(); break;
+            }
+            if(symbol == '(') {
+                arg = "(" + Math.abs(arg) + ")";
             }
             arg = (/[def]/.test(match[7]) && match[2] && arg>= 0 ? '+'+ arg : arg);
             c = match[3] ? match[3] == '0' ? '0' : match[3].charAt(1) : ' ';
@@ -138,12 +149,11 @@ String.format = String.prototype.format = function(){
             pad = match[5] ? this.strRepeat(c, x) : '';
             //needs to put the '-' to first position when the arg is negative.
             padded = pad + arg;
-            if (typeof(arg) == "number" && arg < 0) {
+            if (typeof(arg) == "number" && arg < 0 && c != ' ') {
                 padded = '-'+(pad + Math.abs(arg));
             }
             output.push(s + (match[4] ? arg + pad : padded));
-        }
-        else {
+        } else {
             throw('Error!');
         }
         fmt = fmt.substring(match[0].length);

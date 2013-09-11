@@ -2186,14 +2186,12 @@ outer:
      *             if the format is invalid.
      * @since 1.5
      */
-    /*public static String format(Locale locale, String format, Object... args) {
+    public static String format(Locale locale, String format, Object... args) {
         if (format == null) {
             throw new NullPointerException("null format argument");
         }
-        int bufferSize = format.length() + (args == null ? 0 : args.length * 10);
-        Formatter f = new Formatter(new StringBuilder(bufferSize), locale);
-        return f.format(format, args).toString();
-    }*/
+        return format;
+    }
 
     /*
      * An implementation of a String.indexOf that is supposed to perform
