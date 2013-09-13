@@ -107,6 +107,9 @@ String.format = String.prototype.format = function(){
     }
     var arg, fmt = arguments[i++], output = [], match, pad, padded, c, x, s = '';
     var args = arguments[i];
+    while(args.length >= 1 && args[0] instanceof Array) {
+        args = args[0];
+    }
     args.unshift(fmt);
     while (fmt) {
         if (match = /^[^\x25]+/.exec(fmt)) {
