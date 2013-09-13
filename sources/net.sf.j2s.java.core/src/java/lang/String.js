@@ -33,7 +33,7 @@ String.prototype.$replace = function (c1, c2) {
 		c1 = "\\" + c1;
 	}
 	*/
-	c1 = c1.replace (/([\\\/\$\.\*\+\{\}\?\^\(\)\[\]])/g, function ($0, $1) {
+	c1 = c1.replace (/([\\\/\$\.\*\+\{\}\?\^\(\)\[\]\|])/g, function ($0, $1) {
 		return "\\" + $1;
 	});
     c2=c2.replace(/\$/g, "$$$$");

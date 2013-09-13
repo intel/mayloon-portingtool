@@ -462,4 +462,8 @@ public final class Character implements Serializable, Comparable<Character> {
     	 */ {}
         return String.valueOf(c);
     }
+
+    public static String toString(String s) {
+        return String.valueOf(s);
+    }
 }
