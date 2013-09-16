@@ -21,7 +21,14 @@ return Math.round (this) & 0xffff;
 
 Clazz.defineMethod (Number, "byteValue", 
 function () {
-return Math.round (this) & 0xff;
+var value = Math.round(this)%256;
+if(value >= -128 && value <128){
+return value;
+}else if(value<-128){
+return value + 256;
+}else{
+return value - 256;
+}
 });
 
 Clazz.defineMethod (Number, "intValue", 
