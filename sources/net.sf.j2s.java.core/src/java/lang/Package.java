@@ -48,7 +48,19 @@ public class Package implements java.lang.reflect.AnnotatedElement {
     }
 
     public static Package getPackage(String name) {
-        return null;
+        if (name == null || "".equals(name)) {
+            return null;
+        }
+        /**
+         * @j2sNative
+         * var pkgFrags=name.split(/\./);
+         * var pkg=Clazz.allPackage;
+         * for(var i=0;i<pkgFrags.length;i++){
+         *     pkg=pkg[pkgFrags[i]];
+         * }
+         * return pkg;
+         **/{}
+         return null;
     }
 
     public static void package2Array (Package pkgs, Package[] arrayPkg) {

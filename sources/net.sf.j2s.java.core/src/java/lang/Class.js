@@ -1559,7 +1559,8 @@ Clazz.innerFunctions = {
      * Similar to Class#getPackage
      */
     getPackage : function () {
-        var pkgName = this.getName().substring(0, this.getName().lastIndexOf("."));
+        var clsName = this.getName() == "Object" ? "java.lang.Object" : this.getName();
+        var pkgName = clsName.substring(0, clsName.lastIndexOf("."));
         var pkgFrags = pkgName.split(/\./);
         var pkg = Clazz.allPackage;
         var lastPkg;
