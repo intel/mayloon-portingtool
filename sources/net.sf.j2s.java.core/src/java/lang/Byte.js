@@ -47,6 +47,15 @@ throw  new NumberFormatException ("radix " + radix + " less than Character.MIN_R
 }if (radix > 36) {
 throw  new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
 }
+var i = 0;
+var len = s.length;
+var digit;
+while(i<len){
+digit = Character.digit(s.charAt(i++),radix);
+if (digit < 0) {
+throw new NumberFormatException("For input string: \"" + s + "\"");
+}
+}
 var integer = parseInt (s, radix);
 if(isNaN(integer)){
 throw  new NumberFormatException ("Not a Number : " + s);
