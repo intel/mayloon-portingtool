@@ -51,7 +51,27 @@ public class Package implements java.lang.reflect.AnnotatedElement {
         return null;
     }
 
+    public static void package2Array (Package pkgs, Package[] arrayPkg) {
+        /**
+         * @j2sNative
+         * for(var n in pkgs) {
+         *     if(pkgs[n].__PKG_NAME__) {
+         *         arrayPkg.push(pkgs[n]);
+         *         this.package2Array(pkgs[n], arrayPkg);
+         *     }
+         * }
+         **/{}
+        
+    }
+
     public static Package[] getPackages() {
+        /**
+         * @j2sNative
+         * var pkgs=[];
+         * var allPkg = Clazz.allPackage;
+         * this.package2Array(allPkg, pkgs);
+         * return pkgs;
+         **/{}
         return null;
     }
 
