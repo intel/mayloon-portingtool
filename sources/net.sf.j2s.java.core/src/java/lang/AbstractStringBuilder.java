@@ -361,7 +361,7 @@ abstract class AbstractStringBuilder {
             s = "null";
         if (index < 0 || index > count || start < 0 || end < 0 || start > end
                 || end > s.length())
-            throw new IndexOutOfBoundsException();
+            throw new StringIndexOutOfBoundsException(index);
         insert0(index, s.subSequence(start, end).toString());
     }
 
