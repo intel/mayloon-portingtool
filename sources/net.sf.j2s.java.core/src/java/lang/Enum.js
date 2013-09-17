@@ -36,10 +36,13 @@ throw  new CloneNotSupportedException ();
 });
 Clazz.defineMethod (c$, "compareTo", 
 function (o) {
+if (o == null) {
+    throw new NullPointerException ();
+}
 var other = o;
 var self = this;
 if (self.getClass () != other.getClass () && self.getDeclaringClass () != other.getDeclaringClass ()) throw  new ClassCastException ();
-return self.ordinal - other.ordinal;
+return self.$ordinal - other.$ordinal;
 }, "E");
 Clazz.defineMethod (c$, "getDeclaringClass", 
 function () {
@@ -60,7 +63,7 @@ for (var i = 0; i < vals.length; i++) {
 		return vals[i];
 	}
 }
-throw  new IllegalArgumentException ("No enum const " + enumType + "." + name);
+throw  new IllegalArgumentException ("No enum const " + this.__CLASS_NAME__ + "." + name);
 }, "String");
 Enum.$valueOf = Enum.prototype.$valueOf;
 Clazz.defineMethod (Enum, "values", 
