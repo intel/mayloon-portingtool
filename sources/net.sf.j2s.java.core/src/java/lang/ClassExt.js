@@ -305,7 +305,17 @@ Clazz.newArray  = function () {
 			dim = dim.charCodeAt (0); // char
 		}
 		var val = args[1];
-		var arr = new Array (dim);
+        var arr;
+        try {
+            /**
+             * fix bug 1908
+             * Sometimes the Chrome will report an illgal access exception when new a large array.
+             * so we need try catch and renew an array.
+             */
+            arr=new Array(dim);
+        } catch(e) {
+            arr = new Array(dim);
+        }
 		for (var i = 0; i < dim; i++) {
 			arr[i] = val;
 		}
