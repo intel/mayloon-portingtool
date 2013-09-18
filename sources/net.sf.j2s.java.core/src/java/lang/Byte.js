@@ -6,7 +6,7 @@ Clazz.decorateAsType (Byte, "Byte", Number, Comparable, null, true);
 Byte.prototype.valueOf = function () { return 0; };
 Byte.toString = Byte.prototype.toString = function () {
 	if (arguments.length != 0) {
-		return "" + arguments[0];
+		return "" + Number.toByteValue(arguments[0]);
 	} else if (this === Byte) {
 		return "class java.lang.Byte"; // Byte.class.toString
 	}
@@ -20,9 +20,9 @@ this.valueOf = function () {
 });
 Clazz.makeConstructor (Byte, 
 function (value) {
-var v = Math.round (value) & 0xffffffff;
+var v = Number.toByteValue(value);
 this.valueOf = function () {
-	return v;
+return v;
 };
 }, "Number");
 Clazz.makeConstructor (Byte, 

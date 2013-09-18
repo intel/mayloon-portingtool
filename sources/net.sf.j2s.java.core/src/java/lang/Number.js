@@ -14,14 +14,8 @@ Number.getName = Clazz.innerFunctions.getName;
 
 Number.serialVersionUID = Number.prototype.serialVersionUID = -8742448824652078965;
 
-Clazz.defineMethod (Number, "shortValue", 
-function () {
-return Math.round (this) & 0xffff;
-});
-
-Clazz.defineMethod (Number, "byteValue", 
-function () {
-var value = Math.round(this)%256;
+Number.toByteValue=Number.prototype.toByteValue=function(){
+var value = Math.round(arguments[0])%256;
 if(value >= -128 && value <128){
 return value;
 }else if(value<-128){
@@ -29,6 +23,23 @@ return value + 256;
 }else{
 return value - 256;
 }
+};
+
+Clazz.defineMethod (Number, "shortValue", function(){
+
+var value = Math.round(this)%65536;
+if(value >= -32768 && value <32768){
+return value;
+}else if(value<-32768){
+return value + 65536;
+}else{
+return value - 65536;
+}
+});
+
+
+Clazz.defineMethod(Number,"byteValue",function(){
+return Number.toByteValue(this);
 });
 
 Clazz.defineMethod (Number, "intValue", 
