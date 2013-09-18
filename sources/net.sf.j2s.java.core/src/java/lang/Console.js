@@ -499,6 +499,9 @@ window.assert = function () {
 	    return;
 	};
 
+    System.identityHashCode = function(obj) {
+        return (new String(obj)).hashCode();
+    };
 
 	/* public */
 	System.out = new JavaObject ();
