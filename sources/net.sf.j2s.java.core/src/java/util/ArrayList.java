@@ -636,10 +636,12 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] contents) {
 		int size = size();
-		/*if (size > contents.length) {
-            Class<?> ct = contents.getClass().getComponentType();
-			contents = (T[]) Array.newInstance(ct, size);
-        }*/
+        if (contents.length < size) {
+            /**
+             * @j2sNative
+             * contents = new Array(size);
+             **/{}
+        }
 		System.arraycopy(array, firstIndex, contents, 0, size);
 		if (size < contents.length) {
             contents[size] = null;
