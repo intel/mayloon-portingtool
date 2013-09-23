@@ -60,6 +60,10 @@ var integer = parseInt (s, radix);
 if(isNaN(integer)){
 throw  new NumberFormatException ("Not a Number : " + s);
 }
+
+if (integer < MIN_VALUE || integer > MAX_VALUE){
+throw new NumberFormatException("Value out of range. Value:\"" + s + "\" Radix:" + radix);
+}
 return integer;
 }, "String, Number");
 Byte.parseByte = Byte.prototype.parseByte;
