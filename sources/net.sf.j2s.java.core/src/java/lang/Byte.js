@@ -12,6 +12,9 @@ Byte.toString = Byte.prototype.toString = function () {
 	}
 	return "" + this.valueOf ();
 };
+Byte.hashCode = Byte.prototype.hashCode = function () {
+return this.valueOf ();
+};
 Clazz.makeConstructor (Byte, 
 function () {
 this.valueOf = function () {
@@ -50,6 +53,17 @@ throw  new NumberFormatException ("radix " + radix + " greater than Character.MA
 var i = 0;
 var len = s.length;
 var digit;
+if (len > 0) {
+var firstChar = s.charAt(0);
+if (firstChar < '0') { // Possible leading "+" or "-"
+if (firstChar != '-' && firstChar != '+') {
+throw new NumberFormatException(s);
+}
+if (len == 1) // Cannot have lone "+" or "-"
+throw new NumberFormatException("Cannot have lone \"+\" or \"-\"" +s);
+i++;
+}
+}
 while(i<len){
 digit = Character.digit(s.charAt(i++),radix);
 if (digit < 0) {
@@ -60,8 +74,7 @@ var integer = parseInt (s, radix);
 if(isNaN(integer)){
 throw  new NumberFormatException ("Not a Number : " + s);
 }
-
-if (integer < MIN_VALUE || integer > MAX_VALUE){
+if (integer < Byte.MIN_VALUE || integer > Byte.MAX_VALUE){
 throw new NumberFormatException("Value out of range. Value:\"" + s + "\" Radix:" + radix);
 }
 return integer;
