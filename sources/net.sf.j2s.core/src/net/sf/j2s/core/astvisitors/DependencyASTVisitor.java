@@ -110,15 +110,6 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 			if (n instanceof QNTypeBinding) {
 				QNTypeBinding qn = (QNTypeBinding) n;
 				boolean isRemoved = false;
-				for (Iterator iterator = classBindingSet.iterator(); iterator
-						.hasNext();) {
-					ITypeBinding binding = (ITypeBinding) iterator.next();
-					if (qn.binding != null && Bindings.isSuperType(binding, qn.binding)) {
-						removed.add(qn);
-						isRemoved = true;
-						break;
-					}
-				}
 				if (!isRemoved) {
 					reseted.add(qn);
 				}
@@ -697,6 +688,29 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 		}
 	}
 
+    protected Set getSetWithoutSubClass (Set set) {
+        Set reseted = new HashSet();
+        for (Iterator iter = set.iterator(); iter.hasNext();) {
+            Object n = iter.next();
+            if (n instanceof QNTypeBinding) {
+                QNTypeBinding qn = (QNTypeBinding) n;
+                boolean isRemoved = false;
+                for (Iterator iterator = classBindingSet.iterator(); iterator
+                        .hasNext();) {
+                    ITypeBinding binding = (ITypeBinding) iterator.next();
+                    if (qn.binding != null && Bindings.isSuperType(binding, qn.binding)) {
+                        isRemoved = true;
+                        break;
+                    }
+                }
+                if (!isRemoved) {
+                    reseted.add(qn);
+                }
+            }
+        }
+        return reseted;
+    }
+
 	protected void visitForRequires(AbstractTypeDeclaration node) {
 		for (Iterator iter = node.bodyDeclarations().iterator(); iter.hasNext();) {
 			ASTNode element = (ASTNode) iter.next();
@@ -712,7 +726,7 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 					element.accept(visitor);
 					requires.addAll(visitor.musts);
 					requires.addAll(visitor.requires);
-					requires.addAll(visitor.optionals);
+					requires.addAll(getSetWithoutSubClass(visitor.optionals));
 				}
 			} else if (element instanceof Initializer) {
 				if (getJ2STag((Initializer) element, "@j2sIgnore") != null) {
