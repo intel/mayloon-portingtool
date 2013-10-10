@@ -739,6 +739,7 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 				requires.addAll(visitor.optionals);
 			} else if (element instanceof FieldDeclaration) {
 				FieldDeclaration field = (FieldDeclaration) element;
+                boolean isStatic = Modifier.isStatic(field.getModifiers());
 				if (getJ2STag(field, "@j2sIgnore") != null) {
 					continue;
 				}
@@ -753,7 +754,11 @@ public class DependencyASTVisitor extends ASTEmptyVisitor {
 						}
 						requires.addAll(visitor.musts);
 						requires.addAll(visitor.requires);
-						requires.addAll(visitor.optionals);
+                        if (isStatic) {
+                            requires.addAll(visitor.optionals);
+                        } else {
+                            optionals.addAll(visitor.optionals);
+                        }
 					}
 			}
 		}
