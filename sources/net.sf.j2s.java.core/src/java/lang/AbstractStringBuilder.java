@@ -760,13 +760,14 @@ abstract class AbstractStringBuilder {
      * @see Character
      * @see Character#codePointAt(char[], int, int)
      * @since 1.5
-     * @j2sIgnore
+     * @
      */
-    public int codePointAt(int index) {
-        if (index < 0 || index >= count)
-            throw new StringIndexOutOfBoundsException(index);
-        return Character.codePointAt(value, index, count);
-    }
+	public int codePointAt(int index) {
+		if (index < 0 || index >= count)
+			throw new StringIndexOutOfBoundsException(index);
+		return this.toString().codePointAt(index);
+
+	}
 
     /**
      * <p>
@@ -782,12 +783,12 @@ abstract class AbstractStringBuilder {
      * @see Character
      * @see Character#codePointBefore(char[], int, int)
      * @since 1.5
-     * @j2sIgnore
+     * 
      */
     public int codePointBefore(int index) {
         if (index < 1 || index > count)
             throw new StringIndexOutOfBoundsException(index);
-        return Character.codePointBefore(value, index);
+        return this.toString().codePointBefore(index);
     }
 
     /**
@@ -803,12 +804,12 @@ abstract class AbstractStringBuilder {
      *         negative or greater than <code>endIndex</code> or
      *         <code>endIndex</code> is greater than {@link #length()}.
      * @since 1.5
-     * @j2sIgnore
+     * 
      */
     public int codePointCount(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex > count || beginIndex > endIndex)
             throw new StringIndexOutOfBoundsException();
-        return Character.codePointCount(value, beginIndex, endIndex
+        return this.toString().codePointCount(beginIndex, endIndex
                 - beginIndex);
     }
 
@@ -826,10 +827,10 @@ abstract class AbstractStringBuilder {
      *         points before or after <code>index</code> to match
      *         <code>codePointOffset</code>.
      * @since 1.5
-     * @j2sIgnore
+     * 
      */
     public int offsetByCodePoints(int index, int codePointOffset) {
-        return Character.offsetByCodePoints(value, 0, count, index,
+        return this.toString().offsetByCodePoints(index,
                 codePointOffset);
     }
 }
