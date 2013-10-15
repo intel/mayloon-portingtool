@@ -417,7 +417,6 @@ public class ConvertWizards extends Wizard {
 						}
 					}
 		            missingTypesMap.clear();
-					parConversionInfoPage.addStubClassInfo(parConversionInfo);
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 
@@ -581,11 +580,38 @@ public class ConvertWizards extends Wizard {
 		} catch (MalformedTreeException e) {
 			reportError(e);
 		}
-		
+		setStubClassInfo();
 		missingFieldsMap = null;
 		missingMethodsMap = null;
 		missingConstructorsMap = null;
 	}	
+	
+	private void setStubClassInfo() {
+	    for (String className : parConversionInfo) {
+	        parConversionInfoPage.addStubClassInfo(className, null, null);
+	        if (missingFieldsMap.containsKey(className)) {
+	            for (String fieldName : (Set<String>) missingFieldsMap.get(className).keySet()) {
+	                parConversionInfoPage.addStubClassInfo(className,
+	                        MptConstants.STUB_CLASS_FIELD_TYPE, fieldName);
+	            }
+	        }
+	        
+	        if (missingConstructorsMap.containsKey(className)) {
+	            for (String constructorsName : (Set<String>) missingConstructorsMap.get(className)
+	                    .keySet()) {
+	                parConversionInfoPage.addStubClassInfo(className,
+	                        MptConstants.STUB_CLASS_CONSTRUCTOR_TYPE, constructorsName);
+	            }
+	        }
+	        
+	        if (missingMethodsMap.containsKey(className)) {
+	            for (String methodsName : (Set<String>) missingMethodsMap.get(className).keySet()) {
+	                parConversionInfoPage.addStubClassInfo(className,
+	                        MptConstants.STUB_CLASS_METHOD_TYPE, methodsName);
+	            }
+	        }
+	    }
+	}
 	
 	private void initMaps() {
 	    missingMethodsMap = new HashMap<String, Map>();

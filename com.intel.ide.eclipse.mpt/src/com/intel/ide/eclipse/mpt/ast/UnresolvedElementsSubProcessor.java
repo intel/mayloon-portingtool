@@ -955,13 +955,13 @@ public class UnresolvedElementsSubProcessor {
                 return;
 			ICompilationUnit targetCU= ASTResolving.findCompilationUnitForBinding(cu, astRoot, targetDecl);
 			if (targetCU != null) {
-				String[] args= new String[] { ASTResolving.getMethodSignature( ASTResolving.getTypeSignature(targetDecl), getParameterTypes(arguments), false) };
-				String label= Messages.format(CorrectionMessages.UnresolvedElementsSubProcessor_createconstructor_description, args);
+				String arg= ASTResolving.getMethodSignature( ASTResolving.getTypeSignature(targetDecl), getParameterTypes(arguments), false);
+				String label= Messages.format(CorrectionMessages.UnresolvedElementsSubProcessor_createconstructor_description, arg);
 				Image image= JavaElementImageProvider.getDecoratedImage(JavaPluginImages.DESC_MISC_PUBLIC, JavaElementImageDescriptor.CONSTRUCTOR, JavaElementImageProvider.SMALL_SIZE);
 				/**
 				 * Make sure constructor of a certain signature is created only once. 
 				 */
-				String key = Arrays.toString(args);
+				String key = arg;
 				map.put(key, new NewMethodCorrectionProposal(label, targetCU, selectedNode, arguments, targetDecl, IProposalRelevance.CREATE_CONSTRUCTOR, image));
 			}
 		}

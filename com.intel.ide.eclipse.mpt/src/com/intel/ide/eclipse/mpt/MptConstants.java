@@ -100,4 +100,8 @@ public class MptConstants {
     // Tag for export message in console
     public static final String EXPORT_TAG = "Export";
     
+    //Tag for Partial Conversion Stub Class
+    public static final String STUB_CLASS_FIELD_TYPE = "Fields";
+    public static final String STUB_CLASS_CONSTRUCTOR_TYPE = "Constructors";
+    public static final String STUB_CLASS_METHOD_TYPE = "Methods";
 }
