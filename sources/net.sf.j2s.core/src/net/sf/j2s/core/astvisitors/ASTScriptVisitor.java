@@ -1347,6 +1347,59 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 			}
 		}
 
+        //needs to add more expression for code that 'object == null' or 'null == object' in a method, 
+        //make sure the result is correct in j2s when force cast null to object as parameter to call a method.
+        boolean addExpRight = false;
+        boolean addExpLeft = false; 
+        String orAnd = "";
+        if ("==".equals(operator)) {
+            orAnd = " || "; 
+        } else if ("!=".equals(operator)) {
+            orAnd = " && ";
+        }
+
+        //get the parameter list of this method by MethodDeclaration.
+        ASTNode p = node;
+        while(p != null) {
+            if (p instanceof MethodDeclaration) {
+                break;
+            }
+            p = p.getParent();
+        }
+        List paramsName = new ArrayList();
+        if (p != null && p instanceof MethodDeclaration) {
+            MethodDeclaration md = (MethodDeclaration)p;
+            List parames = md.parameters();
+            for (int i = 0; i< parames.size(); i++) {
+                SingleVariableDeclaration varDec = (SingleVariableDeclaration)parames.get(i);
+                paramsName.add(varDec.getName().toString());
+            }
+        }
+
+        String varName = node.getRightOperand() instanceof NullLiteral ? 
+                node.getLeftOperand().toString() : node.getRightOperand().toString();
+
+        boolean isMethodParam = paramsName.contains(varName);
+
+        if (isMethodParam && ("==".equals(operator) || "!=".equals(operator))) {
+            if (node.getRightOperand() instanceof NullLiteral) {
+                 addExpRight = true;
+            }
+            if (node.getLeftOperand() instanceof NullLiteral) {
+                addExpLeft = true;
+            }
+        }
+
+        //if (null == null) or if (null != null) don't need to handle it.
+        if (node.getLeftOperand() instanceof NullLiteral && 
+                node.getRightOperand() instanceof NullLiteral) {
+            addExpRight = addExpLeft = false;
+        }
+
+        if (addExpRight || addExpLeft) {
+            buffer.append("(");
+        }
+
 		charVisit(node.getLeftOperand(), beCare);
 		buffer.append(' ');
 		buffer.append(operator);
@@ -1361,6 +1414,25 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		}
 		buffer.append(' ');
 		charVisit(node.getRightOperand(), beCare);
+
+        if (addExpRight) {
+            buffer.append(orAnd);
+            charVisit(node.getLeftOperand(), beCare);
+            buffer.append(".valueOf()");
+            buffer.append(' ' + operator + ' ');
+            charVisit(node.getRightOperand(), beCare);
+            buffer.append(")");
+        }
+
+        if (addExpLeft) {
+            buffer.append(orAnd);
+            charVisit(node.getLeftOperand(), beCare);
+            buffer.append(' ' + operator + ' ');
+            charVisit(node.getRightOperand(), beCare);
+            buffer.append(".valueOf()");
+            buffer.append(")");
+        }
+
 		List extendedOperands = node.extendedOperands();
 		if (extendedOperands.size() > 0) {
 			for (Iterator iter = extendedOperands.iterator(); iter.hasNext();) {
