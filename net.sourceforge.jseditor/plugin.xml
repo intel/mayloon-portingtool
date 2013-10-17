@@ -3,7 +3,7 @@
 <plugin
    id="net.sourceforge.jseditor"
    name="JavaScript Editor Plug-in"
-   version="0.5.0.qualifier"
+   version="0.6.0.qualifier"
    provider-name="Adrian Dinu, Alex Fitzpatrick, &amp; Richard Clark"
    class="net.sourceforge.jseditor.JSEditorPlugin">
 
