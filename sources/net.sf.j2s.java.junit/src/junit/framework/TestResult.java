@@ -15,13 +15,16 @@ import java.util.Enumeration;
 public class TestResult extends Object {
 	protected Vector fFailures;
 	protected Vector fErrors;
+	protected Vector fKnownFailures;
 	protected Vector fListeners;
 	protected int fRunTests;
 	private boolean fStop;
+	static final private String KNOWN_FAILURE = "Known failure";
 	
 	public TestResult() {
 		fFailures= new Vector();
 		fErrors= new Vector();
+		fKnownFailures= new Vector();
 		fListeners= new Vector();
 		fRunTests= 0;
 		fStop= false;
@@ -45,6 +48,15 @@ public class TestResult extends Object {
 		for (Enumeration e= cloneListeners().elements(); e.hasMoreElements(); ) {
 			((TestListener)e.nextElement()).addFailure(test, t);
 		}
+	}
+	/**
+	 * Adds a known failure to the list of known failures.
+	 */
+	public synchronized void addKnownFailure(Test test, AssertionFailedError t) {
+	    fKnownFailures.addElement(new TestFailure(test, t));
+	    for (Enumeration e= cloneListeners().elements(); e.hasMoreElements(); ) {
+	        ((TestListener)e.nextElement()).addKnownFailure(test, t);
+	    }
 	}
 	/**
 	 * Registers a TestListener
@@ -97,6 +109,18 @@ public class TestResult extends Object {
 		return fFailures.elements();
 	}
 	/**
+	 * Gets the number of known failures.
+	 */
+	public synchronized int knownFailureCount() {
+	    return fKnownFailures.size();
+	}
+	/**
+	 * Returns an Enumeration for the known failures
+	 */
+	public synchronized Enumeration knownFailures() {
+	    return fKnownFailures.elements();
+	}
+	/**
 	 * Runs a TestCase.
 	 */
 	protected void run(final TestCase test) {
@@ -120,11 +144,17 @@ public class TestResult extends Object {
 	 * Runs a TestCase.
 	 */
 	public void runProtected(final Test test, Protectable p) {
+	    String tempStr = new String();
 		try {
 			p.protect();
 		} 
 		catch (AssertionFailedError e) {
-			addFailure(test, e);
+		    tempStr = e.getMessage();
+		    if(tempStr != null && tempStr.startsWith(KNOWN_FAILURE)){
+		        addKnownFailure(test, e);
+		    }else{
+		        addFailure(test, e);
+		    }
 		}
 		catch (ThreadDeath e) { // don't catch ThreadDeath by accident
 			throw e;

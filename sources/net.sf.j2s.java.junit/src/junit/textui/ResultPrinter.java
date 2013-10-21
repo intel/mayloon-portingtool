@@ -110,7 +110,11 @@ public class ResultPrinter implements TestListener {
         if (result.wasSuccessful()) {
              /**
              * @j2sNative
-             * console.log("\nOK" + " (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
+             * console.log("\nOK" + " (" +
+             *                          result.runCount() + " test" + (result.runCount() == 1 ? "": "s") +
+             *                          (result.knownFailureCount() == 0 ? "" : ", but "+ result.knownFailureCount() + " known failure") +
+             *                          (result.knownFailureCount() == 1 ? "": "s") +
+             *                      ")");
              **/
             {
                 getWriter().println();
@@ -121,13 +125,15 @@ public class ResultPrinter implements TestListener {
             /**
              * @j2sNative
              * console.log("\nFAILURES!!!");
-             * console.log("Tests run: " + result.runCount() + ",  Failures: "+result.failureCount() +
-                           ",  Errors: "+result.errorCount());
+             * console.log("Tests run: " + result.runCount() +
+             *              ",  Failures: "+result.failureCount() +
+             *              ",  Errors: "+result.errorCount() +
+             *              ",  KnownFailures: "+result.knownFailureCount());
              **/
             {
                 getWriter().println();
                 getWriter().println("FAILURES!!!");
-                getWriter().println("Tests run: "+result.runCount()+ 
+                getWriter().println("Tests run: "+result.runCount()+
                          ",  Failures: "+result.failureCount()+
                          ",  Errors: "+result.errorCount());
             }
@@ -164,6 +170,15 @@ public class ResultPrinter implements TestListener {
 	 */
 	public void addFailure(Test test, AssertionFailedError t) {
 	    getWriter().print("F");
+	}
+
+	/**
+	 * @see junit.framework.TestListener#addKnownFailure(Test, AssertionFailedError)
+	 * @j2sNative
+	 * console.log("Known F");
+	 */
+	public void addKnownFailure(Test test, AssertionFailedError t) {
+	    getWriter().print("Known F");
 	}
 
 	/**

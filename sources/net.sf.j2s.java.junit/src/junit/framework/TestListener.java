@@ -13,6 +13,10 @@ public interface TestListener {
  	 */
  	public void addFailure(Test test, AssertionFailedError t);  
 	/**
+	 * A known failure occurred
+	 */
+	public void addKnownFailure(Test test, AssertionFailedError t);
+	/**
 	 * A test ended.
 	 */
  	public void endTest(Test test); 
