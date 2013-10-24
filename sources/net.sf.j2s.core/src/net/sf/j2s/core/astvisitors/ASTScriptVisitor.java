@@ -750,13 +750,44 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 	public boolean visit(ConstructorInvocation node) {
 		buffer.append("this.construct (");
 		IMethodBinding methodDeclaration = null;
+        String curClassName = null;
 		IMethodBinding constructorBinding = node.resolveConstructorBinding();
 		if (constructorBinding != null) {
 			methodDeclaration = constructorBinding.getMethodDeclaration();
+            curClassName = methodDeclaration.getDeclaringClass().getQualifiedName();
 		}
 		visitMethodParameterList(node.arguments(), methodDeclaration);
 		//visitList(node.arguments(), ", ");
-		buffer.append(");\r\n");
+        /**
+         * add one more parameter is used to identify this constructor belongs to which class.
+         * because a constructor in class which has the same parameter types and parameter number as its child class and parent class, 
+         * if you use 'this' keyword to call the constructor need to make sure to call the constructor of the current class 
+         * instead of a subclass constructor. 
+         *
+         * example:
+         * public class ClassA{
+         *     public ClassA(String name) {
+         *         //notice: when execute this code, need to call the constructor of the current class instead of a subclass constructor at anytime.
+         *         this(name, "Tom"); after translate js code is : this.construct(name, "Tom", "{cls#name}=com.test.ClassA");
+         *     }
+         *     public ClassA(String name, String name1) {
+         *     }
+         * }
+         * public class ClassB extends ClassB{
+         *     public ClassB(String name) {
+         *     }
+         *     public ClassB(String name, String name1) {
+         *     }
+         * }
+         */
+        if (curClassName != null) {
+            if (node.arguments().size() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append("\"{cls#name}=" + curClassName + "\"");
+        }
+        buffer.append(");\r\n");
+
 		return false;
 	}
 	public boolean visit(EnumConstantDeclaration node) {

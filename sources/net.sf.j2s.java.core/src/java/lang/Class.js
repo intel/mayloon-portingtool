@@ -776,6 +776,35 @@ Clazz.getParamsType = function (funParams) {
 /* protected */
 /*-# searchAndExecuteMethod -> saem #-*/
 Clazz.searchAndExecuteMethod = function (objThis, claxxRef, fxName, funParams) {
+    /*
+     * if fxName value is 'construct', then get the class name of this constructor by last parameter of method.
+     * make sure to call the constructor of the current class instead of a subclass constructor. 
+     * example:
+     * public class ClassA{
+     *     public ClassA(String name) {
+     *         //notice: when execute this code, need to call the constructor of the current class instead of a subclass constructor at anytime.
+     *         this(name, "Tom"); --> after translate js code is : this.construct(name, "Tom", "{cls#name}=com.test.ClassA");
+     *     }
+     *     public ClassA(String name, String name1) {
+     *     }
+     * }
+     * public class ClassB extends ClassB{
+     *     public ClassB(String name) {
+     *     }
+     *     public ClassB(String name, String name1) {
+     *     }
+     * }
+     */
+    var curClsName = "";
+    if ("construct" == fxName && funParams != null && funParams.length > 0) {
+        var keyString = funParams[funParams.length - 1];
+        if ("string" == typeof(keyString) && keyString.indexOf("{cls#name}=") == 0) {
+            curClsName = keyString.substring("{cls#name}=".length);
+            //removed the last param after had got the current class name of this construct method.
+            funParams.length = funParams.length - 1;
+        }
+    }
+
 	var params = Clazz.getParamsType (funParams);
 	var fx = objThis[fxName];
 	/*
@@ -813,7 +842,9 @@ Clazz.searchAndExecuteMethod = function (objThis, claxxRef, fxName, funParams) {
 	if (stacks == null) {
 		stacks = claxxRef.prototype[fxName].stacks;
 	}
+
 	var length = stacks.length;
+
 	/*
 	 * Search the inheritance stacks to get the given class' function
 	 */
@@ -831,12 +862,20 @@ Clazz.searchAndExecuteMethod = function (objThis, claxxRef, fxName, funParams) {
 			 * with stacks[i] === claxxRef
 			 */
 			var clazzFun = stacks[i].prototype[fxName];
-			
-			var ret = Clazz.tryToSearchAndExecute (objThis, clazzFun, params, 
-					funParams/*, isSuper, clazzThis*/, fx);
-			if (!(ret instanceof Clazz.MethodException)) {
-				return ret;
-			}
+
+            var searchAgain = false;
+            if (curClsName != "" && clazzFun[params.typeString]) {
+                if (curClsName != clazzFun[params.typeString].exClazz.getName()) {
+                    searchAgain = true;
+                }
+            }
+            if (!searchAgain) {
+                var ret = Clazz.tryToSearchAndExecute(objThis, clazzFun, params, funParams, fx);
+                if (!(ret instanceof Clazz.MethodException)) {
+                    return ret;
+                }
+            }
+
 			/*
 			 * As there are no such methods in current class, Clazz will try 
 			 * to search its super class stacks. Here variable began indicates
