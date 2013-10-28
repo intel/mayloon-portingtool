@@ -184,6 +184,10 @@ public class TestRunner extends BaseTestRunner {
 	public void setPrinter(ResultPrinter printer) {
 		fPrinter= printer;
 	}
+
+    @Override
+    public void addKnownFailure(Test test, AssertionFailedError t) {
+    }
 		
 	
 }
