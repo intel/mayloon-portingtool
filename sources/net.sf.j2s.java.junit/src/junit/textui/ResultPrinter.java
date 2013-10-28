@@ -129,6 +129,17 @@ public class ResultPrinter implements TestListener {
              *              ",  Failures: "+result.failureCount() +
              *              ",  Errors: "+result.errorCount() +
              *              ",  KnownFailures: "+result.knownFailureCount());
+             * 
+             * console.log("Failures:\n");
+             * var failures = result.failures();
+             * while(failures.hasMoreElements()){
+             *     console.log(failures.nextElement().fFailedTest.toString());
+             * }
+             * console.log("Errors:\n");
+             * var errors = result.errors();
+             * while(errors.hasMoreElements()){
+             *     console.log(errors.nextElement().fFailedTest.toString());
+             * }
              **/
             {
                 getWriter().println();
