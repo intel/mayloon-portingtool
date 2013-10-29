@@ -157,9 +157,9 @@ public final class Double extends Number{
      * @see java.lang.Comparable
      * @since 1.2
      */
-    /*public int compareTo(Double object) {
+    public int compareTo(Double object) {
         return compare(value, object.value);
-    }*/
+    }
 
     @Override
     public byte byteValue() {
@@ -375,7 +375,7 @@ public final class Double extends Number{
      *         0 if {@code double1} and {@code double2} are equal; a positive
      *         value if {@code double1} is greater than {@code double2}.
      */
-    /*public static int compare(double double1, double double2) {
+    public static int compare(double double1, double double2) {
         // Non-zero, non-NaN checking.
         if (double1 > double2) {
             return 1;
@@ -396,14 +396,14 @@ public final class Double extends Number{
         } else if (isNaN(double2)) {
             return -1;
         }
-
+        return 0;
         // Deal with +0.0 and -0.0
-        long d1 = doubleToRawLongBits(double1);
-        long d2 = doubleToRawLongBits(double2);
+        //long d1 = doubleToRawLongBits(double1);
+        //long d2 = doubleToRawLongBits(double2);
         // The below expression is equivalent to:
         // (d1 == d2) ? 0 : (d1 < d2) ? -1 : 1
-        return (int) ((d1 >> 63) - (d2 >> 63));
-    }*/
+        //return (int) ((d1 >> 63) - (d2 >> 63));
+    }
 
     /**
      * Returns a {@code Double} instance for the specified double value.

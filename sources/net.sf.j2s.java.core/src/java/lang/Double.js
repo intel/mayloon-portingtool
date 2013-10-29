@@ -53,14 +53,75 @@ Double.isInfinite = Double.prototype.isInfinite;
 
 Clazz.defineMethod (Double, "parseDouble", 
 function (s) {
-if(s==null) throw new NullPointerException();//sgurin . if s==null a NPE should be thrown and not NumberFormatException because isNaN(null)==true
-var doubleVal = parseFloat (s);
-if(isNaN(doubleVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
-}
-return doubleVal;
+    if (s == null) 
+        throw new NullPointerException();//sgurin . if s==null a NPE should be thrown and not NumberFormatException because isNaN(null)==true
+    s = s.trim();
+    if (s == "NaN" || s == "+NaN" || s == "-NaN") {
+        return Number.NaN;
+    }
+    if (isNaN(s) || s.length == 0) {
+        throw new NumberFormatException("Not a Number : " + s);
+    }
+    var doubleVal = parseFloat (s);
+    return doubleVal;
 }, "String");
 Double.parseDouble = Double.prototype.parseDouble;
+
+Clazz.defineMethod (Double, "compare", 
+function (double1, double2) {
+    if (double1 > double2) {
+        return 1;
+    }
+    if (double2 > double1) {
+        return -1;
+    }
+    if (double1 == double2){
+        return 0;
+    }
+    // NaNs are equal to other NaNs and larger than any other double
+    if (isNaN(double1)) {
+        if (isNaN(double2)) {
+            return 0;
+        }
+        return 1;
+    } else if (isNaN(double2)) {
+        return -1;
+    }
+    return 0;
+}, "~N,~N");
+Double.compare=Double.prototype.compare;
+
+Clazz.defineMethod (Double, "compareTo", 
+function (object) {
+    return Double.compare (this.valueOf(), object.valueOf());
+}, "Double");
+
+Clazz.defineMethod (Double, "hashCode", 
+function () {
+    return this.valueOf();
+});
+
+Clazz.defineMethod (Double, "intValue", 
+function () {
+    var va = this.valueOf();
+    if (va > Integer.MAX_VALUE) {
+        return Integer.MAX_VALUE;
+    }
+    if (va < Integer.MIN_VALUE) {
+        return Integer.MIN_VALUE;
+    }
+    return Math.round(this) & 0xffffffff;
+});
+
+Clazz.defineMethod (Double, "isInfinite", 
+function () {
+    return Double.isInfinite(this.valueOf());
+});
+
+Clazz.defineMethod (Double, "isNaN", 
+function () {
+    return Double.isNaN(this.valueOf());
+});
 
 Clazz.defineMethod (Double, "$valueOf", 
 function (s) {
@@ -77,9 +138,9 @@ Double.$valueOf = Double.prototype.$valueOf;
 Clazz.defineMethod (Double, "equals", 
 function (s) {
 if(s == null || ! Clazz.instanceOf(s, Double) ){
-	return false;
+    return false;
 }
-return s.valueOf()  == this.valueOf();
+return Double.compare(s.valueOf(), this.valueOf()) == 0;
 }, "Object");
 });
 

@@ -52,9 +52,16 @@ function () {
 return Math.round (this);
 });
 
-Clazz.defineMethod (Number, "floatValue", 
-function () {
-return this.valueOf();
+Clazz.defineMethod(Number, "floatValue", 
+function() {
+    var val = this.valueOf();
+    if(val < Float.MIN_VALUE) {
+        return Number.NEGATIVE_INFINITY;
+    }
+    if (val > Float.MAX_VALUE) {
+        return Number.POSITIVE_INFINITY;
+    }
+    return val;
 });
 
 Clazz.defineMethod (Number, "doubleValue", 
