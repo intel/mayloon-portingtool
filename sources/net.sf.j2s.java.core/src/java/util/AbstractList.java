@@ -144,17 +144,65 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
 	}
 
 	private static final class SubAbstractListRandomAccess<E> extends
-			SubAbstractList<E> implements RandomAccess {
-		SubAbstractListRandomAccess(AbstractList<E> list, int start, int end) {
-			super(list, start, end);
-		}
+    SubAbstractList<E> implements RandomAccess {
+        private ArrayList<E> arraylist=new ArrayList<E>();
+        SubAbstractListRandomAccess(AbstractList<E> list, int start, int end) {
+            super(list, start, end);
+            if(end>list.size()) 
+                end=list.size();
+            if(start >= end)
+                throw new IndexOutOfBoundsException();
+            for (int i = start; i < end; i++) {
+                arraylist.add(list.get(i));
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractList.SubAbstractList#addAll(java.util.Collection)
+         */
+        @Override
+        public boolean addAll(Collection<? extends E> collection) {
+            return arraylist.addAll(collection);
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractCollection#contains(java.lang.Object)
+         */
+        @Override
+        public boolean contains(Object object) {
+            return arraylist.contains(object);
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractList.SubAbstractList#remove(int)
+         */
+        @Override
+        public E remove(int location) {
+            return arraylist.remove(location);
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractList.SubAbstractList#set(int, java.lang.Object)
+         */
+        @Override
+        public E set(int location, E object) {
+            return (E) arraylist.set(location, object);
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractList.SubAbstractList#get(int)
+         */
+        @Override
+        public E get(int location) {
+            return arraylist.get(location);
+            }
 	}
 
 	private static class SubAbstractList<E> extends AbstractList<E> {
-		private final AbstractList<E> fullList;
+	    private final AbstractList<E> fullList;
 
 		private int offset;
-        private int size;
+		private int size;
 
 		private static final class SubAbstractListIterator<E> implements
 				ListIterator<E> {
