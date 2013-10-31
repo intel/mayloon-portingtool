@@ -102,7 +102,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public void add(int location, E object) {
-		int size = size();
+		int size = lastIndex - firstIndex;
 		if (0 < location && location < size) {
 			if (firstIndex == 0 && lastIndex == array.length) {
 				growForInsert(location, 1);
@@ -128,7 +128,8 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
             }
 			array[lastIndex++] = object;
 		} else {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Invalid index " + location
+                    + ", size is " + size);
         }
 
 		modCount++;
@@ -165,9 +166,10 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
      */
     @Override
     public boolean addAll(int location, Collection<? extends E> collection) {
-        int size = size();
+        int size = lastIndex - firstIndex;
         if (location < 0 || location > size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Invalid index " + location
+                    + ", size is " + size);
         }
         if(collection == null){
             throw new NullPointerException();
@@ -336,14 +338,15 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public E get(int location) {
-		if (0 <= location && location < size()) {
+		if (0 <= location && location < (lastIndex - firstIndex)) {
 			return array[firstIndex + location];
         }
-		throw new IndexOutOfBoundsException();
+		throw new IndexOutOfBoundsException("Invalid index " + location
+                + ", size is " + (lastIndex - firstIndex));
 	}
 
 	private void growAtEnd(int required) {
-		int size = size();
+		int size = lastIndex - firstIndex;
 		if (firstIndex >= required - (array.length - lastIndex)) {
 			int newLast = lastIndex - firstIndex;
 			if (size > 0) {
@@ -370,7 +373,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	}
 
 	private void growAtFront(int required) {
-		int size = size();
+		int size = lastIndex - firstIndex;
 		if (array.length - lastIndex >= required) {
 			int newFirst = array.length - size;
 			if (size > 0) {
@@ -401,7 +404,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	}
 
 	private void growForInsert(int location, int required) {
-		int size = size(), increment = size / 2;
+		int size = lastIndex - firstIndex, increment = size / 2;
 		if (required > increment) {
             increment = required;
         }
@@ -411,7 +414,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 		E[] newArray = newElementArray(size + increment);
 		if (location < size / 2) {
 			int newFirst = newArray.length - (size + required);
-			System.arraycopy(array, location, newArray, location + increment,
+			System.arraycopy(array, location + 1, newArray, location + increment,
 					size - location);
 			System.arraycopy(array, firstIndex, newArray, newFirst, location);
 			firstIndex = newFirst;
@@ -503,7 +506,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	@Override
     public E remove(int location) {
 		E result;
-		int size = size();
+		int size = lastIndex - firstIndex;
 		if (0 <= location && location < size) {
 			if (location == size - 1) {
 				result = array[--lastIndex];
@@ -525,7 +528,8 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 				}
 			}
 		} else {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Invalid index " + location
+                    + ", size is " + size);
         }
 
 		modCount++;
@@ -547,11 +551,11 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     protected void removeRange(int start, int end) {
-		if (start >= 0 && start <= end && end <= size()) {
+		if (start >= 0 && start <= end && end <= lastIndex - firstIndex) {
 			if (start == end) {
                 return;
             }
-			int size = size();
+			int size = lastIndex - firstIndex;
 			if (end == size) {
 				Arrays.fill(array, firstIndex + start, lastIndex, null);
 				lastIndex = firstIndex + start;
@@ -567,7 +571,8 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 			}
 			modCount++;
 		} else {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Invalid index " + start
+                    + ", size is " + (lastIndex - firstIndex));
         }
 	}
 
@@ -586,12 +591,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public E set(int location, E object) {
-		if (0 <= location && location < size()) {
+		if (0 <= location && location < lastIndex - firstIndex) {
 			E result = array[firstIndex + location];
 			array[firstIndex + location] = object;
 			return result;
 		}
-		throw new IndexOutOfBoundsException();
+		throw new IndexOutOfBoundsException("Invalid index " + location
+                + ", size is " + (lastIndex - firstIndex));
 	}
 
 	/**
@@ -611,7 +617,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public Object[] toArray() {
-		int size = size();
+		int size = lastIndex - firstIndex;
 		Object[] result = new Object[size];
 		System.arraycopy(array, firstIndex, result, 0, size);
 		return result;
@@ -635,7 +641,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	@Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] contents) {
-		int size = size();
+		int size = lastIndex - firstIndex;
         if (contents.length < size) {
             /**
              * @j2sNative
@@ -655,12 +661,13 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 * @see #size
 	 */
 	public void trimToSize() {
-		int size = size();
+		int size = lastIndex - firstIndex;
 		E[] newArray = newElementArray(size);
 		System.arraycopy(array, firstIndex, newArray, 0, size);
 		array = newArray;
 		firstIndex = 0;
 		lastIndex = array.length;
+		modCount++;
 	}
 
 	/*
