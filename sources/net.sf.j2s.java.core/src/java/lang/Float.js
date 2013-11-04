@@ -49,10 +49,14 @@ function (s) {
 if (s == null) {
 throw  new NumberFormatException ("null");
 }
-var floatVal =  parseFloat (s);
-if(isNaN(floatVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
+s = s.trim();
+if (s == "NaN" || s == "+NaN" || s == "-NaN") {
+    return Number.NaN;
 }
+if (isNaN(s) || s.length == 0) {
+    throw new NumberFormatException("Not a Number : " + s);
+}
+var floatVal = parseFloat (s);
 return floatVal;
 }, "String");
 Float.parseFloat = Float.prototype.parseFloat;
@@ -64,6 +68,9 @@ return new Float(Float.parseFloat (s, 10));
 
 Clazz.defineMethod (Float, "$valueOf", 
 function (s) {
+if (s == null) {
+   throw new NullPointerException("null");
+}
 return new Float(s);
 }, "Number");
 
@@ -84,6 +91,6 @@ function (s) {
 if(s == null || ! Clazz.instanceOf(s, Float) ){
 	return false;
 }
-return s.valueOf()  == this.valueOf();
+return Number.compare(s.valueOf(), this.valueOf()) == 0;
 }, "Object");
 });

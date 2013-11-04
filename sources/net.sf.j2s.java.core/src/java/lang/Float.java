@@ -161,9 +161,9 @@ public final class Float extends Number{
      * @see java.lang.Comparable
      * @since 1.2
      */
-    /*public int compareTo(Float object) {
+    public int compareTo(Float object) {
         return compare(value, object.value);
-    }*/
+    }
 
     @Override
     public byte byteValue() {
@@ -235,10 +235,10 @@ public final class Float extends Number{
         return value;
     }
 
-    /*@Override
+    @Override
     public int hashCode() {
-        return floatToIntBits(value);
-    }*/
+        return (int)value;
+    }
 
     /**
      * Converts the specified IEEE 754 floating-point single precision bit
@@ -381,7 +381,7 @@ public final class Float extends Number{
      *         value if {@code float1} is greater than {@code float2}.
      * @since 1.4
      */
-    /*public static int compare(float float1, float float2) {
+    public static int compare(float float1, float float2) {
         // Non-zero, non-NaN checking.
         if (float1 > float2) {
             return 1;
@@ -402,15 +402,15 @@ public final class Float extends Number{
         } else if (isNaN(float2)) {
             return -1;
         }
-
+        return 0;
         // Deal with +0.0 and -0.0
-        int f1 = floatToRawIntBits(float1);
-        int f2 = floatToRawIntBits(float2);
+        //int f1 = floatToRawIntBits(float1);
+        //int f2 = floatToRawIntBits(float2);
         // The below expression is equivalent to:
         // (f1 == f2) ? 0 : (f1 < f2) ? -1 : 1
         // because f1 and f2 are either 0 or Integer.MIN_VALUE
-        return (f1 >> 31) - (f2 >> 31);
-    }*/
+        //return (f1 >> 31) - (f2 >> 31);
+    }
 
     /**
      * Returns a {@code Float} instance for the specified float value.

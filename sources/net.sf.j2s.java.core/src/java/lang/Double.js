@@ -67,35 +67,6 @@ function (s) {
 }, "String");
 Double.parseDouble = Double.prototype.parseDouble;
 
-Clazz.defineMethod (Double, "compare", 
-function (double1, double2) {
-    if (double1 > double2) {
-        return 1;
-    }
-    if (double2 > double1) {
-        return -1;
-    }
-    if (double1 == double2){
-        return 0;
-    }
-    // NaNs are equal to other NaNs and larger than any other double
-    if (isNaN(double1)) {
-        if (isNaN(double2)) {
-            return 0;
-        }
-        return 1;
-    } else if (isNaN(double2)) {
-        return -1;
-    }
-    return 0;
-}, "~N,~N");
-Double.compare=Double.prototype.compare;
-
-Clazz.defineMethod (Double, "compareTo", 
-function (object) {
-    return Double.compare (this.valueOf(), object.valueOf());
-}, "Double");
-
 Clazz.defineMethod (Double, "hashCode", 
 function () {
     return this.valueOf();
@@ -111,16 +82,6 @@ function () {
         return Integer.MIN_VALUE;
     }
     return Math.round(this) & 0xffffffff;
-});
-
-Clazz.defineMethod (Double, "isInfinite", 
-function () {
-    return Double.isInfinite(this.valueOf());
-});
-
-Clazz.defineMethod (Double, "isNaN", 
-function () {
-    return Double.isNaN(this.valueOf());
 });
 
 Clazz.defineMethod (Double, "$valueOf", 
@@ -140,7 +101,7 @@ function (s) {
 if(s == null || ! Clazz.instanceOf(s, Double) ){
     return false;
 }
-return Double.compare(s.valueOf(), this.valueOf()) == 0;
+return Number.compare(s.valueOf(), this.valueOf()) == 0;
 }, "Object");
 });
 

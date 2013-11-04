@@ -15,7 +15,7 @@ Number.getName = Clazz.innerFunctions.getName;
 Number.serialVersionUID = Number.prototype.serialVersionUID = -8742448824652078965;
 
 Number.toByteValue=Number.prototype.toByteValue=function(){
-var value = Math.round(arguments[0])%256;
+var value = parseInt(arguments[0])%256;
 if(value >= -128 && value <128){
 return value;
 }else if(value<-128){
@@ -27,7 +27,7 @@ return value - 256;
 
 Clazz.defineMethod (Number, "shortValue", function(){
 
-var value = Math.round(this)%65536;
+var value = parseInt(this) % 65536;
 if(value >= -32768 && value <32768){
 return value;
 }else if(value<-32768){
@@ -49,13 +49,13 @@ return Math.round (this) & 0xffffffff;
 
 Clazz.defineMethod (Number, "longValue", 
 function () {
-return Math.round (this);
+return parseInt (this);
 });
 
 Clazz.defineMethod(Number, "floatValue", 
 function() {
     var val = this.valueOf();
-    if(val < Float.MIN_VALUE) {
+    if(val < -Float.MAX_VALUE) {
         return Number.NEGATIVE_INFINITY;
     }
     if (val > Float.MAX_VALUE) {
@@ -68,6 +68,48 @@ Clazz.defineMethod (Number, "doubleValue",
 function () {
 return this.valueOf();
 });
+
+Clazz.defineMethod (Number, "isInfinite", 
+function () {
+    return !isFinite (this.valueOf());
+});
+
+Clazz.defineMethod (Number, "isNaN", 
+function () {
+    return isNaN (this.valueOf());
+});
+
+
+Clazz.defineMethod (Number, "compare", 
+function (num1, num2) {
+    if (num1 > num2) {
+        return 1;
+    }
+    if (num2 > num1) {
+        return -1;
+    }
+    if (num1 == num2){
+        return 0;
+    }
+    // NaNs are equal to other NaNs and larger than any other double
+    if (isNaN(num1)) {
+        if (isNaN(num2)) {
+            return 0;
+        }
+        return 1;
+    } else if (isNaN(num2)) {
+        return -1;
+    }
+    return 0;
+}, "~N,~N");
+
+Number.compare=Number.prototype.compare;
+
+Clazz.defineMethod (Number, "compareTo", 
+function (object) {
+    return Number.compare (this.valueOf(), object.valueOf());
+}, "Number");
+
 /*
 * this method will be override the original toString of Number in javascript.
 * lead to method toString(radix) of Number in javascript doesn't work.
