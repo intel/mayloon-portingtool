@@ -44,7 +44,13 @@ return Number.toByteValue(this);
 
 Clazz.defineMethod (Number, "intValue", 
 function () {
-return Math.round (this) & 0xffffffff;
+    if (this > Integer.MAX_VALUE) {
+        return Integer.MAX_VALUE;
+    }
+    if (this < Integer.MIN_VALUE) {
+        return Integer.MIN_VALUE;
+    }
+    return parseInt(this) & 0xffffffff;
 });
 
 Clazz.defineMethod (Number, "longValue", 

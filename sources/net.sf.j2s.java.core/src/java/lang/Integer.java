@@ -224,7 +224,7 @@ public final class Integer extends Number{
      * @return the requested property's value as an {@code Integer} or
      *         {@code null}.
      */
-    /*public static Integer getInteger(String string) {
+    public static Integer getInteger(String string) {
         if (string == null || string.length() == 0) {
             return null;
         }
@@ -237,7 +237,7 @@ public final class Integer extends Number{
         } catch (NumberFormatException ex) {
             return null;
         }
-    }*/
+    }
 
     /**
      * Returns the {@code Integer} value of the system property identified by
@@ -253,7 +253,7 @@ public final class Integer extends Number{
      * @return the requested property's value as an {@code Integer} or the
      *         default value.
      */
-   /* public static Integer getInteger(String string, int defaultValue) {
+    public static Integer getInteger(String string, int defaultValue) {
         if (string == null || string.length() == 0) {
             return valueOf(defaultValue);
         }
@@ -266,7 +266,7 @@ public final class Integer extends Number{
         } catch (NumberFormatException ex) {
             return valueOf(defaultValue);
         }
-    }*/
+    }
 
     /**
      * Returns the {@code Integer} value of the system property identified by
@@ -297,10 +297,10 @@ public final class Integer extends Number{
         }
     }*/
 
-   /* @Override
+    @Override
     public int hashCode() {
         return value;
-    }*/
+    }
 
     /**
      * Gets the primitive value of this int.

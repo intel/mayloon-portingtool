@@ -4,14 +4,28 @@ Clazz.instantialize (this, arguments);
 };
 Clazz.decorateAsType (Integer, "Integer", Number, Comparable, null, true);
 Integer.prototype.valueOf = function () { return 0; };
-Integer.toString = Integer.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Integer) {
-		return "class java.lang.Integer"; // Integer.class.toString
-	}
-	return "" + this.valueOf ();
-};
+
+Integer.toString = Integer.prototype.toString = Clazz.defineMethod (Integer, "toString", 
+function () {
+    if (arguments.length != 0) {
+        return "" + arguments[0];
+    } else if (this === Integer) {
+        return "class java.lang.Integer"; // Integer.class.toString
+    }
+    return "" + this.valueOf();
+});
+
+Integer.toString = Integer.prototype.toString = Clazz.defineMethod (Integer, "toString", 
+function (n) {
+    var v = n & 0xffffffff;
+    return "" + v;
+}, "~N");
+
+Integer.toString = Integer.prototype.toString = Clazz.defineMethod (Integer, "toString", 
+function (i, radix) {
+    return Number(i).toString(radix);
+}, "~N,~N");
+
 Clazz.makeConstructor (Integer, 
 function () {
 this.valueOf = function () {
@@ -46,9 +60,18 @@ throw new NumberFormatException ("radix " + radix + " less than Character.MIN_RA
 }if (radix > 36) {
 throw new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
 }
+if (s.indexOf("0x") == 0 || s.indexOf(".") > -1) {
+    throw new NumberFormatException("For input string: " + s);
+}
 var integer = parseInt (s, radix);
 if(isNaN(integer)){
 throw new NumberFormatException ("Not a Number : " + s);
+}
+if (integer > Integer.MAX_VALUE) {
+    throw new NumberFormatException("For input string: " + s);
+}
+if (integer < Integer.MIN_VALUE) {
+    throw new NumberFormatException("For input string: " + s);
 }
 return integer;
 }, "String, Number");
@@ -59,6 +82,39 @@ return Integer.parseInt (s, 10);
 }, "String");
 
 Integer.parseInt = Integer.prototype.parseInt;
+
+
+Clazz.defineMethod (Integer, "getInteger", 
+function (string) {
+    if (string == null || string.length == 0) {
+        return null;
+    }
+    var prop = System.getProperty (string);
+    if (prop == null) {
+        return null;
+    }
+    try {
+        return Integer.decode (prop);
+    } catch (ex) {
+        if (Clazz.exceptionOf (ex, NumberFormatException)) {
+            return null;
+        } else {
+            throw ex;
+        }
+    }
+}, "~S");
+
+Clazz.defineMethod (Integer, "getInteger", 
+function (str, defVal) {
+    var result = Integer.getInteger (str);
+    return (result == null) ? Integer.$valueOf (defVal) : result;
+}, "~S,~N");
+Integer.getInteger=Integer.prototype.getInteger;
+
+Clazz.defineMethod (Integer, "hashCode", 
+function () {
+    return this.valueOf();
+});
 
 Clazz.defineMethod (Integer, "$valueOf", 
 function (s) {
@@ -113,7 +169,14 @@ radix = 16;
 } else if (nm.startsWith ("0", index) && nm.length > 1 + index) {
 index++;
 radix = 8;
-}if (nm.startsWith ("-", index)) throw  new NumberFormatException ("Negative sign in wrong position");
+}
+if (nm.startsWith ("-", index)) {
+    throw  new NumberFormatException ("Negative sign in wrong position");
+}
+if (nm.indexOf(".") > -1) {
+    throw new NumberFormatException ("For input string: " + nm);
+}
+
 try {
 result = Integer.$valueOf (nm.substring (index), radix);
 result = negative ?  new Integer (-result.intValue ()) : result;
