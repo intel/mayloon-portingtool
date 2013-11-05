@@ -536,7 +536,35 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 		return result;
 	}
 
-	/**
+	/* (non-Javadoc)
+     * @see java.util.AbstractCollection#remove(java.lang.Object)
+     */
+    @Override
+    public boolean remove(Object object) {
+        Object[] a = array;
+        if (object != null) {
+            for (int i = firstIndex; i < lastIndex; i++) {
+                if (object.equals(a[i])) {
+                    System.arraycopy(a, i + 1, a, i, --lastIndex - i);
+                    a[lastIndex] = null;  // Prevent memory leak
+                    modCount++;
+                    return true;
+                }
+            }
+        } else {
+            for (int i = firstIndex; i < lastIndex; i++) {
+                if (a[i] == null) {
+                    System.arraycopy(a, i + 1, a, i, --lastIndex - i);
+                    a[lastIndex] = null;  // Prevent memory leak
+                    modCount++;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
 	 * Removes the objects in the specified range from the start to the end, but
 	 * not including the end index.
 	 * 
