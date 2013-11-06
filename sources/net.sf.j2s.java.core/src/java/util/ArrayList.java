@@ -414,14 +414,14 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 		E[] newArray = newElementArray(size + increment);
 		if (location < size / 2) {
 			int newFirst = newArray.length - (size + required);
-			System.arraycopy(array, location + 1, newArray, location + increment,
+			System.arraycopy(array, firstIndex + location , newArray, location + increment,
 					size - location);
-			System.arraycopy(array, firstIndex, newArray, newFirst, location);
+			System.arraycopy(array, firstIndex , newArray, newFirst, location);
 			firstIndex = newFirst;
 			lastIndex = newArray.length;
 		} else {
 			System.arraycopy(array, firstIndex, newArray, 0, location);
-			System.arraycopy(array, location, newArray, location + required,
+			System.arraycopy(array, location + firstIndex, newArray, location + required,
 					size - location);
 			firstIndex = 0;
 			lastIndex += required;
