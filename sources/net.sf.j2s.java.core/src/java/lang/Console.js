@@ -480,17 +480,18 @@ window.assert = function () {
 		return System.props;
 	};
     System.getProperty = function (key, def) {
+        var val = null;
         if (System.props != null) {
-            var v = System.props[key];
-            if (!v) {
-                v = System.props.getProperty(key);
+            if (System.props instanceof Array) {
+                val = System.props[key];
+            } else {
+                val = System.props[key] || System.props.getProperty(key);
             }
-            return v;
         }
-        if (def != null) {
+        if (val == null && def != null) {
             return def;
         }
-        return key;
+        return val == undefined ? null : val;
     };
 
 	System.setProperties = function (props) {
