@@ -503,7 +503,15 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 						} else {
 							buffer.append(assureQualifiedName(shortenQualifiedName(binding.getQualifiedName())));
 						}
-						buffer.append(", this, ");
+                        if (expression instanceof SimpleName) {
+                            buffer.append(", " + expression.toString() + ", ");
+                        } else if (expression instanceof ClassInstanceCreation) {
+                            buffer.append(", ");
+                            expression.accept(this);
+                            buffer.append(", ");
+                        } else {
+                            buffer.append(", this, ");
+                        }
 						buffer.append("null"); // No final variables for non-anonymous class
 						List arguments = node.arguments();
 						if (arguments.size() > 0) {
