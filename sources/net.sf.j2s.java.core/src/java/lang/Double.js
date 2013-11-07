@@ -59,6 +59,10 @@ function (s) {
     if (s == "NaN" || s == "+NaN" || s == "-NaN") {
         return Number.NaN;
     }
+    var lastChar = s.charAt(s.length-1).toLowerCase();
+    if (lastChar == 'd' || lastChar == 'f') {
+        s = s.substring(0, s.length - 1);
+    }
     if (isNaN(s) || s.length == 0) {
         throw new NumberFormatException("Not a Number : " + s);
     }
