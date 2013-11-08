@@ -150,8 +150,6 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
             super(list, start, end);
             if(end>list.size()) 
                 end=list.size();
-            if(start >= end)
-                throw new IndexOutOfBoundsException();
             for (int i = start; i < end; i++) {
                 arraylist.add(list.get(i));
             }
