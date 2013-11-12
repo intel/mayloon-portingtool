@@ -418,12 +418,13 @@ public class ASTScriptVisitor extends ASTJ2SDocVisitor {
 		
 		buffer.append(packageName);
 		buffer.append(".");
-		idx = className.indexOf('$');
-		if (idx != -1) {
-			buffer.append(className.substring(0, idx));
-		} else {
-			buffer.append(className);
-		}
+
+        /**
+         * gets a string like 'com.testinner.AnonymousTest.AMT.$AnonymousTest$AMT$1$ ()'
+         * indicate the anonymous class name
+         */
+        buffer.append(className.split("\\$\\d")[0].replace('$', '.'));
+
 		buffer.append(".$");
 		buffer.append(shortClassName);
 		buffer.append("$ ())");
