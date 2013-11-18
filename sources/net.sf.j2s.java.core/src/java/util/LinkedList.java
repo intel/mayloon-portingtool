@@ -562,6 +562,13 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
 	 */
 	@Override
     public E remove(int location) {
+	    /**
+         * @j2sNative
+         * var isObj = typeof (location) == "object";
+         * if (isObj) {
+         *     return this.removeObject(location);
+         * }
+         * */ {}
 		if (0 <= location && location < size) {
 			Link<E> link = voidLink;
 			if (location < (size / 2)) {
@@ -585,28 +592,32 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements
 	}
 
 	@Override
-    public boolean remove(Object object) {
-		Link<E> link = voidLink.next;
-		if (object != null) {
-			while (link != voidLink && !object.equals(link.data)) {
+	public boolean remove(Object object) {
+	    return removeObject(object);
+	}
+
+    private boolean removeObject(Object object) {
+        Link<E> link = voidLink.next;
+        if (object != null) {
+            while (link != voidLink && !object.equals(link.data)) {
                 link = link.next;
             }
-		} else {
-			while (link != voidLink && link.data != null) {
+        } else {
+            while (link != voidLink && link.data != null) {
                 link = link.next;
             }
-		}
-		if (link == voidLink) {
+        }
+        if (link == voidLink) {
             return false;
         }
-		Link<E> next = link.next;
-		Link<E> previous = link.previous;
-		previous.next = next;
-		next.previous = previous;
-		size--;
-		modCount++;
-		return true;
-	}
+        Link<E> next = link.next;
+        Link<E> previous = link.previous;
+        previous.next = next;
+        next.previous = previous;
+        size--;
+        modCount++;
+        return true;
+    }
 
 	/**
 	 * Removes the first object from this LinkedList.
