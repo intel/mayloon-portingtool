@@ -505,6 +505,14 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
 	 */
 	@Override
     public E remove(int location) {
+	    /***
+	     * @j2sNative
+	     * var isObj = typeof (location) == "object";
+	     * if (isObj) {
+	     * return this.removeObject(location);
+	     * }
+	     */{}
+
 		E result;
 		int size = lastIndex - firstIndex;
 		if (0 <= location && location < size) {
@@ -541,6 +549,10 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
      */
     @Override
     public boolean remove(Object object) {
+        return removeObject(object);
+    }
+
+    private boolean removeObject(Object object) {
         Object[] a = array;
         if (object != null) {
             for (int i = firstIndex; i < lastIndex; i++) {
@@ -563,7 +575,6 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, Cloneable,
         }
         return false;
     }
-
     /**
 	 * Removes the objects in the specified range from the start to the end, but
 	 * not including the end index.
