@@ -307,6 +307,8 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>,
                     map.elementData[i] = (Entry<K,V>) entry.clone();
                 }
             }
+            map.keySet=null;
+            map.valuesCollection=null;
             return map;
         } catch (CloneNotSupportedException e) {
             return null;
@@ -679,5 +681,18 @@ public class HashMap<K, V> extends AbstractMap<K, V> implements Map<K, V>,
             };
         }
         return valuesCollection;
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.AbstractMap#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        int result = 0;
+        Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+        while (it.hasNext()) {
+            result += it.next().hashCode();
+        }
+        return result;
     } 
 }
