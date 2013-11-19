@@ -34,7 +34,6 @@
 
 	<property name="cfg.dir" location="./buildconfig" />
 	<property name="current.dir" location="." />
-	<property name="update.site.source.dir" location="./site"/>
 	<property name="mpt.source.dir" location="../" />
 	<property name="jseditor.source.dir" location="../" />
 	<property name="json.source.dir" location="../" />
@@ -133,7 +132,6 @@
 			<arg value="org.eclipse.ant.core.antRunner" />
 			<arg value="-DbuildDirectory=${build.dir}" />
 			<arg value="-Dbuilder=${cfg.dir}" />
-			<arg value="-DupdateSiteSource=${update.site.source.dir}" />
 			<arg value="-DupdateSiteRoot=${build.dir}" />
 			<arg value="-DbaseLocation=${eclipse.home}" />
 			<arg value="-buildfile" />
