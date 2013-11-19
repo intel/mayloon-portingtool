@@ -103,9 +103,9 @@ public final class Short extends Number{
      * @see java.lang.Comparable
      * @since 1.2
      */
-   /* public int compareTo(Short object) {
+    public int compareTo(Short object) {
         return value > object.value ? 1 : (value < object.value ? -1 : 0);
-    }*/
+    }
 
     /**
      * Parses the specified string and returns a {@code Short} instance if the
@@ -156,10 +156,10 @@ public final class Short extends Number{
         return value;
     }
 
-    /*@Override
+    @Override
     public int hashCode() {
         return value;
-    }*/
+    }
 
     @Override
     public int intValue() {
@@ -285,9 +285,9 @@ public final class Short extends Number{
      * @return the reversed value.
      * @since 1.5
      */
-   /* public static short reverseBytes(short s) {
+    public static short reverseBytes(short s) {
         return (short) ((s << 8) | ((s >>> 8) & 0xFF));
-    }*/
+    }
 
     /**
      * Returns a {@code Short} instance for the specified short value.

@@ -5,12 +5,27 @@ Clazz.instantialize (this, arguments);
 Clazz.decorateAsType (Short, "Short", Number, Comparable, null, true);
 Short.prototype.valueOf = function () { return 0; };
 Short.toString = Short.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Short) {
-		return "class java.lang.Short"; // Short.class.toString
-	}
-	return "" + this.valueOf ();
+    var val = null;
+    if (arguments.length != 0) {
+        val = arguments[0];
+    } else if (this === Short) {
+        return "class java.lang.Short"; // Short.class.toString
+    }
+    if (val == null)
+        val = this.valueOf ();
+
+    val = Short.number2Short(val);	
+    return "" + val;
+};
+Short.number2Short = Short.prototype.number2Short = function(n) {
+    var v = parseInt(n) % 65536;
+    if(v >= -32768 && v < 32768){
+        return v;
+    }else if(v < -32768){
+        return v + 65536;
+    }else{
+        return v - 65536;
+    }
 };
 Clazz.makeConstructor (Short, 
 function () {
@@ -46,12 +61,33 @@ throw  new NumberFormatException ("radix " + radix + " less than Character.MIN_R
 }if (radix > 36) {
 throw  new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
 }
-var integer = parseInt (s, radix);
-if(isNaN(integer)){
-throw  new NumberFormatException ("Not a Number : " + s);
+
+
+if (isNaN(s) || s.length == 0 || s.indexOf("0x") == 0 || s.indexOf(".") > -1) {
+    throw new NumberFormatException("Not a Number : " + s);
 }
+
+var integer = parseInt (s, radix);
+if (integer > Short.MAX_VALUE || integer < Short.MIN_VALUE) {
+    throw new NumberFormatException();
+}
+
 return integer;
 }, "String, Number");
+
+
+Clazz.defineMethod (Short, "hashCode", 
+function () {
+    return this.valueOf();
+});
+
+Short.reverseBytes = Clazz.defineMethod (Short, "reverseBytes", 
+function (s) {
+    var val = (((s & 0xFF00) >> 8) | (s << 8));
+    return Short.number2Short(val);
+}, "~N");
+
+
 Short.parseShort = Short.prototype.parseShort;
 Clazz.defineMethod (Short, "parseShort", 
 function (s) {
@@ -113,7 +149,9 @@ radix = 8;
 }if (nm.startsWith ("-", index)) throw  new NumberFormatException ("Negative sign in wrong position");
 try {
 result = Short.$valueOf (nm.substring (index), radix);
-result = negative ?  new Short (-result.shortValue ()) : result;
+
+result = negative ?  new Short (-result.valueOf()) : result;
+
 } catch (e) {
 if (Clazz.instanceOf (e, NumberFormatException)) {
 var constant = negative ?  String.instantialize ("-" + nm.substring (index)) : nm.substring (index);
@@ -122,6 +160,12 @@ result = Short.$valueOf (constant, radix);
 throw e;
 }
 }
+
+var num = result.valueOf();
+if (num > Short.MAX_VALUE || num < Short.MIN_VALUE) {
+    throw new NumberFormatException();
+}
+
 return result;
 }, "~S");
 });
