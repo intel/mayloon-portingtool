@@ -4,14 +4,29 @@ Clazz.instantialize (this, arguments);
 };
 Clazz.decorateAsType (Long, "Long", Number, Comparable, null, true);
 Long.prototype.valueOf = function () { return 0; };
-Long.toString = Long.prototype.toString = function () {
-	if (arguments.length != 0) {
-		return "" + arguments[0];
-	} else if (this === Long) {
-		return "class java.lang.Long"; // Long.class.toString
-	}
-	return "" + this.valueOf ();
+Long.toString = Long.prototype.toString = function() {
+    if (arguments.length != 0) {
+        var value = arguments[0];
+        var radix = arguments[1];
+        if (radix == null) {
+           radix = 10;
+        }
+        if (radix < Character.MIN_RADIX) {
+            throw  new NumberFormatException ("radix " + radix + " less than Character.MIN_RADIX");
+        }if (radix > Character.MAX_RADIX) {
+            throw  new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
+        }
+        return Number(value).toString(radix);
+    } else if (this === Long) {
+        return "class java.lang.Long"; // Long.class.toString
+    }
+    return "" + this.valueOf();
 };
+
+Clazz.defineMethod (Long, "hashCode", 
+function () {
+    return this.valueOf();
+});
 Clazz.makeConstructor (Long, 
 function () {
 this.valueOf = function () {
@@ -41,14 +56,17 @@ Clazz.defineMethod (Long, "parseLong",
 function (s, radix) {
 if (s == null) {
 throw  new NumberFormatException ("null");
-}if (radix < 2) {
+}if (radix < Character.MIN_RADIX) {
 throw  new NumberFormatException ("radix " + radix + " less than Character.MIN_RADIX");
-}if (radix > 36) {
+}if (radix > Character.MAX_RADIX) {
 throw  new NumberFormatException ("radix " + radix + " greater than Character.MAX_RADIX");
 }
+if (s.length == 0 || s.indexOf("0x") == 0 || s.indexOf(".") > -1) {
+    throw new NumberFormatException("Not a Number : " + s);
+}
 var longVal = parseInt (s, radix);
-if(isNaN(longVal)){
-throw  new NumberFormatException ("Not a Number : " + s);
+if (isNaN(longVal) || longVal > Long.MAX_VALUE || longVal < Long.MIN_VALUE) {
+    throw new NumberFormatException("Not a Number : " + s);
 }
 return longVal;
 }, "String, Number");
@@ -138,8 +156,40 @@ result = Long.$valueOf (constant, radix);
 throw e;
 }
 }
+var val = result.valueOf ();
+if (val > Long.MAX_VALUE || val < Long.MIN_VALUE) {
+    throw new NumberFormatException ();
+}
 return result;
 }, "~S");
+
+Clazz.defineMethod (Long, "getLong", 
+function (string) {
+    if (string == null || string.length == 0) {
+        return null;
+    }
+    var prop = System.getProperty (string);
+    if (prop == null) {
+        return null;
+    }
+    try {
+        return Long.decode (prop);
+    } catch (ex) {
+        if (Clazz.exceptionOf (ex, NumberFormatException)) {
+            return null;
+        } else {
+            throw ex;
+        }
+    }
+}, "~S");
+
+Clazz.defineMethod (Long, "getLong", 
+function (str, defVal) {
+    var result = Long.getLong (str);
+    return (result == null) ? Long.$valueOf (defVal) : result;
+}, "~S,~N");
+Long.getLong=Long.prototype.getLong;
+
 //sgurin compare and compareTo. the same implementation as in Integer
 Long.compare = Clazz.defineMethod (Long, "compare", 
 function (f1, f2) {

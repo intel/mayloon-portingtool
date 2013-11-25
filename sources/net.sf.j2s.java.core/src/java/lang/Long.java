@@ -203,7 +203,7 @@ public final class Long extends Number{
      *            the name of the requested system property.
      * @return the requested property's value as a {@code Long} or {@code null}.
      */
-    /*public static Long getLong(String string) {
+    public static Long getLong(String string) {
         if (string == null || string.length() == 0) {
             return null;
         }
@@ -216,7 +216,7 @@ public final class Long extends Number{
         } catch (NumberFormatException ex) {
             return null;
         }
-    }*/
+    }
 
     /**
      * Returns the {@code Long} value of the system property identified by
@@ -232,7 +232,7 @@ public final class Long extends Number{
      * @return the requested property's value as a {@code Long} or the default
      *         value.
      */
-    /*public static Long getLong(String string, long defaultValue) {
+    public static Long getLong(String string, long defaultValue) {
         if (string == null || string.length() == 0) {
             return valueOf(defaultValue);
         }
@@ -245,7 +245,7 @@ public final class Long extends Number{
         } catch (NumberFormatException ex) {
             return valueOf(defaultValue);
         }
-    }*/
+    }
 
     /**
      * Returns the {@code Long} value of the system property identified by
@@ -261,7 +261,7 @@ public final class Long extends Number{
      * @return the requested property's value as a {@code Long} or the default
      *         value.
      */
-    /*public static Long getLong(String string, Long defaultValue) {
+    public static Long getLong(String string, Long defaultValue) {
         if (string == null || string.length() == 0) {
             return defaultValue;
         }
@@ -274,12 +274,12 @@ public final class Long extends Number{
         } catch (NumberFormatException ex) {
             return defaultValue;
         }
-    }*/
+    }
 
-   /* @Override
+    @Override
     public int hashCode() {
         return (int) (value ^ (value >>> 32));
-    }*/
+    }
 
     @Override
     public int intValue() {
