@@ -339,15 +339,34 @@ String.prototype.codePointAt = function(index) {
     if(index < 0 || index >= this.length) {
         throw  new StringIndexOutOfBoundsException (index);
     }
-    return this.charCodeAt(index);
+    var i=index;
+        var ch = this.charAt(i++);
+            if (ch >= '\uD800' && ch <= '\uDBFF') {
+                ch = this.charAt(i);
+                if (i < this.length && ch >= '\uDC00' && ch <= '\uDFFF') {
+                    var h = (this.charAt(index) & 0x3FF) << 10;
+                    var l = this.charAt(index+1) & 0x3FF;
+                    return (h | l) + 0x10000;
+                }
+            }
+        return this.charCodeAt(index);
 };
 
 String.prototype.codePointBefore = function(index) {
     var i = index - 1;
-    if(i < 0 || i >= this.length) {
-        throw  new StringIndexOutOfBoundsException (index);
-    }
-    return this.charCodeAt(index-1);
+        if (i < 0 || i >= this.length) {
+            throw new StringIndexOutOfBoundsException(index);
+        }
+        var ch=this.charAt(i--);
+         if (ch >= '\uDC00' && ch <= '\uDFFF'){
+             ch = this.charAt(i);
+             if (i>=0 && ch >= '\uD800' && ch <= '\uDBFF'){
+             var h = (this.charAt(index-2) & 0x3FF) << 10;
+             var l = this.charAt(index-1) & 0x3FF;
+             return (h | l) + 0x10000;
+             }
+         }
+        return this.charCodeAt(index - 1);
 };
 
 String.prototype.codePointCount = function(beginIndex, endIndex) {
