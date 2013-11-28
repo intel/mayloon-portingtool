@@ -20,7 +20,9 @@ package java.net;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Document;
@@ -690,6 +692,26 @@ public class HttpURLConnection extends URLConnection {
     public void setRequestProperty(String key, String value){
         requestProperties.put(key, value);
     }
+
+    @Override
+    public String getRequestProperty(String field) {
+        return requestProperties.get(field);
+    }
+
+    @Override
+    public Map<String, List<String>> getRequestProperties() {
+        if (connected) {
+            throw new IllegalStateException("Already connected");
+        }
+        Map<String, List<String>> properties = new HashMap<String, List<String>>();
+        for (Map.Entry<String, String> entry : requestProperties.entrySet()) {
+            List<String> valList = new ArrayList<String>();
+            valList.add(entry.getValue());
+            properties.put(entry.getKey(), valList);
+        }
+        return properties;
+    }
+
     /**
      * Returns whether this connection uses a proxy server or not.
      *
@@ -811,6 +833,7 @@ public class HttpURLConnection extends URLConnection {
 
 	@Override
 	public void connect() throws IOException {
+        this.connected = true;
 	}
 
 
