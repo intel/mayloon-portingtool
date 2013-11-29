@@ -445,15 +445,72 @@ abstract class AbstractStringBuilder {
             return;
         }
         if (!shared) {
-            for (int i = 0, end = count, mid = count / 2; i < mid; i++) {
-                char temp = value[--end];
-                value[end] = value[i];
-                value[i] = temp;
+            int end = count - 1;
+            char frontHigh = value[0];
+            char endLow = value[end];
+            boolean allowFrontSur = true, allowEndSur = true;
+            for (int i = 0, mid = count / 2; i < mid; i++, --end) {
+                char frontLow = value[i + 1];
+                char endHigh = value[end - 1];
+                boolean surAtFront = allowFrontSur && frontLow >= 0xdc00
+                        && frontLow <= 0xdfff && frontHigh >= 0xd800
+                        && frontHigh <= 0xdbff;
+                if (surAtFront && (count < 3)) {
+                    return;
+                }
+                boolean surAtEnd = allowEndSur && endHigh >= 0xd800
+                        && endHigh <= 0xdbff && endLow >= 0xdc00
+                        && endLow <= 0xdfff;
+                allowFrontSur = allowEndSur = true;
+                if (surAtFront == surAtEnd) {
+                    if (surAtFront) {
+                        // both surrogates
+                        value[end] = frontLow;
+                        value[end - 1] = frontHigh;
+                        value[i] = endHigh;
+                        value[i + 1] = endLow;
+                        frontHigh = value[i + 2];
+                        endLow = value[end - 2];
+                        i++;
+                        end--;
+                    } else {
+                        // neither surrogates
+                        value[end] = frontHigh;
+                        value[i] = endLow;
+                        frontHigh = frontLow;
+                        endLow = endHigh;
+                    }
+                } else {
+                    if (surAtFront) {
+                        // surrogate only at the front
+                        value[end] = frontLow;
+                        value[i] = endLow;
+                        endLow = endHigh;
+                        allowFrontSur = false;
+                    } else {
+                        // surrogate only at the end
+                        value[end] = frontHigh;
+                        value[i] = endHigh;
+                        frontHigh = frontLow;
+                        allowEndSur = false;
+                    }
+                }
+            }
+            if ((count & 1) == 1 && (!allowFrontSur || !allowEndSur)) {
+                value[end] = allowFrontSur ? endLow : frontHigh;
             }
         } else {
             char[] newData = new char[value.length];
             for (int i = 0, end = count; i < count; i++) {
-                newData[--end] = value[i];
+                char high = value[i];
+                if ((i + 1) < count && high >= 0xd800 && high <= 0xdbff) {
+                    char low = value[i + 1];
+                    if (low >= 0xdc00 && low <= 0xdfff) {
+                        newData[--end] = low;
+                        i++;
+                    }
+                }
+                newData[--end] = high;
             }
             value = newData;
             shared = false;
