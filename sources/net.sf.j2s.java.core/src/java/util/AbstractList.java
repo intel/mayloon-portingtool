@@ -156,6 +156,15 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
 
         /* (non-Javadoc)
+         * @see java.util.AbstractList#listIterator()
+         */
+        @Override
+        public ListIterator<E> listIterator() {
+            // TODO Auto-generated method stub
+            return arraylist.listIterator();
+        }
+
+        /* (non-Javadoc)
          * @see java.util.AbstractList.SubAbstractList#addAll(java.util.Collection)
          */
         @Override
