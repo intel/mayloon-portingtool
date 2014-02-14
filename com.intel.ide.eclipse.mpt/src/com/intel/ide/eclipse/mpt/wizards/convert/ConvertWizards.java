@@ -229,8 +229,9 @@ public class ConvertWizards extends Wizard {
 	
 	private void convert(IProgressMonitor monitor){
 		try {
-			// 7 steps to convert project
-			monitor.beginTask("Project converting...", 7);
+			// 8 steps to convert project
+			monitor.beginTask("Project converting...", 8);
+			this.convertFlag = true;
 
 			// disable AutoBuild
 			originalAutoBuild = ProjectUtil.getAutoBuild();
@@ -248,6 +249,9 @@ public class ConvertWizards extends Wizard {
 			monitor.worked(1);
 			
 			String deployMode = MptConstants.J2S_DEPLOY_MODE_BROWSER;
+
+			ProjectUtil.backupProject(project);
+			monitor.worked(1);
 
 			// get package name from AndroidManifest.xml
 			// packageName is [packageName], not include the
@@ -647,8 +651,6 @@ public class ConvertWizards extends Wizard {
 		if (originalAutoBuild){
 			ProjectUtil.setAutoBuild(true);
 		}
-		
-        this.convertFlag = true;
 	}
 	
 
