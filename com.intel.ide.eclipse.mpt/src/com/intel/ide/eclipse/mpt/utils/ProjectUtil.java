@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -47,14 +48,17 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -1843,6 +1847,106 @@ public class ProjectUtil {
 					targetStream.close();
 				} catch (IOException e) {
 				}
+			}
+		}
+	}
+
+	/**
+	 * Backup the project which is going to be converted. All files and folders
+	 * in the project directory will be compressed to an archive, except
+	 * contents in project output directory.
+	 * 
+	 * @param project
+	 */
+	public static void backupProject(IProject project) {
+		MptPluginConsole.general(MptConstants.GENERAL_TAG,
+				"Backup project '%1$s'.", project.getName());
+
+		// disable auto building mode if necessary
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		boolean isAutoBuilding = workspace.isAutoBuilding();
+		if (isAutoBuilding) {
+			try {
+				IWorkspaceDescription desc = workspace.getDescription();
+				desc.setAutoBuilding(false);
+				workspace.setDescription(desc);
+			} catch (CoreException e) {
+			}
+		}
+
+		// do backup
+		ZipOutputStream stream = null;
+		File archive = null;
+		try {
+			archive = File.createTempFile(project.getName() + "_archive", "bk");
+			final ZipOutputStream output = (stream = new ZipOutputStream(
+					new FileOutputStream(archive)));
+			final IPath base = project.getLocation();
+			final byte[] buffer = new byte[4096];
+			project.accept(new IResourceVisitor() {
+				@Override
+				public boolean visit(IResource resource) throws CoreException {
+					if (resource.getType() == IResource.FILE) {
+						IPath path = resource.getLocation();
+						IPath entry = path.makeRelativeTo(base);
+						FileInputStream stream = null;
+						try {
+							FileInputStream input = (stream = new FileInputStream(
+									path.toFile()));
+							output.putNextEntry(new ZipEntry(entry.toString()));
+							int length = 0;
+							while ((length = input.read(buffer)) != -1) {
+								output.write(buffer, 0, length);
+							}
+							output.closeEntry();
+						} catch (IOException e) {
+							throw new CoreException(new Status(IStatus.ERROR,
+									MptPlugin.PLUGIN_ID, e.getMessage()));
+						} finally {
+							if (stream != null) {
+								try {
+									stream.close();
+								} catch (IOException e) {
+								}
+							}
+						}
+					}
+					return true;
+				}
+			});
+		} catch (Exception e) {
+			MptPluginLogger.throwable(e);
+			MptPluginConsole.warning(MptConstants.GENERAL_TAG,
+					"Could not complete backup due to cause {%1$s}.",
+					e.getMessage());
+			archive.deleteOnExit();
+			archive = null;
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+			if (archive != null) {
+				if (archive.renameTo(new File(project.getLocation().toFile(),
+						"archive.zip"))) {
+					MptPluginConsole
+							.general(
+									MptConstants.GENERAL_TAG,
+									"Backup archive.zip is generated under project '%1$s'.",
+									project.getName());
+				}
+			}
+		}
+
+		// restore auto building mode if necessary
+		if (isAutoBuilding) {
+			try {
+				IWorkspaceDescription desc = workspace.getDescription();
+				desc.setAutoBuilding(true);
+				workspace.setDescription(desc);
+			} catch (CoreException e) {
 			}
 		}
 	}
